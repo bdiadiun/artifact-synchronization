@@ -13,6 +13,12 @@ while served from different ports.
   Subagents that write code or tests **must not run on Fable**; use a lower tier (Opus, or Sonnet
   for narrow, well-specified tasks). Each subagent gets a self-contained brief: canon IDs, graph
   nodes, files in scope, constraints from this file, and the verification commands to run.
+- **Roles are defined in [`.claude/agents/`](.claude/agents/):** `architect` (planning, docs,
+  review), `developer` (implementation), `tester` (tests and verification), `researcher`
+  (read-only investigation with citations), `git-operator` (commit / PR / merge after approval).
+  Each file fixes the model, the tools and the prompt; briefs are written for one of these roles.
+- **Code style is defined in [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md)** (decision A-13) and
+  enforced by `npm run lint` and `npm run format:check`; both must be green before gate 2.
 - **Architect verifies subagent output** before presenting a slice result: reads the diff, runs
   lint / typecheck / tests, and checks traceability to the canon. Subagent output is never
   forwarded to the user unreviewed.
@@ -137,7 +143,8 @@ Indicative slice order (the minimum from the canon; refined in the graph):
   decisions, recorded in `ARCHITECTURE.md` before or together with the implementation.
 - **Cleanup**: every subscription / `addEventListener` has a paired unsubscribe; an armed tool
   state is cancelled on unmount.
-- TypeScript in `strict` mode; no `any` without a justifying comment.
+- TypeScript in `strict` mode; no `any` without a justifying comment. Style, naming, enums and
+  function conventions: `docs/CONVENTIONS.md`.
 - Changes in the OHIF fork are minimal and concentrated in our extension; the OHIF UI is not reworked.
 - Tests are targeted: the sum logic and message serialisation / validation.
 - Every line of code must be explainable at the defence: no "magic" we cannot justify.
@@ -167,7 +174,7 @@ Every implementation / test / git subagent receives a self-contained brief with 
 ```
 Role: <developer | test writer | git operator>   Model: <opus | sonnet>
 Repository: <path>; branch: <name>; do not run git unless you are the git operator.
-Read first: CLAUDE.md (follow it), then <exact files>.
+Read first: CLAUDE.md (follow it), docs/CONVENTIONS.md, then <exact files>.
 Scope: closes <F-nn> / canon <IDs>. Files you may create or modify: <list>. Nothing else.
 Constraints: English only; no AI mentions; TypeScript strict; no new dependencies unless listed: <list>.
 Decisions already made (do not revisit): <A-n summaries or links>.

@@ -2,6 +2,7 @@
   "name": "artifact-synchronization",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "Viewer + Scoring Form micro-frontend: host-app and an OHIF Viewer fork talking over window.postMessage",
   "engines": {
     "node": ">=22"
@@ -15,7 +16,20 @@
     "check:contract": "node scripts/check-contract-sync.mjs",
     "docs:build": "node scripts/build-docs.mjs",
     "test": "npm run test --workspace host-app",
-    "lint": "npm run lint --workspace host-app",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "npm run typecheck --workspace host-app"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.7",
+    "typescript-eslint": "^8.70.0"
   }
 }
