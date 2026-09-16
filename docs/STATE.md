@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 4 `feat: receive measurement into form` (branch `feat/receive-measurement-into-form`, nodes F-09, F-10) |
+| Current slice | 5 `feat: total area calculation` (branch `feat/total-area-calculation`, node F-11) |
 | Gate | 2 — implemented and verified end to end, awaiting result approval |
-| Last merged PR | #5 `feat: activate ellipse from form` (merged manually by the user); fork PRs #1, #2 merged into `scoring` |
-| Next slice | 5 `feat: total area calculation` (F-11) |
+| Last merged PR | #6 `feat: receive measurement into form`; fork PRs #1–#3 merged into `scoring` |
+| Next slice | 6 `docs: README, ARCHITECTURE, AI-USAGE` (F-12, F-13) |
 
 ## Open decisions (see CANON.md → Decisions)
 
