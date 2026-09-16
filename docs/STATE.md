@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 9 `feat: OHIF version on viewport` (branch `feat/ohif-version-on-viewport`, node F-18, bonus S-5.5) |
-| Gate | 2 — implemented and verified (1×1 and 2×2), awaiting result approval |
-| Last merged PR | #10 `feat: two-way deletion` (S-5.2); mandatory part complete (F-13 video pending by the author); fork PRs #1–#5 merged into `scoring` |
-| Next slice | 10 `chore: docs site generator` (npm run docs:build → docs/site/index.html), then S-5.3 focus (F-16) |
+| Current slice | 10 `chore: docs site generator` (branch `chore/docs-site-generator`, node F-21) |
+| Gate | 2 — generator works, page verified over http and file://, awaiting result approval |
+| Last merged PR | #11 `feat: OHIF version on viewport` (S-5.5); mandatory part complete (F-13 video pending by the author); fork PRs #1–#6 merged into `scoring` |
+| Next slice | 11 S-5.3 focus (F-16) |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -37,6 +37,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 - OHIF "clear all measurements" emits `MEASUREMENTS_CLEARED`, not per-uid `MEASUREMENT_REMOVED`; rows would keep stale values. Small follow-up in the bridge if needed.
 
 - Fork `tsc --noEmit` has two pre-existing type errors unrelated to runtime (`ToolGroupService` type lacks pubsub members used by `subscribe`; generated `pluginImports.js` cannot resolve the extension). Webpack/babel build is unaffected. Candidate for a small fork PR.
+
+## Docs page
+
+- `npm run docs:build` regenerates `docs/site/index.html` (commit it with the docs it bundles). The same page is published as a private artifact for the author; republish it after each merge.
 
 ## Session checklist
 
