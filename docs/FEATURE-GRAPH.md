@@ -22,13 +22,14 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-09 | Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool | C-3.4, C-4.3.4, C-4.3.5, C-4.3.6, Q-3, Q-6, P-3, P-4 | F-08 | 4 `feat: receive measurement into form` | done | Drawing an ellipse produces one `MEASUREMENT_ADDED` with area, units (`mm²` / `px²`), row correlation ID and annotation ID; the viewer tool returns to default. |
 | F-10 | Row receives the value | C-4.3.5, C-4.3.6, Q-6 | F-09 | 4 | done | The correct row shows the value with its unit and status `Done`; a measurement that arrives for an unknown or non-`Drawing…` row is ignored and logged. |
 | F-11 | Total area with unit handling | C-4.3.8, Q-6, X-4 | F-10 | 5 `feat: total area calculation` | done | Sum is shown per unit (mm² and px² never added together); recalculates on every change; unit tests for the sum logic pass. |
+| F-21 | Docs site generator (`npm run docs:build` → `docs/site/index.html`, clickable requirement IDs) | D-3, D-6 | F-12 | 10 `chore: docs site generator` | review | `npm run docs:build` produces a single self-contained page; opening it shows every document, IDs link to canon / graph rows / decision files. |
 | F-12 | Documentation: README, ARCHITECTURE, AI-USAGE | D-5, D-6, D-7, P-2, P-5, P-6 | F-11 | 6 `docs: README, ARCHITECTURE, AI-USAGE` | done | Fresh clone → both apps running by following README only; ARCHITECTURE has the diagram, full payload table and "Decisions"; AI-USAGE is honest and specific. |
 | F-13 | Video demo | D-8 | F-12 | 6 (recorded by the author, outside the repo) | planned | 2–4 min recording covering D-8 (a)–(e). |
 | F-14 | Bonus: live update (`MEASUREMENT_UPDATED`) with echo-loop protection | S-5.1, Q-4, P-6 | F-11 | 7 | done | Dragging a handle updates the row and the sum live; a host-originated change does not bounce back as a second update. |
 | F-15 | Bonus: two-way deletion | S-5.2, Q-4, C-4.4.2 | F-11 | 8 | done | Row "Delete" removes the annotation; deleting in the viewer clears the row. |
 | F-16 | Bonus: focus annotation from row | S-5.3 | F-11 | 7 | planned | Clicking a row highlights / jumps to the annotation. |
 | F-17 | Bonus: Length row type with separate sum | S-5.4 | F-11 | 7 | planned | Length rows sum separately from area rows. |
-| F-18 | Bonus: OHIF version on every viewport | S-5.5 | F-04 | 9 | review | Version from `package.json` injected at build time appears on each viewport in a 2×2 grid. |
+| F-18 | Bonus: OHIF version on every viewport | S-5.5 | F-04 | 9 | done | Version from `package.json` injected at build time appears on each viewport in a 2×2 grid. |
 | F-19 | Bonus: state restore after reload | S-5.6 | F-11 | 7 | planned | Reload keeps rows and annotations in sync. |
 | F-20 | Project tooling and state journal | D-2, D-3, D-5, A-6 | F-00 | 0.5 `chore: project tooling and state journal` | done | `npm run check:graph` exits 0; `.nvmrc` + `engines` pin Node 22; `docs/STATE.md` lets a fresh session resume; decision records exist for A-1..A-6. |
 
@@ -77,6 +78,7 @@ graph TD
   F10[F-10 Row receives value]
   F11[F-11 Total area with units]
   F12[F-12 README, ARCHITECTURE, AI-USAGE]
+  F21[F-21 Docs site generator]
   F13[F-13 Video demo]
   F14[F-14 * Live update + echo guard]
   F15[F-15 * Two-way deletion]
@@ -97,6 +99,7 @@ graph TD
   F06 --> F08
   F07 --> F08
   F08 --> F09 --> F10 --> F11 --> F12 --> F13
+  F12 --> F21
   F11 --> F14
   F11 --> F15
   F11 --> F16
@@ -120,4 +123,5 @@ graph TD
 | 7 | `feat/live-measurement-update` | F-14 |
 | 8 | `feat/two-way-deletion` | F-15 |
 | 9 | `feat/ohif-version-on-viewport` | F-18 |
-| 10+ | one branch per bonus node | F-16, F-17, F-19 |
+| 10 | `chore/docs-site-generator` | F-21 |
+| 11+ | one branch per bonus node | F-16, F-17, F-19 |

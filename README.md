@@ -76,3 +76,4 @@ turns to "готовий" once the viewer has sent `VIEWER_READY`.
 - `npm run lint`, `npm run typecheck`, `npm run test` — host-app and contract package.
 - `npm run check:graph` — feature-graph invariants.
 - `npm run check:contract` — the viewer extension's copy of the contract is byte-identical to `packages/contract`.
+- `npm run docs:build` — builds `docs/site/index.html`, a single-page reader of all project documents with clickable requirement IDs.
