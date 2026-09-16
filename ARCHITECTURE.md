@@ -54,7 +54,7 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 
 | Concern | File |
 |---|---|
-| Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` (listener, handshake, subscriptions), `commands.ts` (ACTIVATE/DEACTIVATE, armed state, previous-tool restore) |
+| Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` (listener, handshake, subscriptions, outgoing `MEASUREMENT_ADDED`, `uid ↔ rowId` map), `commands.ts` (ACTIVATE/DEACTIVATE, armed state, previous-tool restore), `measurements.ts` (OHIF measurement → `metrics`; add a metric here for P-8) |
 | Extension registration | `viewer/platform/app/pluginConfig.json` (`preRegistration` runs at app init for every listed extension, mode-independent) |
 | Host side of the bridge | `host-app/src/bridge/createBridge.ts`, React binding `useBridge.ts` |
 | Form rows and commands | `host-app/src/form/rows.ts` (pure reducer), `useScoringForm.ts` (row IDs, activate/cancel, re-arm on reload) |
@@ -63,6 +63,9 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 | Contract sync check | `scripts/check-contract-sync.mjs` |
 
 ## Known behaviour
+
+- The area in `MEASUREMENT_ADDED` is read from cornerstone `cachedStats` at completion time. Those stats are filled in the render pass, so a release in the very same frame as the last mouse move (only reproducible with synthetic input) can carry a one-frame-old value; a human drag always dwells long enough. `MEASUREMENT_UPDATED` (bonus S-5.1) carries the settled value.
+- Units: OHIF reports `mm²` when the image has pixel spacing and `px²` otherwise; a calibration suffix such as `mm² ERMF` is provenance and maps to `mm2`.
 
 - If a study never loads, no viewport is created and `VIEWER_READY` is never sent; queued commands
   stay queued and the status line keeps showing "очікує VIEWER_READY". A viewer without a viewport
