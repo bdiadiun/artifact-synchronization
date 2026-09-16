@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 8 `feat: two-way deletion` (branch `feat/two-way-deletion`, node F-15, bonus S-5.2) |
-| Gate | 2 — implemented and verified end to end, awaiting result approval |
-| Last merged PR | #9 `feat: live measurement update` (S-5.1); mandatory part complete (F-13 video pending by the author); fork PRs #1–#4 merged into `scoring` |
-| Next slice | 9 S-5.5 version on viewport (F-18), then S-5.3 focus (F-16) |
+| Current slice | 9 `feat: OHIF version on viewport` (branch `feat/ohif-version-on-viewport`, node F-18, bonus S-5.5) |
+| Gate | 2 — implemented and verified (1×1 and 2×2), awaiting result approval |
+| Last merged PR | #10 `feat: two-way deletion` (S-5.2); mandatory part complete (F-13 video pending by the author); fork PRs #1–#5 merged into `scoring` |
+| Next slice | 10 `chore: docs site generator` (npm run docs:build → docs/site/index.html), then S-5.3 focus (F-16) |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -25,7 +25,7 @@ not a log. Update it in every PR (same commit as the work it describes).
 - GitHub default branch was the first pushed branch (`docs/canon-and-feature-graph`) until 2026-09-16; now `main`. A plain `git clone` therefore works.
 - OHIF facts (measurement shape, events, tool activation) are in `docs/notes/ohif-bridge-api.md`; do not re-research.
 - corepack 0.30 is available; yarn 1 for the fork comes from corepack, no global install.
-- Viewer dev server: `yarn --cwd platform/app dev` inside `viewer/` (root `yarn dev` picks up `bun.lock` and fails).
+- Viewer dev server: `OHIF_OPEN=false yarn --cwd platform/app dev` inside `viewer/` (root `yarn dev` picks up `bun.lock` and fails; without `OHIF_OPEN=false` webpack opens a browser tab on the user's machine on every start).
 - Fork branches: `scoring` (base, from v3.12.17), feature branches PR into it; fork PR #1 = bridge extension.
 - Study `1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1` has pixel spacing → areas arrive in mm² (verified with a headless ellipse).
 - Raw OHIF `areaUnit` on the demo study is `mm²` (U+00B2); the bridge normalises the first token to `mm2`/`px2`. The default display set is a CT topogram with large pixel spacing, so areas are in the hundreds of thousands of mm² (real, not a bug).
