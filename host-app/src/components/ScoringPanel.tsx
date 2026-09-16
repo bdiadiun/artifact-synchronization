@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type JSX } from 'react';
 import { UI } from '../ui-strings';
 import { MeasurementRow } from './MeasurementRow';
 import { TotalsFooter } from './TotalsFooter';
@@ -14,13 +14,28 @@ export interface ScoringPanelProps {
   focus: (rowId: string) => void;
 }
 
-export function ScoringPanel({ rows, addRow, activate, cancel, remove, focus }: ScoringPanelProps) {
+export const ScoringPanel = ({
+  rows,
+  addRow,
+  activate,
+  cancel,
+  remove,
+  focus,
+}: ScoringPanelProps): JSX.Element => {
   // Recomputed whenever `rows` changes so the footer always reflects the current row set
   // (C-4.3.8: "recalculated automatically").
   const totals = useMemo(() => computeTotals(rows), [rows]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '16px', boxSizing: 'border-box' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        padding: '16px',
+        boxSizing: 'border-box',
+      }}
+    >
       <h1 style={{ fontSize: '18px', margin: '0 0 16px' }}>{UI.appTitle}</h1>
       <button type="button" onClick={addRow}>
         {UI.addMeasurement}
@@ -47,4 +62,4 @@ export function ScoringPanel({ rows, addRow, activate, cancel, remove, focus }: 
       </div>
     </div>
   );
-}
+};

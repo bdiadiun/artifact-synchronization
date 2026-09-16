@@ -62,7 +62,12 @@ export default tseslint.config(
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
       '@typescript-eslint/prefer-enum-initializers': 'error',
       '@typescript-eslint/prefer-literal-enum-member': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        // Rest siblings are the idiomatic way to build an object without one key (tests drop a
+        // required field to prove a guard rejects it).
+        { argsIgnorePattern: '^_', ignoreRestSiblings: true },
+      ],
       '@typescript-eslint/naming-convention': [
         'error',
         {
@@ -108,7 +113,8 @@ export default tseslint.config(
       'func-style': ['error', 'expression'],
       'prefer-arrow-callback': 'error',
       eqeqeq: 'error',
-      'no-console': ['warn', { allow: ['warn', 'error', 'debug', 'info'] }],
+      // Repository scripts are CLI tools: stdout is their output channel.
+      'no-console': 'off',
     },
   },
   {

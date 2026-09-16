@@ -3,7 +3,7 @@ import { UI } from '../ui-strings';
 import { viewerUrl } from '../config';
 
 // No `sandbox` attribute: the viewer needs its own scripts and must be able to postMessage out.
-export const ViewerFrame = forwardRef<HTMLIFrameElement>(function ViewerFrame(_props, ref) {
+export const ViewerFrame = forwardRef<HTMLIFrameElement>((_props, ref) => {
   return (
     <iframe
       ref={ref}

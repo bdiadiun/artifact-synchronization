@@ -2,22 +2,19 @@
 
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@scoring/contract';
-import type { Row } from './rows';
+import { RowStatus, type Row } from './rows';
 import { computeTotals } from './totals';
 
-function row(overrides: Partial<Row> & { rowId: string }): Row {
-  return {
-    status: 'pending',
-    toolName: 'EllipticalROI',
-    metrics: null,
-    measurementUid: null,
-    ...overrides,
-  };
-}
+const row = (overrides: Partial<Row> & { rowId: string }): Row => ({
+  status: RowStatus.Pending,
+  toolName: 'EllipticalROI',
+  metrics: null,
+  measurementUid: null,
+  ...overrides,
+});
 
-function doneRow(rowId: string, metrics: Metrics): Row {
-  return row({ rowId, status: 'done', metrics, measurementUid: `uid-${rowId}` });
-}
+const doneRow = (rowId: string, metrics: Metrics): Row =>
+  row({ rowId, status: RowStatus.Done, metrics, measurementUid: `uid-${rowId}` });
 
 describe('computeTotals', () => {
   it('returns an empty array for no rows', () => {
@@ -26,8 +23,8 @@ describe('computeTotals', () => {
 
   it('ignores pending and drawing rows', () => {
     const rows: Row[] = [
-      row({ rowId: 'a', status: 'pending' }),
-      row({ rowId: 'b', status: 'drawing' }),
+      row({ rowId: 'a', status: RowStatus.Pending }),
+      row({ rowId: 'b', status: RowStatus.Drawing }),
     ];
     expect(computeTotals(rows)).toEqual([]);
   });

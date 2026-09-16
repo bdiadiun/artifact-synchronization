@@ -11,6 +11,5 @@ const UNIT_LABELS: Record<Unit, string> = {
   px: 'px',
 };
 
-export function formatMetric(metric: Metric): string {
-  return `${metric.value.toFixed(1)} ${UNIT_LABELS[metric.unit]}`;
-}
+export const formatMetric = (metric: Metric): string =>
+  `${metric.value.toFixed(1)} ${UNIT_LABELS[metric.unit]}`;

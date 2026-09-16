@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field | Value |
-|---|---|
-| Current slice | 12 `chore: conventions, lint and agent roles` (branch `chore/conventions-lint-and-agent-roles`, node F-22) |
-| Gate | 2 — rules, lint tooling and agent roles in place; lint is red on existing code by design (204 findings, fixed in slice 13) |
-| Last merged PR | #13 `feat: focus measurement from row` (S-5.3); mandatory part complete (F-13 video pending by the author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#7 merged into `scoring` |
-| Next slice | 13 `refactor: apply conventions` (F-23), then 14 final docs pass (F-12, F-13) |
+| Field          | Value                                                                                                                                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Current slice  | 13 `refactor: apply conventions` (branch `refactor/apply-conventions`, node F-23)                                                                                                                            |
+| Gate           | 2 — lint, lint:fork, format, typecheck, tests and end-to-end regression green; awaiting result approval                                                                                                      |
+| Last merged PR | #14 `chore: conventions, lint and agent roles`; #13 focus (S-5.3); mandatory part complete (F-13 video pending by the author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#7 merged into `scoring` |
+| Next slice     | 14 final docs pass (F-12, F-13)                                                                                                                                                                              |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -34,6 +34,8 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Follow-ups (out of current scope)
 
+- The fork's own ESLint crashes at v3.12.17 (legacy config + `@typescript-eslint` 5 under ESLint 9); we lint the extension with `npm run lint:fork` instead.
+
 - OHIF "clear all measurements" emits `MEASUREMENTS_CLEARED`, not per-uid `MEASUREMENT_REMOVED`; rows would keep stale values. Small follow-up in the bridge if needed.
 
 - Fork `tsc --noEmit` has two pre-existing type errors unrelated to runtime (`ToolGroupService` type lacks pubsub members used by `subscribe`; generated `pluginImports.js` cannot resolve the extension). Webpack/babel build is unaffected. Candidate for a small fork PR.
@@ -42,9 +44,9 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 - `npm run docs:build` regenerates `docs/site/index.html` (commit it with the docs it bundles). The same page is published as a private artifact for the author; republish it after each merge.
 
-## Lint baseline before slice 13
+## Lint status
 
-- 204 ESLint findings: `func-style` 89, `no-confusing-void-expression` 45, `no-non-null-assertion` 14, `no-unnecessary-type-assertion` 14, `prefer-optional-chain` 8, `no-console` 6, others ≤ 5. Prettier: 43 files to format.
+- Slice 13 brought the baseline of 204 ESLint findings and 43 unformatted files to zero. `npm run lint`, `npm run lint:fork` and `npm run format:check` are green on `main` from here on.
 
 ## Session checklist
 

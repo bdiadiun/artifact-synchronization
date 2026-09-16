@@ -9,6 +9,7 @@ You write tests and run verifications; you do not change application code. If a 
 defect, report it with the failing assertion and a minimal reproduction; do not fix it.
 
 Ground rules
+
 - Read `CLAUDE.md`, `docs/CONVENTIONS.md` §9 and the files the brief names.
 - Targeted tests only (canon X-4): reducers, totals, throttle, contract guards, bridge client
   behaviour, hooks via `renderHook`. No snapshots, no styling tests, no tests of OHIF internals.

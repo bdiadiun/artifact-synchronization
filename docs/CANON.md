@@ -7,14 +7,14 @@ ambiguities" only, and only after approval.
 
 ID classes:
 
-| Prefix | Meaning | Source section |
-|---|---|---|
-| `C-<s>.<i>` | Mandatory functional / architectural requirement | 3, 4 |
-| `Q-<n>` | Quality requirement, graded separately | 5 |
-| `S-5.<n>` | Bonus ("star") task, optional | 6 (numbered 5.x in the source) |
-| `D-<n>` | Deliverable / submission artifact | 7 |
-| `X-<n>` | Explicit prohibition ("do not do") | 8 |
-| `P-<n>` | Defence-readiness item: a question or live change we must be able to handle | 9 |
+| Prefix      | Meaning                                                                     | Source section                 |
+| ----------- | --------------------------------------------------------------------------- | ------------------------------ |
+| `C-<s>.<i>` | Mandatory functional / architectural requirement                            | 3, 4                           |
+| `Q-<n>`     | Quality requirement, graded separately                                      | 5                              |
+| `S-5.<n>`   | Bonus ("star") task, optional                                               | 6 (numbered 5.x in the source) |
+| `D-<n>`     | Deliverable / submission artifact                                           | 7                              |
+| `X-<n>`     | Explicit prohibition ("do not do")                                          | 8                              |
+| `P-<n>`     | Defence-readiness item: a question or live change we must be able to handle | 9                              |
 
 ## 1. Purpose (informative)
 
@@ -27,118 +27,118 @@ the code must be defended by the author.
 
 ## 3. Architecture (mandatory)
 
-| ID | Requirement |
-|---|---|
-| C-3.1 | Two applications on two different ports communicate exclusively through `window.postMessage`. |
-| C-3.2 | `viewer` is a fork of https://github.com/OHIF/Viewers, run locally, extended with our own OHIF extension that acts as a bridge: accepts commands from outside and publishes events to the outside. |
-| C-3.3 | `host-app` is a new React application built from scratch on any boilerplate (Vite recommended). It contains an `<iframe>` with the viewer and the form. |
+| ID    | Requirement                                                                                                                                                                                                                                                                                 |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-3.1 | Two applications on two different ports communicate exclusively through `window.postMessage`.                                                                                                                                                                                               |
+| C-3.2 | `viewer` is a fork of https://github.com/OHIF/Viewers, run locally, extended with our own OHIF extension that acts as a bridge: accepts commands from outside and publishes events to the outside.                                                                                          |
+| C-3.3 | `host-app` is a new React application built from scratch on any boilerplate (Vite recommended). It contains an `<iframe>` with the viewer and the form.                                                                                                                                     |
 | C-3.4 | The bridge lives inside our extension: it obtains `servicesManager` and `commandsManager` in the `preRegistration` hook, subscribes to `measurementService` there and calls `commandsManager.runCommand(...)`. Do not try to reach OHIF internals through `window` from outside the iframe. |
 
 ## 4. Mandatory part
 
 ### 4.1 Running the viewer
 
-| ID | Requirement |
-|---|---|
-| C-4.1.1 | Fork https://github.com/OHIF/Viewers and run it locally. |
-| C-4.1.2 | Data source is the public DICOMweb that OHIF ships with by default; no own PACS. |
+| ID      | Requirement                                                                                                                                  |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-4.1.1 | Fork https://github.com/OHIF/Viewers and run it locally.                                                                                     |
+| C-4.1.2 | Data source is the public DICOMweb that OHIF ships with by default; no own PACS.                                                             |
 | C-4.1.3 | The viewer must open by a direct link to a specific study (`/viewer?StudyInstanceUIDs=...`), because exactly that link goes into the iframe. |
 
 ### 4.2 Host-app and page
 
-| ID | Requirement |
-|---|---|
-| C-4.2.1 | Host-app is React + TypeScript. |
+| ID      | Requirement                                                                                      |
+| ------- | ------------------------------------------------------------------------------------------------ |
+| C-4.2.1 | Host-app is React + TypeScript.                                                                  |
 | C-4.2.2 | Single page: on the left the viewer iframe (flexible, full height), on the right the form panel. |
-| C-4.2.3 | The two apps run on different ports, deliberately, so that real cross-origin constraints apply. |
+| C-4.2.3 | The two apps run on different ports, deliberately, so that real cross-origin constraints apply.  |
 
 ### 4.3 Scenario "add measurement" (core)
 
-| ID | Requirement |
-|---|---|
-| C-4.3.1 | The form has an "Add measurement" button. |
-| C-4.3.2 | Clicking it creates a new empty row in the form with status `Pending` and an "Activate" button. |
+| ID      | Requirement                                                                                                                              |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| C-4.3.1 | The form has an "Add measurement" button.                                                                                                |
+| C-4.3.2 | Clicking it creates a new empty row in the form with status `Pending` and an "Activate" button.                                          |
 | C-4.3.3 | Clicking "Activate" sends a command into the iframe to enable the Ellipse tool (`EllipticalROI`). The row switches to status `Drawing…`. |
-| C-4.3.4 | The user draws an ellipse in the viewer. |
-| C-4.3.5 | The viewer sends back the annotation area together with an identifier by which the host understands which row the value belongs to. |
-| C-4.3.6 | The row receives the value (e.g. `124.5 mm²`), status `Done`; the tool in the viewer deactivates by itself (returns to Pan / default). |
-| C-4.3.7 | Steps C-4.3.1–C-4.3.6 are repeatable; there may be any number of rows. |
-| C-4.3.8 | At the bottom of the form there is the sum of the areas of all rows, recalculated automatically. |
+| C-4.3.4 | The user draws an ellipse in the viewer.                                                                                                 |
+| C-4.3.5 | The viewer sends back the annotation area together with an identifier by which the host understands which row the value belongs to.      |
+| C-4.3.6 | The row receives the value (e.g. `124.5 mm²`), status `Done`; the tool in the viewer deactivates by itself (returns to Pan / default).   |
+| C-4.3.7 | Steps C-4.3.1–C-4.3.6 are repeatable; there may be any number of rows.                                                                   |
+| C-4.3.8 | At the bottom of the form there is the sum of the areas of all rows, recalculated automatically.                                         |
 
 ### 4.4 Minimal message contract
 
-| ID | Requirement |
-|---|---|
+| ID      | Requirement                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | C-4.4.1 | Event names are fixed: `VIEWER_READY` (viewer → host, viewer loaded and ready for commands); `ACTIVATE_TOOL` (host → viewer, enable a tool for a specific form row); `DEACTIVATE_TOOL` (host → viewer, cancel waiting for drawing); `MEASUREMENT_ADDED` (viewer → host, annotation created: value + units + binding); `MEASUREMENT_UPDATED` (viewer → host, annotation changed; see S-5.1). |
-| C-4.4.2 | Payload structure is designed by us and described in `ARCHITECTURE.md`. |
-| C-4.4.3 | Every message carries a contract version (`version: 1`); the reason is explained at the defence. |
+| C-4.4.2 | Payload structure is designed by us and described in `ARCHITECTURE.md`.                                                                                                                                                                                                                                                                                                                     |
+| C-4.4.3 | Every message carries a contract version (`version: 1`); the reason is explained at the defence.                                                                                                                                                                                                                                                                                            |
 
 ## 5. Quality requirements (graded separately, one line each)
 
-| ID | Requirement |
-|---|---|
-| Q-1 | **Handshake.** The host must not send commands before the viewer has reported `VIEWER_READY`. If the user clicks "Activate" while the iframe is still loading, the command must not be lost. |
-| Q-2 | **Origin check.** `message` handlers on both sides check `event.origin` and ignore foreign origins. A hardcoded origin in config is fine; its absence is not. |
+| ID  | Requirement                                                                                                                                                                                                                        |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q-1 | **Handshake.** The host must not send commands before the viewer has reported `VIEWER_READY`. If the user clicks "Activate" while the iframe is still loading, the command must not be lost.                                       |
+| Q-2 | **Origin check.** `message` handlers on both sides check `event.origin` and ignore foreign origins. A hardcoded origin in config is fine; its absence is not.                                                                      |
 | Q-3 | **Correlation.** Every form row has its own identifier, every annotation has its own. We must consciously decide who issues which ID and how the mapping is maintained. This is the main architectural decision of the assignment. |
-| Q-4 | **No echo loop.** If S-5.1 is implemented, an update host → viewer → host must not produce an infinite ping-pong. This will be tested. |
-| Q-5 | **Cleanup.** `removeEventListener`, unsubscribing from `measurementService`, cancelling the "armed" state on unmount. |
-| Q-6 | **Units.** Area may arrive in mm² or px² depending on whether the DICOM has pixel spacing. Units must not be lost and mm² must not be added to px² in the sum. The handling must be described. |
-| Q-7 | **TypeScript.** Message types are declared in one place and shared by both apps (separate package, shared folder, or at least a copied file with an explanation why). |
+| Q-4 | **No echo loop.** If S-5.1 is implemented, an update host → viewer → host must not produce an infinite ping-pong. This will be tested.                                                                                             |
+| Q-5 | **Cleanup.** `removeEventListener`, unsubscribing from `measurementService`, cancelling the "armed" state on unmount.                                                                                                              |
+| Q-6 | **Units.** Area may arrive in mm² or px² depending on whether the DICOM has pixel spacing. Units must not be lost and mm² must not be added to px² in the sum. The handling must be described.                                     |
+| Q-7 | **TypeScript.** Message types are declared in one place and shared by both apps (separate package, shared folder, or at least a copied file with an explanation why).                                                              |
 
 ## 6. Bonus tasks (optional; source numbers them 5.x)
 
-| ID | Requirement |
-|---|---|
-| S-5.1 | **Live update.** Dragging an ellipse handle updates the value in the form in real time; the sum is recalculated. |
-| S-5.2 | **Deletion.** A "Delete" button in a form row removes the annotation in the viewer, and deleting the annotation in the viewer clears the row. |
-| S-5.3 | **Focus.** Clicking a form row highlights / scrolls to the matching annotation in the viewer. |
-| S-5.4 | **Second tool.** Add a row type "Length" (`Length` tool); the sum of lengths is computed separately from the sum of areas. |
+| ID    | Requirement                                                                                                                                                                                  |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S-5.1 | **Live update.** Dragging an ellipse handle updates the value in the form in real time; the sum is recalculated.                                                                             |
+| S-5.2 | **Deletion.** A "Delete" button in a form row removes the annotation in the viewer, and deleting the annotation in the viewer clears the row.                                                |
+| S-5.3 | **Focus.** Clicking a form row highlights / scrolls to the matching annotation in the viewer.                                                                                                |
+| S-5.4 | **Second tool.** Add a row type "Length" (`Length` tool); the sum of lengths is computed separately from the sum of areas.                                                                   |
 | S-5.5 | **Version on the viewport.** Show the OHIF version (from `package.json`, injected at build time through bundler config) in a corner of every viewport; in a 2×2 grid it appears on all four. |
-| S-5.6 | **State restore.** After a page reload the form and the annotations are restored. |
+| S-5.6 | **State restore.** After a page reload the form and the annotations are restored.                                                                                                            |
 
 ## 7. Submission format
 
-| ID | Requirement |
-|---|---|
-| D-1 | Code in a public repository (GitHub / GitLab). OHIF fork + host-app may be two repositories or a mono-repo; the choice must be explained. |
-| D-2 | Work is split into feature pull requests, at least five, indicatively: `chore: bootstrap host-app`, `feat: viewer bridge extension`, `feat: activate ellipse from form`, `feat: receive measurement into form`, `feat: total area calculation`. |
-| D-3 | Every PR has a meaningful description: what changed, why this way, what was verified. A PR described as "changes" does not count. |
-| D-4 | PRs may be merged by the author; no external code review at this stage. The history of thinking matters. |
-| D-5 | `README.md`: how to run both apps from scratch (git clone → working screen). It will be executed literally on a clean machine. |
-| D-6 | `ARCHITECTURE.md`: exchange diagram, full message table with payloads, and a separate "Decisions" section: who issues IDs, how the handshake works, what happens to early commands, how the echo loop is avoided. 1–2 pages, to the point. |
-| D-7 | `AI-USAGE.md`: honestly, where AI was used, what output was kept as is, what was rewritten and why. |
+| ID  | Requirement                                                                                                                                                                                                                                                           |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-1 | Code in a public repository (GitHub / GitLab). OHIF fork + host-app may be two repositories or a mono-repo; the choice must be explained.                                                                                                                             |
+| D-2 | Work is split into feature pull requests, at least five, indicatively: `chore: bootstrap host-app`, `feat: viewer bridge extension`, `feat: activate ellipse from form`, `feat: receive measurement into form`, `feat: total area calculation`.                       |
+| D-3 | Every PR has a meaningful description: what changed, why this way, what was verified. A PR described as "changes" does not count.                                                                                                                                     |
+| D-4 | PRs may be merged by the author; no external code review at this stage. The history of thinking matters.                                                                                                                                                              |
+| D-5 | `README.md`: how to run both apps from scratch (git clone → working screen). It will be executed literally on a clean machine.                                                                                                                                        |
+| D-6 | `ARCHITECTURE.md`: exchange diagram, full message table with payloads, and a separate "Decisions" section: who issues IDs, how the handshake works, what happens to early commands, how the echo loop is avoided. 1–2 pages, to the point.                            |
+| D-7 | `AI-USAGE.md`: honestly, where AI was used, what output was kept as is, what was rewritten and why.                                                                                                                                                                   |
 | D-8 | Video demo, 2–4 minutes, voice-over preferred, showing: (a) both apps starting; (b) at least three measurements added in a row; (c) the sum updating; (d) behaviour on cancelled activation ("Activate" clicked, then changed mind); (e) any implemented bonus tasks. |
 
 ## 8. What not to do
 
-| ID | Prohibition |
-|---|---|
-| X-1 | No auth, backend, database, or server-side persistence. |
-| X-2 | No own PACS / DICOMweb server. |
-| X-3 | No design work; a grey form with native inputs is enough. |
+| ID  | Prohibition                                                                                     |
+| --- | ----------------------------------------------------------------------------------------------- |
+| X-1 | No auth, backend, database, or server-side persistence.                                         |
+| X-2 | No own PACS / DICOMweb server.                                                                  |
+| X-3 | No design work; a grey form with native inputs is enough.                                       |
 | X-4 | No project-wide tests. A few unit tests for the sum logic and message serialisation are enough. |
-| X-5 | No rework of the OHIF UI itself (panels, toolbar) beyond what the bridge requires. |
+| X-5 | No rework of the OHIF UI itself (panels, toolbar) beyond what the bridge requires.              |
 
 ## 9. Defence readiness
 
 Questions we must be able to answer with a pointer into the code:
 
-| ID | Item |
-|---|---|
+| ID  | Item                                                                                               |
+| --- | -------------------------------------------------------------------------------------------------- |
 | P-1 | What happens if the iframe loads slower than the user clicks the button? Show where it is handled. |
-| P-2 | Why `postMessage` and not another mechanism? What would change if both apps shared one origin? |
-| P-3 | Who issues the measurement identifier and why? What breaks if the decision is flipped? |
-| P-4 | Where exactly in OHIF do we subscribe to annotation creation and why there? |
-| P-5 | What happens if two host-app tabs are open at the same time? |
-| P-6 | Show the place where an infinite message loop could arise. |
+| P-2 | Why `postMessage` and not another mechanism? What would change if both apps shared one origin?     |
+| P-3 | Who issues the measurement identifier and why? What breaks if the decision is flipped?             |
+| P-4 | Where exactly in OHIF do we subscribe to annotation creation and why there?                        |
+| P-5 | What happens if two host-app tabs are open at the same time?                                       |
+| P-6 | Show the place where an infinite message loop could arise.                                         |
 
 Live changes (~10 min each) the design must make cheap:
 
-| ID | Item | Design implication |
-|---|---|---|
-| P-7 | Replace the tool: ellipse → `RectangleROI`. | Tool name is a single configurable constant carried in the `ACTIVATE_TOOL` payload, not scattered. |
+| ID  | Item                                                                                                  | Design implication                                                                                             |
+| --- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| P-7 | Replace the tool: ellipse → `RectangleROI`.                                                           | Tool name is a single configurable constant carried in the `ACTIVATE_TOOL` payload, not scattered.             |
 | P-8 | Add one more field to the row (e.g. perimeter or mean intensity) and pass it through the whole chain. | Measurement payload and row model are extensible; the mapping viewer-measurement → payload is in one function. |
-| P-9 | One protocol element is disabled (e.g. `VIEWER_READY`); diagnose the breakage aloud. | Bridge logs / dev-visible state make the handshake and queue observable. |
+| P-9 | One protocol element is disabled (e.g. `VIEWER_READY`); diagnose the breakage aloud.                  | Bridge logs / dev-visible state make the handshake and queue observable.                                       |
 
 ## 10. Grading (informative)
 
@@ -149,21 +149,21 @@ Working scenario 25 %, bridge architecture 25 %, defence 25 %, code quality 15 %
 
 This table is the index. Each decision has a full record (context, decision, rejected alternatives, consequences) in [`docs/decisions/`](decisions/). Approved decisions are also mirrored in `ARCHITECTURE.md` → "Decisions".
 
-| # | Date | Decision | Rationale | Status |
-|---|---|---|---|---|
-| [A-1](decisions/A-1-mono-repo-with-submodule.md) | 2026-09-16 | Mono-repo: `host-app/` in this repository, the OHIF fork as a git submodule under `viewer/` pointing to our fork. | One PR can change both sides of the contract; the fork keeps its own history and stays a real fork (C-4.1.1, D-1). Vendoring OHIF would bloat the repo. | approved 2026-09-16 |
-| [A-2](decisions/A-2-ports.md) | 2026-09-16 | Ports: host-app `5173`, viewer `3000`. Both are fixed in config and used for origin checks (Q-2). | Vite and OHIF defaults; distinct ports satisfy C-4.2.3. | approved 2026-09-16 |
-| [A-3](decisions/A-3-defence-readiness-ids.md) | 2026-09-16 | Added the `P-*` ID class for section 9 (defence readiness). These items are not requirements but constrain design; graph nodes may reference them in addition to a `C/Q/D` ID. | Live changes (P-7..P-9) affect how the contract and row model are shaped; tracking them avoids a costly refactor at the defence. | approved 2026-09-16 |
-| [A-4](decisions/A-4-cancelled-activation.md) | 2026-09-16 | "Cancelled activation" (D-8 d) maps to `DEACTIVATE_TOOL`: the row returns from `Drawing…` to `Pending`, the viewer returns to the default tool, and the row is kept. | The assignment names the event but not the row behaviour; keeping the row is the least surprising outcome. | approved 2026-09-16 |
-| [A-5](decisions/A-5-deferred-bridge-decisions.md) | 2026-09-16 | Decisions on ID issuance (Q-3), early-command queue (Q-1), echo-loop protection (Q-4) and mixed-unit sums (Q-6) are taken in the slice that implements them and recorded here plus in `ARCHITECTURE.md` in the same PR. | They need contact with the real OHIF `measurementService` API to be made responsibly. | resolved by A-8..A-11 |
-| [A-6](decisions/A-6-ohif-base-version.md) | 2026-09-16 | The OHIF fork branch is based on the release tag `v3.12.17`, not on `master`. | `master` requires Node >= 24 and pnpm 11; `v3.12.17` requires Node >= 18 and yarn 1, matching the local toolchain and giving a stable base for the README "clean machine" run (D-5). | approved 2026-09-16 |
-| [A-7](decisions/A-7-ui-language.md) | 2026-09-16 | User-visible strings of the form are Ukrainian, as in the assignment, collected in one file (`host-app/src/ui-strings.ts`); code, comments and docs stay English. | The reviewer expects the screen from the assignment ("Додати вимірювання", "Разом"); one strings file keeps the English-code rule intact. | approved 2026-09-16 |
-| [A-8](decisions/A-8-id-correlation.md) | 2026-09-16 | Host issues `rowId`; viewer issues `measurementUid` (cornerstone `annotationUID`); both sides keep a `rowId ↔ measurementUid` map. After a measurement or a cancel the bridge restores the previously active primary tool (snapshot via `toolGroupService.getActivePrimaryMouseButtonTool()`), which is the assignment's "Pan/default". | OHIF's `_isValidMeasurement` rejects custom fields, so an external ID cannot ride on the measurement; `uid` is stable across ADDED/UPDATED/REMOVED. Default primary tool in longitudinal mode is WindowLevel, not Pan. | approved 2026-09-16 |
-| [A-9](decisions/A-9-handshake-and-queue.md) | 2026-09-16 | Host keeps `ready` + a FIFO command queue; commands before `VIEWER_READY` are queued and flushed in order without coalescing. A repeated `VIEWER_READY` (iframe reload) resets `ready` and re-arms the row currently in `Drawing…`. | Simple, observable, and answers P-1 / P-9 directly. | approved 2026-09-16 |
-| [A-10](decisions/A-10-echo-guard.md) | 2026-09-16 | Mandatory part: host never writes back to the viewer in reaction to `MEASUREMENT_*`, so no loop by construction. Bonus tasks: every host command carries `requestId`; viewer events caused by a command carry `causedBy`; host ignores its own `causedBy` and applies commands idempotently (no command when state already matches). | `measurementService.update/remove` re-broadcast events; this is the loop point (P-6). | approved 2026-09-16 |
-| [A-11](decisions/A-11-units-and-metrics-payload.md) | 2026-09-16 | Units are copied from OHIF `cachedStats` as is (`mm2` / `px2`), never inferred. Payload carries `metrics: { area: { value, unit } }`; sums are computed per unit and never mixed. | Extensible for P-8 (add a key, not a type change); satisfies Q-6. | approved 2026-09-16 |
-| [A-12](decisions/A-12-npm-workspaces.md) | 2026-09-16 | npm workspaces for `host-app` and `packages/contract` (`@scoring/contract`); the viewer submodule stays outside and keeps a byte-identical copy of the contract checked by `npm run check:contract`. | Explicit package dependency instead of an alias; the fork must stay a self-contained yarn repo. | approved 2026-09-16 |
-| [A-13](decisions/A-13-coding-conventions.md) | 2026-09-16 | Coding conventions in `docs/CONVENTIONS.md`: arrow functions everywhere; string enums for app state, literal types in the wire contract; ESLint 9 + typescript-eslint strict + Prettier; agent roles in `.claude/agents/`. | Consistent, mechanically enforced style for the "code quality" grading block; separates the serialised contract from TypeScript-only constructs. | approved 2026-09-16 |
+| #                                                   | Date       | Decision                                                                                                                                                                                                                                                                                                                                | Rationale                                                                                                                                                                                                              | Status                |
+| --------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| [A-1](decisions/A-1-mono-repo-with-submodule.md)    | 2026-09-16 | Mono-repo: `host-app/` in this repository, the OHIF fork as a git submodule under `viewer/` pointing to our fork.                                                                                                                                                                                                                       | One PR can change both sides of the contract; the fork keeps its own history and stays a real fork (C-4.1.1, D-1). Vendoring OHIF would bloat the repo.                                                                | approved 2026-09-16   |
+| [A-2](decisions/A-2-ports.md)                       | 2026-09-16 | Ports: host-app `5173`, viewer `3000`. Both are fixed in config and used for origin checks (Q-2).                                                                                                                                                                                                                                       | Vite and OHIF defaults; distinct ports satisfy C-4.2.3.                                                                                                                                                                | approved 2026-09-16   |
+| [A-3](decisions/A-3-defence-readiness-ids.md)       | 2026-09-16 | Added the `P-*` ID class for section 9 (defence readiness). These items are not requirements but constrain design; graph nodes may reference them in addition to a `C/Q/D` ID.                                                                                                                                                          | Live changes (P-7..P-9) affect how the contract and row model are shaped; tracking them avoids a costly refactor at the defence.                                                                                       | approved 2026-09-16   |
+| [A-4](decisions/A-4-cancelled-activation.md)        | 2026-09-16 | "Cancelled activation" (D-8 d) maps to `DEACTIVATE_TOOL`: the row returns from `Drawing…` to `Pending`, the viewer returns to the default tool, and the row is kept.                                                                                                                                                                    | The assignment names the event but not the row behaviour; keeping the row is the least surprising outcome.                                                                                                             | approved 2026-09-16   |
+| [A-5](decisions/A-5-deferred-bridge-decisions.md)   | 2026-09-16 | Decisions on ID issuance (Q-3), early-command queue (Q-1), echo-loop protection (Q-4) and mixed-unit sums (Q-6) are taken in the slice that implements them and recorded here plus in `ARCHITECTURE.md` in the same PR.                                                                                                                 | They need contact with the real OHIF `measurementService` API to be made responsibly.                                                                                                                                  | resolved by A-8..A-11 |
+| [A-6](decisions/A-6-ohif-base-version.md)           | 2026-09-16 | The OHIF fork branch is based on the release tag `v3.12.17`, not on `master`.                                                                                                                                                                                                                                                           | `master` requires Node >= 24 and pnpm 11; `v3.12.17` requires Node >= 18 and yarn 1, matching the local toolchain and giving a stable base for the README "clean machine" run (D-5).                                   | approved 2026-09-16   |
+| [A-7](decisions/A-7-ui-language.md)                 | 2026-09-16 | User-visible strings of the form are Ukrainian, as in the assignment, collected in one file (`host-app/src/ui-strings.ts`); code, comments and docs stay English.                                                                                                                                                                       | The reviewer expects the screen from the assignment ("Додати вимірювання", "Разом"); one strings file keeps the English-code rule intact.                                                                              | approved 2026-09-16   |
+| [A-8](decisions/A-8-id-correlation.md)              | 2026-09-16 | Host issues `rowId`; viewer issues `measurementUid` (cornerstone `annotationUID`); both sides keep a `rowId ↔ measurementUid` map. After a measurement or a cancel the bridge restores the previously active primary tool (snapshot via `toolGroupService.getActivePrimaryMouseButtonTool()`), which is the assignment's "Pan/default". | OHIF's `_isValidMeasurement` rejects custom fields, so an external ID cannot ride on the measurement; `uid` is stable across ADDED/UPDATED/REMOVED. Default primary tool in longitudinal mode is WindowLevel, not Pan. | approved 2026-09-16   |
+| [A-9](decisions/A-9-handshake-and-queue.md)         | 2026-09-16 | Host keeps `ready` + a FIFO command queue; commands before `VIEWER_READY` are queued and flushed in order without coalescing. A repeated `VIEWER_READY` (iframe reload) resets `ready` and re-arms the row currently in `Drawing…`.                                                                                                     | Simple, observable, and answers P-1 / P-9 directly.                                                                                                                                                                    | approved 2026-09-16   |
+| [A-10](decisions/A-10-echo-guard.md)                | 2026-09-16 | Mandatory part: host never writes back to the viewer in reaction to `MEASUREMENT_*`, so no loop by construction. Bonus tasks: every host command carries `requestId`; viewer events caused by a command carry `causedBy`; host ignores its own `causedBy` and applies commands idempotently (no command when state already matches).    | `measurementService.update/remove` re-broadcast events; this is the loop point (P-6).                                                                                                                                  | approved 2026-09-16   |
+| [A-11](decisions/A-11-units-and-metrics-payload.md) | 2026-09-16 | Units are copied from OHIF `cachedStats` as is (`mm2` / `px2`), never inferred. Payload carries `metrics: { area: { value, unit } }`; sums are computed per unit and never mixed.                                                                                                                                                       | Extensible for P-8 (add a key, not a type change); satisfies Q-6.                                                                                                                                                      | approved 2026-09-16   |
+| [A-12](decisions/A-12-npm-workspaces.md)            | 2026-09-16 | npm workspaces for `host-app` and `packages/contract` (`@scoring/contract`); the viewer submodule stays outside and keeps a byte-identical copy of the contract checked by `npm run check:contract`.                                                                                                                                    | Explicit package dependency instead of an alias; the fork must stay a self-contained yarn repo.                                                                                                                        | approved 2026-09-16   |
+| [A-13](decisions/A-13-coding-conventions.md)        | 2026-09-16 | Coding conventions in `docs/CONVENTIONS.md`: arrow functions everywhere; string enums for app state, literal types in the wire contract; ESLint 9 + typescript-eslint strict + Prettier; agent roles in `.claude/agents/`.                                                                                                              | Consistent, mechanically enforced style for the "code quality" grading block; separates the serialised contract from TypeScript-only constructs.                                                                       | approved 2026-09-16   |
 
 ## Appendix A — original assignment text (verbatim, Ukrainian)
 

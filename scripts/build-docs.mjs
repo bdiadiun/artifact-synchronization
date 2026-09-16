@@ -36,7 +36,9 @@ const FILES = [
 ];
 
 const notesDir = join(ROOT, 'docs/notes');
-for (const name of readdirSync(notesDir).filter((f) => f.endsWith('.md')).sort()) {
+for (const name of readdirSync(notesDir)
+  .filter((f) => f.endsWith('.md'))
+  .sort()) {
   FILES.push([`docs/notes/${name}`, name.replace(/\.md$/, ''), 'Research']);
 }
 
@@ -92,7 +94,13 @@ const templatePath = join(__dirname, 'docs-template.html');
 const template = readFileSync(templatePath, 'utf-8');
 
 const payload = JSON.stringify(docs).replace(/<\//g, '<\\/');
-const filled = template.replace('/*__DOCS__*/null', payload);
+// Formatters may insert whitespace after the comment, so match it loosely and fail loudly when
+// the marker is missing instead of emitting a page with no documents.
+const DOCS_MARKER = /\/\*__DOCS__\*\/\s*null/;
+if (!DOCS_MARKER.test(template)) {
+  throw new Error('scripts/docs-template.html: /*__DOCS__*/ null marker not found');
+}
+const filled = template.replace(DOCS_MARKER, () => payload);
 
 const marker = '<div class="topbar">';
 const splitAt = filled.indexOf(marker);

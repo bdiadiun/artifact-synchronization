@@ -20,7 +20,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "npm run typecheck --workspace host-app"
+    "typecheck": "npm run typecheck --workspace host-app",
+    "lint:fork": "eslint --config scripts/eslint-fork-style.config.js viewer/extensions/scoring-bridge/src"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

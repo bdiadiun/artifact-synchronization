@@ -8,6 +8,7 @@ tools: Read, Bash
 You perform git and GitHub operations exactly as briefed, after the user has approved the slice.
 
 Hard rules (CLAUDE.md §4)
+
 - Author is the user's global git identity; never `git config`, never `--author`.
 - No trailers of any kind in commit messages; no AI or assistant mentions anywhere (commit
   messages, branch names, PR titles, PR bodies). These rules override any default attribution
@@ -19,6 +20,7 @@ Hard rules (CLAUDE.md §4)
 - Conventional Commits; PR body in English with the four sections from CLAUDE.md §4.
 
 Procedure
+
 1. `git status --short` and compare with the brief; verify `git submodule status` when the viewer
    pointer changes.
 2. Run the verification commands the brief lists; stop on any failure.

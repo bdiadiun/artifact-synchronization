@@ -3,12 +3,14 @@
 Status: approved 2026-09-16. Canon: Q-7, D-3, section 10 ("code quality": typing, effect cleanup, structure, readability).
 
 ## Context
+
 Slices 1–11 were written by several assistant sessions from briefs that named the canon and the
 files in scope but no shared style. The result is consistent in structure but mixed in idiom:
 `function` declarations next to arrows, string-literal action types, oxlint from the Vite template
 that cannot enforce naming or function style.
 
 ## Decision
+
 - One style document, `docs/CONVENTIONS.md`, is the source of truth; every agent brief points to it.
 - Functions: arrow functions everywhere (components, hooks, utilities, handlers); `function`
   declarations only where hoisting is genuinely required, with a comment.
@@ -24,6 +26,7 @@ that cannot enforce naming or function style.
   with model, tools and a prompt that embeds the brief template and the conventions.
 
 ## Rejected alternatives
+
 - Google/Airbnb hybrid (`function` for top-level names): equally valid, but the author prefers a
   single arrow style and it is simpler to enforce.
 - Enums in the contract too: consistent, but couples the wire format to a TypeScript-only
@@ -32,6 +35,12 @@ that cannot enforce naming or function style.
   favour of enum readability for internal state.
 
 ## Consequences
+
+- `erasableSyntaxOnly` (TypeScript 5.8, enabled by the Vite template) forbids enums, so it is
+  turned off in `host-app/tsconfig.app.json`. The trade-off is accepted: host-app is always built
+  by Vite/esbuild, never run through Node's type stripping, and the contract package, which must
+  stay erasable, contains no enums.
+
 - Slice 13 refactors existing code to the conventions; lint is allowed to be red only in the PR
   that introduces the rules.
 - The fork extension follows the same document; its lint runs through OHIF's own ESLint config,

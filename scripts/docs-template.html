@@ -1,192 +1,572 @@
 <title>Scoring Bridge Docs</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+/>
 <style>
-:root {
-  --paper: #F6F5F1; --surface: #FFFFFF; --ink: #1B2320; --muted: #5B6663; --line: #D9DED9;
-  --accent: #0F766E; --accent-ink: #FFFFFF; --chip: #E3F1EF; --chip-ink: #0B5A54; --code-bg: #EEF0EC;
-  --mark: #FFF3C4;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #141918; --surface: #1B2221; --ink: #E4EAE7; --muted: #98A39F; --line: #2C3533;
-    --accent: #4FB3A9; --accent-ink: #0F1A18; --chip: #1E3532; --chip-ink: #8FD6CD; --code-bg: #202826;
-    --mark: #4A3F12;
+  :root {
+    --paper: #f6f5f1;
+    --surface: #ffffff;
+    --ink: #1b2320;
+    --muted: #5b6663;
+    --line: #d9ded9;
+    --accent: #0f766e;
+    --accent-ink: #ffffff;
+    --chip: #e3f1ef;
+    --chip-ink: #0b5a54;
+    --code-bg: #eef0ec;
+    --mark: #fff3c4;
   }
-}
-:root[data-theme="dark"] {
-  --paper: #141918; --surface: #1B2221; --ink: #E4EAE7; --muted: #98A39F; --line: #2C3533;
-  --accent: #4FB3A9; --accent-ink: #0F1A18; --chip: #1E3532; --chip-ink: #8FD6CD; --code-bg: #202826;
-  --mark: #4A3F12;
-}
-* { box-sizing: border-box; }
-body { background: var(--paper); color: var(--ink); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.55; }
-.shell { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 100vh; }
-nav { border-right: 1px solid var(--line); background: var(--surface); padding-block: 20px; padding-inline: 16px; position: sticky; top: env(safe-area-inset-top, 0px); height: 100vh; overflow-y: auto; }
-nav h1 { font-size: 14px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 6px; color: var(--muted); }
-nav .brand { font-size: 17px; font-weight: 600; margin: 0 0 16px; }
-nav input { width: 100%; font: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); margin-bottom: 16px; }
-nav input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-nav .group { margin-bottom: 14px; }
-nav .group h2 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 4px; }
-nav a { display: block; padding: 5px 8px; border-radius: 5px; color: var(--ink); text-decoration: none; font-size: 14px; }
-nav a:hover { background: var(--paper); }
-nav a.active { background: var(--chip); color: var(--chip-ink); font-weight: 500; }
-nav a:focus-visible, main a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.topbar { display: none; }
-main { padding-block: 32px 80px; padding-inline: 40px; }
-article { max-width: 76ch; }
-article h1 { font-size: 30px; line-height: 1.2; text-wrap: balance; margin: 0 0 8px; font-weight: 600; }
-article .path { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 12px; color: var(--muted); margin-bottom: 28px; }
-article h2 { font-size: 21px; margin: 40px 0 12px; font-weight: 600; text-wrap: balance; padding-top: 8px; border-top: 1px solid var(--line); }
-article h3 { font-size: 16px; margin: 26px 0 8px; font-weight: 600; }
-article p, article li { max-width: 76ch; }
-article a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-article code { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 13px; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
-article pre { background: var(--code-bg); padding: 14px 16px; border-radius: 6px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
-article pre code { background: none; padding: 0; }
-article pre.mermaid { background: var(--surface); border: 1px solid var(--line); }
-.tablewrap { overflow-x: auto; margin: 12px 0 20px; border: 1px solid var(--line); border-radius: 6px; }
-article table { border-collapse: collapse; width: 100%; font-size: 14px; }
-article th, article td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
-article th { background: var(--code-bg); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
-article tr:last-child td { border-bottom: none; }
-article tr:target td, article tr.flash td { background: var(--mark); }
-article blockquote { border-left: 3px solid var(--accent); margin: 0; padding: 4px 16px; color: var(--muted); }
-a.id { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 12.5px; background: var(--chip); color: var(--chip-ink); padding: 1px 6px; border-radius: 4px; text-decoration: none; white-space: nowrap; }
-a.id:hover { background: var(--accent); color: var(--accent-ink); }
-a.id.missing { background: transparent; color: var(--muted); border: 1px dashed var(--line); }
-.idpanel { position: fixed; right: 20px; bottom: 20px; max-width: 420px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,.12); font-size: 13.5px; }
-.idpanel b { font-family: "IBM Plex Mono", ui-monospace, monospace; }
-.idpanel button { float: right; border: none; background: none; color: var(--muted); font-size: 16px; cursor: pointer; }
-kbd { font-family: "IBM Plex Mono", monospace; font-size: 12px; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
-@media (max-width: 860px) {
-  .shell { grid-template-columns: 1fr; }
-  nav { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
-  nav[hidden] { display: none; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; }
-  .topbar button { font: inherit; border: 1px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 6px 10px; }
-  main { padding-inline: 16px; padding-block: 20px 60px; }
-  .idpanel { left: 16px; right: 16px; max-width: none; }
-}
-@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --paper: #141918;
+      --surface: #1b2221;
+      --ink: #e4eae7;
+      --muted: #98a39f;
+      --line: #2c3533;
+      --accent: #4fb3a9;
+      --accent-ink: #0f1a18;
+      --chip: #1e3532;
+      --chip-ink: #8fd6cd;
+      --code-bg: #202826;
+      --mark: #4a3f12;
+    }
+  }
+  :root[data-theme='dark'] {
+    --paper: #141918;
+    --surface: #1b2221;
+    --ink: #e4eae7;
+    --muted: #98a39f;
+    --line: #2c3533;
+    --accent: #4fb3a9;
+    --accent-ink: #0f1a18;
+    --chip: #1e3532;
+    --chip-ink: #8fd6cd;
+    --code-bg: #202826;
+    --mark: #4a3f12;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family:
+      'IBM Plex Sans',
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .shell {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+  nav {
+    border-right: 1px solid var(--line);
+    background: var(--surface);
+    padding-block: 20px;
+    padding-inline: 16px;
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav h1 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+    color: var(--muted);
+  }
+  nav .brand {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 16px;
+  }
+  nav input {
+    width: 100%;
+    font: inherit;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  nav input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  nav .group {
+    margin-bottom: 14px;
+  }
+  nav .group h2 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 4px;
+  }
+  nav a {
+    display: block;
+    padding: 5px 8px;
+    border-radius: 5px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  nav a:hover {
+    background: var(--paper);
+  }
+  nav a.active {
+    background: var(--chip);
+    color: var(--chip-ink);
+    font-weight: 500;
+  }
+  nav a:focus-visible,
+  main a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .topbar {
+    display: none;
+  }
+  main {
+    padding-block: 32px 80px;
+    padding-inline: 40px;
+  }
+  article {
+    max-width: 76ch;
+  }
+  article h1 {
+    font-size: 30px;
+    line-height: 1.2;
+    text-wrap: balance;
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  article .path {
+    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  article h2 {
+    font-size: 21px;
+    margin: 40px 0 12px;
+    font-weight: 600;
+    text-wrap: balance;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  article h3 {
+    font-size: 16px;
+    margin: 26px 0 8px;
+    font-weight: 600;
+  }
+  article p,
+  article li {
+    max-width: 76ch;
+  }
+  article a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+  article code {
+    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  article pre {
+    background: var(--code-bg);
+    padding: 14px 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  article pre code {
+    background: none;
+    padding: 0;
+  }
+  article pre.mermaid {
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .tablewrap {
+    overflow-x: auto;
+    margin: 12px 0 20px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  article table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+  }
+  article th,
+  article td {
+    text-align: left;
+    vertical-align: top;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  article th {
+    background: var(--code-bg);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  article tr:last-child td {
+    border-bottom: none;
+  }
+  article tr:target td,
+  article tr.flash td {
+    background: var(--mark);
+  }
+  article blockquote {
+    border-left: 3px solid var(--accent);
+    margin: 0;
+    padding: 4px 16px;
+    color: var(--muted);
+  }
+  a.id {
+    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    font-size: 12.5px;
+    background: var(--chip);
+    color: var(--chip-ink);
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  a.id:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  a.id.missing {
+    background: transparent;
+    color: var(--muted);
+    border: 1px dashed var(--line);
+  }
+  .idpanel {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    font-size: 13.5px;
+  }
+  .idpanel b {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  .idpanel button {
+    float: right;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+  }
+  kbd {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0 4px;
+  }
+  @media (max-width: 860px) {
+    .shell {
+      grid-template-columns: 1fr;
+    }
+    nav {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+    }
+    nav[hidden] {
+      display: none;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+      position: sticky;
+      top: env(safe-area-inset-top, 0px);
+      z-index: 2;
+    }
+    .topbar button {
+      font: inherit;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+    main {
+      padding-inline: 16px;
+      padding-block: 20px 60px;
+    }
+    .idpanel {
+      left: 16px;
+      right: 16px;
+      max-width: none;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 
-<div class="topbar"><strong>Scoring Bridge Docs</strong><button id="navToggle" type="button" aria-expanded="true">Contents</button></div>
+<div class="topbar">
+  <strong>Scoring Bridge Docs</strong
+  ><button id="navToggle" type="button" aria-expanded="true">Contents</button>
+</div>
 <div class="shell">
   <nav id="nav" aria-label="Documents">
     <p class="brand">Scoring Bridge Docs</p>
-    <input id="search" type="search" placeholder="Find text or an ID, e.g. C-4.3.5" aria-label="Find in documents">
+    <input
+      id="search"
+      type="search"
+      placeholder="Find text or an ID, e.g. C-4.3.5"
+      aria-label="Find in documents"
+    />
     <div id="navlist"></div>
-    <p style="font-size:12px;color:var(--muted);margin-top:20px">IDs in the text are links. Press <kbd>/</kbd> to search.</p>
+    <p style="font-size: 12px; color: var(--muted); margin-top: 20px">
+      IDs in the text are links. Press <kbd>/</kbd> to search.
+    </p>
   </nav>
   <main><article id="article"></article></main>
 </div>
-<div class="idpanel" id="idpanel" hidden><button type="button" id="idclose" aria-label="Close">×</button><div id="idbody"></div></div>
+<div class="idpanel" id="idpanel" hidden>
+  <button type="button" id="idclose" aria-label="Close">×</button>
+  <div id="idbody"></div>
+</div>
 
 <script>
-const DOCS = /*__DOCS__*/null;
-const ID_RE = /\b(C-\d+(?:\.\d+)+|Q-\d+|S-5\.\d|D-\d+|X-\d+|P-\d+|A-\d+|F-\d\d)\b/g;
-const CANON = 'docs/CANON.md', GRAPH = 'docs/FEATURE-GRAPH.md';
-const byPath = Object.fromEntries(DOCS.map(d => [d.path, d]));
-const decisionDoc = id => DOCS.find(d => d.path.startsWith('docs/decisions/' + id + '-'));
+  const DOCS = /*__DOCS__*/ null;
+  const ID_RE = /\b(C-\d+(?:\.\d+)+|Q-\d+|S-5\.\d|D-\d+|X-\d+|P-\d+|A-\d+|F-\d\d)\b/g;
+  const CANON = 'docs/CANON.md',
+    GRAPH = 'docs/FEATURE-GRAPH.md';
+  const byPath = Object.fromEntries(DOCS.map((d) => [d.path, d]));
+  const decisionDoc = (id) => DOCS.find((d) => d.path.startsWith('docs/decisions/' + id + '-'));
 
-// Home of each ID: canon rows for C/Q/S/D/X/P, graph rows for F, decision file for A.
-function homeOf(id) {
-  if (id.startsWith('F-')) return { path: GRAPH, anchor: id };
-  if (id.startsWith('A-')) { const d = decisionDoc(id); return d ? { path: d.path, anchor: null } : { path: CANON, anchor: id }; }
-  return { path: CANON, anchor: id };
-}
-// One-line description of an ID, read from the canon / graph table row text.
-const descCache = {};
-function describe(id) {
-  if (descCache[id] !== undefined) return descCache[id];
-  const home = homeOf(id);
-  const src = byPath[home.path].md;
-  let text = '';
-  for (const line of src.split('\n')) {
-    const cells = line.split('|').map(s => s.trim());
-    if (cells.length > 2 && (cells[1] === id || cells[1].startsWith('[' + id + ']'))) { text = cells.slice(2).filter(Boolean).join(' · ').replace(/[`*]/g, ''); break; }
-  }
-  if (!text && id.startsWith('A-')) text = (src.match(/^# .*$/m) || [''])[0].replace(/^# /, '');
-  descCache[id] = text; return text;
-}
-
-marked.use({ gfm: true });
-function renderDoc(path) {
-  const d = byPath[path]; if (!d) return;
-  let md = d.md.replace(/```mermaid\n([\s\S]*?)```/g, (m, body) => '<pre class="mermaid">' + body.replace(/</g, '&lt;') + '</pre>');
-  let html = marked.parse(md);
-  const el = document.getElementById('article');
-  el.innerHTML = '<div class="path">' + path + '</div>' + html;
-  // wrap tables for horizontal scroll
-  el.querySelectorAll('table').forEach(t => { const w = document.createElement('div'); w.className = 'tablewrap'; t.parentNode.insertBefore(w, t); w.appendChild(t); });
-  // relative links between docs → in-page routes
-  el.querySelectorAll('a[href]').forEach(a => {
-    const href = a.getAttribute('href');
-    if (/^(https?:|#|mailto:)/.test(href)) return;
-    const target = resolve(path, href.split('#')[0]);
-    if (byPath[target]) { a.setAttribute('href', '#doc=' + encodeURIComponent(target)); }
-    else { a.classList.add('missing'); a.title = 'Not part of this bundle: ' + target; }
-  });
-  // anchors on table rows whose first cell is an ID
-  el.querySelectorAll('tr').forEach(tr => { const c = tr.querySelector('td'); if (!c) return; const m = c.textContent.trim().match(/^(C-\d+(?:\.\d+)+|Q-\d+|S-5\.\d|D-\d+|X-\d+|P-\d+|A-\d+|F-\d\d)$/); if (m) tr.id = m[1]; });
-  linkIds(el);
-  window.renderMermaid && window.renderMermaid(el);
-  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.path === path));
-  document.title = d.title + ' · Scoring Bridge Docs';
-}
-function resolve(from, rel) {
-  const base = from.split('/').slice(0, -1); const parts = rel.split('/');
-  for (const p of parts) { if (p === '..') base.pop(); else if (p !== '.' && p !== '') base.push(p); }
-  return base.join('/');
-}
-// Turn bare IDs in text nodes into links; skip code, pre and existing links.
-function linkIds(root) {
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.parentElement.closest('code, pre, a, h1') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
-  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
-  for (const n of nodes) {
-    if (!ID_RE.test(n.nodeValue)) { ID_RE.lastIndex = 0; continue; } ID_RE.lastIndex = 0;
-    const frag = document.createDocumentFragment(); let last = 0, m;
-    while ((m = ID_RE.exec(n.nodeValue))) {
-      frag.appendChild(document.createTextNode(n.nodeValue.slice(last, m.index)));
-      const a = document.createElement('a'); a.className = 'id'; a.textContent = m[1];
-      const home = homeOf(m[1]);
-      a.href = '#doc=' + encodeURIComponent(home.path) + (home.anchor ? '&id=' + home.anchor : '');
-      a.title = describe(m[1]) || m[1];
-      a.addEventListener('mouseenter', () => showPanel(m[1]));
-      frag.appendChild(a); last = m.index + m[0].length;
+  // Home of each ID: canon rows for C/Q/S/D/X/P, graph rows for F, decision file for A.
+  const homeOf = (id) => {
+    if (id.startsWith('F-')) return { path: GRAPH, anchor: id };
+    if (id.startsWith('A-')) {
+      const d = decisionDoc(id);
+      return d ? { path: d.path, anchor: null } : { path: CANON, anchor: id };
     }
-    frag.appendChild(document.createTextNode(n.nodeValue.slice(last)));
-    n.parentNode.replaceChild(frag, n);
-  }
-}
-function showPanel(id) {
-  const t = describe(id); if (!t) return;
-  document.getElementById('idbody').innerHTML = '<b>' + id + '</b> — ' + escapeHtml(t).slice(0, 400);
-  document.getElementById('idpanel').hidden = false;
-}
-function escapeHtml(s) { return s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
-document.getElementById('idclose').onclick = () => { document.getElementById('idpanel').hidden = true; };
+    return { path: CANON, anchor: id };
+  };
+  // One-line description of an ID, read from the canon / graph table row text.
+  const descCache = {};
+  const describe = (id) => {
+    if (descCache[id] !== undefined) return descCache[id];
+    const home = homeOf(id);
+    const src = byPath[home.path].md;
+    let text = '';
+    for (const line of src.split('\n')) {
+      const cells = line.split('|').map((s) => s.trim());
+      if (cells.length > 2 && (cells[1] === id || cells[1].startsWith('[' + id + ']'))) {
+        text = cells.slice(2).filter(Boolean).join(' · ').replace(/[`*]/g, '');
+        break;
+      }
+    }
+    if (!text && id.startsWith('A-')) text = (src.match(/^# .*$/m) || [''])[0].replace(/^# /, '');
+    descCache[id] = text;
+    return text;
+  };
 
-// Navigation
-const groups = [...new Set(DOCS.map(d => d.group))];
-document.getElementById('navlist').innerHTML = groups.map(g => '<div class="group"><h2>' + g + '</h2>' + DOCS.filter(d => d.group === g).map(d => '<a href="#doc=' + encodeURIComponent(d.path) + '" data-path="' + d.path + '">' + d.title + '</a>').join('') + '</div>').join('');
-function route() {
-  const params = new URLSearchParams(location.hash.slice(1));
-  const path = params.get('doc') || 'README.md'; const id = params.get('id');
-  renderDoc(path);
-  if (id) { const tr = document.getElementById(id); if (tr) { tr.scrollIntoView({ block: 'center' }); tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 2500); } }
-  else window.scrollTo(0, 0);
-  if (innerWidth <= 860) document.getElementById('nav').hidden = true;
-}
-addEventListener('hashchange', route); route();
+  marked.use({ gfm: true });
+  const renderDoc = (path) => {
+    const d = byPath[path];
+    if (!d) return;
+    let md = d.md.replace(
+      /```mermaid\n([\s\S]*?)```/g,
+      (m, body) => '<pre class="mermaid">' + body.replace(/</g, '&lt;') + '</pre>',
+    );
+    let html = marked.parse(md);
+    const el = document.getElementById('article');
+    el.innerHTML = '<div class="path">' + path + '</div>' + html;
+    // wrap tables for horizontal scroll
+    el.querySelectorAll('table').forEach((t) => {
+      const w = document.createElement('div');
+      w.className = 'tablewrap';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+    // relative links between docs → in-page routes
+    el.querySelectorAll('a[href]').forEach((a) => {
+      const href = a.getAttribute('href');
+      if (/^(https?:|#|mailto:)/.test(href)) return;
+      const target = resolve(path, href.split('#')[0]);
+      if (byPath[target]) {
+        a.setAttribute('href', '#doc=' + encodeURIComponent(target));
+      } else {
+        a.classList.add('missing');
+        a.title = 'Not part of this bundle: ' + target;
+      }
+    });
+    // anchors on table rows whose first cell is an ID
+    el.querySelectorAll('tr').forEach((tr) => {
+      const c = tr.querySelector('td');
+      if (!c) return;
+      const m = c.textContent
+        .trim()
+        .match(/^(C-\d+(?:\.\d+)+|Q-\d+|S-5\.\d|D-\d+|X-\d+|P-\d+|A-\d+|F-\d\d)$/);
+      if (m) tr.id = m[1];
+    });
+    linkIds(el);
+    window.renderMermaid && window.renderMermaid(el);
+    document
+      .querySelectorAll('nav a')
+      .forEach((a) => a.classList.toggle('active', a.dataset.path === path));
+    document.title = d.title + ' · Scoring Bridge Docs';
+  };
+  const resolve = (from, rel) => {
+    const base = from.split('/').slice(0, -1);
+    const parts = rel.split('/');
+    for (const p of parts) {
+      if (p === '..') base.pop();
+      else if (p !== '.' && p !== '') base.push(p);
+    }
+    return base.join('/');
+  };
+  // Turn bare IDs in text nodes into links; skip code, pre and existing links.
+  const linkIds = (root) => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) =>
+        n.parentElement.closest('code, pre, a, h1')
+          ? NodeFilter.FILTER_REJECT
+          : NodeFilter.FILTER_ACCEPT,
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const n of nodes) {
+      if (!ID_RE.test(n.nodeValue)) {
+        ID_RE.lastIndex = 0;
+        continue;
+      }
+      ID_RE.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let last = 0,
+        m;
+      while ((m = ID_RE.exec(n.nodeValue))) {
+        frag.appendChild(document.createTextNode(n.nodeValue.slice(last, m.index)));
+        const a = document.createElement('a');
+        a.className = 'id';
+        a.textContent = m[1];
+        const home = homeOf(m[1]);
+        a.href =
+          '#doc=' + encodeURIComponent(home.path) + (home.anchor ? '&id=' + home.anchor : '');
+        a.title = describe(m[1]) || m[1];
+        a.addEventListener('mouseenter', () => showPanel(m[1]));
+        frag.appendChild(a);
+        last = m.index + m[0].length;
+      }
+      frag.appendChild(document.createTextNode(n.nodeValue.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    }
+  };
+  const showPanel = (id) => {
+    const t = describe(id);
+    if (!t) return;
+    document.getElementById('idbody').innerHTML =
+      '<b>' + id + '</b> — ' + escapeHtml(t).slice(0, 400);
+    document.getElementById('idpanel').hidden = false;
+  };
+  const escapeHtml = (s) => {
+    return s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
+  };
+  document.getElementById('idclose').onclick = () => {
+    document.getElementById('idpanel').hidden = true;
+  };
 
-// Search: filter nav by title or by full-text / ID match
-document.getElementById('search').addEventListener('input', e => {
-  const q = e.target.value.trim().toLowerCase();
-  document.querySelectorAll('nav a').forEach(a => { const d = byPath[a.dataset.path]; a.hidden = q !== '' && !(d.title.toLowerCase().includes(q) || d.md.toLowerCase().includes(q)); });
-});
-addEventListener('keydown', e => { if (e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); document.getElementById('search').focus(); } });
-document.getElementById('navToggle').onclick = () => { const n = document.getElementById('nav'); n.hidden = !n.hidden; document.getElementById('navToggle').setAttribute('aria-expanded', String(!n.hidden)); };
+  // Navigation
+  const groups = [...new Set(DOCS.map((d) => d.group))];
+  document.getElementById('navlist').innerHTML = groups
+    .map(
+      (g) =>
+        '<div class="group"><h2>' +
+        g +
+        '</h2>' +
+        DOCS.filter((d) => d.group === g)
+          .map(
+            (d) =>
+              '<a href="#doc=' +
+              encodeURIComponent(d.path) +
+              '" data-path="' +
+              d.path +
+              '">' +
+              d.title +
+              '</a>',
+          )
+          .join('') +
+        '</div>',
+    )
+    .join('');
+  const route = () => {
+    const params = new URLSearchParams(location.hash.slice(1));
+    const path = params.get('doc') || 'README.md';
+    const id = params.get('id');
+    renderDoc(path);
+    if (id) {
+      const tr = document.getElementById(id);
+      if (tr) {
+        tr.scrollIntoView({ block: 'center' });
+        tr.classList.add('flash');
+        setTimeout(() => tr.classList.remove('flash'), 2500);
+      }
+    } else window.scrollTo(0, 0);
+    if (innerWidth <= 860) document.getElementById('nav').hidden = true;
+  };
+  addEventListener('hashchange', route);
+  route();
+
+  // Search: filter nav by title or by full-text / ID match
+  document.getElementById('search').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('nav a').forEach((a) => {
+      const d = byPath[a.dataset.path];
+      a.hidden = q !== '' && !(d.title.toLowerCase().includes(q) || d.md.toLowerCase().includes(q));
+    });
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      document.getElementById('search').focus();
+    }
+  });
+  document.getElementById('navToggle').onclick = () => {
+    const n = document.getElementById('nav');
+    n.hidden = !n.hidden;
+    document.getElementById('navToggle').setAttribute('aria-expanded', String(!n.hidden));
+  };
 </script>

@@ -1,7 +1,11 @@
 // Unit tests for the framework-free bridge client (canon Q-1, Q-2, Q-5, P-1, P-9; decision A-9).
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ActivateToolCommand, DeactivateToolCommand, ViewerReadyEvent } from '@scoring/contract';
+import type {
+  ActivateToolCommand,
+  DeactivateToolCommand,
+  ViewerReadyEvent,
+} from '@scoring/contract';
 import { createBridge, type Bridge } from './createBridge';
 
 const VIEWER_ORIGIN = 'http://localhost:3000';
@@ -30,9 +34,9 @@ const viewerReady: ViewerReadyEvent = {
 
 // Dispatches a fake incoming viewer message on `window`, as the real iframe would via
 // `window.postMessage` from the child frame.
-function dispatchFromViewer(data: unknown, origin = VIEWER_ORIGIN): void {
+const dispatchFromViewer = (data: unknown, origin = VIEWER_ORIGIN): void => {
   window.dispatchEvent(new MessageEvent('message', { data, origin }));
-}
+};
 
 describe('createBridge', () => {
   let fakeViewerWindow: { postMessage: ReturnType<typeof vi.fn> };
@@ -103,7 +107,9 @@ describe('createBridge', () => {
 
     expect(bridge.getState().ready).toBe(true);
     // First READY: one notify. Second READY: ready flips false then true, so two more notifies.
-    const readyEvents = events.filter((event) => (event as ViewerReadyEvent | null)?.type === 'VIEWER_READY');
+    const readyEvents = events.filter(
+      (event) => (event as ViewerReadyEvent | null)?.type === 'VIEWER_READY',
+    );
     expect(readyEvents.length).toBe(3);
 
     bridge.send(activate);

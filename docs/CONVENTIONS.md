@@ -47,16 +47,16 @@ and the linter disagree, fix the linter config in the same PR and say so.
 
 ## 4. Naming
 
-| Thing | Style | Example |
-|---|---|---|
-| Types, interfaces, enums, components | PascalCase | `MeasurementRow`, `BridgeState` |
-| Variables, functions, hooks | camelCase; hooks start with `use` | `createBridge`, `useScoringForm` |
-| Files: components | PascalCase `.tsx` | `TotalsFooter.tsx` |
-| Files: everything else | kebab-case or camelCase, one concept per file | `create-bridge.ts` / `createBridge.ts` (keep the existing style within a folder) |
-| Tests | next to the source, `*.test.ts(x)` | `rows.test.ts` |
-| Booleans | `is`/`has`/`can`/`should` prefix | `isReady`, `hasMetrics` |
-| Event handlers | `on<Event>` for props, `handle<Event>` for implementations | `onRemove` / `handleRemove` |
-| Interfaces for props | `<Component>Props` | `ScoringPanelProps` |
+| Thing                                | Style                                                      | Example                                                                          |
+| ------------------------------------ | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Types, interfaces, enums, components | PascalCase                                                 | `MeasurementRow`, `BridgeState`                                                  |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                          | `createBridge`, `useScoringForm`                                                 |
+| Files: components                    | PascalCase `.tsx`                                          | `TotalsFooter.tsx`                                                               |
+| Files: everything else               | kebab-case or camelCase, one concept per file              | `create-bridge.ts` / `createBridge.ts` (keep the existing style within a folder) |
+| Tests                                | next to the source, `*.test.ts(x)`                         | `rows.test.ts`                                                                   |
+| Booleans                             | `is`/`has`/`can`/`should` prefix                           | `isReady`, `hasMetrics`                                                          |
+| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations | `onRemove` / `handleRemove`                                                      |
+| Interfaces for props                 | `<Component>Props`                                         | `ScoringPanelProps`                                                              |
 
 No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`, `uid`, `url`.
 
@@ -99,7 +99,7 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
 
 ## 8. Comments
 
-- Comments explain *why*, not *what*. A branch that exists because of a requirement, a decision
+- Comments explain _why_, not _what_. A branch that exists because of a requirement, a decision
   or an OHIF quirk cites it: `// Q-1: commands before VIEWER_READY are queued, never dropped.`
 - OHIF behaviour that we depend on is cited with `file:line` in the fork at the version we pin.
 - No commented-out code, no TODO without an owner and a graph node or follow-up entry in
@@ -128,8 +128,11 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
 ## 11. The OHIF fork
 
 - Only `extensions/scoring-bridge/` and the one registration line in `pluginConfig.json` change.
-- The extension follows this document. It is formatted by the fork's Prettier and linted by the
-  fork's ESLint config (we do not replace OHIF's tooling); conventions the fork's linter cannot
-  check are checked in review.
+- The extension follows this document. The fork's own ESLint does not run at v3.12.17 (ESLint 9
+  with a legacy `.eslintrc.json` and `@typescript-eslint` 5 crashes while loading rules), and we do
+  not replace OHIF's tooling. `npm run lint:fork` applies the rules from this document that need no
+  type information (`scripts/eslint-fork-style.config.js`); the fork's Prettier formats the
+  extension, except the contract copy, which keeps this repository's formatting to stay
+  byte-identical. Type-aware rules are checked in review.
 - `AppTypes` and other OHIF globals are used as typed; no `any` for OHIF objects, use the narrowest
   structural type that covers what we read.

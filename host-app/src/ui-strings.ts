@@ -44,9 +44,10 @@ export const UI = {
   measurementsCount(n: number): string {
     const lastTwo = n % 100;
     const lastOne = n % 10;
+    const count = String(n);
     if (lastOne >= 1 && lastOne <= 4 && (lastTwo < 11 || lastTwo > 14)) {
-      return `${n} вимірювання`;
+      return `${count} вимірювання`;
     }
-    return `${n} вимірювань`;
+    return `${count} вимірювань`;
   },
 } as const;
