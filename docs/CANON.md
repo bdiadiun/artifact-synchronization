@@ -1,0 +1,292 @@
+# Canon — requirements of the test assignment
+
+This file is the single source of truth for requirements. IDs are immutable. The original
+assignment text (Ukrainian) is quoted verbatim in Appendix A; the atomic requirements below are
+derived from it. Any deviation or resolved ambiguity is recorded in section "Decisions on
+ambiguities" only, and only after approval.
+
+ID classes:
+
+| Prefix | Meaning | Source section |
+|---|---|---|
+| `C-<s>.<i>` | Mandatory functional / architectural requirement | 3, 4 |
+| `Q-<n>` | Quality requirement, graded separately | 5 |
+| `S-5.<n>` | Bonus ("star") task, optional | 6 (numbered 5.x in the source) |
+| `D-<n>` | Deliverable / submission artifact | 7 |
+| `X-<n>` | Explicit prohibition ("do not do") | 8 |
+| `P-<n>` | Defence-readiness item: a question or live change we must be able to handle | 9 |
+
+## 1. Purpose (informative)
+
+The assignment reproduces a daily situation: two independent apps on different ports talk to each
+other. A medical image viewer (OHIF) on one side, a scoring form on the other. The form does not
+draw annotations; it asks the viewer to enable a tool and receives the result back. What is
+evaluated: message contract design, asynchrony (who loads first, early messages), entity-to-
+annotation correlation and sync, and infinite-loop avoidance. AI use is allowed and expected, but
+the code must be defended by the author.
+
+## 3. Architecture (mandatory)
+
+| ID | Requirement |
+|---|---|
+| C-3.1 | Two applications on two different ports communicate exclusively through `window.postMessage`. |
+| C-3.2 | `viewer` is a fork of https://github.com/OHIF/Viewers, run locally, extended with our own OHIF extension that acts as a bridge: accepts commands from outside and publishes events to the outside. |
+| C-3.3 | `host-app` is a new React application built from scratch on any boilerplate (Vite recommended). It contains an `<iframe>` with the viewer and the form. |
+| C-3.4 | The bridge lives inside our extension: it obtains `servicesManager` and `commandsManager` in the `preRegistration` hook, subscribes to `measurementService` there and calls `commandsManager.runCommand(...)`. Do not try to reach OHIF internals through `window` from outside the iframe. |
+
+## 4. Mandatory part
+
+### 4.1 Running the viewer
+
+| ID | Requirement |
+|---|---|
+| C-4.1.1 | Fork https://github.com/OHIF/Viewers and run it locally. |
+| C-4.1.2 | Data source is the public DICOMweb that OHIF ships with by default; no own PACS. |
+| C-4.1.3 | The viewer must open by a direct link to a specific study (`/viewer?StudyInstanceUIDs=...`), because exactly that link goes into the iframe. |
+
+### 4.2 Host-app and page
+
+| ID | Requirement |
+|---|---|
+| C-4.2.1 | Host-app is React + TypeScript. |
+| C-4.2.2 | Single page: on the left the viewer iframe (flexible, full height), on the right the form panel. |
+| C-4.2.3 | The two apps run on different ports, deliberately, so that real cross-origin constraints apply. |
+
+### 4.3 Scenario "add measurement" (core)
+
+| ID | Requirement |
+|---|---|
+| C-4.3.1 | The form has an "Add measurement" button. |
+| C-4.3.2 | Clicking it creates a new empty row in the form with status `Pending` and an "Activate" button. |
+| C-4.3.3 | Clicking "Activate" sends a command into the iframe to enable the Ellipse tool (`EllipticalROI`). The row switches to status `Drawing…`. |
+| C-4.3.4 | The user draws an ellipse in the viewer. |
+| C-4.3.5 | The viewer sends back the annotation area together with an identifier by which the host understands which row the value belongs to. |
+| C-4.3.6 | The row receives the value (e.g. `124.5 mm²`), status `Done`; the tool in the viewer deactivates by itself (returns to Pan / default). |
+| C-4.3.7 | Steps C-4.3.1–C-4.3.6 are repeatable; there may be any number of rows. |
+| C-4.3.8 | At the bottom of the form there is the sum of the areas of all rows, recalculated automatically. |
+
+### 4.4 Minimal message contract
+
+| ID | Requirement |
+|---|---|
+| C-4.4.1 | Event names are fixed: `VIEWER_READY` (viewer → host, viewer loaded and ready for commands); `ACTIVATE_TOOL` (host → viewer, enable a tool for a specific form row); `DEACTIVATE_TOOL` (host → viewer, cancel waiting for drawing); `MEASUREMENT_ADDED` (viewer → host, annotation created: value + units + binding); `MEASUREMENT_UPDATED` (viewer → host, annotation changed; see S-5.1). |
+| C-4.4.2 | Payload structure is designed by us and described in `ARCHITECTURE.md`. |
+| C-4.4.3 | Every message carries a contract version (`version: 1`); the reason is explained at the defence. |
+
+## 5. Quality requirements (graded separately, one line each)
+
+| ID | Requirement |
+|---|---|
+| Q-1 | **Handshake.** The host must not send commands before the viewer has reported `VIEWER_READY`. If the user clicks "Activate" while the iframe is still loading, the command must not be lost. |
+| Q-2 | **Origin check.** `message` handlers on both sides check `event.origin` and ignore foreign origins. A hardcoded origin in config is fine; its absence is not. |
+| Q-3 | **Correlation.** Every form row has its own identifier, every annotation has its own. We must consciously decide who issues which ID and how the mapping is maintained. This is the main architectural decision of the assignment. |
+| Q-4 | **No echo loop.** If S-5.1 is implemented, an update host → viewer → host must not produce an infinite ping-pong. This will be tested. |
+| Q-5 | **Cleanup.** `removeEventListener`, unsubscribing from `measurementService`, cancelling the "armed" state on unmount. |
+| Q-6 | **Units.** Area may arrive in mm² or px² depending on whether the DICOM has pixel spacing. Units must not be lost and mm² must not be added to px² in the sum. The handling must be described. |
+| Q-7 | **TypeScript.** Message types are declared in one place and shared by both apps (separate package, shared folder, or at least a copied file with an explanation why). |
+
+## 6. Bonus tasks (optional; source numbers them 5.x)
+
+| ID | Requirement |
+|---|---|
+| S-5.1 | **Live update.** Dragging an ellipse handle updates the value in the form in real time; the sum is recalculated. |
+| S-5.2 | **Deletion.** A "Delete" button in a form row removes the annotation in the viewer, and deleting the annotation in the viewer clears the row. |
+| S-5.3 | **Focus.** Clicking a form row highlights / scrolls to the matching annotation in the viewer. |
+| S-5.4 | **Second tool.** Add a row type "Length" (`Length` tool); the sum of lengths is computed separately from the sum of areas. |
+| S-5.5 | **Version on the viewport.** Show the OHIF version (from `package.json`, injected at build time through bundler config) in a corner of every viewport; in a 2×2 grid it appears on all four. |
+| S-5.6 | **State restore.** After a page reload the form and the annotations are restored. |
+
+## 7. Submission format
+
+| ID | Requirement |
+|---|---|
+| D-1 | Code in a public repository (GitHub / GitLab). OHIF fork + host-app may be two repositories or a mono-repo; the choice must be explained. |
+| D-2 | Work is split into feature pull requests, at least five, indicatively: `chore: bootstrap host-app`, `feat: viewer bridge extension`, `feat: activate ellipse from form`, `feat: receive measurement into form`, `feat: total area calculation`. |
+| D-3 | Every PR has a meaningful description: what changed, why this way, what was verified. A PR described as "changes" does not count. |
+| D-4 | PRs may be merged by the author; no external code review at this stage. The history of thinking matters. |
+| D-5 | `README.md`: how to run both apps from scratch (git clone → working screen). It will be executed literally on a clean machine. |
+| D-6 | `ARCHITECTURE.md`: exchange diagram, full message table with payloads, and a separate "Decisions" section: who issues IDs, how the handshake works, what happens to early commands, how the echo loop is avoided. 1–2 pages, to the point. |
+| D-7 | `AI-USAGE.md`: honestly, where AI was used, what output was kept as is, what was rewritten and why. |
+| D-8 | Video demo, 2–4 minutes, voice-over preferred, showing: (a) both apps starting; (b) at least three measurements added in a row; (c) the sum updating; (d) behaviour on cancelled activation ("Activate" clicked, then changed mind); (e) any implemented bonus tasks. |
+
+## 8. What not to do
+
+| ID | Prohibition |
+|---|---|
+| X-1 | No auth, backend, database, or server-side persistence. |
+| X-2 | No own PACS / DICOMweb server. |
+| X-3 | No design work; a grey form with native inputs is enough. |
+| X-4 | No project-wide tests. A few unit tests for the sum logic and message serialisation are enough. |
+| X-5 | No rework of the OHIF UI itself (panels, toolbar) beyond what the bridge requires. |
+
+## 9. Defence readiness
+
+Questions we must be able to answer with a pointer into the code:
+
+| ID | Item |
+|---|---|
+| P-1 | What happens if the iframe loads slower than the user clicks the button? Show where it is handled. |
+| P-2 | Why `postMessage` and not another mechanism? What would change if both apps shared one origin? |
+| P-3 | Who issues the measurement identifier and why? What breaks if the decision is flipped? |
+| P-4 | Where exactly in OHIF do we subscribe to annotation creation and why there? |
+| P-5 | What happens if two host-app tabs are open at the same time? |
+| P-6 | Show the place where an infinite message loop could arise. |
+
+Live changes (~10 min each) the design must make cheap:
+
+| ID | Item | Design implication |
+|---|---|---|
+| P-7 | Replace the tool: ellipse → `RectangleROI`. | Tool name is a single configurable constant carried in the `ACTIVATE_TOOL` payload, not scattered. |
+| P-8 | Add one more field to the row (e.g. perimeter or mean intensity) and pass it through the whole chain. | Measurement payload and row model are extensible; the mapping viewer-measurement → payload is in one function. |
+| P-9 | One protocol element is disabled (e.g. `VIEWER_READY`); diagnose the breakage aloud. | Bridge logs / dev-visible state make the handshake and queue observable. |
+
+## 10. Grading (informative)
+
+Working scenario 25 %, bridge architecture 25 %, defence 25 %, code quality 15 %, communication
+10 %. Bonus tasks add up to +15 % but do not compensate a failed defence.
+
+## Decisions on ambiguities
+
+Each entry: date, decision, rationale, status. Also mirrored in `ARCHITECTURE.md` → "Decisions".
+
+| # | Date | Decision | Rationale | Status |
+|---|---|---|---|---|
+| A-1 | 2026-09-16 | Mono-repo: `host-app/` in this repository, the OHIF fork as a git submodule under `viewer/` pointing to our fork. | One PR can change both sides of the contract; the fork keeps its own history and stays a real fork (C-4.1.1, D-1). Vendoring OHIF would bloat the repo. | pending approval |
+| A-2 | 2026-09-16 | Ports: host-app `5173`, viewer `3000`. Both are fixed in config and used for origin checks (Q-2). | Vite and OHIF defaults; distinct ports satisfy C-4.2.3. | approved 2026-09-16 |
+| A-3 | 2026-09-16 | Added the `P-*` ID class for section 9 (defence readiness). These items are not requirements but constrain design; graph nodes may reference them in addition to a `C/Q/D` ID. | Live changes (P-7..P-9) affect how the contract and row model are shaped; tracking them avoids a costly refactor at the defence. | pending approval |
+| A-4 | 2026-09-16 | "Cancelled activation" (D-8 d) maps to `DEACTIVATE_TOOL`: the row returns from `Drawing…` to `Pending`, the viewer returns to the default tool, and the row is kept. | The assignment names the event but not the row behaviour; keeping the row is the least surprising outcome. | pending approval |
+| A-5 | 2026-09-16 | Decisions on ID issuance (Q-3), early-command queue (Q-1), echo-loop protection (Q-4) and mixed-unit sums (Q-6) are taken in the slice that implements them and recorded here plus in `ARCHITECTURE.md` in the same PR. | They need contact with the real OHIF `measurementService` API to be made responsibly. | open |
+
+## Appendix A — original assignment text (verbatim, Ukrainian)
+
+```text
+Тестове завдання: мікрофронтенд «Viewer + Scoring Form»
+Роль: Frontend Developer (React / TypeScript)
+Термін: 5 робочих днів
+Формат здачі: відкритий репозиторій + відео-демо + захист роботи на дзвінку (30–45 хв)
+
+1. Мета завдання
+Це завдання відтворює у спрощеному вигляді те, чим ви будете займатися щодня: два окремих застосунки, які живуть на різних портах і спілкуються між собою.
+З одного боку — медичний переглядач зображень (OHIF Viewer), з іншого — форма, у яку лікар вносить результати вимірювань. Форма не малює анотації сама: вона просить переглядач увімкнути інструмент, а потім отримує назад результат.
+Ми перевіряємо не вміння написати форму на React. Ми перевіряємо, чи розумієте ви:
+- як два незалежні застосунки домовляються про контракт обміну повідомленнями;
+- як не зламатися на асинхронності (хто завантажився першим, що робити з повідомленнями, які прийшли «зарано»);
+- як зв'язати сутність у формі з анотацією у переглядачі та тримати їх синхронними;
+- як не влаштувати нескінченний цикл, коли зміна з одного боку викликає зміну з іншого, а та — знову першу.
+Про AI. Використовувати AI-асистентів дозволено і навіть очікувано — ми самі ними користуємось. Але код, який ви здаєте, ви захищаєте самі: на дзвінку ми попросимо пояснити рішення й внести кілька живих змін (див. розділ 9). Код, який ви не можете пояснити, зараховано не буде.
+
+2. Як це виглядає в реальному продукті (контекст)
+У нашому продукті лікар відкриває дослідження пацієнта. Праворуч від зображення — скоринг-форма клінічного дослідження. Щоб додати вимірювання пухлини, лікар натискає кнопку в формі, а не в тулбарі переглядача: форма знає, який саме інструмент потрібен для цього поля (еліпс, лінійка, сегментація) і які обмеження діють.
+Далі: переглядач вмикає потрібний інструмент → лікар малює анотацію → переглядач віддає у форму площу/довжину → форма зберігає значення й перераховує похідні показники (сума площ, відповідь на терапію тощо).
+Ваше завдання — зробити найпростіший робочий скелет цієї схеми.
+
+3. Архітектура, яку треба побудувати
+Два застосунки, два порти, обмін через window.postMessage.
+- viewer — форк офіційного https://github.com/OHIF/Viewers, запущений локально. Ви додаєте до нього власне OHIF-розширення (extension), яке виступає мостом: приймає команди ззовні й публікує події назовні.
+- host-app — новий React-застосунок з нуля на будь-якому бойлерплейті (Vite рекомендовано). Містить <iframe> з переглядачем і форму.
+Підказка щодо OHIF. Не намагайтесь дістати внутрішні сервіси через window ззовні — це не спрацює через iframe. Правильний шлях: власне розширення отримує servicesManager і commandsManager у хуку preRegistration. Саме там живе ваш міст: підписки на measurementService і виклики commandsManager.runCommand(...).
+
+4. Обов'язкова частина
+4.1. Запуск переглядача
+- Форкнути https://github.com/OHIF/Viewers, запустити локально.
+- Джерело даних — публічний DICOMweb за замовчуванням з коробки OHIF (свій PACS піднімати не потрібно).
+- Переглядач має відкриватись за прямим посиланням на конкретне дослідження (/viewer?StudyInstanceUIDs=...), бо саме таке посилання піде в iframe.
+4.2. Host-app і сторінка
+- React + TypeScript.
+- Одна сторінка: ліворуч iframe з переглядачем (гумовий, на всю висоту), праворуч — панель форми.
+- Порти застосунків різні — це навмисно, щоб ви зіткнулися з реальними обмеженнями cross-origin.
+4.3. Сценарій «додати вимірювання» (ядро завдання)
+1. У формі є кнопка «Додати вимірювання».
+2. Натискання створює у формі новий порожній рядок зі статусом Очікує і кнопкою «Активувати».
+3. Натискання «Активувати» надсилає в iframe команду увімкнути інструмент Ellipse (EllipticalROI). Рядок переходить у статус Малювання….
+4. Користувач малює еліпс у переглядачі.
+5. Переглядач надсилає назад площу анотації разом з ідентифікатором, за яким host розуміє, до якого саме рядка це значення належить.
+6. Рядок отримує значення (наприклад 124.5 mm²), статус Готово, інструмент у переглядачі вимикається сам (повертається Pan/дефолт).
+7. Кроки 1–6 повторювані: рядків може бути скільки завгодно.
+8. Унизу форми — сума площ усіх рядків, яка перераховується автоматично.
+4.4. Мінімальний контракт повідомлень
+Назви подій зафіксовані нижче, структуру payload проєктуєте ви самі — і описуєте в ARCHITECTURE.md.
+| Напрямок | Тип події | Призначення |
+| viewer → host | VIEWER_READY | Переглядач завантажився й готовий приймати команди |
+| host → viewer | ACTIVATE_TOOL | Увімкнути інструмент для конкретного рядка форми |
+| host → viewer | DEACTIVATE_TOOL | Скасувати очікування малювання |
+| viewer → host | MEASUREMENT_ADDED | Анотацію створено; значення + одиниці + прив'язка |
+| viewer → host | MEASUREMENT_UPDATED | Анотацію змінили (див. зіркове завдання 5.1) |
+Домовтеся про версію контракту (version: 1) і закладіть її в повідомлення — поясните на захисті, навіщо.
+
+5. Вимоги до якості (оцінюються окремо)
+Це те, що відрізняє «працює на демо» від «працює в продукті». Кожен пункт — окремий рядок в оцінюванні.
+- Handshake. Host не має права надсилати команди до того, як переглядач повідомив VIEWER_READY. Якщо користувач натиснув «Активувати», поки iframe ще вантажиться, команда не має загубитись — подумайте, що з нею зробити.
+- Перевірка origin. Обробники message з обох боків мають перевіряти event.origin і не реагувати на чуже. Захардкоджений origin у конфізі — нормально; його відсутність — ні.
+- Кореляція. Кожен рядок форми має свій ідентифікатор; кожна анотація — свій. Ви маєте свідомо вирішити, хто кому видає ID і як тримається відповідність між ними. Це головне архітектурне рішення завдання.
+- Відсутність echo-циклу. Якщо ви реалізуєте зіркове завдання 5.1 — переконайтесь, що оновлення host → viewer → host не породжує нескінченний пінг-понг. Ми це перевіримо.
+- Прибирання за собою. removeEventListener, відписки від measurementService, скасування «озброєного» стану при unmount.
+- Одиниці вимірювання. Площа може приходити в mm² або в px² — залежно від того, чи є в DICOM пікселний spacing. Не втрачайте одиниці й не додавайте mm² до px² у сумі. Опишіть, що робите в цьому випадку.
+- TypeScript. Типи повідомлень описані в одному місці й спільні для обох застосунків (окремий пакет, спільна тека або хоч би скопійований файл із поясненням, чому так).
+
+6. Зіркові завдання (*) — за бажанням
+Робіть у порядку інтересу, жодне не є обов'язковим. Одне-два виконаних зіркових завдання суттєво впливають на оцінку — але тільки якщо обов'язкова частина зроблена якісно.
+- 5.1. Живе оновлення. Користувач тягне вершину еліпса — значення в формі оновлюється в реальному часі, сума перераховується.
+- 5.2. Видалення. Кнопка «Видалити» в рядку форми прибирає анотацію в переглядачі. І навпаки: видалення анотації в переглядачі очищає рядок.
+- 5.3. Фокус. Клік по рядку форми підсвічує/скролить до відповідної анотації в переглядачі.
+- 5.4. Другий інструмент. Додайте тип рядка «Довжина» (Length) — сума довжин рахується окремо від суми площ.
+- 5.5. Версія на вьюпорті. Вивести версію OHIF (з package.json, підставлену на етапі збірки через конфіг бандлера) у кутку кожного вьюпорта — якщо обрано сітку 2×2, версія має бути на всіх чотирьох.
+- 5.6. Відновлення стану. Після перезавантаження сторінки форма й анотації відновлюються.
+
+7. Формат здачі
+7.1. Репозиторії та pull request'и
+- Код у відкритому репозиторії (GitHub / GitLab). Форк OHIF + host-app можуть бути двома репозиторіями або монорепо — на ваш вибір, поясніть чому.
+- Обов'язково: робота розбита на pull request'и по фічах. Мінімум п'ять, орієнтовно: 1. chore: bootstrap host-app — каркас, iframe, layout 2. feat: viewer bridge extension — OHIF-розширення + handshake 3. feat: activate ellipse from form — напрямок host → viewer 4. feat: receive measurement into form — напрямок viewer → host 5. feat: total area calculation — сума й форматування
+- Кожен PR має осмислений опис: що змінено, чому саме так, що перевірено. PR з описом «changes» не зараховується.
+- PR можуть бути змержені вами ж — код-рев'ю від нас на цьому етапі немає. Нам важлива історія мислення, а не одна купа коду.
+7.2. Документація в репозиторії
+- README.md — як запустити обидва застосунки з нуля (git clone → робочий екран). Ми буквально виконаємо ці кроки на чистій машині.
+- ARCHITECTURE.md — схема обміну, повна таблиця повідомлень з payload, і окремий розділ «Прийняті рішення»: хто видає ID, як влаштований handshake, що робиться з командами, які прийшли зарано, як уникається echo-цикл. Достатньо 1–2 сторінок, але по суті.
+- AI-USAGE.md — чесно: де використовували AI, що з його виводу залишили без змін, а що переписали й чому. Це не мінус в оцінюванні — навпаки, вміння працювати з AI критично оцінюється. Мінус — приховати це.
+7.3. Відео-демо (обов'язково)
+Запис екрана 2–4 хвилини, голос за кадром бажаний, де показано:
+- запуск обох застосунків;
+- додавання щонайменше трьох вимірювань поспіль;
+- як оновлюється сума;
+- поведінку при скасуванні активації (натиснули «Активувати» й передумали);
+- будь-які реалізовані зіркові завдання.
+
+8. Чого робити не треба
+Щоб ви не витрачали час не на те:
+- Не потрібна авторизація, бекенд, база даних, збереження на сервер.
+- Не потрібен власний PACS / DICOMweb-сервер.
+- Не потрібен дизайн — сірої форми з нативними інпутами повністю достатньо.
+- Не потрібні тести на весь проєкт. Якщо хочете показати вміння — достатньо кількох юніт-тестів на логіку суми та на серіалізацію повідомлень.
+- Не потрібно перероблювати UI самого OHIF (панелі, тулбар) — окрім того, що вимагає ваш міст.
+
+9. Захист роботи
+Після здачі — дзвінок на 30–45 хвилин. Це основна частина оцінювання.
+Питання, до яких варто бути готовим:
+- Що станеться, якщо iframe завантажиться повільніше, ніж користувач натисне кнопку? Покажіть у коді, де це оброблено.
+- Чому ви обрали postMessage, а не інший спосіб? Що б змінилось, якби обидва застосунки були на одному домені?
+- Хто видає ідентифікатор вимірювання й чому саме він? Що зламається, якщо переклацнути це рішення на протилежне?
+- Де саме в OHIF ви підписались на створення анотації і чому саме там?
+- Що буде, якщо відкрити дві вкладки host-app одночасно?
+- Покажіть місце, де міг би виникнути нескінченний цикл повідомлень.
+Живі зміни (виконуються під час дзвінка, ~10 хв кожна):
+- Замінити інструмент з еліпса на прямокутник (RectangleROI).
+- Додати до рядка форми ще одне поле — наприклад, периметр або середню інтенсивність — і провести його через увесь ланцюжок.
+- Ми вимкнемо один елемент вашого протоколу (наприклад, VIEWER_READY) — ви маєте продіагностувати поломку вголос.
+
+10. Критерії оцінювання
+| Блок | Що дивимось | Вага |
+| Робочий сценарій | Обов'язкова частина відтворюється з README без підказок | 25% |
+| Архітектура мосту | Контракт, кореляція ID, handshake, розділення відповідальності | 25% |
+| Захист роботи | Пояснення рішень і живі зміни на дзвінку | 25% |
+| Якість коду | Типізація, прибирання ефектів, структура, читабельність | 15% |
+| Комунікація | PR'и, ARCHITECTURE.md, відео-демо | 10% |
+Зіркові завдання додають до +15% зверху, але не компенсують провалений блок «Захист роботи».
+
+11. Корисні орієнтири
+- OHIF Viewer: https://github.com/OHIF/Viewers
+- Документація OHIF (extensions, services): https://docs.ohif.org
+- window.postMessage: https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
+- Ключові речі в OHIF, які вам знадобляться: хук preRegistration у розширенні, commandsManager.runCommand('setToolActive', ...), measurementService.subscribe(measurementService.EVENTS.MEASUREMENT_ADDED, ...).
+Якщо щось у завданні здається неоднозначним — прийміть рішення самі й задокументуйте його в ARCHITECTURE.md. Уміння закрити невизначеність самостійно теж оцінюється.
+Питання по завданню: @acestudiooleg Telegram
+```
