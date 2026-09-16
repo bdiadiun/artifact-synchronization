@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 5 `feat: total area calculation` (branch `feat/total-area-calculation`, node F-11) |
-| Gate | 2 — implemented and verified end to end, awaiting result approval |
-| Last merged PR | #6 `feat: receive measurement into form`; fork PRs #1–#3 merged into `scoring` |
-| Next slice | 6 `docs: README, ARCHITECTURE, AI-USAGE` (F-12, F-13) |
+| Current slice | 6 `docs: README, ARCHITECTURE, AI-USAGE` (branch `docs/readme-architecture-ai-usage`, nodes F-12, F-13) |
+| Gate | 2 — docs written, README verified from a clean clone, awaiting result approval |
+| Last merged PR | #7 `feat: total area calculation`; mandatory part complete; fork PRs #1–#3 merged into `scoring` |
+| Next slice | 7+ bonus, one per PR; recommended order: S-5.1 live update (F-14), S-5.2 deletion (F-15), S-5.5 version on viewport (F-18) |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -22,6 +22,7 @@ not a log. Update it in every PR (same commit as the work it describes).
 - Local toolchain: Node 22.13.1, npm 10.9.2; yarn/pnpm not installed (use corepack for yarn 1 in the fork).
 - `gh pr merge` from the main session is blocked by the permission classifier; the git subagent can merge (worked for PR #2).
 - Git pushes over HTTPS use `gh auth setup-git` as the credential helper.
+- GitHub default branch was the first pushed branch (`docs/canon-and-feature-graph`) until 2026-09-16; now `main`. A plain `git clone` therefore works.
 - OHIF facts (measurement shape, events, tool activation) are in `docs/notes/ohif-bridge-api.md`; do not re-research.
 - corepack 0.30 is available; yarn 1 for the fork comes from corepack, no global install.
 - Viewer dev server: `yarn --cwd platform/app dev` inside `viewer/` (root `yarn dev` picks up `bun.lock` and fails).
