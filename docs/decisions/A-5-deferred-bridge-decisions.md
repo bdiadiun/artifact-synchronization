@@ -1,6 +1,6 @@
 # A-5 — Bridge decisions are taken in the slice that implements them
 
-Status: open (2026-09-16). Canon: Q-1, Q-3, Q-4, Q-6.
+Status: resolved 2026-09-16 by A-8..A-11 (grounded in docs/notes/ohif-bridge-api.md). Canon: Q-1, Q-3, Q-4, Q-6.
 
 ## Context
 ID issuance (Q-3), the early-command queue (Q-1), echo-loop protection (Q-4) and mixed-unit sums

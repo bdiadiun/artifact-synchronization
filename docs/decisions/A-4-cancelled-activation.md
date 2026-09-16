@@ -1,6 +1,6 @@
 # A-4 — Cancelled activation keeps the row in `Pending`
 
-Status: pending approval (2026-09-16). Canon: C-4.3.3, C-4.4.1, D-8 (d).
+Status: approved 2026-09-16. Canon: C-4.3.3, C-4.4.1, D-8 (d).
 
 ## Context
 The assignment defines `DEACTIVATE_TOOL` ("cancel waiting for drawing") and requires the demo to

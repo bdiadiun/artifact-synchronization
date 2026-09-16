@@ -1,0 +1,19 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.layout__viewer {
+  flex: 1 1 auto;
+  height: 100%;
+  background: #f2f2f2;
+}
+
+.layout__panel {
+  flex: 0 0 360px;
+  height: 100%;
+  background: #fafafa;
+  border-left: 1px solid #ddd;
+  overflow-y: auto;
+}
