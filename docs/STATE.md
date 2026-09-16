@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 3 `feat: activate ellipse from form` (branch `feat/activate-ellipse-from-form`, nodes F-07, F-08) |
+| Current slice | 4 `feat: receive measurement into form` (branch `feat/receive-measurement-into-form`, nodes F-09, F-10) |
 | Gate | 2 — implemented and verified end to end, awaiting result approval |
-| Last merged PR | #4 `feat: viewer bridge extension` (2026-09-16); fork PR #1 merged into `scoring` |
-| Next slice | 4 `feat: receive measurement into form` (F-09, F-10) |
+| Last merged PR | #5 `feat: activate ellipse from form` (merged manually by the user); fork PRs #1, #2 merged into `scoring` |
+| Next slice | 5 `feat: total area calculation` (F-11) |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -27,6 +27,8 @@ not a log. Update it in every PR (same commit as the work it describes).
 - Viewer dev server: `yarn --cwd platform/app dev` inside `viewer/` (root `yarn dev` picks up `bun.lock` and fails).
 - Fork branches: `scoring` (base, from v3.12.17), feature branches PR into it; fork PR #1 = bridge extension.
 - Study `1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1` has pixel spacing → areas arrive in mm² (verified with a headless ellipse).
+- Raw OHIF `areaUnit` on the demo study is `mm²` (U+00B2); the bridge normalises the first token to `mm2`/`px2`. The default display set is a CT topogram with large pixel spacing, so areas are in the hundreds of thousands of mm² (real, not a bug).
+- `cachedStats` is filled in cornerstone's render pass; with an instantaneous synthetic release the area in `MEASUREMENT_ADDED` can lag one frame. Human drags are fine; the S-5.1 UPDATED slice would correct it anyway.
 - `VIEWER_READY` is sent on the first `toolGroupService` VIEWPORT_ADDED, not in preRegistration (setToolActive is a silent no-op before a viewport exists).
 
 ## Follow-ups (out of current scope)
