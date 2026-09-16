@@ -11,8 +11,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Node | Name | Canon | Depends on | Slice | Status | Verify |
 |---|---|---|---|---|---|---|
 | F-00 | Canon and feature graph | D-2, D-3, D-4, D-6 (decisions section seeded), A-1..A-5 | — | 0 `docs: canon and feature graph` | done | Coverage check: every `C/Q/D` ID appears in this table; no cycles; diagram matches table. |
-| F-01 | Host-app scaffold | C-3.3, C-4.2.1, C-4.2.3, A-2 | F-20 | 1 `chore: bootstrap host-app` | planned | `npm run dev` in `host-app/` serves on port 5173; `tsc --noEmit` and lint pass with `strict`. |
-| F-02 | Page layout: iframe + form panel | C-4.2.2, C-4.1.3 | F-01 | 1 | planned | Page shows a full-height flexible iframe on the left pointing at `http://localhost:3000/viewer?StudyInstanceUIDs=…` and a form panel on the right. |
+| F-01 | Host-app scaffold | C-3.3, C-4.2.1, C-4.2.3, A-2 | F-20 | 1 `chore: bootstrap host-app` | review | `npm run dev` in `host-app/` serves on port 5173; `tsc --noEmit` and lint pass with `strict`. |
+| F-02 | Page layout: iframe + form panel | C-4.2.2, C-4.1.3 | F-01 | 1 | review | Page shows a full-height flexible iframe on the left pointing at `http://localhost:3000/viewer?StudyInstanceUIDs=…` and a form panel on the right. |
 | F-03 | Shared message contract | C-4.4.1, C-4.4.2, C-4.4.3, Q-7, P-7, P-8 | F-00 | 2 `feat: viewer bridge extension` | planned | Types for the five events with `version: 1`; runtime guard rejects malformed / wrong-version messages; unit tests for serialisation and validation pass (X-4). |
 | F-04 | OHIF fork wired in | C-4.1.1, C-4.1.2, C-4.1.3, D-1, A-1 | F-00 | 2 | planned | Fork added as submodule under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb. |
 | F-05 | Viewer bridge extension: `preRegistration`, origin check, `VIEWER_READY` | C-3.1, C-3.2, C-3.4, Q-2, Q-5 | F-03, F-04 | 2 | planned | Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools). |
@@ -30,7 +30,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-17 | Bonus: Length row type with separate sum | S-5.4 | F-11 | 7 | planned | Length rows sum separately from area rows. |
 | F-18 | Bonus: OHIF version on every viewport | S-5.5 | F-04 | 7 | planned | Version from `package.json` injected at build time appears on each viewport in a 2×2 grid. |
 | F-19 | Bonus: state restore after reload | S-5.6 | F-11 | 7 | planned | Reload keeps rows and annotations in sync. |
-| F-20 | Project tooling and state journal | D-2, D-3, D-5, A-6 | F-00 | 0.5 `chore: project tooling and state journal` | review | `npm run check:graph` exits 0; `.nvmrc` + `engines` pin Node 22; `docs/STATE.md` lets a fresh session resume; decision records exist for A-1..A-6. |
+| F-20 | Project tooling and state journal | D-2, D-3, D-5, A-6 | F-00 | 0.5 `chore: project tooling and state journal` | done | `npm run check:graph` exits 0; `.nvmrc` + `engines` pin Node 22; `docs/STATE.md` lets a fresh session resume; decision records exist for A-1..A-6. |
 
 Bonus slices are ordered later by interest; each bonus node is its own slice / PR.
 

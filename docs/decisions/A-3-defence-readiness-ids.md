@@ -1,6 +1,6 @@
 # A-3 — `P-*` ID class for defence-readiness items
 
-Status: pending approval (2026-09-16). Canon: section 9.
+Status: approved 2026-09-16. Canon: section 9.
 
 ## Context
 Section 9 of the assignment lists questions and live changes for the defence call. They are not

@@ -1,6 +1,6 @@
 # A-1 — Mono-repo with the OHIF fork as a git submodule
 
-Status: pending approval (2026-09-16). Canon: D-1, C-4.1.1.
+Status: approved 2026-09-16. Canon: D-1, C-4.1.1.
 
 ## Context
 The assignment allows either two repositories or a mono-repo and asks for the choice to be explained.

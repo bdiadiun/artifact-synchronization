@@ -1,0 +1,18 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+}
