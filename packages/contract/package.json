@@ -1,0 +1,11 @@
+{
+  "name": "@scoring/contract",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/messages.ts",
+  "types": "./src/messages.ts",
+  "exports": {
+    ".": "./src/messages.ts"
+  }
+}

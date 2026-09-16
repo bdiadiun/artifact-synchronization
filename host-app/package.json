@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
+    "@scoring/contract": "0.0.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

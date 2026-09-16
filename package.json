@@ -6,7 +6,15 @@
   "engines": {
     "node": ">=22"
   },
+  "workspaces": [
+    "host-app",
+    "packages/*"
+  ],
   "scripts": {
-    "check:graph": "node scripts/check-graph.mjs"
+    "check:graph": "node scripts/check-graph.mjs",
+    "check:contract": "node scripts/check-contract-sync.mjs",
+    "test": "npm run test --workspace host-app",
+    "lint": "npm run lint --workspace host-app",
+    "typecheck": "npm run typecheck --workspace host-app"
   }
 }
