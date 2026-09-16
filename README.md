@@ -37,6 +37,8 @@ opens a study. Notes:
 
 - Run the dev server from `platform/app` as shown, not `yarn dev` at the viewer root; the root
   script picks up a `bun.lock` and requires bun.
+- The dev server opens a browser tab at `http://localhost:3000/` (the study list) on every start.
+  Set `OHIF_OPEN=false` to suppress it: `OHIF_OPEN=false yarn --cwd platform/app dev`.
 - `yarn install` prints many `unmet peer dependency` warnings and two
   `Workspaces can only be enabled in private projects` warnings; the webpack build ends with one
   `InjectManifest ... --watch mode` warning. All of these are expected and harmless.

@@ -98,7 +98,7 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 
 | Concern | File |
 |---|---|
-| Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` (listener, handshake, subscriptions, outgoing `MEASUREMENT_ADDED` / `MEASUREMENT_UPDATED`, `uid ↔ rowId` map), `commands.ts` (ACTIVATE/DEACTIVATE, armed state, previous-tool restore), `measurements.ts` (OHIF measurement → `metrics`; add a metric here for P-8), `throttle.ts` (per-key throttled emitter), `removals.ts` (REMOVE_MEASUREMENT, pending-removal `causedBy` map) |
+| Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` (listener, handshake, subscriptions, outgoing `MEASUREMENT_ADDED` / `MEASUREMENT_UPDATED`, `uid ↔ rowId` map), `commands.ts` (ACTIVATE/DEACTIVATE, armed state, previous-tool restore), `measurements.ts` (OHIF measurement → `metrics`; add a metric here for P-8), `throttle.ts` (per-key throttled emitter), `removals.ts` (REMOVE_MEASUREMENT, pending-removal `causedBy` map), `getCustomizationModule.tsx` (OHIF version overlay on every viewport, bonus S-5.5) |
 | Extension registration | `viewer/platform/app/pluginConfig.json` (`preRegistration` runs at app init for every listed extension, mode-independent) |
 | Host side of the bridge | `host-app/src/bridge/createBridge.ts`, React binding `useBridge.ts` |
 | Form rows and commands | `host-app/src/form/rows.ts` (pure reducer), `useScoringForm.ts` (row IDs, activate/cancel, re-arm on reload, measurement intake) |
