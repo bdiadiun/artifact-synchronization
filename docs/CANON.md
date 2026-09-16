@@ -147,15 +147,16 @@ Working scenario 25 %, bridge architecture 25 %, defence 25 %, code quality 15 %
 
 ## Decisions on ambiguities
 
-Each entry: date, decision, rationale, status. Also mirrored in `ARCHITECTURE.md` → "Decisions".
+This table is the index. Each decision has a full record (context, decision, rejected alternatives, consequences) in [`docs/decisions/`](decisions/). Approved decisions are also mirrored in `ARCHITECTURE.md` → "Decisions".
 
 | # | Date | Decision | Rationale | Status |
 |---|---|---|---|---|
-| A-1 | 2026-09-16 | Mono-repo: `host-app/` in this repository, the OHIF fork as a git submodule under `viewer/` pointing to our fork. | One PR can change both sides of the contract; the fork keeps its own history and stays a real fork (C-4.1.1, D-1). Vendoring OHIF would bloat the repo. | pending approval |
-| A-2 | 2026-09-16 | Ports: host-app `5173`, viewer `3000`. Both are fixed in config and used for origin checks (Q-2). | Vite and OHIF defaults; distinct ports satisfy C-4.2.3. | approved 2026-09-16 |
-| A-3 | 2026-09-16 | Added the `P-*` ID class for section 9 (defence readiness). These items are not requirements but constrain design; graph nodes may reference them in addition to a `C/Q/D` ID. | Live changes (P-7..P-9) affect how the contract and row model are shaped; tracking them avoids a costly refactor at the defence. | pending approval |
-| A-4 | 2026-09-16 | "Cancelled activation" (D-8 d) maps to `DEACTIVATE_TOOL`: the row returns from `Drawing…` to `Pending`, the viewer returns to the default tool, and the row is kept. | The assignment names the event but not the row behaviour; keeping the row is the least surprising outcome. | pending approval |
-| A-5 | 2026-09-16 | Decisions on ID issuance (Q-3), early-command queue (Q-1), echo-loop protection (Q-4) and mixed-unit sums (Q-6) are taken in the slice that implements them and recorded here plus in `ARCHITECTURE.md` in the same PR. | They need contact with the real OHIF `measurementService` API to be made responsibly. | open |
+| [A-1](decisions/A-1-mono-repo-with-submodule.md) | 2026-09-16 | Mono-repo: `host-app/` in this repository, the OHIF fork as a git submodule under `viewer/` pointing to our fork. | One PR can change both sides of the contract; the fork keeps its own history and stays a real fork (C-4.1.1, D-1). Vendoring OHIF would bloat the repo. | pending approval |
+| [A-2](decisions/A-2-ports.md) | 2026-09-16 | Ports: host-app `5173`, viewer `3000`. Both are fixed in config and used for origin checks (Q-2). | Vite and OHIF defaults; distinct ports satisfy C-4.2.3. | approved 2026-09-16 |
+| [A-3](decisions/A-3-defence-readiness-ids.md) | 2026-09-16 | Added the `P-*` ID class for section 9 (defence readiness). These items are not requirements but constrain design; graph nodes may reference them in addition to a `C/Q/D` ID. | Live changes (P-7..P-9) affect how the contract and row model are shaped; tracking them avoids a costly refactor at the defence. | pending approval |
+| [A-4](decisions/A-4-cancelled-activation.md) | 2026-09-16 | "Cancelled activation" (D-8 d) maps to `DEACTIVATE_TOOL`: the row returns from `Drawing…` to `Pending`, the viewer returns to the default tool, and the row is kept. | The assignment names the event but not the row behaviour; keeping the row is the least surprising outcome. | pending approval |
+| [A-5](decisions/A-5-deferred-bridge-decisions.md) | 2026-09-16 | Decisions on ID issuance (Q-3), early-command queue (Q-1), echo-loop protection (Q-4) and mixed-unit sums (Q-6) are taken in the slice that implements them and recorded here plus in `ARCHITECTURE.md` in the same PR. | They need contact with the real OHIF `measurementService` API to be made responsibly. | open |
+| [A-6](decisions/A-6-ohif-base-version.md) | 2026-09-16 | The OHIF fork branch is based on the release tag `v3.12.17`, not on `master`. | `master` requires Node >= 24 and pnpm 11; `v3.12.17` requires Node >= 18 and yarn 1, matching the local toolchain and giving a stable base for the README "clean machine" run (D-5). | approved 2026-09-16 |
 
 ## Appendix A — original assignment text (verbatim, Ukrainian)
 

@@ -119,6 +119,11 @@ Indicative slice order (the minimum from the canon; refined in the graph):
   - **How it was verified** — concrete steps and results
 - No `--force` push, no `--no-verify`, no rewriting of `main` history.
 - PR merge — only after explicit user approval.
+- **Routine git is delegated.** Once a gate-2 "ok" is given, the architect spawns a git subagent
+  (Sonnet) that commits, rebases on `origin/main`, pushes, opens the PR with the approved
+  description, and merges it. The architect does not stop for these steps; it reports the PR URL and
+  the merge result afterwards. If the merge is refused by tooling, the subagent reports that and the
+  user merges manually.
 
 ## 5. Technical rules
 
@@ -136,3 +141,37 @@ Indicative slice order (the minimum from the canon; refined in the graph):
 - Changes in the OHIF fork are minimal and concentrated in our extension; the OHIF UI is not reworked.
 - Tests are targeted: the sum logic and message serialisation / validation.
 - Every line of code must be explainable at the defence: no "magic" we cannot justify.
+
+## 6. Session start, context discipline, subagent briefs
+
+### Session start
+1. Read this file, then [docs/STATE.md](docs/STATE.md), then only the rows of
+   [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md) for the current slice.
+2. Run `npm run check:graph`.
+3. Continue from the gate recorded in `STATE.md`. Decisions already in `docs/decisions/` are not
+   re-derived.
+
+### Context discipline
+- One session = one slice. `STATE.md` is updated in the same commit as the work, so a fresh session
+  can resume after a context reset.
+- Never read the OHIF fork (`viewer/`) wholesale. Look things up with an Explore subagent and record
+  the answer (file, symbol, ~30 lines of conclusion) in `docs/notes/ohif-<topic>.md`; later sessions
+  read the note, not the source.
+- Subagent reports are capped at ~40 lines: what changed, verification output, open questions.
+  No transcripts, no file dumps.
+- Large command output goes to a file in the scratchpad and is summarised, not pasted.
+
+### Subagent brief template
+Every implementation / test / git subagent receives a self-contained brief with these sections:
+
+```
+Role: <developer | test writer | git operator>   Model: <opus | sonnet>
+Repository: <path>; branch: <name>; do not run git unless you are the git operator.
+Read first: CLAUDE.md (follow it), then <exact files>.
+Scope: closes <F-nn> / canon <IDs>. Files you may create or modify: <list>. Nothing else.
+Constraints: English only; no AI mentions; TypeScript strict; no new dependencies unless listed: <list>.
+Decisions already made (do not revisit): <A-n summaries or links>.
+Verification you must run and paste: <commands>.
+Report (max 40 lines): files changed, verification output, deviations from the brief, open questions.
+```
+

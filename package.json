@@ -1,0 +1,12 @@
+{
+  "name": "artifact-synchronization",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Viewer + Scoring Form micro-frontend: host-app and an OHIF Viewer fork talking over window.postMessage",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check:graph": "node scripts/check-graph.mjs"
+  }
+}
