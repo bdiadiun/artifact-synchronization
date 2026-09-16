@@ -20,5 +20,9 @@ on our fork branch. The bridge extension lives inside the fork under `extensions
 
 ## Consequences
 - `README.md` must document `git clone --recurse-submodules` (D-5).
-- A change in the extension is two commits: one in the fork, one bumping the submodule pointer here.
-- PR descriptions link the matching fork PR when both sides change.
+- A change in the extension is two commits: one in the fork (own PR there), one bumping the
+  submodule pointer here. A contract change is therefore never a single PR; the main-repo PR links
+  the fork PR and `npm run check:contract` guards the copy (A-12).
+- What the mono-repo buys, stated honestly (re-confirmed 2026-09-16): one clone with the viewer
+  pinned to the exact tested commit; the contract as a real package for host-app; canon, graph,
+  ARCHITECTURE and decisions in one place. It does not buy atomic cross-repo changes.

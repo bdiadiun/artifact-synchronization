@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 2 `feat: viewer bridge extension` (branch `feat/viewer-bridge-extension`, nodes F-03..F-06) |
+| Current slice | 3 `feat: activate ellipse from form` (branch `feat/activate-ellipse-from-form`, nodes F-07, F-08) |
 | Gate | 2 — implemented and verified end to end, awaiting result approval |
-| Last merged PR | #3 `chore: bootstrap host-app` (2026-09-16) |
-| Next slice | 3 `feat: activate ellipse from form` (F-07, F-08) |
+| Last merged PR | #4 `feat: viewer bridge extension` (2026-09-16); fork PR #1 merged into `scoring` |
+| Next slice | 4 `feat: receive measurement into form` (F-09, F-10) |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -28,6 +28,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 - Fork branches: `scoring` (base, from v3.12.17), feature branches PR into it; fork PR #1 = bridge extension.
 - Study `1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1` has pixel spacing → areas arrive in mm² (verified with a headless ellipse).
 - `VIEWER_READY` is sent on the first `toolGroupService` VIEWPORT_ADDED, not in preRegistration (setToolActive is a silent no-op before a viewport exists).
+
+## Follow-ups (out of current scope)
+
+- Fork `tsc --noEmit` has two pre-existing type errors unrelated to runtime (`ToolGroupService` type lacks pubsub members used by `subscribe`; generated `pluginImports.js` cannot resolve the extension). Webpack/babel build is unaffected. Candidate for a small fork PR.
 
 ## Session checklist
 

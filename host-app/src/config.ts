@@ -1,5 +1,11 @@
+import type { ToolName } from '@scoring/contract';
+
 // Origin of the viewer app; the only origin accepted for incoming viewer messages (decision A-2).
 export const VIEWER_ORIGIN = 'http://localhost:3000';
+
+// Tool armed by "Activate" for every row. This is the single place that changes for the
+// ellipse -> RectangleROI live change (P-7): edit this constant, nothing else.
+export const DEFAULT_TOOL: ToolName = 'EllipticalROI';
 
 // Origin of this host app; used as the targetOrigin when posting messages into the viewer iframe.
 export const HOST_ORIGIN = 'http://localhost:5173';

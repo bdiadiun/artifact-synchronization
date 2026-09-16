@@ -54,9 +54,11 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 
 | Concern | File |
 |---|---|
-| Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` |
+| Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` (listener, handshake, subscriptions), `commands.ts` (ACTIVATE/DEACTIVATE, armed state, previous-tool restore) |
 | Extension registration | `viewer/platform/app/pluginConfig.json` (`preRegistration` runs at app init for every listed extension, mode-independent) |
 | Host side of the bridge | `host-app/src/bridge/createBridge.ts`, React binding `useBridge.ts` |
+| Form rows and commands | `host-app/src/form/rows.ts` (pure reducer), `useScoringForm.ts` (row IDs, activate/cancel, re-arm on reload) |
+| Tool to arm | `host-app/src/config.ts` `DEFAULT_TOOL` (the one constant for the RectangleROI live change) |
 | Origins and study link | `host-app/src/config.ts`, `viewer/extensions/scoring-bridge/src/config.ts` |
 | Contract sync check | `scripts/check-contract-sync.mjs` |
 

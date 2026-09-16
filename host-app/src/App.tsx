@@ -3,11 +3,13 @@ import { ViewerFrame } from './components/ViewerFrame';
 import { ScoringPanel } from './components/ScoringPanel';
 import { BridgeStatus } from './components/BridgeStatus';
 import { useBridge } from './bridge/useBridge';
+import { useScoringForm } from './form/useScoringForm';
 import './App.css';
 
 function App() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const { state } = useBridge(iframeRef);
+  const { send, state } = useBridge(iframeRef);
+  const { rows, addRow, activate, cancel } = useScoringForm({ send, lastEvent: state.lastEvent });
 
   return (
     <div className="layout">
@@ -16,7 +18,7 @@ function App() {
       </div>
       <div className="layout__panel">
         <BridgeStatus state={state} />
-        <ScoringPanel />
+        <ScoringPanel rows={rows} addRow={addRow} activate={activate} cancel={cancel} />
       </div>
     </div>
   );
