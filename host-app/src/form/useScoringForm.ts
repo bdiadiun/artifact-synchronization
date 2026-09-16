@@ -117,13 +117,34 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
       });
     }
 
-    // Single entry point shared by both event types: dedupe above by object identity, branch by
+    function processMeasurementUpdated(event: Extract<ViewerEvent, { type: 'MEASUREMENT_UPDATED' }>): void {
+      const row = state.rows.find((candidate) => candidate.measurementUid === event.measurementUid);
+      // Unknown uid is expected, not an error: it happens for a measurement drawn without an
+      // armed row (the viewer's own MEASUREMENT_ADDED filter keeps those out of the form, so
+      // there is no row to update here either). `console.debug`, not `warn`.
+      if (row === undefined || row.status !== 'done') {
+        console.debug('[form] update for a measurement not tracked by any row', event.measurementUid);
+        return;
+      }
+      // Q-4: this branch only dispatches into the local reducer and never calls `send`. That is
+      // the invariant that makes a host -> viewer -> host echo loop impossible on this side (A-10):
+      // there is no command this handler could issue that the viewer could echo back.
+      dispatch({
+        type: 'MEASUREMENT_UPDATED',
+        measurementUid: event.measurementUid,
+        metrics: event.metrics,
+      });
+    }
+
+    // Single entry point shared by all event types: dedupe above by object identity, branch by
     // `type` here. VIEWER_READY and MEASUREMENT_ADDED used to be handled by separate effects;
     // folded into one so the "is this a new event" check exists exactly once.
     if (lastEvent.type === 'VIEWER_READY') {
       processViewerReady();
     } else if (lastEvent.type === 'MEASUREMENT_ADDED') {
       processMeasurementAdded(lastEvent);
+    } else if (lastEvent.type === 'MEASUREMENT_UPDATED') {
+      processMeasurementUpdated(lastEvent);
     }
     // No cleanup needed: this effect only reacts to a new `lastEvent` reference and never
     // subscribes to anything itself (the bridge subscription lives in useBridge).

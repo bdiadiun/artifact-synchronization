@@ -133,6 +133,73 @@ describe('rows reducer', () => {
     expect(next).toBe(state);
   });
 
+  it('MEASUREMENT_UPDATED replaces metrics of the matching done row', () => {
+    let state = addRows(initialFormState, 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, {
+      type: 'MEASUREMENT_RECEIVED',
+      rowId: 'row-1',
+      measurementUid: 'uid-1',
+      metrics,
+    });
+
+    const updatedMetrics: Metrics = { area: { value: 200, unit: 'mm2' } };
+    const next = reducer(state, {
+      type: 'MEASUREMENT_UPDATED',
+      measurementUid: 'uid-1',
+      metrics: updatedMetrics,
+    });
+
+    expect(next.rows[0]).toMatchObject({
+      status: 'done',
+      metrics: updatedMetrics,
+      measurementUid: 'uid-1',
+    });
+  });
+
+  it('MEASUREMENT_UPDATED with an unknown measurementUid leaves state unchanged', () => {
+    let state = addRows(initialFormState, 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, {
+      type: 'MEASUREMENT_RECEIVED',
+      rowId: 'row-1',
+      measurementUid: 'uid-1',
+      metrics,
+    });
+
+    const next = reducer(state, {
+      type: 'MEASUREMENT_UPDATED',
+      measurementUid: 'ghost',
+      metrics: { area: { value: 999, unit: 'mm2' } },
+    });
+    expect(next).toBe(state);
+  });
+
+  it('MEASUREMENT_UPDATED for a pending row with the same uid leaves state unchanged', () => {
+    // A row is only ever `pending` with a `measurementUid` in a contrived/defensive scenario
+    // (normally uid is set exactly when status becomes `done`), but the reducer must still refuse
+    // to update anything but a `done` row - checked directly by constructing that state.
+    const state: FormState = {
+      rows: [
+        {
+          rowId: 'row-1',
+          status: 'pending',
+          toolName: 'EllipticalROI',
+          metrics: null,
+          measurementUid: 'uid-1',
+        },
+      ],
+      armedRowId: null,
+    };
+
+    const next = reducer(state, {
+      type: 'MEASUREMENT_UPDATED',
+      measurementUid: 'uid-1',
+      metrics,
+    });
+    expect(next).toBe(state);
+  });
+
   it('rows are unlimited: add 50 rows', () => {
     const rowIds = Array.from({ length: 50 }, (_, i) => `row-${i}`);
     const state = addRows(initialFormState, ...rowIds);
