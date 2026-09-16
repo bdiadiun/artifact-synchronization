@@ -10,13 +10,13 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 
 | Node | Name | Canon | Depends on | Slice | Status | Verify |
 |---|---|---|---|---|---|---|
-| F-00 | Canon and feature graph | D-2, D-3, D-6 (decisions section seeded), A-1..A-5 | — | 0 `docs: canon and feature graph` | review | Coverage check: every `C/Q/D` ID appears in this table; no cycles; diagram matches table. |
-| F-01 | Host-app scaffold | C-3.3, C-4.2.1, C-4.2.3, A-2 | F-00 | 1 `chore: bootstrap host-app` | planned | `npm run dev` in `host-app/` serves on port 5173; `tsc --noEmit` and lint pass with `strict`. |
+| F-00 | Canon and feature graph | D-2, D-3, D-4, D-6 (decisions section seeded), A-1..A-5 | — | 0 `docs: canon and feature graph` | done | Coverage check: every `C/Q/D` ID appears in this table; no cycles; diagram matches table. |
+| F-01 | Host-app scaffold | C-3.3, C-4.2.1, C-4.2.3, A-2 | F-20 | 1 `chore: bootstrap host-app` | planned | `npm run dev` in `host-app/` serves on port 5173; `tsc --noEmit` and lint pass with `strict`. |
 | F-02 | Page layout: iframe + form panel | C-4.2.2, C-4.1.3 | F-01 | 1 | planned | Page shows a full-height flexible iframe on the left pointing at `http://localhost:3000/viewer?StudyInstanceUIDs=…` and a form panel on the right. |
 | F-03 | Shared message contract | C-4.4.1, C-4.4.2, C-4.4.3, Q-7, P-7, P-8 | F-00 | 2 `feat: viewer bridge extension` | planned | Types for the five events with `version: 1`; runtime guard rejects malformed / wrong-version messages; unit tests for serialisation and validation pass (X-4). |
 | F-04 | OHIF fork wired in | C-4.1.1, C-4.1.2, C-4.1.3, D-1, A-1 | F-00 | 2 | planned | Fork added as submodule under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb. |
-| F-05 | Viewer bridge extension: `preRegistration`, origin check, `VIEWER_READY` | C-3.2, C-3.4, Q-2, Q-5 | F-03, F-04 | 2 | planned | Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools). |
-| F-06 | Host bridge client: origin check, handshake, early-command queue, cleanup | Q-1, Q-2, Q-5, P-1, P-9 | F-02, F-03 | 2 | planned | Clicking "Activate" before the iframe is ready queues the command; it is flushed after `VIEWER_READY`; listeners are removed on unmount (React StrictMode double-mount leaves one listener). |
+| F-05 | Viewer bridge extension: `preRegistration`, origin check, `VIEWER_READY` | C-3.1, C-3.2, C-3.4, Q-2, Q-5 | F-03, F-04 | 2 | planned | Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools). |
+| F-06 | Host bridge client: origin check, handshake, early-command queue, cleanup | C-3.1, Q-1, Q-2, Q-5, P-1, P-9 | F-02, F-03 | 2 | planned | Clicking "Activate" before the iframe is ready queues the command; it is flushed after `VIEWER_READY`; listeners are removed on unmount (React StrictMode double-mount leaves one listener). |
 | F-07 | Form rows: add, statuses, row IDs | C-4.3.1, C-4.3.2, C-4.3.7, Q-3 | F-02 | 3 `feat: activate ellipse from form` | planned | "Add measurement" creates rows with unique IDs and status `Pending`; any number of rows can be added. |
 | F-08 | Activate / deactivate tool from a row | C-4.3.3, C-4.4.1, Q-3, A-4, P-7 | F-05, F-06, F-07 | 3 | planned | "Activate" switches the row to `Drawing…` and the viewer to `EllipticalROI`; cancel sends `DEACTIVATE_TOOL`, row returns to `Pending`, viewer returns to the default tool. |
 | F-09 | Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool | C-3.4, C-4.3.4, C-4.3.5, C-4.3.6, Q-3, Q-6, P-3, P-4 | F-08 | 4 `feat: receive measurement into form` | planned | Drawing an ellipse produces one `MEASUREMENT_ADDED` with area, units (`mm²` / `px²`), row correlation ID and annotation ID; the viewer tool returns to default. |
@@ -30,6 +30,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-17 | Bonus: Length row type with separate sum | S-5.4 | F-11 | 7 | planned | Length rows sum separately from area rows. |
 | F-18 | Bonus: OHIF version on every viewport | S-5.5 | F-04 | 7 | planned | Version from `package.json` injected at build time appears on each viewport in a 2×2 grid. |
 | F-19 | Bonus: state restore after reload | S-5.6 | F-11 | 7 | planned | Reload keeps rows and annotations in sync. |
+| F-20 | Project tooling and state journal | D-2, D-3, D-5, A-6 | F-00 | 0.5 `chore: project tooling and state journal` | review | `npm run check:graph` exits 0; `.nvmrc` + `engines` pin Node 22; `docs/STATE.md` lets a fresh session resume; decision records exist for A-1..A-6. |
 
 Bonus slices are ordered later by interest; each bonus node is its own slice / PR.
 
@@ -52,8 +53,9 @@ Bonus slices are ordered later by interest; each bonus node is its own slice / P
 | Q-6 | F-09, F-10, F-11 |
 | Q-7 | F-03 |
 | D-1 | F-04 |
-| D-2, D-3, D-4 | F-00 (process; every slice PR) |
-| D-5, D-6, D-7 | F-12 |
+| D-2, D-3, D-4 | F-00, F-20 (process; every slice PR) |
+| D-5 | F-20 (toolchain pinning), F-12 |
+| D-6, D-7 | F-12 |
 | D-8 | F-13 |
 | X-1..X-5 | Constraints on every node; X-4 referenced by F-03, F-11 |
 
@@ -62,6 +64,7 @@ Bonus slices are ordered later by interest; each bonus node is its own slice / P
 ```mermaid
 graph TD
   F00[F-00 Canon and graph]
+  F20[F-20 Tooling and state journal]
   F01[F-01 Host-app scaffold]
   F02[F-02 Layout: iframe + form]
   F03[F-03 Shared message contract]
@@ -82,7 +85,7 @@ graph TD
   F18[F-18 * Version on viewport]
   F19[F-19 * State restore]
 
-  F00 --> F01 --> F02
+  F00 --> F20 --> F01 --> F02
   F00 --> F03
   F00 --> F04
   F03 --> F05
@@ -107,6 +110,7 @@ graph TD
 | Slice | Branch | Nodes |
 |---|---|---|
 | 0 | `docs/canon-and-feature-graph` | F-00 |
+| 0.5 | `chore/project-tooling-and-state-journal` | F-20 |
 | 1 | `chore/bootstrap-host-app` | F-01, F-02 |
 | 2 | `feat/viewer-bridge-extension` | F-03, F-04, F-05, F-06 |
 | 3 | `feat/activate-ellipse-from-form` | F-07, F-08 |
