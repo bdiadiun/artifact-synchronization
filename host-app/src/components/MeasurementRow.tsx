@@ -7,6 +7,7 @@ export interface MeasurementRowProps {
   index: number;
   onActivate: (rowId: string) => void;
   onCancel: (rowId: string) => void;
+  onRemove: (rowId: string) => void;
 }
 
 const STATUS_LABEL: Record<RowStatus, string> = {
@@ -35,7 +36,7 @@ function displayMetric(metrics: Row['metrics']): string | null {
 }
 
 // Native elements, minimal grey styling (X-3: no design work required).
-export function MeasurementRow({ row, index, onActivate, onCancel }: MeasurementRowProps) {
+export function MeasurementRow({ row, index, onActivate, onCancel, onRemove }: MeasurementRowProps) {
   const metricLabel = row.status === 'done' ? displayMetric(row.metrics) : null;
 
   return (
@@ -62,6 +63,11 @@ export function MeasurementRow({ row, index, onActivate, onCancel }: Measurement
           {UI.cancel}
         </button>
       )}
+      {/* S-5.2: available for every status; useScoringForm.remove decides what, if anything, to
+          send to the viewer before dropping the row. */}
+      <button type="button" onClick={() => onRemove(row.rowId)}>
+        {UI.remove}
+      </button>
     </div>
   );
 }

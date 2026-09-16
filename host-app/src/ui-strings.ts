@@ -8,6 +8,9 @@ export const UI = {
   activate: 'Активувати',
   // Button that cancels an armed row.
   cancel: 'Скасувати',
+  // Button that removes a row (S-5.2): its annotation in the viewer for a `done` row, or just
+  // the row itself for `drawing` / `pending`.
+  remove: 'Видалити',
   // Row status: created, not yet activated.
   statusPending: 'Очікує',
   // Row status: tool armed, waiting for the user to draw.

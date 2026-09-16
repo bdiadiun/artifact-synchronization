@@ -5,7 +5,12 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import type { MeasurementAddedEvent, MeasurementUpdatedEvent, ViewerEvent } from '@scoring/contract';
+import type {
+  MeasurementAddedEvent,
+  MeasurementRemovedEvent,
+  MeasurementUpdatedEvent,
+  ViewerEvent,
+} from '@scoring/contract';
 import { DEFAULT_TOOL } from '../config';
 import { computeTotals } from './totals';
 import { useScoringForm } from './useScoringForm';
@@ -36,6 +41,18 @@ function measurementUpdated(
     measurementUid,
     toolName: 'EllipticalROI',
     metrics: { area: { value: 200, unit: 'mm2' } },
+    ...overrides,
+  };
+}
+
+function measurementRemoved(
+  measurementUid: string,
+  overrides: Partial<MeasurementRemovedEvent> = {},
+): MeasurementRemovedEvent {
+  return {
+    version: 1,
+    type: 'MEASUREMENT_REMOVED',
+    measurementUid,
     ...overrides,
   };
 }
@@ -195,5 +212,88 @@ describe('useScoringForm', () => {
     expect(debugSpy).toHaveBeenCalled();
 
     debugSpy.mockRestore();
+  });
+
+  it('remove on a done row sends REMOVE_MEASUREMENT and drops the row', () => {
+    const send = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => result.current.addRow());
+    const rowId = result.current.rows[0]!.rowId;
+    act(() => result.current.activate(rowId));
+    act(() => rerender({ lastEvent: measurementAdded(rowId) }));
+
+    act(() => result.current.remove(rowId));
+
+    expect(result.current.rows).toHaveLength(0);
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'REMOVE_MEASUREMENT', rowId, measurementUid: 'uid-1' }),
+    );
+  });
+
+  it('the echo of our own REMOVE_MEASUREMENT (causedBy matches) is ignored, not reapplied', () => {
+    const send = vi.fn();
+    const debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
+    const { result, rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => result.current.addRow());
+    const rowId = result.current.rows[0]!.rowId;
+    act(() => result.current.activate(rowId));
+    act(() => rerender({ lastEvent: measurementAdded(rowId) }));
+
+    act(() => result.current.remove(rowId));
+    const removeCall = send.mock.calls.find((call) => call[0].type === 'REMOVE_MEASUREMENT');
+    const requestId = removeCall?.[0].requestId as string;
+    send.mockClear();
+
+    const rowsBefore = result.current.rows;
+    act(() => rerender({ lastEvent: measurementRemoved('uid-1', { causedBy: requestId }) }));
+
+    expect(result.current.rows).toBe(rowsBefore);
+    expect(send).not.toHaveBeenCalled();
+    expect(debugSpy).toHaveBeenCalled();
+
+    debugSpy.mockRestore();
+  });
+
+  it('a viewer-originated MEASUREMENT_REMOVED clears the done row to pending and never calls send', () => {
+    const send = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => result.current.addRow());
+    const rowId = result.current.rows[0]!.rowId;
+    act(() => result.current.activate(rowId));
+    act(() => rerender({ lastEvent: measurementAdded(rowId) }));
+    send.mockClear();
+
+    act(() => rerender({ lastEvent: measurementRemoved('uid-1') }));
+
+    const row = result.current.rows.find((r) => r.rowId === rowId);
+    expect(row).toMatchObject({ status: 'pending', metrics: null, measurementUid: null });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('remove on a drawing row sends DEACTIVATE_TOOL then drops the row', () => {
+    const send = vi.fn();
+    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+
+    act(() => result.current.addRow());
+    const rowId = result.current.rows[0]!.rowId;
+    act(() => result.current.activate(rowId));
+    send.mockClear();
+
+    act(() => result.current.remove(rowId));
+
+    expect(send).toHaveBeenCalledWith(expect.objectContaining({ type: 'DEACTIVATE_TOOL', rowId }));
+    expect(result.current.rows).toHaveLength(0);
   });
 });

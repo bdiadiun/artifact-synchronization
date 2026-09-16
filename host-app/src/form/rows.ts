@@ -30,7 +30,15 @@ export type FormAction =
   | { type: 'MEASUREMENT_RECEIVED'; rowId: string; measurementUid: string; metrics: Metrics }
   // S-5.1 live update: matched by `measurementUid` (not `rowId` - the viewer does not know it),
   // and only applied to a `done` row, since that is the only status a measurementUid is bound to.
-  | { type: 'MEASUREMENT_UPDATED'; measurementUid: string; metrics: Metrics };
+  | { type: 'MEASUREMENT_UPDATED'; measurementUid: string; metrics: Metrics }
+  // S-5.2 deletion, host -> viewer direction: the row is dropped outright, regardless of its
+  // current status (done/drawing/pending all delete the same way once the caller has already
+  // sent whatever command the status required - see useScoringForm.remove).
+  | { type: 'REMOVE_ROW'; rowId: string }
+  // S-5.2 deletion, viewer -> host direction: the annotation was removed in the viewer and the
+  // event was not our own echo (A-10). The assignment says deletion in the viewer "clears the
+  // row", not removes it, so a `done` row returns to `pending` instead of disappearing.
+  | { type: 'MEASUREMENT_CLEARED'; rowId: string };
 
 export const initialFormState: FormState = { rows: [], armedRowId: null };
 
@@ -102,6 +110,29 @@ export function reducer(state: FormState, action: FormAction): FormState {
       }
       const rows = state.rows.map((row) =>
         row.measurementUid === action.measurementUid ? { ...row, metrics: action.metrics } : row,
+      );
+      return { ...state, rows };
+    }
+
+    case 'REMOVE_ROW': {
+      const targetExists = state.rows.some((row) => row.rowId === action.rowId);
+      if (!targetExists) {
+        return state;
+      }
+      const rows = state.rows.filter((row) => row.rowId !== action.rowId);
+      const armedRowId = state.armedRowId === action.rowId ? null : state.armedRowId;
+      return { rows, armedRowId };
+    }
+
+    case 'MEASUREMENT_CLEARED': {
+      const target = state.rows.find((row) => row.rowId === action.rowId);
+      if (!target || target.status !== 'done') {
+        return state;
+      }
+      const rows = state.rows.map((row) =>
+        row.rowId === action.rowId
+          ? { ...row, status: 'pending' as const, metrics: null, measurementUid: null }
+          : row,
       );
       return { ...state, rows };
     }

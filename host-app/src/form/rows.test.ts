@@ -200,6 +200,46 @@ describe('rows reducer', () => {
     expect(next).toBe(state);
   });
 
+  it('REMOVE_ROW drops the row and clears armedRowId when it was the armed one', () => {
+    let state = addRows(initialFormState, 'row-1', 'row-2');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'REMOVE_ROW', rowId: 'row-1' });
+
+    expect(state.rows.map((row) => row.rowId)).toEqual(['row-2']);
+    expect(state.armedRowId).toBeNull();
+  });
+
+  it('REMOVE_ROW with an unknown rowId leaves state unchanged', () => {
+    const state = addRows(initialFormState, 'row-1');
+    const next = reducer(state, { type: 'REMOVE_ROW', rowId: 'ghost' });
+    expect(next).toBe(state);
+  });
+
+  it('MEASUREMENT_CLEARED returns a done row to pending with metrics and uid cleared', () => {
+    let state = addRows(initialFormState, 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, {
+      type: 'MEASUREMENT_RECEIVED',
+      rowId: 'row-1',
+      measurementUid: 'uid-1',
+      metrics,
+    });
+
+    const next = reducer(state, { type: 'MEASUREMENT_CLEARED', rowId: 'row-1' });
+
+    expect(next.rows[0]).toMatchObject({
+      status: 'pending',
+      metrics: null,
+      measurementUid: null,
+    });
+  });
+
+  it('MEASUREMENT_CLEARED for a non-done row leaves state unchanged', () => {
+    const state = addRows(initialFormState, 'row-1');
+    const next = reducer(state, { type: 'MEASUREMENT_CLEARED', rowId: 'row-1' });
+    expect(next).toBe(state);
+  });
+
   it('rows are unlimited: add 50 rows', () => {
     const rowIds = Array.from({ length: 50 }, (_, i) => `row-${i}`);
     const state = addRows(initialFormState, ...rowIds);
