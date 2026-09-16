@@ -21,4 +21,4 @@ Area arrives in mm² when the image has pixel spacing and in px² otherwise. OHI
 - Converting px² to mm² with a guessed spacing: fabricates clinical numbers.
 
 ## Consequences
-- The sum function is pure and lives in `host-app/src/lib/totals.ts`, the natural test target (X-4).
+- The sum function is pure and lives in `host-app/src/form/totals.ts`, the natural test target (X-4).

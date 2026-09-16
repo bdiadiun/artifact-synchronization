@@ -1,5 +1,8 @@
+import { useMemo } from 'react';
 import { UI } from '../ui-strings';
 import { MeasurementRow } from './MeasurementRow';
+import { TotalsFooter } from './TotalsFooter';
+import { computeTotals } from '../form/totals';
 import type { Row } from '../form/rows';
 
 export interface ScoringPanelProps {
@@ -10,6 +13,10 @@ export interface ScoringPanelProps {
 }
 
 export function ScoringPanel({ rows, addRow, activate, cancel }: ScoringPanelProps) {
+  // Recomputed whenever `rows` changes so the footer always reflects the current row set
+  // (C-4.3.8: "recalculated automatically").
+  const totals = useMemo(() => computeTotals(rows), [rows]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '16px', boxSizing: 'border-box' }}>
       <h1 style={{ fontSize: '18px', margin: '0 0 16px' }}>{UI.appTitle}</h1>
@@ -25,9 +32,8 @@ export function ScoringPanel({ rows, addRow, activate, cancel }: ScoringPanelPro
           ))}
         </div>
       )}
-      {/* Sum comes in a later slice (C-4.3.8); footer stays a placeholder until then. */}
       <div style={{ marginTop: 'auto', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
-        {UI.total}: —
+        <TotalsFooter totals={totals} />
       </div>
     </div>
   );
