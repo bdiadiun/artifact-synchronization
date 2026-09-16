@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 7 `feat: live measurement update` (branch `feat/live-measurement-update`, node F-14, bonus S-5.1) |
+| Current slice | 8 `feat: two-way deletion` (branch `feat/two-way-deletion`, node F-15, bonus S-5.2) |
 | Gate | 2 — implemented and verified end to end, awaiting result approval |
-| Last merged PR | #8 `docs: README, ARCHITECTURE, AI-USAGE`; mandatory part complete (F-13 video pending by the author); fork PRs #1–#3 merged into `scoring` |
-| Next slice | 8 `feat: two-way deletion` (F-15, S-5.2), then S-5.5 (F-18), S-5.3 (F-16) |
+| Last merged PR | #9 `feat: live measurement update` (S-5.1); mandatory part complete (F-13 video pending by the author); fork PRs #1–#4 merged into `scoring` |
+| Next slice | 9 S-5.5 version on viewport (F-18), then S-5.3 focus (F-16) |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -33,6 +33,8 @@ not a log. Update it in every PR (same commit as the work it describes).
 - `VIEWER_READY` is sent on the first `toolGroupService` VIEWPORT_ADDED, not in preRegistration (setToolActive is a silent no-op before a viewport exists).
 
 ## Follow-ups (out of current scope)
+
+- OHIF "clear all measurements" emits `MEASUREMENTS_CLEARED`, not per-uid `MEASUREMENT_REMOVED`; rows would keep stale values. Small follow-up in the bridge if needed.
 
 - Fork `tsc --noEmit` has two pre-existing type errors unrelated to runtime (`ToolGroupService` type lacks pubsub members used by `subscribe`; generated `pluginImports.js` cannot resolve the extension). Webpack/babel build is unaffected. Candidate for a small fork PR.
 

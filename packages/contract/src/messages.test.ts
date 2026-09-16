@@ -8,7 +8,9 @@ import {
   type ActivateToolCommand,
   type DeactivateToolCommand,
   type MeasurementAddedEvent,
+  type MeasurementRemovedEvent,
   type MeasurementUpdatedEvent,
+  type RemoveMeasurementCommand,
   type ViewerReadyEvent,
 } from './messages';
 
@@ -51,6 +53,21 @@ const measurementUpdated: MeasurementUpdatedEvent = {
   causedBy: 'req-1',
 };
 
+const removeMeasurement: RemoveMeasurementCommand = {
+  version: 1,
+  type: 'REMOVE_MEASUREMENT',
+  requestId: 'req-3',
+  rowId: 'row-1',
+  measurementUid: 'uid-1',
+};
+
+const measurementRemoved: MeasurementRemovedEvent = {
+  version: 1,
+  type: 'MEASUREMENT_REMOVED',
+  measurementUid: 'uid-1',
+  causedBy: 'req-3',
+};
+
 describe('isHostCommand', () => {
   it('accepts a valid ACTIVATE_TOOL command', () => {
     expect(isHostCommand(activateTool)).toBe(true);
@@ -91,6 +108,15 @@ describe('isHostCommand', () => {
 
   it('survives a JSON round-trip', () => {
     expect(isHostCommand(JSON.parse(JSON.stringify(activateTool)))).toBe(true);
+  });
+
+  it('accepts a valid REMOVE_MEASUREMENT command', () => {
+    expect(isHostCommand(removeMeasurement)).toBe(true);
+  });
+
+  it('rejects REMOVE_MEASUREMENT missing measurementUid', () => {
+    const { measurementUid: _measurementUid, ...withoutUid } = removeMeasurement;
+    expect(isHostCommand(withoutUid)).toBe(false);
   });
 });
 
@@ -150,5 +176,18 @@ describe('isViewerEvent', () => {
 
   it('survives a JSON round-trip', () => {
     expect(isViewerEvent(JSON.parse(JSON.stringify(measurementAdded)))).toBe(true);
+  });
+
+  it('accepts a valid MEASUREMENT_REMOVED event with causedBy', () => {
+    expect(isViewerEvent(measurementRemoved)).toBe(true);
+  });
+
+  it('accepts a valid MEASUREMENT_REMOVED event without causedBy', () => {
+    const { causedBy: _causedBy, ...withoutCausedBy } = measurementRemoved;
+    expect(isViewerEvent(withoutCausedBy)).toBe(true);
+  });
+
+  it('rejects MEASUREMENT_REMOVED with a wrong-type causedBy', () => {
+    expect(isViewerEvent({ ...measurementRemoved, causedBy: 42 })).toBe(false);
   });
 });

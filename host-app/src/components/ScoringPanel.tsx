@@ -10,9 +10,10 @@ export interface ScoringPanelProps {
   addRow: () => void;
   activate: (rowId: string) => void;
   cancel: (rowId: string) => void;
+  remove: (rowId: string) => void;
 }
 
-export function ScoringPanel({ rows, addRow, activate, cancel }: ScoringPanelProps) {
+export function ScoringPanel({ rows, addRow, activate, cancel, remove }: ScoringPanelProps) {
   // Recomputed whenever `rows` changes so the footer always reflects the current row set
   // (C-4.3.8: "recalculated automatically").
   const totals = useMemo(() => computeTotals(rows), [rows]);
@@ -28,7 +29,14 @@ export function ScoringPanel({ rows, addRow, activate, cancel }: ScoringPanelPro
       ) : (
         <div style={{ marginTop: '8px' }}>
           {rows.map((row, index) => (
-            <MeasurementRow key={row.rowId} row={row} index={index} onActivate={activate} onCancel={cancel} />
+            <MeasurementRow
+              key={row.rowId}
+              row={row}
+              index={index}
+              onActivate={activate}
+              onCancel={cancel}
+              onRemove={remove}
+            />
           ))}
         </div>
       )}

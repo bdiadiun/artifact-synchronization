@@ -18,6 +18,7 @@ export interface UseScoringFormResult {
   addRow: () => void;
   activate: (rowId: string) => void;
   cancel: (rowId: string) => void;
+  remove: (rowId: string) => void;
 }
 
 export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseScoringFormResult {
@@ -56,11 +57,41 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
     send({ version: 1, type: 'DEACTIVATE_TOOL', requestId: crypto.randomUUID(), rowId });
   }
 
+  // S-5.2 deletion, host -> viewer direction. Behaviour depends on the row's current status
+  // (decided with the author): `done` has a real annotation to remove in the viewer; `drawing`
+  // has nothing drawn yet but the tool is armed, so it is cancelled first, same as `cancel`;
+  // `pending` has neither, so only the row itself goes away.
+  function remove(rowId: string): void {
+    const row = state.rows.find((candidate) => candidate.rowId === rowId);
+    if (row === undefined) {
+      return;
+    }
+    if (row.status === 'done') {
+      // measurementUid is guaranteed non-null once a row is `done` (rows.ts: MEASUREMENT_RECEIVED
+      // sets both together).
+      const measurementUid = row.measurementUid as string;
+      const requestId = crypto.randomUUID();
+      // A-10: record the requestId so the REMOVE_MEASUREMENT echo (MEASUREMENT_REMOVED with this
+      // causedBy) is recognised and ignored below, instead of clearing the row a second time.
+      issuedRemovalRequestIdsRef.current.add(requestId);
+      dispatch({ type: 'REMOVE_ROW', rowId });
+      send({ version: 1, type: 'REMOVE_MEASUREMENT', requestId, rowId, measurementUid });
+      return;
+    }
+    if (row.status === 'drawing') {
+      send({ version: 1, type: 'DEACTIVATE_TOOL', requestId: crypto.randomUUID(), rowId });
+    }
+    dispatch({ type: 'REMOVE_ROW', rowId });
+  }
+
   // Dedupe: `lastEvent` is a `useState`-style snapshot from the bridge, so a re-render that does
   // not carry a *new* event object must not reprocess the previous one. Compared by identity
   // (not by content) because that is exactly what "a new event arrived" means here.
   const readyCountRef = useRef(0);
   const processedEventRef = useRef<ViewerEvent | null>(null);
+  // S-5.2 / A-10: requestIds of REMOVE_MEASUREMENT commands issued by `remove`, so the resulting
+  // MEASUREMENT_REMOVED echo can be told apart from a deletion that started in the viewer.
+  const issuedRemovalRequestIdsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (lastEvent === null || lastEvent === processedEventRef.current) {
@@ -136,6 +167,29 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
       });
     }
 
+    function processMeasurementRemoved(event: Extract<ViewerEvent, { type: 'MEASUREMENT_REMOVED' }>): void {
+      // Q-4 / A-10: this is the one place a viewer-originated MEASUREMENT_* event could be
+      // mistaken for our own REMOVE_MEASUREMENT bouncing back. `causedBy` set to a requestId we
+      // issued means it is the echo of our own command (the row was already removed by `remove`
+      // above) - ignore it and forget the id so the set does not grow forever.
+      if (event.causedBy !== undefined && issuedRemovalRequestIdsRef.current.has(event.causedBy)) {
+        issuedRemovalRequestIdsRef.current.delete(event.causedBy);
+        console.debug('[form] ignoring our own REMOVE_MEASUREMENT echo', event.measurementUid);
+        return;
+      }
+      const row = state.rows.find((candidate) => candidate.measurementUid === event.measurementUid);
+      if (row === undefined || row.status !== 'done') {
+        // Unknown uid (never tracked, e.g. drawn without an armed row) or a row that is not
+        // `done` (nothing to clear): expected, not an error.
+        console.debug('[form] removal for a measurement not tracked by any row', event.measurementUid);
+        return;
+      }
+      // No `send` here by construction (A-10): a viewer-originated removal only ever dispatches
+      // into the local reducer, so it can never trigger a command that the viewer would echo
+      // back - there is no loop for this handler to close.
+      dispatch({ type: 'MEASUREMENT_CLEARED', rowId: row.rowId });
+    }
+
     // Single entry point shared by all event types: dedupe above by object identity, branch by
     // `type` here. VIEWER_READY and MEASUREMENT_ADDED used to be handled by separate effects;
     // folded into one so the "is this a new event" check exists exactly once.
@@ -145,10 +199,12 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
       processMeasurementAdded(lastEvent);
     } else if (lastEvent.type === 'MEASUREMENT_UPDATED') {
       processMeasurementUpdated(lastEvent);
+    } else if (lastEvent.type === 'MEASUREMENT_REMOVED') {
+      processMeasurementRemoved(lastEvent);
     }
     // No cleanup needed: this effect only reacts to a new `lastEvent` reference and never
     // subscribes to anything itself (the bridge subscription lives in useBridge).
   }, [lastEvent, state.armedRowId, state.rows, send]);
 
-  return { rows: state.rows, addRow, activate, cancel };
+  return { rows: state.rows, addRow, activate, cancel, remove };
 }

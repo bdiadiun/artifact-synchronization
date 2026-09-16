@@ -21,7 +21,9 @@ host-app  http://localhost:5173                   viewer  http://localhost:3000 
 Source of truth: [`packages/contract/src/messages.ts`](packages/contract/src/messages.ts).
 Every message carries `version: 1`; receivers reject other versions and unknown types with a
 runtime guard (`isHostCommand`, `isViewerEvent`). Unknown extra fields are ignored so a `version`
-bump is needed only for breaking changes.
+bump is needed only for breaking changes. Adding a message type (as the deletion bonus did) is
+additive and stays in version 1: both sides are updated in the same slice, and an older peer would
+simply reject the new type as unknown.
 
 | Direction | `type` | Payload (besides `version`, `type`) | When |
 |---|---|---|---|
@@ -30,6 +32,8 @@ bump is needed only for breaking changes.
 | host → viewer | `DEACTIVATE_TOOL` | `requestId`, `rowId` | Cancel clicked, or another row activated. Restores the previous tool. |
 | viewer → host | `MEASUREMENT_ADDED` | `rowId: string \| null`, `measurementUid`, `toolName`, `metrics: { area: { value, unit } }`, `causedBy?` | Annotation completed. `rowId` is `null` if nothing was armed. |
 | viewer → host | `MEASUREMENT_UPDATED` | `measurementUid`, `toolName`, `metrics` | Annotation modified. Throttled per uid to one event per 100 ms with a trailing emit, only for measurements bound to a row, skipped when the value did not change. A one-shot correction 150 ms after `MEASUREMENT_ADDED` covers the `cachedStats` render-pass lag. Bonus S-5.1. |
+| host → viewer | `REMOVE_MEASUREMENT` | `requestId`, `rowId`, `measurementUid` | "Видалити" on a row that has a measurement. Idempotent: an unknown uid is ignored. Bonus S-5.2. |
+| viewer → host | `MEASUREMENT_REMOVED` | `measurementUid`, `causedBy?` | Annotation removed in OHIF, for any reason. `causedBy` carries the `requestId` of the `REMOVE_MEASUREMENT` that caused it, so the host can tell its own echo from a deletion made in the viewer. Bonus S-5.2. |
 
 `unit` is `'mm2' | 'px2' | 'mm' | 'px'` and is copied from OHIF's `cachedStats`, never inferred.
 
@@ -94,7 +98,7 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 
 | Concern | File |
 |---|---|
-| Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` (listener, handshake, subscriptions, outgoing `MEASUREMENT_ADDED` / `MEASUREMENT_UPDATED`, `uid ↔ rowId` map), `commands.ts` (ACTIVATE/DEACTIVATE, armed state, previous-tool restore), `measurements.ts` (OHIF measurement → `metrics`; add a metric here for P-8), `throttle.ts` (per-key throttled emitter) |
+| Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` (listener, handshake, subscriptions, outgoing `MEASUREMENT_ADDED` / `MEASUREMENT_UPDATED`, `uid ↔ rowId` map), `commands.ts` (ACTIVATE/DEACTIVATE, armed state, previous-tool restore), `measurements.ts` (OHIF measurement → `metrics`; add a metric here for P-8), `throttle.ts` (per-key throttled emitter), `removals.ts` (REMOVE_MEASUREMENT, pending-removal `causedBy` map) |
 | Extension registration | `viewer/platform/app/pluginConfig.json` (`preRegistration` runs at app init for every listed extension, mode-independent) |
 | Host side of the bridge | `host-app/src/bridge/createBridge.ts`, React binding `useBridge.ts` |
 | Form rows and commands | `host-app/src/form/rows.ts` (pure reducer), `useScoringForm.ts` (row IDs, activate/cancel, re-arm on reload, measurement intake) |
