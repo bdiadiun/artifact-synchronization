@@ -7,8 +7,5 @@
   "types": "./src/messages.ts",
   "exports": {
     ".": "./src/messages.ts"
-  },
-  "devDependencies": {
-    "vitest": "^5.0.1"
   }
 }

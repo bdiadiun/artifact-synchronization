@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                        |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Current slice  | 13 `refactor: apply conventions` (branch `refactor/apply-conventions`, node F-23)                                                                                                                            |
-| Gate           | 2 — lint, lint:fork, format, typecheck, tests and end-to-end regression green; awaiting result approval                                                                                                      |
-| Last merged PR | #14 `chore: conventions, lint and agent roles`; #13 focus (S-5.3); mandatory part complete (F-13 video pending by the author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#7 merged into `scoring` |
-| Next slice     | 14 final docs pass (F-12, F-13)                                                                                                                                                                              |
+| Field          | Value                                                                                                                                                                        |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 14 `ci: checks and fork default branch` (branch `ci/checks-and-fork-default-branch`, node F-24)                                                                              |
+| Gate           | 2 — CI workflow added, all eight steps green locally after a clean `npm ci`; awaiting result approval                                                                        |
+| Last merged PR | #15 `refactor: apply conventions`; mandatory part complete (F-13 video pending by the author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#8 merged into `scoring` |
+| Next slice     | 15 `docs: final pass` (DEFENCE, AI-USAGE, README, video script; F-12, F-13)                                                                                                  |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -32,7 +32,13 @@ not a log. Update it in every PR (same commit as the work it describes).
 - `cachedStats` is filled in cornerstone's render pass; with an instantaneous synthetic release the area in `MEASUREMENT_ADDED` can lag one frame. Human drags are fine; the S-5.1 UPDATED slice would correct it anyway.
 - `VIEWER_READY` is sent on the first `toolGroupService` VIEWPORT_ADDED, not in preRegistration (setToolActive is a silent no-op before a viewport exists).
 
+## Facts added in slice 14
+
+- A warm `node_modules` hid a broken dependency layout: after `npm ci`, Vitest could not find jsdom and ESLint could not resolve React types for Testing Library. Shared test tooling and React types now live in the root `package.json` (CONVENTIONS §1). Always verify with `npm ci` before gate 2.
+
 ## Follow-ups (out of current scope)
+
+- Optional, not scheduled: unit tests for the extension's `throttle.ts` and `toMetrics`; bonus S-5.4 Length (F-17); bonus S-5.6 state restore (F-19).
 
 - The fork's own ESLint crashes at v3.12.17 (legacy config + `@typescript-eslint` 5 under ESLint 9); we lint the extension with `npm run lint:fork` instead.
 

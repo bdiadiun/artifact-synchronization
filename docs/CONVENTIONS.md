@@ -13,6 +13,11 @@ and the linter disagree, fix the linter config in the same PR and say so.
   `unknown` and narrow, or write a one-line comment above a justified `// eslint-disable-next-line`.
 - ESLint 9 flat config with `typescript-eslint` strict + stylistic (type-aware), `react-hooks`,
   `react-refresh`; Prettier for formatting (single quotes, semicolons, trailing commas, width 100).
+- Dependencies: runtime dependencies of an app live in that workspace's `package.json`. Shared
+  tooling lives at the root: ESLint, Prettier, Vitest, jsdom, Testing Library and the React type
+  packages those tests rely on. npm hoists workspace packages unpredictably, and a test library
+  hoisted to the root cannot see types left inside a workspace; CI runs `npm ci` from scratch and
+  would catch the drift, a warm local `node_modules` does not.
 - Node 22; npm workspaces at the root; the viewer fork uses its own yarn toolchain but follows this
   document for our extension.
 
