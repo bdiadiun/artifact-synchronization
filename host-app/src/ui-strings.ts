@@ -20,4 +20,12 @@ export const UI = {
   viewerFrameTitle: 'Переглядач OHIF',
   // Shown when the form has no rows yet.
   emptyHint: 'Рядків ще немає. Натисніть «Додати вимірювання».',
+  // Label for the bridge dev status line (P-9 diagnostic surface, decision A-9).
+  bridgeStatus: 'Міст',
+  // Bridge status value: VIEWER_READY has been seen.
+  bridgeReady: 'готовий',
+  // Bridge status value: still waiting for the viewer's first VIEWER_READY.
+  bridgeNotReady: 'очікує VIEWER_READY',
+  // Label preceding the queued-command count in the bridge status line.
+  bridgeQueued: 'у черзі',
 } as const;

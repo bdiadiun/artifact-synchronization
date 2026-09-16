@@ -7,15 +7,14 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 1 `chore: bootstrap host-app` (branch `chore/bootstrap-host-app`, nodes F-01, F-02) |
-| Gate | 2 — implemented and verified, awaiting result approval |
-| Last merged PR | #2 `chore: project tooling and state journal` (2026-09-16) |
-| Next slice | 2 `feat: viewer bridge extension` (F-03..F-06) — needs a gate-1 plan; start from `docs/notes/ohif-bridge-api.md` |
+| Current slice | 2 `feat: viewer bridge extension` (branch `feat/viewer-bridge-extension`, nodes F-03..F-06) |
+| Gate | 2 — implemented and verified end to end, awaiting result approval |
+| Last merged PR | #3 `chore: bootstrap host-app` (2026-09-16) |
+| Next slice | 3 `feat: activate ellipse from form` (F-07, F-08) |
 
 ## Open decisions (see CANON.md → Decisions)
 
 - None. A-1..A-11 are approved (2026-09-16); see `docs/decisions/`. Fork: https://github.com/bdiadiun/Viewers.
-- Runtime check pending (slice 2): does the chosen study yield `mm²` (pixel spacing present)?
 
 ## Facts worth not rediscovering
 
@@ -25,6 +24,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 - Git pushes over HTTPS use `gh auth setup-git` as the credential helper.
 - OHIF facts (measurement shape, events, tool activation) are in `docs/notes/ohif-bridge-api.md`; do not re-research.
 - corepack 0.30 is available; yarn 1 for the fork comes from corepack, no global install.
+- Viewer dev server: `yarn --cwd platform/app dev` inside `viewer/` (root `yarn dev` picks up `bun.lock` and fails).
+- Fork branches: `scoring` (base, from v3.12.17), feature branches PR into it; fork PR #1 = bridge extension.
+- Study `1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1` has pixel spacing → areas arrive in mm² (verified with a headless ellipse).
+- `VIEWER_READY` is sent on the first `toolGroupService` VIEWPORT_ADDED, not in preRegistration (setToolActive is a silent no-op before a viewport exists).
 
 ## Session checklist
 

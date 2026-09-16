@@ -13,5 +13,7 @@ describe('App', () => {
 
     const iframe = screen.getByTitle(UI.viewerFrameTitle) as HTMLIFrameElement;
     expect(iframe.src).toBe(viewerUrl());
+
+    expect(screen.getByText(new RegExp(UI.bridgeNotReady))).toBeInTheDocument();
   });
 });
