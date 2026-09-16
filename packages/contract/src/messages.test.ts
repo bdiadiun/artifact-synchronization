@@ -7,6 +7,7 @@ import {
   isViewerEvent,
   type ActivateToolCommand,
   type DeactivateToolCommand,
+  type FocusMeasurementCommand,
   type MeasurementAddedEvent,
   type MeasurementRemovedEvent,
   type MeasurementUpdatedEvent,
@@ -57,6 +58,14 @@ const removeMeasurement: RemoveMeasurementCommand = {
   version: 1,
   type: 'REMOVE_MEASUREMENT',
   requestId: 'req-3',
+  rowId: 'row-1',
+  measurementUid: 'uid-1',
+};
+
+const focusMeasurement: FocusMeasurementCommand = {
+  version: 1,
+  type: 'FOCUS_MEASUREMENT',
+  requestId: 'req-4',
   rowId: 'row-1',
   measurementUid: 'uid-1',
 };
@@ -116,6 +125,15 @@ describe('isHostCommand', () => {
 
   it('rejects REMOVE_MEASUREMENT missing measurementUid', () => {
     const { measurementUid: _measurementUid, ...withoutUid } = removeMeasurement;
+    expect(isHostCommand(withoutUid)).toBe(false);
+  });
+
+  it('accepts a valid FOCUS_MEASUREMENT command', () => {
+    expect(isHostCommand(focusMeasurement)).toBe(true);
+  });
+
+  it('rejects FOCUS_MEASUREMENT missing measurementUid', () => {
+    const { measurementUid: _measurementUid, ...withoutUid } = focusMeasurement;
     expect(isHostCommand(withoutUid)).toBe(false);
   });
 });

@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 10 `chore: docs site generator` (branch `chore/docs-site-generator`, node F-21) |
-| Gate | 2 — generator works, page verified over http and file://, awaiting result approval |
-| Last merged PR | #11 `feat: OHIF version on viewport` (S-5.5); mandatory part complete (F-13 video pending by the author); fork PRs #1–#6 merged into `scoring` |
-| Next slice | 11 S-5.3 focus (F-16) |
+| Current slice | 11 `feat: focus measurement from row` (branch `feat/focus-measurement-from-row`, node F-16, bonus S-5.3) |
+| Gate | 2 — implemented and verified end to end, awaiting result approval |
+| Last merged PR | #12 `chore: docs site generator`; mandatory part complete (F-13 video pending by the author); bonuses S-5.1, S-5.2, S-5.5 done; fork PRs #1–#6 merged into `scoring` |
+| Next slice | none planned after F-16; remaining bonuses S-5.4 (F-17) and S-5.6 (F-19) are optional |
 
 ## Open decisions (see CANON.md → Decisions)
 
