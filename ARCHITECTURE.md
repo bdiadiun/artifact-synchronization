@@ -33,6 +33,46 @@ bump is needed only for breaking changes.
 
 `unit` is `'mm2' | 'px2' | 'mm' | 'px'` and is copied from OHIF's `cachedStats`, never inferred.
 
+## Sequence: one measurement
+
+```mermaid
+sequenceDiagram
+  participant U as Doctor
+  participant H as host-app (5173)
+  participant B as bridge client
+  participant X as scoring-bridge extension (3000)
+  participant O as OHIF services
+
+  X->>O: preRegistration: subscribe MEASUREMENT_ADDED, VIEWPORT_ADDED
+  O-->>X: VIEWPORT_ADDED (first viewport)
+  X->>B: VIEWER_READY {viewerVersion}
+  B->>B: ready = true, flush queue
+  U->>H: "Додати вимірювання"
+  H->>H: row {rowId: uuid, status: pending}
+  U->>H: "Активувати"
+  H->>B: ACTIVATE_TOOL {requestId, rowId, toolName}
+  B->>X: postMessage(targetOrigin = viewer)
+  X->>O: snapshot active tool; setToolActive(toolName)
+  U->>O: draws ellipse
+  O-->>X: MEASUREMENT_ADDED {uid, data.cachedStats}
+  X->>X: metrics = toMetrics(); uidToRowId.set(uid, rowId)
+  X->>B: MEASUREMENT_ADDED {rowId, measurementUid, metrics, causedBy}
+  X->>O: restore previous tool; disarm
+  B->>H: lastEvent
+  H->>H: row → done; totals recomputed
+```
+
+## Answers to the defence questions
+
+See [`docs/DEFENCE.md`](docs/DEFENCE.md) for file and line pointers. In short: early commands are
+queued in the host bridge client and flushed on `VIEWER_READY`; `postMessage` is the only channel
+that crosses two origins with a verifiable sender; the viewer issues the measurement id and the
+host the row id because OHIF rejects foreign fields on measurements; the subscription lives on
+`measurementService` inside `preRegistration` because that is where OHIF hands out the service and
+where the event is already de-duplicated; two tabs never interfere because each has its own
+iframe window; the only place a loop could start is a host reaction to `MEASUREMENT_*`, which the
+mandatory part does not have and the bonus part guards with `causedBy`.
+
 ## Decisions
 
 Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
@@ -57,7 +97,8 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 | Viewer side of the bridge | `viewer/extensions/scoring-bridge/src/bridge.ts` (listener, handshake, subscriptions, outgoing `MEASUREMENT_ADDED`, `uid ↔ rowId` map), `commands.ts` (ACTIVATE/DEACTIVATE, armed state, previous-tool restore), `measurements.ts` (OHIF measurement → `metrics`; add a metric here for P-8) |
 | Extension registration | `viewer/platform/app/pluginConfig.json` (`preRegistration` runs at app init for every listed extension, mode-independent) |
 | Host side of the bridge | `host-app/src/bridge/createBridge.ts`, React binding `useBridge.ts` |
-| Form rows and commands | `host-app/src/form/rows.ts` (pure reducer), `useScoringForm.ts` (row IDs, activate/cancel, re-arm on reload) |
+| Form rows and commands | `host-app/src/form/rows.ts` (pure reducer), `useScoringForm.ts` (row IDs, activate/cancel, re-arm on reload, measurement intake) |
+| Totals | `host-app/src/form/totals.ts` (per-unit sums), `components/TotalsFooter.tsx` |
 | Tool to arm | `host-app/src/config.ts` `DEFAULT_TOOL` (the one constant for the RectangleROI live change) |
 | Origins and study link | `host-app/src/config.ts`, `viewer/extensions/scoring-bridge/src/config.ts` |
 | Contract sync check | `scripts/check-contract-sync.mjs` |
