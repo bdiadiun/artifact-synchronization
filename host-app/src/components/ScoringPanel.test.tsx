@@ -37,7 +37,7 @@ describe('ScoringPanel totals footer', () => {
       doneRow('row-3', 1520, 'px2'),
     ];
 
-    render(<ScoringPanel rows={rows} addRow={noop} activate={noop} cancel={noop} remove={noop} />);
+    render(<ScoringPanel rows={rows} addRow={noop} activate={noop} cancel={noop} remove={noop} focus={noop} />);
 
     expect(screen.getByText(/212\.7 mm²/)).toBeInTheDocument();
     expect(screen.getAllByText(/1520\.0 px²/).length).toBeGreaterThan(0);
@@ -47,7 +47,7 @@ describe('ScoringPanel totals footer', () => {
   it('shows — when only pending rows are present', () => {
     const rows: Row[] = [pendingRow('row-1')];
 
-    render(<ScoringPanel rows={rows} addRow={noop} activate={noop} cancel={noop} remove={noop} />);
+    render(<ScoringPanel rows={rows} addRow={noop} activate={noop} cancel={noop} remove={noop} focus={noop} />);
 
     expect(screen.getByText(/Разом:\s*—/)).toBeInTheDocument();
   });

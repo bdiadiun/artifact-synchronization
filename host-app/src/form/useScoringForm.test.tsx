@@ -282,6 +282,38 @@ describe('useScoringForm', () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it('focus on a done row sends FOCUS_MEASUREMENT with its measurementUid', () => {
+    const send = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => result.current.addRow());
+    const rowId = result.current.rows[0]!.rowId;
+    act(() => result.current.activate(rowId));
+    act(() => rerender({ lastEvent: measurementAdded(rowId) }));
+    send.mockClear();
+
+    act(() => result.current.focus(rowId));
+
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'FOCUS_MEASUREMENT', rowId, measurementUid: 'uid-1' }),
+    );
+  });
+
+  it('focus on a pending row sends nothing', () => {
+    const send = vi.fn();
+    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+
+    act(() => result.current.addRow());
+    const rowId = result.current.rows[0]!.rowId;
+
+    act(() => result.current.focus(rowId));
+
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it('remove on a drawing row sends DEACTIVATE_TOOL then drops the row', () => {
     const send = vi.fn();
     const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));

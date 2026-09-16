@@ -34,6 +34,10 @@ export const UI = {
   // Shown next to a px² total (C-4.3.8, Q-6): explains why it has its own line instead of being
   // folded into the mm² sum.
   totalNoSpacingHint: 'без піксельного spacing, не додається до mm²',
+  // Accessible label for a `done` row, clickable to focus the matching annotation (S-5.3).
+  focusRow: 'Показати в переглядачі',
+  // Muted caption on a `done` row hinting that it is clickable (S-5.3).
+  focusHint: 'клік — показати в переглядачі',
   // Ukrainian noun agreement with a count for "вимірювання" (neuter): 1 and 2-4 share the form
   // "вимірювання", 5+ and 11-14 take "вимірювань". A display footnote, not a reason for an i18n
   // library (X-3).

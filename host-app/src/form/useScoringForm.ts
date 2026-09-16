@@ -19,6 +19,7 @@ export interface UseScoringFormResult {
   activate: (rowId: string) => void;
   cancel: (rowId: string) => void;
   remove: (rowId: string) => void;
+  focus: (rowId: string) => void;
 }
 
 export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseScoringFormResult {
@@ -82,6 +83,24 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
       send({ version: 1, type: 'DEACTIVATE_TOOL', requestId: crypto.randomUUID(), rowId });
     }
     dispatch({ type: 'REMOVE_ROW', rowId });
+  }
+
+  // S-5.3 focus, host -> viewer direction: a click only means anything for a `done` row, which is
+  // the only status with a real annotation in the viewer to scroll/highlight to. No state change
+  // on this side (canon: "highlights / scrolls to"), no reply expected, so there is nothing to
+  // dispatch into the reducer here.
+  function focus(rowId: string): void {
+    const row = state.rows.find((candidate) => candidate.rowId === rowId);
+    if (row === undefined || row.status !== 'done' || row.measurementUid === null) {
+      return;
+    }
+    send({
+      version: 1,
+      type: 'FOCUS_MEASUREMENT',
+      requestId: crypto.randomUUID(),
+      rowId,
+      measurementUid: row.measurementUid,
+    });
   }
 
   // Dedupe: `lastEvent` is a `useState`-style snapshot from the bridge, so a re-render that does
@@ -206,5 +225,5 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
     // subscribes to anything itself (the bridge subscription lives in useBridge).
   }, [lastEvent, state.armedRowId, state.rows, send]);
 
-  return { rows: state.rows, addRow, activate, cancel, remove };
+  return { rows: state.rows, addRow, activate, cancel, remove, focus };
 }
