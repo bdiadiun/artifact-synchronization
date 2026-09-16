@@ -7,10 +7,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 | Field | Value |
 |---|---|
-| Current slice | 11 `feat: focus measurement from row` (branch `feat/focus-measurement-from-row`, node F-16, bonus S-5.3) |
-| Gate | 2 — implemented and verified end to end, awaiting result approval |
-| Last merged PR | #12 `chore: docs site generator`; mandatory part complete (F-13 video pending by the author); bonuses S-5.1, S-5.2, S-5.5 done; fork PRs #1–#6 merged into `scoring` |
-| Next slice | none planned after F-16; remaining bonuses S-5.4 (F-17) and S-5.6 (F-19) are optional |
+| Current slice | 12 `chore: conventions, lint and agent roles` (branch `chore/conventions-lint-and-agent-roles`, node F-22) |
+| Gate | 2 — rules, lint tooling and agent roles in place; lint is red on existing code by design (204 findings, fixed in slice 13) |
+| Last merged PR | #13 `feat: focus measurement from row` (S-5.3); mandatory part complete (F-13 video pending by the author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#7 merged into `scoring` |
+| Next slice | 13 `refactor: apply conventions` (F-23), then 14 final docs pass (F-12, F-13) |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -41,6 +41,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 ## Docs page
 
 - `npm run docs:build` regenerates `docs/site/index.html` (commit it with the docs it bundles). The same page is published as a private artifact for the author; republish it after each merge.
+
+## Lint baseline before slice 13
+
+- 204 ESLint findings: `func-style` 89, `no-confusing-void-expression` 45, `no-non-null-assertion` 14, `no-unnecessary-type-assertion` 14, `prefer-optional-chain` 8, `no-console` 6, others ≤ 5. Prettier: 43 files to format.
 
 ## Session checklist
 

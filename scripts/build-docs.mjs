@@ -40,6 +40,7 @@ for (const name of readdirSync(notesDir).filter((f) => f.endsWith('.md')).sort()
   FILES.push([`docs/notes/${name}`, name.replace(/\.md$/, ''), 'Research']);
 }
 
+FILES.push(['docs/CONVENTIONS.md', 'Conventions', 'Process']);
 FILES.push(['CLAUDE.md', 'Working rules', 'Process']);
 
 const decDir = join(ROOT, 'docs/decisions');
