@@ -78,12 +78,13 @@ Every slice passes through **user approval** at two gates:
    - key decisions and alternatives (brief, with a recommendation);
    - how it will be verified;
    - which subagents will be spawned, on which model, with which brief.
-   No code is written without an explicit "ok".
+     No code is written without an explicit "ok".
 2. **Slice result → approval.** After implementation, show a diff summary, verification results
    (lint, typecheck, tests, manual scenario), the architect's review notes on the subagent output,
    and a draft PR description. No commit / push / PR / merge without an explicit "ok".
 
 Rules:
+
 - One slice at a time. The next slice does not start until the previous one is merged (unless the
   user says otherwise).
 - No scope creep "while we're at it". Anything found outside the slice scope is recorded as a
@@ -92,15 +93,15 @@ Rules:
   force-push.
 - If the plan changes materially during implementation — stop and return to gate 1.
 
-Indicative slice order (the minimum from the canon; refined in the graph):
-0. `docs: canon and feature graph` — CANON.md, FEATURE-GRAPH.md, mono-/poly-repo decision
+Indicative slice order (the minimum from the canon; refined in the graph): 0. `docs: canon and feature graph` — CANON.md, FEATURE-GRAPH.md, mono-/poly-repo decision
+
 1. `chore: bootstrap host-app` — scaffold, iframe, layout
 2. `feat: viewer bridge extension` — OHIF extension + handshake
 3. `feat: activate ellipse from form` — host → viewer
 4. `feat: receive measurement into form` — viewer → host
 5. `feat: total area calculation` — sum, units, formatting
 6. `docs: README, ARCHITECTURE, AI-USAGE`
-7+. bonus tasks — one slice each
+   7+. bonus tasks — one slice each
 
 ## 4. Git, commits, and PRs
 
@@ -152,6 +153,7 @@ Indicative slice order (the minimum from the canon; refined in the graph):
 ## 6. Session start, context discipline, subagent briefs
 
 ### Session start
+
 1. Read this file, then [docs/STATE.md](docs/STATE.md), then only the rows of
    [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md) for the current slice.
 2. Run `npm run check:graph`.
@@ -159,6 +161,7 @@ Indicative slice order (the minimum from the canon; refined in the graph):
    re-derived.
 
 ### Context discipline
+
 - One session = one slice. `STATE.md` is updated in the same commit as the work, so a fresh session
   can resume after a context reset.
 - Never read the OHIF fork (`viewer/`) wholesale. Look things up with an Explore subagent and record
@@ -169,6 +172,7 @@ Indicative slice order (the minimum from the canon; refined in the graph):
 - Large command output goes to a file in the scratchpad and is summarised, not pasted.
 
 ### Subagent brief template
+
 Every implementation / test / git subagent receives a self-contained brief with these sections:
 
 ```
@@ -181,4 +185,3 @@ Decisions already made (do not revisit): <A-n summaries or links>.
 Verification you must run and paste: <commands>.
 Report (max 40 lines): files changed, verification output, deviations from the brief, open questions.
 ```
-

@@ -8,6 +8,7 @@ tools: Read, Grep, Glob, Bash, Write
 You answer the brief's questions from source, not memory, and write exactly one note.
 
 Ground rules
+
 - Read `CLAUDE.md` and any existing `docs/notes/*.md` first; do not re-research what a note
   already answers, extend it instead.
 - Work on the pinned version (the `viewer/` submodule or a shallow clone of the tag in the

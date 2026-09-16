@@ -41,7 +41,7 @@ export interface Bridge {
   dispose: () => void;
 }
 
-export function createBridge(options: CreateBridgeOptions): Bridge {
+export const createBridge = (options: CreateBridgeOptions): Bridge => {
   const { getViewerWindow, viewerOrigin } = options;
   const hostWindow = options.hostWindow ?? window;
 
@@ -55,20 +55,20 @@ export function createBridge(options: CreateBridgeOptions): Bridge {
   const loggedOrigins = new Set<string>();
   let disposed = false;
 
-  function setState(patch: Partial<BridgeState>): void {
+  const setState = (patch: Partial<BridgeState>): void => {
     state = { ...state, ...patch };
-  }
+  };
 
-  function notify(event: ViewerEvent | null): void {
+  const notify = (event: ViewerEvent | null): void => {
     // Snapshot the listener set is unnecessary here since `subscribe`/`unsubscribe` mutate the
     // same Set object, but iterating a Set that a listener removes itself from mid-iteration is
     // still safe in JS (deleted entries are simply skipped).
     for (const listener of listeners) {
       listener(event, state);
     }
-  }
+  };
 
-  function flushQueue(): void {
+  const flushQueue = (): void => {
     // Re-checked per command: if the iframe window disappears mid-flush, stop and keep the
     // remainder queued rather than dropping it (Q-1).
     while (queue.length > 0) {
@@ -76,14 +76,19 @@ export function createBridge(options: CreateBridgeOptions): Bridge {
       if (viewerWindow === null) {
         break;
       }
-      const command = queue.shift() as HostCommand;
+      // `queue.length > 0` above guarantees `shift()` returns a command; narrowed explicitly
+      // instead of a non-null assertion.
+      const command = queue.shift();
+      if (command === undefined) {
+        break;
+      }
       viewerWindow.postMessage(command, viewerOrigin);
     }
     setState({ queued: queue.length });
     notify(null);
-  }
+  };
 
-  function handleMessage(event: MessageEvent): void {
+  const handleMessage = (event: MessageEvent): void => {
     // Origin check (Q-2): drop anything not from the configured viewer origin, never trust the
     // payload to say who sent it.
     if (event.origin !== viewerOrigin) {
@@ -117,11 +122,11 @@ export function createBridge(options: CreateBridgeOptions): Bridge {
     }
     setState({ lastEvent: viewerEvent });
     notify(viewerEvent);
-  }
+  };
 
   hostWindow.addEventListener('message', handleMessage);
 
-  function send(command: HostCommand): void {
+  const send = (command: HostCommand): void => {
     if (disposed) {
       return;
     }
@@ -136,20 +141,18 @@ export function createBridge(options: CreateBridgeOptions): Bridge {
     }
     // Never '*': the target origin is always the configured, hardcoded viewer origin (Q-2).
     viewerWindow.postMessage(command, viewerOrigin);
-  }
+  };
 
-  function subscribe(listener: BridgeListener): () => void {
+  const subscribe = (listener: BridgeListener): (() => void) => {
     listeners.add(listener);
     return () => {
       listeners.delete(listener);
     };
-  }
+  };
 
-  function getState(): BridgeState {
-    return state;
-  }
+  const getState = (): BridgeState => state;
 
-  function dispose(): void {
+  const dispose = (): void => {
     // Idempotent: a second call is a no-op instead of throwing or double-removing a listener.
     if (disposed) {
       return;
@@ -159,7 +162,7 @@ export function createBridge(options: CreateBridgeOptions): Bridge {
     queue.length = 0;
     listeners.clear();
     setState({ ready: false, queued: 0 });
-  }
+  };
 
   return { send, subscribe, getState, dispose };
-}
+};

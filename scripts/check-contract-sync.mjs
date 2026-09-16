@@ -13,7 +13,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-function parseArgs(argv) {
+const parseArgs = (argv) => {
   let root = process.cwd();
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--root' && argv[i + 1] !== undefined) {
@@ -22,12 +22,20 @@ function parseArgs(argv) {
     }
   }
   return { root };
-}
+};
 
-function main() {
+const main = () => {
   const { root } = parseArgs(process.argv.slice(2));
   const sourcePath = join(root, 'packages', 'contract', 'src', 'messages.ts');
-  const copyPath = join(root, 'viewer', 'extensions', 'scoring-bridge', 'src', 'contract', 'messages.ts');
+  const copyPath = join(
+    root,
+    'viewer',
+    'extensions',
+    'scoring-bridge',
+    'src',
+    'contract',
+    'messages.ts',
+  );
 
   if (!existsSync(sourcePath)) {
     console.error(`FAIL: source of truth not found at ${sourcePath}`);
@@ -47,9 +55,11 @@ function main() {
     process.exit(0);
   }
 
-  console.error('FAIL: viewer/extensions/scoring-bridge/src/contract/messages.ts is out of sync with packages/contract/src/messages.ts');
+  console.error(
+    'FAIL: viewer/extensions/scoring-bridge/src/contract/messages.ts is out of sync with packages/contract/src/messages.ts',
+  );
   console.error('hint: copy packages/contract/src/messages.ts over the viewer file verbatim.');
   process.exit(1);
-}
+};
 
 main();

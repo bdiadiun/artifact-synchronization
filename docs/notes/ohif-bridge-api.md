@@ -39,6 +39,7 @@ File: `platform/core/src/services/MeasurementService/MeasurementService.ts`.
 cleanup handle (Q-5).
 
 Payloads:
+
 - ADDED — `{ source, measurement }` (`MeasurementService.ts:567-570`).
 - UPDATED — `{ source, measurement, notYetUpdatedAtSource }` (`:559-564`, `:379-383`, `:872-876`).
 - REMOVED — `{ source, measurement }` where `measurement` is the **UID string**, not the object (`:686-689`).
@@ -70,6 +71,7 @@ carrying `area` / `areaUnit`.
 ## 4. When ADDED vs UPDATED actually fire
 
 Wiring: `extensions/cornerstone/src/initMeasurementService.ts:332-342`
+
 ```
 const addedEvt = csToolsEvents.ANNOTATION_ADDED;      // 332
 const completedEvt = csToolsEvents.ANNOTATION_COMPLETED;
@@ -77,6 +79,7 @@ eventTarget.addEventListener(addedEvt, addMeasurement);      // 338
 eventTarget.addEventListener(completedEvt, addMeasurement);  // 339
 eventTarget.addEventListener(updatedEvt, updateMeasurement); // 340 (ANNOTATION_MODIFIED)
 ```
+
 Both ADDED and COMPLETED call the same `addMeasurement` (`:225-259`), which forces
 `annotationAddedEventDetail.uid = annotationUID` (`:253`) and calls `annotationToMeasurement(toolName, detail)`.
 
@@ -120,6 +123,7 @@ the whole measurement if any key is outside `MEASUREMENT_SCHEMA_KEYS` (`:33-69`)
 add and update paths (`:430`, `:526`).
 
 Available carriers, in order of preference:
+
 1. **`uid` = cornerstone `annotationUID`** (`EllipticalROI.ts:62`, forced in `initMeasurementService.ts:253`).
    Stable across ADDED/UPDATED/REMOVED and unique — the natural correlation key. The bridge keeps its own
    `rowId ↔ measurementUid` map in extension memory; the viewer issues the measurement UID, the host issues

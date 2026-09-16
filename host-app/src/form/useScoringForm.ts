@@ -6,7 +6,7 @@
 import { useEffect, useReducer, useRef } from 'react';
 import type { HostCommand, ViewerEvent } from '@scoring/contract';
 import { DEFAULT_TOOL } from '../config';
-import { initialFormState, reducer, type Row } from './rows';
+import { FormActionType, RowStatus, initialFormState, reducer, type Row } from './rows';
 
 export interface UseScoringFormOptions {
   send: (command: HostCommand) => void;
@@ -22,17 +22,20 @@ export interface UseScoringFormResult {
   focus: (rowId: string) => void;
 }
 
-export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseScoringFormResult {
+export const useScoringForm = ({
+  send,
+  lastEvent,
+}: UseScoringFormOptions): UseScoringFormResult => {
   const [state, dispatch] = useReducer(reducer, initialFormState);
 
-  function addRow(): void {
+  const addRow = (): void => {
     // Host issues the row id (A-8): the row must exist, empty, before anything is armed.
-    dispatch({ type: 'ADD_ROW', rowId: crypto.randomUUID() });
-  }
+    dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID() });
+  };
 
-  function activate(rowId: string): void {
+  const activate = (rowId: string): void => {
     const previousArmedRowId = state.armedRowId;
-    dispatch({ type: 'ARM_ROW', rowId });
+    dispatch({ type: FormActionType.ArmRow, rowId });
     // Only one row can be armed at a time (A-4): tell the viewer to drop the previous one before
     // arming the new one, so the viewer's armed state never disagrees with the form's.
     if (previousArmedRowId !== null && previousArmedRowId !== rowId) {
@@ -51,47 +54,50 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
       // Single configurable constant (P-7): a tool swap edits config.ts only.
       toolName: DEFAULT_TOOL,
     });
-  }
+  };
 
-  function cancel(rowId: string): void {
-    dispatch({ type: 'DISARM_ROW', rowId });
+  const cancel = (rowId: string): void => {
+    dispatch({ type: FormActionType.DisarmRow, rowId });
     send({ version: 1, type: 'DEACTIVATE_TOOL', requestId: crypto.randomUUID(), rowId });
-  }
+  };
 
   // S-5.2 deletion, host -> viewer direction. Behaviour depends on the row's current status
   // (decided with the author): `done` has a real annotation to remove in the viewer; `drawing`
   // has nothing drawn yet but the tool is armed, so it is cancelled first, same as `cancel`;
   // `pending` has neither, so only the row itself goes away.
-  function remove(rowId: string): void {
+  const remove = (rowId: string): void => {
     const row = state.rows.find((candidate) => candidate.rowId === rowId);
     if (row === undefined) {
       return;
     }
-    if (row.status === 'done') {
+    if (row.status === RowStatus.Done) {
       // measurementUid is guaranteed non-null once a row is `done` (rows.ts: MEASUREMENT_RECEIVED
-      // sets both together).
-      const measurementUid = row.measurementUid as string;
+      // sets both together); narrowed explicitly instead of a non-null assertion.
+      if (row.measurementUid === null) {
+        return;
+      }
+      const measurementUid = row.measurementUid;
       const requestId = crypto.randomUUID();
       // A-10: record the requestId so the REMOVE_MEASUREMENT echo (MEASUREMENT_REMOVED with this
       // causedBy) is recognised and ignored below, instead of clearing the row a second time.
       issuedRemovalRequestIdsRef.current.add(requestId);
-      dispatch({ type: 'REMOVE_ROW', rowId });
+      dispatch({ type: FormActionType.RemoveRow, rowId });
       send({ version: 1, type: 'REMOVE_MEASUREMENT', requestId, rowId, measurementUid });
       return;
     }
-    if (row.status === 'drawing') {
+    if (row.status === RowStatus.Drawing) {
       send({ version: 1, type: 'DEACTIVATE_TOOL', requestId: crypto.randomUUID(), rowId });
     }
-    dispatch({ type: 'REMOVE_ROW', rowId });
-  }
+    dispatch({ type: FormActionType.RemoveRow, rowId });
+  };
 
   // S-5.3 focus, host -> viewer direction: a click only means anything for a `done` row, which is
   // the only status with a real annotation in the viewer to scroll/highlight to. No state change
   // on this side (canon: "highlights / scrolls to"), no reply expected, so there is nothing to
   // dispatch into the reducer here.
-  function focus(rowId: string): void {
+  const focus = (rowId: string): void => {
     const row = state.rows.find((candidate) => candidate.rowId === rowId);
-    if (row === undefined || row.status !== 'done' || row.measurementUid === null) {
+    if (row?.status !== RowStatus.Done || row.measurementUid === null) {
       return;
     }
     send({
@@ -101,7 +107,7 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
       rowId,
       measurementUid: row.measurementUid,
     });
-  }
+  };
 
   // Dedupe: `lastEvent` is a `useState`-style snapshot from the bridge, so a re-render that does
   // not carry a *new* event object must not reprocess the previous one. Compared by identity
@@ -122,7 +128,7 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
     // reload is gone from the viewer's memory. If a row is still armed on this side, re-send
     // ACTIVATE_TOOL for it. The first-ever VIEWER_READY does not need this: an activation clicked
     // before that point is still sitting in the bridge's queue and gets flushed automatically.
-    function processViewerReady(): void {
+    const processViewerReady = (): void => {
       readyCountRef.current += 1;
       if (readyCountRef.current <= 1 || state.armedRowId === null) {
         return;
@@ -138,9 +144,11 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
         rowId: armedRow.rowId,
         toolName: armedRow.toolName,
       });
-    }
+    };
 
-    function processMeasurementAdded(event: Extract<ViewerEvent, { type: 'MEASUREMENT_ADDED' }>): void {
+    const processMeasurementAdded = (
+      event: Extract<ViewerEvent, { type: 'MEASUREMENT_ADDED' }>,
+    ): void => {
       // A-8: a measurement drawn while nothing is armed (e.g. from the OHIF toolbar) arrives with
       // `rowId: null`. There is nowhere in the form to put it, so it is logged and dropped.
       if (event.rowId === null) {
@@ -152,41 +160,52 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
       // row (defence in depth, see rows.ts), so this branch never changes state either way. It is
       // still checked and logged here so the console shows *where* a stray event was decided to
       // be a no-op, instead of only "nothing happened" from the reducer's silent `return state`.
-      if (row === undefined || row.status !== 'drawing') {
-        console.warn('[form] measurement for a row that is not armed', event.rowId, event.measurementUid);
+      if (row?.status !== RowStatus.Drawing) {
+        console.warn(
+          '[form] measurement for a row that is not armed',
+          event.rowId,
+          event.measurementUid,
+        );
         return;
       }
       // No separate `uidToRowId` map kept on the host: the row already carries its own
       // `measurementUid` once done (A-8), and `MEASUREMENT_ADDED` supplies `rowId` directly, so
       // there is nothing this map would resolve that the reducer state does not already have.
       dispatch({
-        type: 'MEASUREMENT_RECEIVED',
+        type: FormActionType.MeasurementReceived,
         rowId: event.rowId,
         measurementUid: event.measurementUid,
         metrics: event.metrics,
       });
-    }
+    };
 
-    function processMeasurementUpdated(event: Extract<ViewerEvent, { type: 'MEASUREMENT_UPDATED' }>): void {
+    const processMeasurementUpdated = (
+      event: Extract<ViewerEvent, { type: 'MEASUREMENT_UPDATED' }>,
+    ): void => {
       const row = state.rows.find((candidate) => candidate.measurementUid === event.measurementUid);
       // Unknown uid is expected, not an error: it happens for a measurement drawn without an
       // armed row (the viewer's own MEASUREMENT_ADDED filter keeps those out of the form, so
       // there is no row to update here either). `console.debug`, not `warn`.
-      if (row === undefined || row.status !== 'done') {
-        console.debug('[form] update for a measurement not tracked by any row', event.measurementUid);
+      if (row?.status !== RowStatus.Done) {
+        console.debug(
+          '[form] update for a measurement not tracked by any row',
+          event.measurementUid,
+        );
         return;
       }
       // Q-4: this branch only dispatches into the local reducer and never calls `send`. That is
       // the invariant that makes a host -> viewer -> host echo loop impossible on this side (A-10):
       // there is no command this handler could issue that the viewer could echo back.
       dispatch({
-        type: 'MEASUREMENT_UPDATED',
+        type: FormActionType.MeasurementUpdated,
         measurementUid: event.measurementUid,
         metrics: event.metrics,
       });
-    }
+    };
 
-    function processMeasurementRemoved(event: Extract<ViewerEvent, { type: 'MEASUREMENT_REMOVED' }>): void {
+    const processMeasurementRemoved = (
+      event: Extract<ViewerEvent, { type: 'MEASUREMENT_REMOVED' }>,
+    ): void => {
       // Q-4 / A-10: this is the one place a viewer-originated MEASUREMENT_* event could be
       // mistaken for our own REMOVE_MEASUREMENT bouncing back. `causedBy` set to a requestId we
       // issued means it is the echo of our own command (the row was already removed by `remove`
@@ -197,17 +216,20 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
         return;
       }
       const row = state.rows.find((candidate) => candidate.measurementUid === event.measurementUid);
-      if (row === undefined || row.status !== 'done') {
+      if (row?.status !== RowStatus.Done) {
         // Unknown uid (never tracked, e.g. drawn without an armed row) or a row that is not
         // `done` (nothing to clear): expected, not an error.
-        console.debug('[form] removal for a measurement not tracked by any row', event.measurementUid);
+        console.debug(
+          '[form] removal for a measurement not tracked by any row',
+          event.measurementUid,
+        );
         return;
       }
       // No `send` here by construction (A-10): a viewer-originated removal only ever dispatches
       // into the local reducer, so it can never trigger a command that the viewer would echo
       // back - there is no loop for this handler to close.
-      dispatch({ type: 'MEASUREMENT_CLEARED', rowId: row.rowId });
-    }
+      dispatch({ type: FormActionType.MeasurementCleared, rowId: row.rowId });
+    };
 
     // Single entry point shared by all event types: dedupe above by object identity, branch by
     // `type` here. VIEWER_READY and MEASUREMENT_ADDED used to be handled by separate effects;
@@ -218,7 +240,7 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
       processMeasurementAdded(lastEvent);
     } else if (lastEvent.type === 'MEASUREMENT_UPDATED') {
       processMeasurementUpdated(lastEvent);
-    } else if (lastEvent.type === 'MEASUREMENT_REMOVED') {
+    } else {
       processMeasurementRemoved(lastEvent);
     }
     // No cleanup needed: this effect only reacts to a new `lastEvent` reference and never
@@ -226,4 +248,4 @@ export function useScoringForm({ send, lastEvent }: UseScoringFormOptions): UseS
   }, [lastEvent, state.armedRowId, state.rows, send]);
 
   return { rows: state.rows, addRow, activate, cancel, remove, focus };
-}
+};

@@ -2,6 +2,7 @@
 // any other unit (in practice px² — images without pixel spacing) gets its own line with a hint
 // explaining why it is not folded into the mm² sum, instead of being silently dropped or added in.
 
+import type { JSX } from 'react';
 import type { Total } from '../form/totals';
 import { formatMetric } from '../form/format';
 import { UI } from '../ui-strings';
@@ -10,13 +11,9 @@ export interface TotalsFooterProps {
   totals: Total[];
 }
 
-export function TotalsFooter({ totals }: TotalsFooterProps) {
+export const TotalsFooter = ({ totals }: TotalsFooterProps): JSX.Element => {
   if (totals.length === 0) {
-    return (
-      <div>
-        {UI.total}: —
-      </div>
-    );
+    return <div>{UI.total}: —</div>;
   }
 
   const mm2 = totals.find((total) => total.unit === 'mm2');
@@ -45,4 +42,4 @@ export function TotalsFooter({ totals }: TotalsFooterProps) {
       ))}
     </div>
   );
-}
+};

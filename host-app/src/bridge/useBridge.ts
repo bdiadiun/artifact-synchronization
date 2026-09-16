@@ -18,7 +18,7 @@ const INITIAL_STATE: BridgeState = { ready: false, queued: 0, lastEvent: null, i
 // StrictMode's mount-unmount-mount dev cycle this runs twice, but the cleanup from the first
 // mount tears its listener down before the second mount adds a new one, so exactly one
 // `message` listener is ever attached at a time.
-export function useBridge(iframeRef: RefObject<HTMLIFrameElement | null>): UseBridgeResult {
+export const useBridge = (iframeRef: RefObject<HTMLIFrameElement | null>): UseBridgeResult => {
   const [state, setState] = useState<BridgeState>(INITIAL_STATE);
   const bridgeRef = useRef<Bridge | null>(null);
 
@@ -42,12 +42,11 @@ export function useBridge(iframeRef: RefObject<HTMLIFrameElement | null>): UseBr
     };
     // `iframeRef` is a ref object with a stable identity across renders, and `VIEWER_ORIGIN` is
     // a module-level constant, so this effect intentionally runs once per mount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [iframeRef]);
 
-  function send(command: HostCommand): void {
+  const send = (command: HostCommand): void => {
     bridgeRef.current?.send(command);
-  }
+  };
 
   return { send, state };
-}
+};

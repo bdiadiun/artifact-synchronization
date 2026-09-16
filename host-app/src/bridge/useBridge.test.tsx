@@ -2,15 +2,15 @@
 // mount-unmount-mount cycle, which must still leave exactly one `message` listener attached.
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { StrictMode, useRef } from 'react';
+import { StrictMode, useRef, type JSX } from 'react';
 import { render, cleanup } from '@testing-library/react';
 import { useBridge } from './useBridge';
 
-function Harness() {
+const Harness = (): JSX.Element => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   useBridge(iframeRef);
   return <iframe ref={iframeRef} title="viewer" />;
-}
+};
 
 afterEach(() => {
   cleanup();

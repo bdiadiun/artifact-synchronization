@@ -1,5 +1,6 @@
-import type { KeyboardEvent } from 'react';
-import type { Row, RowStatus } from '../form/rows';
+import type { KeyboardEvent, JSX } from 'react';
+import type { Metric, Metrics } from '@scoring/contract';
+import { RowStatus, type Row } from '../form/rows';
 import { UI } from '../ui-strings';
 import { formatMetric } from '../form/format';
 
@@ -13,45 +14,56 @@ export interface MeasurementRowProps {
 }
 
 const STATUS_LABEL: Record<RowStatus, string> = {
-  pending: UI.statusPending,
-  drawing: UI.statusDrawing,
-  done: UI.statusDone,
+  [RowStatus.Pending]: UI.statusPending,
+  [RowStatus.Drawing]: UI.statusDrawing,
+  [RowStatus.Done]: UI.statusDone,
 };
 
 // Formats whichever metric the row has for display. `area` is the only metric the mandatory
 // part produces (C-4.3.6); if it is absent but the payload carries something else (P-8 —
 // perimeter, mean intensity, ...), that first metric is shown with its key so a future metric
 // type does not silently disappear from the row.
-function displayMetric(metrics: Row['metrics']): string | null {
+const displayMetric = (metrics: Row['metrics']): string | null => {
   if (metrics === null) {
     return null;
   }
-  if (metrics.area !== undefined) {
-    return formatMetric(metrics.area);
+  // `Metrics` is typed as `Record<string, Metric>`, so TS treats `area` as always present; at
+  // runtime it is optional (only the metrics the viewer actually sent exist), so the lookup is
+  // cast to `Partial` to keep this defensive check honest.
+  const area = (metrics as Partial<Metrics>).area;
+  if (area !== undefined) {
+    return formatMetric(area);
   }
-  const firstEntry = Object.entries(metrics)[0];
+  const firstEntry = Object.entries(metrics)[0] as [string, Metric] | undefined;
   if (firstEntry === undefined) {
     return null;
   }
   const [key, metric] = firstEntry;
   return `${key}: ${formatMetric(metric)}`;
-}
+};
 
 // Native elements, minimal grey styling (X-3: no design work required).
-export function MeasurementRow({ row, index, onActivate, onCancel, onRemove, onFocus }: MeasurementRowProps) {
-  const metricLabel = row.status === 'done' ? displayMetric(row.metrics) : null;
-  const focusable = row.status === 'done';
+export const MeasurementRow = ({
+  row,
+  index,
+  onActivate,
+  onCancel,
+  onRemove,
+  onFocus,
+}: MeasurementRowProps): JSX.Element => {
+  const metricLabel = row.status === RowStatus.Done ? displayMetric(row.metrics) : null;
+  const focusable = row.status === RowStatus.Done;
 
   // S-5.3: only a `done` row has a matching annotation in the viewer to focus. Clicking the row
   // body (not its buttons, see stopPropagation below) sends FOCUS_MEASUREMENT; other statuses are
   // not interactive, so no role/handlers are attached to them.
-  function handleRowClick(): void {
+  const handleRowClick = (): void => {
     if (focusable) {
       onFocus(row.rowId);
     }
-  }
+  };
 
-  function handleRowKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
+  const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     if (!focusable) {
       return;
     }
@@ -59,7 +71,7 @@ export function MeasurementRow({ row, index, onActivate, onCancel, onRemove, onF
       event.preventDefault();
       onFocus(row.rowId);
     }
-  }
+  };
 
   return (
     <div
@@ -80,8 +92,8 @@ export function MeasurementRow({ row, index, onActivate, onCancel, onRemove, onF
     >
       <span>#{index + 1}</span>
       <span style={{ color: '#666' }}>{STATUS_LABEL[row.status]}</span>
-      {row.status === 'done' && metricLabel !== null && <span>{metricLabel}</span>}
-      {row.status === 'pending' && (
+      {row.status === RowStatus.Done && metricLabel !== null && <span>{metricLabel}</span>}
+      {row.status === RowStatus.Pending && (
         <button
           type="button"
           onClick={(event) => {
@@ -92,7 +104,7 @@ export function MeasurementRow({ row, index, onActivate, onCancel, onRemove, onF
           {UI.activate}
         </button>
       )}
-      {row.status === 'drawing' && (
+      {row.status === RowStatus.Drawing && (
         <button
           type="button"
           onClick={(event) => {
@@ -118,4 +130,4 @@ export function MeasurementRow({ row, index, onActivate, onCancel, onRemove, onF
       {focusable && <span style={{ color: '#999', fontSize: '12px' }}>{UI.focusHint}</span>}
     </div>
   );
-}
+};

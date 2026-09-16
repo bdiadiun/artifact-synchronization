@@ -1,6 +1,6 @@
 /// <reference types="vitest/config" />
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -17,4 +17,4 @@ export default defineConfig({
     // host-app; its tests are included here explicitly so `npm run test` covers them too.
     include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/contract/src/**/*.test.ts'],
   },
-})
+});

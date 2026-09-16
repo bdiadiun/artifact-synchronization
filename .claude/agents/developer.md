@@ -8,11 +8,13 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 You implement exactly what the brief asks, in the files it names, and nothing else.
 
 Before writing code
+
 - Read `CLAUDE.md` and `docs/CONVENTIONS.md` in full, then the files the brief lists.
 - Read the decision records the brief cites; do not re-open decided questions. If the brief
   conflicts with a decision or with the code you find, stop and report instead of improvising.
 
 While writing
+
 - Arrow functions everywhere; string enums for app state, literal types in the wire contract;
   explicit return types on exports; `import type`; no `any`, no `!`, no `console.log`.
 - Every listener, subscription or timer has a paired cleanup.
@@ -21,6 +23,7 @@ While writing
 - New behaviour comes with targeted tests next to the code (pure logic and bridge behaviour only).
 
 Before reporting
+
 - Run every verification command in the brief and paste the tail of each; from the repository root
   `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test` must be green unless
   the brief says otherwise.

@@ -5,7 +5,7 @@
 // display happens in `format.ts`, not here, so the raw sums stay exact for any later consumer.
 
 import type { Metrics, Unit } from '@scoring/contract';
-import type { Row } from './rows';
+import { RowStatus, type Row } from './rows';
 
 export interface Total {
   unit: Unit;
@@ -18,7 +18,7 @@ export interface Total {
 // happens to arrive.
 const UNIT_ORDER: readonly Unit[] = ['mm2', 'px2'];
 
-function compareUnits(a: Unit, b: Unit): number {
+const compareUnits = (a: Unit, b: Unit): number => {
   const rankA = UNIT_ORDER.indexOf(a);
   const rankB = UNIT_ORDER.indexOf(b);
   if (rankA !== -1 || rankB !== -1) {
@@ -26,16 +26,19 @@ function compareUnits(a: Unit, b: Unit): number {
     return (rankA === -1 ? UNIT_ORDER.length : rankA) - (rankB === -1 ? UNIT_ORDER.length : rankB);
   }
   return a.localeCompare(b);
-}
+};
 
-export function computeTotals(rows: readonly Row[], metric: keyof Metrics = 'area'): Total[] {
+export const computeTotals = (rows: readonly Row[], metric: keyof Metrics = 'area'): Total[] => {
   const groups = new Map<Unit, { value: number; count: number }>();
 
   for (const row of rows) {
-    if (row.status !== 'done' || row.metrics === null) {
+    if (row.status !== RowStatus.Done || row.metrics === null) {
       continue;
     }
-    const entry = row.metrics[metric];
+    // `Metrics` is typed as `Record<string, Metric>`, so TS treats every key as present; at
+    // runtime a row only ever carries the metric keys the viewer actually sent (in practice just
+    // `area`), so the lookup is cast to `Partial` to keep this defensive check honest.
+    const entry = (row.metrics as Partial<Metrics>)[metric];
     if (entry === undefined) {
       continue;
     }
@@ -48,4 +51,4 @@ export function computeTotals(rows: readonly Row[], metric: keyof Metrics = 'are
   return Array.from(groups.entries())
     .map(([unit, { value, count }]) => ({ unit, value, count }))
     .sort((a, b) => compareUnits(a.unit, b.unit));
-}
+};

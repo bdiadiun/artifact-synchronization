@@ -31,7 +31,7 @@ import { join } from 'node:path';
 // CLI arguments
 // ---------------------------------------------------------------------------
 
-function parseArgs(argv) {
+const parseArgs = (argv) => {
   let root = process.cwd();
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--root' && argv[i + 1] !== undefined) {
@@ -40,7 +40,7 @@ function parseArgs(argv) {
     }
   }
   return { root };
-}
+};
 
 // ---------------------------------------------------------------------------
 // Canon parsing
@@ -49,27 +49,25 @@ function parseArgs(argv) {
 // Matches the exact "## Appendix A" heading that marks the start of the verbatim source text.
 const APPENDIX_HEADING_RE = /^## Appendix A/m;
 
-function loadCanonBody(canonText) {
+const loadCanonBody = (canonText) => {
   const match = APPENDIX_HEADING_RE.exec(canonText);
   return match ? canonText.slice(0, match.index) : canonText;
-}
+};
 
 // Matches a requirement ID of a given class, e.g. "C-4.3.5", "Q-1", "A-1". The class letter is
 // supplied by the caller as part of the character class so the same helper serves every check.
-function makeIdRegex(classLetters) {
-  return new RegExp(`\\b([${classLetters}])-(\\d+(?:\\.\\d+)*)\\b`, 'g');
-}
+const makeIdRegex = (classLetters) =>
+  new RegExp(`\\b([${classLetters}])-(\\d+(?:\\.\\d+)*)\\b`, 'g');
 
-function findIds(text, classLetters) {
+const findIds = (text, classLetters) => {
   const re = makeIdRegex(classLetters);
   const ids = new Set();
   let match;
-  // eslint-disable-next-line no-cond-assign
   while ((match = re.exec(text)) !== null) {
     ids.add(`${match[1]}-${match[2]}`);
   }
   return ids;
-}
+};
 
 // ---------------------------------------------------------------------------
 // Feature graph: Nodes table parsing
@@ -82,7 +80,7 @@ const NODES_HEADING_RE = /^## Nodes\s*$/m;
 // the table body.
 const TABLE_SEPARATOR_RE = /^\|\s*-{2,}/;
 
-function extractNodesTableLines(graphText) {
+const extractNodesTableLines = (graphText) => {
   const headingMatch = NODES_HEADING_RE.exec(graphText);
   if (!headingMatch) {
     throw new Error('Could not find "## Nodes" heading in FEATURE-GRAPH.md');
@@ -106,22 +104,22 @@ function extractNodesTableLines(graphText) {
     tableLines.push(trimmed);
   }
   return tableLines;
-}
+};
 
-function splitTableRow(line) {
-  // A markdown row "| a | b | c |" split into ["a", "b", "c"] by stripping the outer pipes and
-  // splitting on the remaining "|" characters. Cell contents in this table never contain a
-  // literal pipe character.
+// A markdown row "| a | b | c |" split into ["a", "b", "c"] by stripping the outer pipes and
+// splitting on the remaining "|" characters. Cell contents in this table never contain a
+// literal pipe character.
+const splitTableRow = (line) => {
   const inner = line.replace(/^\|/, '').replace(/\|$/, '');
   return inner.split('|').map((cell) => cell.trim());
-}
+};
 
 // Matches an "A-1..A-5" style range in a Canon cell: same class letter on both ends, plain
 // integers only (no sub-numbering), expanded before individual IDs are extracted.
 const RANGE_RE = /\b([A-Z])-(\d+)\.\.\1-(\d+)\b/g;
 
-function expandRanges(cellText) {
-  return cellText.replace(RANGE_RE, (_wholeMatch, letter, fromStr, toStr) => {
+const expandRanges = (cellText) =>
+  cellText.replace(RANGE_RE, (_wholeMatch, letter, fromStr, toStr) => {
     const from = Number.parseInt(fromStr, 10);
     const to = Number.parseInt(toStr, 10);
     const expanded = [];
@@ -130,24 +128,23 @@ function expandRanges(cellText) {
     }
     return expanded.join(', ');
   });
-}
 
-function extractCanonIdsFromCell(cellText) {
+const extractCanonIdsFromCell = (cellText) => {
   const expanded = expandRanges(cellText);
   return Array.from(findIds(expanded, 'CQSDXPA'));
-}
+};
 
 // Matches a graph node ID such as "F-00" or "F-13".
 const NODE_ID_RE = /\bF-\d+\b/g;
 
-function extractNodeIdsFromCell(cellText) {
+const extractNodeIdsFromCell = (cellText) => {
   const matches = cellText.match(NODE_ID_RE);
   return matches ? Array.from(new Set(matches)) : [];
-}
+};
 
 const VALID_STATUSES = new Set(['planned', 'approved', 'in-progress', 'review', 'done']);
 
-function parseNodesTable(graphText) {
+const parseNodesTable = (graphText) => {
   const lines = extractNodesTableLines(graphText);
   const rows = [];
   for (const line of lines) {
@@ -167,7 +164,7 @@ function parseNodesTable(graphText) {
     });
   }
   return rows;
-}
+};
 
 // ---------------------------------------------------------------------------
 // Feature graph: mermaid block parsing
@@ -176,19 +173,19 @@ function parseNodesTable(graphText) {
 // Matches the fenced ```mermaid ... ``` block.
 const MERMAID_BLOCK_RE = /```mermaid\n([\s\S]*?)```/;
 
-function extractMermaidBlock(graphText) {
+const extractMermaidBlock = (graphText) => {
   const match = MERMAID_BLOCK_RE.exec(graphText);
   if (!match) {
     throw new Error('Could not find a ```mermaid block in FEATURE-GRAPH.md');
   }
   return match[1];
-}
+};
 
 // Matches a node label declaration line, e.g. "  F00[F-00 Canon and graph]", capturing the
 // short mermaid id ("F00") and the full node id used in the label text ("F-00").
 const LABEL_LINE_RE = /^\s*([A-Za-z0-9_]+)\[(F-\d+)\b/;
 
-function parseMermaidLabels(mermaidText) {
+const parseMermaidLabels = (mermaidText) => {
   const labels = new Map(); // short id -> full node id
   for (const line of mermaidText.split('\n')) {
     const match = LABEL_LINE_RE.exec(line);
@@ -197,9 +194,9 @@ function parseMermaidLabels(mermaidText) {
     }
   }
   return labels;
-}
+};
 
-function parseMermaidEdges(mermaidText, labels) {
+const parseMermaidEdges = (mermaidText, labels) => {
   const edges = new Set();
   for (const line of mermaidText.split('\n')) {
     if (!line.includes('-->')) continue;
@@ -217,17 +214,17 @@ function parseMermaidEdges(mermaidText, labels) {
     }
   }
   return edges;
-}
+};
 
 // ---------------------------------------------------------------------------
 // Checks
 // ---------------------------------------------------------------------------
 
-function report(results, ok, message) {
+const report = (results, ok, message) => {
   results.push({ ok, message });
-}
+};
 
-function checkCoverage(results, canonBody, rows) {
+const checkCoverage = (results, canonBody, rows) => {
   const requiredIds = findIds(canonBody, 'CQD');
   const coveredIds = new Set();
   for (const row of rows) {
@@ -238,11 +235,15 @@ function checkCoverage(results, canonBody, rows) {
   if (missing.length === 0) {
     report(results, true, 'Coverage: every C-/Q-/D- canon ID appears in the graph.');
   } else {
-    report(results, false, `Coverage: missing canon IDs not present in any node: ${missing.join(', ')}`);
+    report(
+      results,
+      false,
+      `Coverage: missing canon IDs not present in any node: ${missing.join(', ')}`,
+    );
   }
-}
+};
 
-function checkUnknownIds(results, canonBody, rows) {
+const checkUnknownIds = (results, canonBody, rows) => {
   const knownIds = findIds(canonBody, 'CQSDXPA');
   const unknown = new Set();
   for (const row of rows) {
@@ -252,22 +253,34 @@ function checkUnknownIds(results, canonBody, rows) {
   }
   const list = Array.from(unknown).sort();
   if (list.length === 0) {
-    report(results, true, 'Unknown IDs: every canon ID referenced in the graph exists in the canon.');
+    report(
+      results,
+      true,
+      'Unknown IDs: every canon ID referenced in the graph exists in the canon.',
+    );
   } else {
-    report(results, false, `Unknown IDs: referenced in the graph but not found in the canon: ${list.join(', ')}`);
+    report(
+      results,
+      false,
+      `Unknown IDs: referenced in the graph but not found in the canon: ${list.join(', ')}`,
+    );
   }
-}
+};
 
-function checkNonEmptyCanon(results, rows) {
+const checkNonEmptyCanon = (results, rows) => {
   const empty = rows.filter((row) => row.canonIds.length === 0).map((row) => row.node);
   if (empty.length === 0) {
     report(results, true, 'Non-empty canon: every node row lists at least one canon ID.');
   } else {
-    report(results, false, `Non-empty canon: nodes with an empty Canon column: ${empty.join(', ')}`);
+    report(
+      results,
+      false,
+      `Non-empty canon: nodes with an empty Canon column: ${empty.join(', ')}`,
+    );
   }
-}
+};
 
-function checkDependenciesExist(results, rows) {
+const checkDependenciesExist = (results, rows) => {
   const knownNodes = new Set(rows.map((row) => row.node));
   const missing = new Set();
   for (const row of rows) {
@@ -279,11 +292,15 @@ function checkDependenciesExist(results, rows) {
   if (list.length === 0) {
     report(results, true, 'Dependencies exist: every Depends-on value is a known node.');
   } else {
-    report(results, false, `Dependencies exist: unknown nodes referenced as dependencies: ${list.join(', ')}`);
+    report(
+      results,
+      false,
+      `Dependencies exist: unknown nodes referenced as dependencies: ${list.join(', ')}`,
+    );
   }
-}
+};
 
-function checkNoCycles(results, rows) {
+const checkNoCycles = (results, rows) => {
   const depsByNode = new Map(rows.map((row) => [row.node, row.depends]));
   const WHITE = 0;
   const GRAY = 1;
@@ -291,7 +308,7 @@ function checkNoCycles(results, rows) {
   const color = new Map(rows.map((row) => [row.node, WHITE]));
   const cycleNodes = [];
 
-  function visit(node, stack) {
+  const visit = (node, stack) => {
     color.set(node, GRAY);
     stack.push(node);
     for (const dep of depsByNode.get(node) ?? []) {
@@ -305,7 +322,7 @@ function checkNoCycles(results, rows) {
     }
     stack.pop();
     color.set(node, BLACK);
-  }
+  };
 
   for (const row of rows) {
     if (color.get(row.node) === WHITE) visit(row.node, []);
@@ -316,9 +333,9 @@ function checkNoCycles(results, rows) {
   } else {
     report(results, false, `No cycles: cycle(s) detected: ${cycleNodes.join(' | ')}`);
   }
-}
+};
 
-function tableEdgesFromRows(rows) {
+const tableEdgesFromRows = (rows) => {
   const edges = new Set();
   for (const row of rows) {
     for (const dep of row.depends) {
@@ -326,37 +343,53 @@ function tableEdgesFromRows(rows) {
     }
   }
   return edges;
-}
+};
 
-function checkTableDiagramConsistency(results, tableEdges, diagramEdges) {
-  const onlyInTable = Array.from(tableEdges).filter((edge) => !diagramEdges.has(edge)).sort();
-  const onlyInDiagram = Array.from(diagramEdges).filter((edge) => !tableEdges.has(edge)).sort();
+const checkTableDiagramConsistency = (results, tableEdges, diagramEdges) => {
+  const onlyInTable = Array.from(tableEdges)
+    .filter((edge) => !diagramEdges.has(edge))
+    .sort();
+  const onlyInDiagram = Array.from(diagramEdges)
+    .filter((edge) => !tableEdges.has(edge))
+    .sort();
   if (onlyInTable.length === 0 && onlyInDiagram.length === 0) {
-    report(results, true, 'Table/diagram consistency: edges match between the table and the mermaid block.');
+    report(
+      results,
+      true,
+      'Table/diagram consistency: edges match between the table and the mermaid block.',
+    );
   } else {
     const parts = [];
     if (onlyInTable.length > 0) parts.push(`only in table: ${onlyInTable.join(', ')}`);
     if (onlyInDiagram.length > 0) parts.push(`only in diagram: ${onlyInDiagram.join(', ')}`);
     report(results, false, `Table/diagram consistency: mismatch (${parts.join('; ')})`);
   }
-}
+};
 
-function checkNodeLabelParity(results, rows, labels) {
+const checkNodeLabelParity = (results, rows, labels) => {
   const tableNodes = new Set(rows.map((row) => row.node));
   const diagramNodes = new Set(labels.values());
-  const onlyInTable = Array.from(tableNodes).filter((n) => !diagramNodes.has(n)).sort();
-  const onlyInDiagram = Array.from(diagramNodes).filter((n) => !tableNodes.has(n)).sort();
+  const onlyInTable = Array.from(tableNodes)
+    .filter((n) => !diagramNodes.has(n))
+    .sort();
+  const onlyInDiagram = Array.from(diagramNodes)
+    .filter((n) => !tableNodes.has(n))
+    .sort();
   if (onlyInTable.length === 0 && onlyInDiagram.length === 0) {
-    report(results, true, 'Node/label parity: every table node has a mermaid label and vice versa.');
+    report(
+      results,
+      true,
+      'Node/label parity: every table node has a mermaid label and vice versa.',
+    );
   } else {
     const parts = [];
     if (onlyInTable.length > 0) parts.push(`table only: ${onlyInTable.join(', ')}`);
     if (onlyInDiagram.length > 0) parts.push(`diagram only: ${onlyInDiagram.join(', ')}`);
     report(results, false, `Node/label parity: mismatch (${parts.join('; ')})`);
   }
-}
+};
 
-function checkStatusValues(results, rows) {
+const checkStatusValues = (results, rows) => {
   const invalid = rows
     .filter((row) => !VALID_STATUSES.has(row.status))
     .map((row) => `${row.node}=${row.status}`);
@@ -365,9 +398,9 @@ function checkStatusValues(results, rows) {
   } else {
     report(results, false, `Status values: unrecognised status values: ${invalid.join(', ')}`);
   }
-}
+};
 
-function checkDependencyGating(results, rows) {
+const checkDependencyGating = (results, rows) => {
   const statusByNode = new Map(rows.map((row) => [row.node, row.status]));
   const violations = [];
   for (const row of rows) {
@@ -388,13 +421,13 @@ function checkDependencyGating(results, rows) {
   } else {
     report(results, false, `Dependency gating: violations: ${violations.join('; ')}`);
   }
-}
+};
 
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
-function main() {
+const main = () => {
   const { root } = parseArgs(process.argv.slice(2));
 
   const canonText = readFileSync(join(root, 'docs/CANON.md'), 'utf8');
@@ -426,6 +459,6 @@ function main() {
 
   console.log(`\n${results.length - failures}/${results.length} checks passed.`);
   process.exit(failures === 0 ? 0 : 1);
-}
+};
 
 main();

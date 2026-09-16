@@ -11,7 +11,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: UI.appTitle })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: UI.addMeasurement })).toBeInTheDocument();
 
-    const iframe = screen.getByTitle(UI.viewerFrameTitle) as HTMLIFrameElement;
+    const iframe = screen.getByTitle<HTMLIFrameElement>(UI.viewerFrameTitle);
     expect(iframe.src).toBe(viewerUrl());
 
     expect(screen.getByText(new RegExp(UI.bridgeNotReady))).toBeInTheDocument();
