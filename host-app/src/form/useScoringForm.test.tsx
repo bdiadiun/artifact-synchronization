@@ -5,8 +5,9 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, renderHook } from '@testing-library/react';
-import type { MeasurementAddedEvent, ViewerEvent } from '@scoring/contract';
+import type { MeasurementAddedEvent, MeasurementUpdatedEvent, ViewerEvent } from '@scoring/contract';
 import { DEFAULT_TOOL } from '../config';
+import { computeTotals } from './totals';
 import { useScoringForm } from './useScoringForm';
 
 afterEach(() => {
@@ -21,6 +22,20 @@ function measurementAdded(rowId: string | null, overrides: Partial<MeasurementAd
     measurementUid: 'uid-1',
     toolName: 'EllipticalROI',
     metrics: { area: { value: 124.5, unit: 'mm2' } },
+    ...overrides,
+  };
+}
+
+function measurementUpdated(
+  measurementUid: string,
+  overrides: Partial<MeasurementUpdatedEvent> = {},
+): MeasurementUpdatedEvent {
+  return {
+    version: 1,
+    type: 'MEASUREMENT_UPDATED',
+    measurementUid,
+    toolName: 'EllipticalROI',
+    metrics: { area: { value: 200, unit: 'mm2' } },
     ...overrides,
   };
 }
@@ -132,5 +147,53 @@ describe('useScoringForm', () => {
     act(() => rerender({ lastEvent: event }));
     const rowAfterSecond = result.current.rows.find((r) => r.rowId === rowId);
     expect(rowAfterSecond).toBe(rowAfterFirst);
+  });
+
+  it('MEASUREMENT_UPDATED for a done row changes the displayed metrics and the totals input', () => {
+    const send = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => result.current.addRow());
+    const rowId = result.current.rows[0]!.rowId;
+    act(() => result.current.activate(rowId));
+    act(() => rerender({ lastEvent: measurementAdded(rowId) }));
+
+    expect(computeTotals(result.current.rows)).toEqual([{ unit: 'mm2', value: 124.5, count: 1 }]);
+
+    const updated = measurementUpdated('uid-1', { metrics: { area: { value: 200, unit: 'mm2' } } });
+    act(() => rerender({ lastEvent: updated }));
+
+    const row = result.current.rows.find((r) => r.rowId === rowId);
+    expect(row?.metrics).toEqual(updated.metrics);
+    expect(computeTotals(result.current.rows)).toEqual([{ unit: 'mm2', value: 200, count: 1 }]);
+  });
+
+  it('MEASUREMENT_UPDATED never triggers send (Q-4: no echo loop on the host side)', () => {
+    const send = vi.fn();
+    const debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
+    const { result, rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => result.current.addRow());
+    const rowId = result.current.rows[0]!.rowId;
+    act(() => result.current.activate(rowId));
+    act(() => rerender({ lastEvent: measurementAdded(rowId) }));
+    send.mockClear();
+
+    act(() => rerender({ lastEvent: measurementUpdated('uid-1') }));
+    expect(send).not.toHaveBeenCalled();
+
+    // Also verify the "unknown uid" path, expected for measurements drawn without arming: still
+    // no send, and it logs via `console.debug`, not `console.warn`.
+    act(() => rerender({ lastEvent: measurementUpdated('ghost-uid') }));
+    expect(send).not.toHaveBeenCalled();
+    expect(debugSpy).toHaveBeenCalled();
+
+    debugSpy.mockRestore();
   });
 });

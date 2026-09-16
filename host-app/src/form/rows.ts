@@ -27,7 +27,10 @@ export type FormAction =
   | { type: 'DISARM_ROW'; rowId: string }
   // Wired to the bridge in a later slice (viewer -> host measurement flow); the reducer rule is
   // implemented now so it does not have to change when that wiring lands.
-  | { type: 'MEASUREMENT_RECEIVED'; rowId: string; measurementUid: string; metrics: Metrics };
+  | { type: 'MEASUREMENT_RECEIVED'; rowId: string; measurementUid: string; metrics: Metrics }
+  // S-5.1 live update: matched by `measurementUid` (not `rowId` - the viewer does not know it),
+  // and only applied to a `done` row, since that is the only status a measurementUid is bound to.
+  | { type: 'MEASUREMENT_UPDATED'; measurementUid: string; metrics: Metrics };
 
 export const initialFormState: FormState = { rows: [], armedRowId: null };
 
@@ -90,6 +93,17 @@ export function reducer(state: FormState, action: FormAction): FormState {
       );
       const armedRowId = state.armedRowId === action.rowId ? null : state.armedRowId;
       return { rows, armedRowId };
+    }
+
+    case 'MEASUREMENT_UPDATED': {
+      const target = state.rows.find((row) => row.measurementUid === action.measurementUid);
+      if (!target || target.status !== 'done') {
+        return state;
+      }
+      const rows = state.rows.map((row) =>
+        row.measurementUid === action.measurementUid ? { ...row, metrics: action.metrics } : row,
+      );
+      return { ...state, rows };
     }
 
     default:
