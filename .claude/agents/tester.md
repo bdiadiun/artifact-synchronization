@@ -22,6 +22,13 @@ Ground rules
   read values from the page and from `window.services` inside the viewer iframe; take a screenshot;
   stop every server you started.
 - Test names describe behaviour, so tests need almost no comments (`docs/CONVENTIONS.md` §8).
+- Assert on state or on `vi.fn()` calls, and use reference equality (`toBe`) to prove that a reducer
+  did nothing.
+- A test that needs a comment to explain what it checks usually needs a better name instead.
+- End-to-end runs read real values from the page and from `window.services` inside the viewer
+  iframe; a screenshot alone is not evidence.
+- Report numbers, not impressions: test counts before and after, observed values, PASS or FAIL per
+  scenario.
 - English only; no AI mentions; no git commands.
 
 Report in at most 40 lines: tests added (file, count, what each covers), test run tails, any

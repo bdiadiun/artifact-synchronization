@@ -32,6 +32,8 @@ and the linter disagree, fix the linter config in the same PR and say so.
   in one module) and carries a comment saying so.
 - Exported functions declare their return type explicitly. Internal helpers may infer.
 - Prefer small named helpers over long inline lambdas; a callback longer than ~5 lines gets a name.
+- A `switch` over an action, message or status type keeps its `default` branch narrowing to `never`,
+  so a new case added to the type fails the type check instead of being silently ignored.
 
 ## 3. Enums, literals and constants
 
@@ -123,6 +125,8 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
   e.g. `rowStyle(focusable)` returning `styles.row` merged with `styles.rowClickable`. A component without props or styles does not need the file.
 - Types shared by several components live with the module that owns them (e.g. `Row` in
   `form/rows.ts`), not in a component's `.props.ts`.
+- JSX handlers stay inline only while they are one expression; anything longer becomes a named
+  `handleX` arrow in the component body.
 - User-visible strings come from `ui-strings.ts` (A-7); no literals in JSX.
 
 ## 7. Errors, logging and defensive code
@@ -179,6 +183,11 @@ Rules:
 ## 10. Git and review
 
 - Conventional Commits, English, no trailers, no AI mentions (CLAUDE.md §4).
+- Generated files are never edited by hand and are committed with their source in the same commit:
+  `docs/FEATURE-GRAPH.md` from `docs/feature-graph.json` (`npm run graph:build`),
+  `docs/site/index.html` (`npm run docs:build`), and the extension's `contract/messages.ts` copied
+  from `packages/contract/src/messages.ts` (`npm run check:contract`). CI fails when any of them is
+  stale.
 - A PR is one slice; its description follows the template in CLAUDE.md and cites canon IDs.
 - `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test`, `npm run check:graph`,
   `npm run check:contract` all pass before gate 2. A PR that changes docs also runs

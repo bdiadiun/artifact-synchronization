@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                          |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 18 `docs: feature graph as JSON` (branch `docs/feature-graph-json`, node F-28)                                                                                                                 |
-| Gate           | 2 — `docs/feature-graph.json` is the source (29 nodes, 21 slices, files and generated imports); `FEATURE-GRAPH.md` generated; `check:graph` 15/15; awaiting result approval                    |
-| Last merged PR | #19 `refactor: component props files and test folders`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#9 merged into `scoring` |
-| Next slice     | Not planned yet                                                                                                                                                                                |
+| Field          | Value                                                                                                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 19 `docs: agent style rules` (branch `docs/agent-style-rules`, node F-29)                                                                                                 |
+| Gate           | 2 — style rules from slices 12–18 recorded in CONVENTIONS and the role files; awaiting result approval                                                                    |
+| Last merged PR | #20 `docs: feature graph as JSON`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#9 merged into `scoring` |
+| Next slice     | Not planned yet                                                                                                                                                           |
 
 ## Open decisions (see CANON.md → Decisions)
 

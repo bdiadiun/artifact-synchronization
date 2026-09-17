@@ -38,48 +38,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-25 | Final documentation pass: defence pointers after the refactor, AI usage for all slices, README for bonus features, video script                   | D-5, D-6, D-7, D-8, P-1, P-2, P-3, P-4, P-5, P-6, P-7, P-8, P-9 | F-12, F-24       | 15    | done    | Every `file:line` pointer in DEFENCE.md resolves to the cited symbol; AI-USAGE covers slices 0–15; README describes all implemented bonuses; clean-clone run of README succeeds.                                                   |
 | F-26 | Trim comments to a non-obvious why; comment rules made measurable                                                                                 | A-13, Q-7                                                       | F-25             | 16    | done    | Comment lines ≤ ~10% of non-blank lines per file; no behaviour change (all checks and end-to-end green); every removed rationale that matters is present in `docs/decisions/`, ARCHITECTURE or DEFENCE; DEFENCE links re-verified. |
 | F-27 | Component file layout: `{Name}.props.ts` for types, interfaces and styles; tests in `__tests__/` folders; lint rule against inline style literals | A-13, Q-7                                                       | F-26             | 17    | done    | Every component with props or styles has a sibling `.props.ts`; no `style={{…}}` literals (lint); every test file sits in a `__tests__/` folder next to its module; lint, typecheck, 89 tests and end-to-end unchanged.            |
-| F-28 | Feature graph as JSON                                                                                                                             | D-3, D-6, Q-7                                                   | F-27             | 18    | review  | `npm run graph:build` is idempotent; `npm run check:graph` passes and fails on a missing file, a hand edit of FEATURE-GRAPH.md or a stale import list.                                                                             |
+| F-28 | Feature graph as JSON                                                                                                                             | D-3, D-6, Q-7                                                   | F-27             | 18    | done    | `npm run graph:build` is idempotent; `npm run check:graph` passes and fails on a missing file, a hand edit of FEATURE-GRAPH.md or a stale import list.                                                                             |
+| F-29 | Style rules from recent slices recorded for agents                                                                                                | A-13, D-3, Q-7                                                  | F-28             | 19    | review  | Role files and CONVENTIONS agree; npm run format:check and check:graph pass.                                                                                                                                                       |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                               |
-| ------- | ---------------------------------------- |
-| C-3.1   | F-05, F-06                               |
-| C-3.2   | F-05                                     |
-| C-3.3   | F-01                                     |
-| C-3.4   | F-05, F-09                               |
-| C-4.1.1 | F-04                                     |
-| C-4.1.2 | F-04                                     |
-| C-4.1.3 | F-02, F-04                               |
-| C-4.2.1 | F-01                                     |
-| C-4.2.2 | F-02                                     |
-| C-4.2.3 | F-01                                     |
-| C-4.3.1 | F-07                                     |
-| C-4.3.2 | F-07                                     |
-| C-4.3.3 | F-08                                     |
-| C-4.3.4 | F-09                                     |
-| C-4.3.5 | F-09, F-10                               |
-| C-4.3.6 | F-09, F-10                               |
-| C-4.3.7 | F-07                                     |
-| C-4.3.8 | F-11                                     |
-| C-4.4.1 | F-03, F-08                               |
-| C-4.4.2 | F-03, F-15, F-16                         |
-| C-4.4.3 | F-03                                     |
-| Q-1     | F-06                                     |
-| Q-2     | F-05, F-06                               |
-| Q-3     | F-07, F-08, F-09                         |
-| Q-4     | F-14, F-15                               |
-| Q-5     | F-05, F-06                               |
-| Q-6     | F-09, F-10, F-11                         |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28 |
-| D-1     | F-04                                     |
-| D-2     | F-00, F-20                               |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28       |
-| D-4     | F-00, F-24                               |
-| D-5     | F-12, F-20, F-24, F-25                   |
-| D-6     | F-00, F-12, F-21, F-25, F-28             |
-| D-7     | F-12, F-25                               |
-| D-8     | F-13, F-25                               |
+| ID      | Covered by                                     |
+| ------- | ---------------------------------------------- |
+| C-3.1   | F-05, F-06                                     |
+| C-3.2   | F-05                                           |
+| C-3.3   | F-01                                           |
+| C-3.4   | F-05, F-09                                     |
+| C-4.1.1 | F-04                                           |
+| C-4.1.2 | F-04                                           |
+| C-4.1.3 | F-02, F-04                                     |
+| C-4.2.1 | F-01                                           |
+| C-4.2.2 | F-02                                           |
+| C-4.2.3 | F-01                                           |
+| C-4.3.1 | F-07                                           |
+| C-4.3.2 | F-07                                           |
+| C-4.3.3 | F-08                                           |
+| C-4.3.4 | F-09                                           |
+| C-4.3.5 | F-09, F-10                                     |
+| C-4.3.6 | F-09, F-10                                     |
+| C-4.3.7 | F-07                                           |
+| C-4.3.8 | F-11                                           |
+| C-4.4.1 | F-03, F-08                                     |
+| C-4.4.2 | F-03, F-15, F-16                               |
+| C-4.4.3 | F-03                                           |
+| Q-1     | F-06                                           |
+| Q-2     | F-05, F-06                                     |
+| Q-3     | F-07, F-08, F-09                               |
+| Q-4     | F-14, F-15                                     |
+| Q-5     | F-05, F-06                                     |
+| Q-6     | F-09, F-10, F-11                               |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29 |
+| D-1     | F-04                                           |
+| D-2     | F-00, F-20                                     |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29       |
+| D-4     | F-00, F-24                                     |
+| D-5     | F-12, F-20, F-24, F-25                         |
+| D-6     | F-00, F-12, F-21, F-25, F-28                   |
+| D-7     | F-12, F-25                                     |
+| D-8     | F-13, F-25                                     |
 
 ## Diagram
 
@@ -114,6 +115,7 @@ graph TD
   F26["F-26 Trim comments to a non-obvious why; comment rules made measurable"]
   F27["F-27 Component file layout: {Name}.props.ts for types, interfaces and styles; tests in __tests__/ folders; lint rule against inline style literals"]
   F28["F-28 Feature graph as JSON"]
+  F29["F-29 Style rules from recent slices recorded for agents"]
 
   F20 --> F01
   F01 --> F02
@@ -148,6 +150,7 @@ graph TD
   F25 --> F26
   F26 --> F27
   F27 --> F28
+  F28 --> F29
 ```
 
 ## Slice → nodes
@@ -175,6 +178,7 @@ graph TD
 | 17 — refactor: component props files and test folders | `refactor/component-props-and-test-folders` | #19 | F-27                   |
 | 18 — docs: feature graph as JSON                      | `docs/feature-graph-json`                   | —   | F-28                   |
 | later — bonus nodes not yet scheduled                 | one branch per bonus node                   | —   | F-17, F-19             |
+| 19 — docs: agent style rules                          | `docs/agent-style-rules`                    | —   | F-29                   |
 
 ## Node details
 
@@ -591,7 +595,7 @@ Files:
 
 `docs/feature-graph.json` becomes the single source of truth of the feature graph, with a description, canon IDs, dependencies, slice, status, verification and implementing files per node. `scripts/graph.mjs build` scans the imports of those files and generates `docs/FEATURE-GRAPH.md` (tables, per-node sections, Mermaid diagram); `check` validates the graph invariants and the freshness of both outputs in CI.
 
-Canon: D-3, D-6, Q-7. Depends on: F-27. Slice 18, status `review`.
+Canon: D-3, D-6, Q-7. Depends on: F-27. Slice 18, status `done`.
 
 Files:
 
@@ -604,3 +608,16 @@ Files:
 - `docs/site/index.html`
 - `package.json`
 - `scripts/graph.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`
+
+### F-29 Style rules from recent slices recorded for agents
+
+Consolidates the conventions that emerged while refactoring (function style, enums, comments, component props files, test folders, generated files, dependency placement, verification set) into docs/CONVENTIONS.md and the .claude/agents role files, so every delegated task starts from the same rules.
+
+Canon: A-13, D-3, Q-7. Depends on: F-28. Slice 19, status `review`.
+
+Files:
+
+- `.claude/agents/architect.md`
+- `.claude/agents/developer.md`
+- `.claude/agents/tester.md`
+- `docs/CONVENTIONS.md`

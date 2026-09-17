@@ -125,6 +125,11 @@
       "id": "later",
       "title": "bonus nodes not yet scheduled",
       "branch": "one branch per bonus node"
+    },
+    {
+      "id": "19",
+      "title": "docs: agent style rules",
+      "branch": "docs/agent-style-rules"
     }
   ],
   "nodes": [
@@ -1243,7 +1248,7 @@
       "canon": ["D-3", "D-6", "Q-7"],
       "dependsOn": ["F-27"],
       "slice": "18",
-      "status": "review",
+      "status": "done",
       "verify": "`npm run graph:build` is idempotent; `npm run check:graph` passes and fails on a missing file, a hand edit of FEATURE-GRAPH.md or a stale import list.",
       "files": [
         ".claude/agents/architect.md",
@@ -1262,6 +1267,23 @@
           "external": ["node:child_process", "node:fs", "node:path", "node:url"]
         }
       }
+    },
+    {
+      "id": "F-29",
+      "name": "Style rules from recent slices recorded for agents",
+      "description": "Consolidates the conventions that emerged while refactoring (function style, enums, comments, component props files, test folders, generated files, dependency placement, verification set) into docs/CONVENTIONS.md and the .claude/agents role files, so every delegated task starts from the same rules.",
+      "canon": ["A-13", "D-3", "Q-7"],
+      "dependsOn": ["F-28"],
+      "slice": "19",
+      "status": "review",
+      "verify": "Role files and CONVENTIONS agree; npm run format:check and check:graph pass.",
+      "files": [
+        ".claude/agents/architect.md",
+        ".claude/agents/developer.md",
+        ".claude/agents/tester.md",
+        "docs/CONVENTIONS.md"
+      ],
+      "imports": {}
     }
   ]
 }

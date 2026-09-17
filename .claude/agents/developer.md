@@ -28,12 +28,33 @@ While writing
 - User-visible strings go through `ui-strings.ts` (Ukrainian); code and comments are English.
 - New behaviour comes with targeted tests in the `__tests__/` folder next to the code (pure logic and
   bridge behaviour only).
+- JSX handlers stay inline only while they are one expression; anything longer becomes a named
+  `handleX` arrow in the component body.
+- Reducers and pure helpers return the same object reference when nothing changes, and a `switch`
+  over an action or message type keeps its `default` branch so an unhandled case fails the type
+  check.
+- Magic values get a named module constant with a one-line reason (`UPDATE_INTERVAL_MS = 100`),
+  never a literal inside a call.
+- Dependencies: runtime dependencies belong to the workspace that uses them, shared test tooling to
+  the root `package.json`. After changing any dependency, verify with a clean `npm ci`, not a warm
+  `node_modules`.
+- Generated files are never edited by hand: `docs/FEATURE-GRAPH.md` comes from
+  `docs/feature-graph.json` via `npm run graph:build`, `docs/site/index.html` from
+  `npm run docs:build`, and the extension's `contract/messages.ts` is a copy of
+  `packages/contract/src/messages.ts` checked by `npm run check:contract`. Change the source, then
+  regenerate and commit the result.
+- A change to `packages/contract` is additive whenever possible: new message types keep
+  `version: 1`, existing shapes stay untouched, and both sides ship in the same slice.
 
 Before reporting
 
-- Run every verification command in the brief and paste the tail of each; from the repository root
-  `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test` must be green unless
-  the brief says otherwise.
+- Run every verification command in the brief and paste the tail of each. From the repository root
+  the full set is `npm run format:check`, `lint`, `lint:fork`, `typecheck`, `test`,
+  `build --workspace host-app`, `check:graph`, `check:contract`, `docs:build`; all must be green
+  unless the brief says otherwise. Work in the fork also needs `npm run lint:fork` and the fork's
+  Prettier.
+- Measure what the brief asks you to measure (comment ratio, test count, lint findings) before and
+  after, and report both numbers instead of claiming an improvement.
 - Do not run git in the main repository. In the OHIF fork (`viewer/`) you may branch, commit and
   push only when the brief says so, with the user's identity, Conventional Commits, no trailers, no
   AI mentions.
