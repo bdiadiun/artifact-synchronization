@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatMetric } from './format';
+import { formatMetric } from '../format';
 
 describe('formatMetric', () => {
   it('renders mm2 with the mm² glyph and 1 decimal', () => {

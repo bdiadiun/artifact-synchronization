@@ -119,7 +119,8 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
   ```
 
 - No inline style object literals in JSX (`style={{ … }}`); reference `styles.<key>` from the
-  `.props.ts` file (lint rule). A component without props or styles does not need the file.
+  `.props.ts` file (lint rule). A style that depends on state is a small function in the same file,
+  e.g. `rowStyle(focusable)` returning `styles.row` merged with `styles.rowClickable`. A component without props or styles does not need the file.
 - Types shared by several components live with the module that owns them (e.g. `Row` in
   `form/rows.ts`), not in a component's `.props.ts`.
 - User-visible strings come from `ui-strings.ts` (A-7); no literals in JSX.

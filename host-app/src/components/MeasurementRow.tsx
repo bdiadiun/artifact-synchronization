@@ -3,15 +3,7 @@ import type { Metric, Metrics } from '@scoring/contract';
 import { RowStatus, type Row } from '../form/rows';
 import { UI } from '../ui-strings';
 import { formatMetric } from '../form/format';
-
-export interface MeasurementRowProps {
-  row: Row;
-  index: number;
-  onActivate: (rowId: string) => void;
-  onCancel: (rowId: string) => void;
-  onRemove: (rowId: string) => void;
-  onFocus: (rowId: string) => void;
-}
+import { styles, rowStyle, type MeasurementRowProps } from './MeasurementRow.props';
 
 const STATUS_LABEL: Record<RowStatus, string> = {
   [RowStatus.Pending]: UI.statusPending,
@@ -75,14 +67,7 @@ export const MeasurementRow = ({
 
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '4px 0',
-        borderBottom: '1px solid #eee',
-        cursor: focusable ? 'pointer' : undefined,
-      }}
+      style={rowStyle(focusable)}
       title={row.measurementUid ?? undefined}
       role={focusable ? 'button' : undefined}
       tabIndex={focusable ? 0 : undefined}
@@ -91,7 +76,7 @@ export const MeasurementRow = ({
       onKeyDown={focusable ? handleRowKeyDown : undefined}
     >
       <span>#{index + 1}</span>
-      <span style={{ color: '#666' }}>{STATUS_LABEL[row.status]}</span>
+      <span style={styles.status}>{STATUS_LABEL[row.status]}</span>
       {row.status === RowStatus.Done && metricLabel !== null && <span>{metricLabel}</span>}
       {row.status === RowStatus.Pending && (
         <button
@@ -127,7 +112,7 @@ export const MeasurementRow = ({
       >
         {UI.remove}
       </button>
-      {focusable && <span style={{ color: '#999', fontSize: '12px' }}>{UI.focusHint}</span>}
+      {focusable && <span style={styles.focusHint}>{UI.focusHint}</span>}
     </div>
   );
 };

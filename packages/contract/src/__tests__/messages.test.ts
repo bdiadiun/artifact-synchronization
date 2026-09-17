@@ -10,7 +10,7 @@ import {
   type MeasurementUpdatedEvent,
   type RemoveMeasurementCommand,
   type ViewerReadyEvent,
-} from './messages';
+} from '../messages';
 
 const activateTool: ActivateToolCommand = {
   version: 1,

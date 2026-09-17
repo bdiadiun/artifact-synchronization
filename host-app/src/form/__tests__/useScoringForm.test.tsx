@@ -10,10 +10,10 @@ import type {
   MeasurementUpdatedEvent,
   ViewerEvent,
 } from '@scoring/contract';
-import { DEFAULT_TOOL } from '../config';
-import { RowStatus } from './rows';
-import { computeTotals } from './totals';
-import { useScoringForm } from './useScoringForm';
+import { DEFAULT_TOOL } from '../../config';
+import { RowStatus } from '../rows';
+import { computeTotals } from '../totals';
+import { useScoringForm } from '../useScoringForm';
 
 afterEach(() => {
   cleanup();

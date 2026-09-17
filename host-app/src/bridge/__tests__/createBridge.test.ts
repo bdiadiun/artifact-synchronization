@@ -4,7 +4,7 @@ import type {
   DeactivateToolCommand,
   ViewerReadyEvent,
 } from '@scoring/contract';
-import { createBridge, type Bridge } from './createBridge';
+import { createBridge, type Bridge } from '../createBridge';
 
 const VIEWER_ORIGIN = 'http://localhost:3000';
 const FOREIGN_ORIGIN = 'http://localhost:5173';

@@ -13,6 +13,8 @@ import globals from 'globals';
 const numericEnumMemberSelector =
   'TSEnumDeclaration TSEnumMember > :matches(Literal[raw=/^\\d/], UnaryExpression)';
 const constEnumSelector = 'TSEnumDeclaration[const=true]';
+const inlineStyleObjectSelector =
+  "JSXAttribute[name.name='style'] > JSXExpressionContainer > ObjectExpression";
 
 export default tseslint.config(
   {
@@ -91,12 +93,30 @@ export default tseslint.config(
     },
   },
   {
-    files: ['host-app/src/**/*.{tsx}'],
+    // Single-extension brace groups (`*.{tsx}`) do not match in minimatch; `.tsx` is the only
+    // TypeScript extension that can contain JSX, so the pattern names it directly.
+    files: ['host-app/src/**/*.tsx'],
     plugins: {
       'react-refresh': reactRefresh,
     },
     rules: {
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: numericEnumMemberSelector,
+          message: 'Numeric enums are forbidden (A-13); use string enums instead.',
+        },
+        {
+          selector: constEnumSelector,
+          message: 'const enum is forbidden (A-13); use a regular string enum.',
+        },
+        {
+          selector: inlineStyleObjectSelector,
+          message:
+            'Inline style objects are forbidden (CONVENTIONS §6); use styles from {Name}.props.ts.',
+        },
+      ],
     },
   },
   {

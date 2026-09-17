@@ -21,7 +21,7 @@ open the OHIF fork at the commit the `viewer` submodule is pinned to
 | Focus (S-5.3)           | clickable Done row in `MeasurementRow.tsx`                                                                                                                  | [`jumpToMeasurement`][fork-focus]                                                                                                                      |
 | Version overlay (S-5.5) | —                                                                                                                                                           | [`viewportOverlay.bottomRight`][fork-overlay]                                                                                                          |
 | State and totals        | [`RowStatus`](../host-app/src/form/rows.ts#L6), [`FormActionType`](../host-app/src/form/rows.ts#L26), [`computeTotals`](../host-app/src/form/totals.ts#L24) | —                                                                                                                                                      |
-| Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L10)                                                                                           | log prefix `[scoring-bridge]` in the viewer console                                                                                                    |
+| Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                            | log prefix `[scoring-bridge]` in the viewer console                                                                                                    |
 | Entry point             | [`useBridge`](../host-app/src/bridge/useBridge.ts)                                                                                                          | [`preRegistration`][fork-index]                                                                                                                        |
 
 [fork-config]: https://github.com/bdiadiun/Viewers/blob/68ffd3c64334962505cf08b24a7cad6769502b5d/extensions/scoring-bridge/src/config.ts#L2
@@ -103,7 +103,7 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 3. Optional: `computeTotals(rows, 'mean')`.
 
 **P-9. A protocol element is disabled (e.g. `VIEWER_READY`).** Symptoms: the
-[status line](../host-app/src/components/BridgeStatus.tsx#L10) stays at `очікує VIEWER_READY`, the
+[status line](../host-app/src/components/BridgeStatus.tsx#L6) stays at `очікує VIEWER_READY`, the
 queue count grows with each "Активувати", and the viewer console has no `VIEWER_READY sent`. Walk:
 [`postViewerReady`][fork-bridge-ready] → [VIEWPORT_ADDED subscription][fork-bridge-viewport] → host
 [READY branch](../host-app/src/bridge/createBridge.ts#L88). If `ACTIVATE_TOOL` is disabled instead,

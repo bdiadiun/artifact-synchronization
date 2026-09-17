@@ -3,13 +3,9 @@
 // explaining why it is not folded into the mm² sum, instead of being silently dropped or added in.
 
 import type { JSX } from 'react';
-import type { Total } from '../form/totals';
 import { formatMetric } from '../form/format';
 import { UI } from '../ui-strings';
-
-export interface TotalsFooterProps {
-  totals: Total[];
-}
+import { styles, type TotalsFooterProps } from './TotalsFooter.props';
 
 export const TotalsFooter = ({ totals }: TotalsFooterProps): JSX.Element => {
   if (totals.length === 0) {
@@ -23,20 +19,14 @@ export const TotalsFooter = ({ totals }: TotalsFooterProps): JSX.Element => {
     <div>
       <div>
         {UI.total}: {mm2 !== undefined ? formatMetric({ value: mm2.value, unit: 'mm2' }) : '—'}
-        {mm2 !== undefined && (
-          <span style={{ color: '#666', marginLeft: '4px' }}>
-            ({UI.measurementsCount(mm2.count)})
-          </span>
-        )}
+        {mm2 !== undefined && <span style={styles.count}>({UI.measurementsCount(mm2.count)})</span>}
       </div>
       {others.map((total) => (
-        <div key={total.unit} style={{ marginTop: '4px' }}>
+        <div key={total.unit} style={styles.otherTotal}>
           {formatMetric({ value: total.value, unit: total.unit })}
-          <span style={{ color: '#666', marginLeft: '4px' }}>
-            ({UI.measurementsCount(total.count)})
-          </span>
+          <span style={styles.count}>({UI.measurementsCount(total.count)})</span>
           {total.unit === 'px2' && (
-            <span style={{ color: '#999', marginLeft: '4px' }}>({UI.totalNoSpacingHint})</span>
+            <span style={styles.noSpacingHint}>({UI.totalNoSpacingHint})</span>
           )}
         </div>
       ))}
