@@ -13,6 +13,9 @@ form. They run on separate ports and talk only over `window.postMessage`.
 
 - Node.js 22 (`.nvmrc`; `nvm use` if you use nvm).
 - Git with submodule support. Yarn 1 is provided by corepack (bundled with Node), no global install.
+- Ports 3000 (viewer) and 5173 (host app) free. Both are fixed: the apps check each other's origin.
+- Time: the first run takes about 5–10 minutes (submodule clone, `yarn install`, first webpack
+  build); later starts take seconds.
 
 ## Run from a clean machine
 
@@ -58,8 +61,20 @@ turns to "готовий" once the viewer has sent `VIEWER_READY`.
 1. "Додати вимірювання" creates a row with status "Очікує".
 2. "Активувати" arms the ellipse tool in the viewer (row → "Малювання…"). "Скасувати" returns it to "Очікує".
 3. Draw an ellipse on the image. The row shows the area (e.g. `124.5 mm²`), status "Готово", and the
-   viewer returns to the tool that was active before.
+   viewer returns to the tool that was active before. On the first ellipse OHIF asks "Track
+   measurements for this series?"; either answer works.
 4. "Разом" at the bottom sums the areas per unit (mm² and px² are never added together).
+
+### 4. Bonus features
+
+- **Live update.** Drag a handle of a drawn ellipse: the row value and the total follow while you drag.
+- **Deletion in both directions.** "Видалити" on a row removes its annotation in the viewer.
+  Deleting an annotation in OHIF (measurements panel → row menu → Delete) returns the row to
+  "Очікує".
+- **Focus.** Click a "Готово" row (or press Enter on it): the viewer jumps to that image and
+  selects the annotation.
+- **Version on every viewport.** Bottom-right corner of each viewport shows `OHIF 3.12.17`, injected
+  at build time; switch to a 2×2 layout to see it in every pane.
 
 ## Known behaviour
 
