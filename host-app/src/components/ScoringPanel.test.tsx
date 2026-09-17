@@ -1,6 +1,5 @@
-// Render tests for the totals footer wiring (canon C-4.3.8, Q-6). Exercises `ScoringPanel`
-// end-to-end (rows -> computeTotals -> TotalsFooter) rather than mocking totals, since the wiring
-// itself (recompute on every rows change) is what this slice adds.
+// Exercises `ScoringPanel` end-to-end (rows -> computeTotals -> TotalsFooter) rather than mocking
+// totals, since the recompute-on-change wiring is what this covers.
 
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';

@@ -52,16 +52,17 @@ and the linter disagree, fix the linter config in the same PR and say so.
 
 ## 4. Naming
 
-| Thing                                | Style                                                      | Example                                                                          |
-| ------------------------------------ | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Types, interfaces, enums, components | PascalCase                                                 | `MeasurementRow`, `BridgeState`                                                  |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                          | `createBridge`, `useScoringForm`                                                 |
-| Files: components                    | PascalCase `.tsx`                                          | `TotalsFooter.tsx`                                                               |
-| Files: everything else               | kebab-case or camelCase, one concept per file              | `create-bridge.ts` / `createBridge.ts` (keep the existing style within a folder) |
-| Tests                                | next to the source, `*.test.ts(x)`                         | `rows.test.ts`                                                                   |
-| Booleans                             | `is`/`has`/`can`/`should` prefix                           | `isReady`, `hasMetrics`                                                          |
-| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations | `onRemove` / `handleRemove`                                                      |
-| Interfaces for props                 | `<Component>Props`                                         | `ScoringPanelProps`                                                              |
+| Thing                                | Style                                                                        | Example                                                                          |
+| ------------------------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                  |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createBridge`, `useScoringForm`                                                 |
+| Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                               |
+| Files: component types and styles    | PascalCase `.props.ts` next to the component                                 | `TotalsFooter.props.ts`                                                          |
+| Files: everything else               | kebab-case or camelCase, one concept per file                                | `create-bridge.ts` / `createBridge.ts` (keep the existing style within a folder) |
+| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)` | `form/__tests__/rows.test.ts`                                                    |
+| Booleans                             | `is`/`has`/`can`/`should` prefix                                             | `isReady`, `hasMetrics`                                                          |
+| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                   | `onRemove` / `handleRemove`                                                      |
+| Interfaces for props                 | `<Component>Props`                                                           | `ScoringPanelProps`                                                              |
 
 No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`, `uid`, `url`.
 
@@ -87,8 +88,40 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
   warning). Helpers used inside an effect live inside it or are stable (`useCallback`, module scope).
 - No context providers until two unrelated subtrees need the same state; prop drilling two levels
   is fine.
-- Inline styles are acceptable for this assignment's grey form (X-3); keep them small and local.
-  A component with more than ~6 style properties gets a CSS class in `App.css`.
+- Every component `{Name}.tsx` has a sibling `{Name}.props.ts` that holds everything that is not
+  rendering: the props interface, other types and interfaces the component uses, and its style
+  objects. The `.tsx` file keeps only the component and its local logic.
+
+  ```ts
+  // MeasurementRow.props.ts
+  import type { CSSProperties } from 'react';
+  import type { Row } from '../form/rows';
+
+  export interface MeasurementRowProps {
+    row: Row;
+    index: number;
+    onActivate: (rowId: string) => void;
+  }
+
+  export const styles = {
+    row: { display: 'flex', gap: '8px' },
+    status: { color: '#666' },
+  } satisfies Record<string, CSSProperties>;
+  ```
+
+  ```tsx
+  // MeasurementRow.tsx
+  import { styles, type MeasurementRowProps } from './MeasurementRow.props';
+
+  export const MeasurementRow = ({ row, index, onActivate }: MeasurementRowProps): JSX.Element => (
+    <div style={styles.row}>…</div>
+  );
+  ```
+
+- No inline style object literals in JSX (`style={{ … }}`); reference `styles.<key>` from the
+  `.props.ts` file (lint rule). A component without props or styles does not need the file.
+- Types shared by several components live with the module that owns them (e.g. `Row` in
+  `form/rows.ts`), not in a component's `.props.ts`.
 - User-visible strings come from `ui-strings.ts` (A-7); no literals in JSX.
 
 ## 7. Errors, logging and defensive code
@@ -104,15 +137,35 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
 
 ## 8. Comments
 
-- Comments explain _why_, not _what_. A branch that exists because of a requirement, a decision
-  or an OHIF quirk cites it: `// Q-1: commands before VIEWER_READY are queued, never dropped.`
-- OHIF behaviour that we depend on is cited with `file:line` in the fork at the version we pin.
-- No commented-out code, no TODO without an owner and a graph node or follow-up entry in
-  `docs/STATE.md`.
+Code should read without comments: names, small functions and types carry the meaning. A comment
+is a cost every reader pays, so it has to earn its place.
+
+Write a comment only when the code cannot say _why_:
+
+- non-obvious behaviour of OHIF, cornerstone or the browser that the code depends on, with a short
+  `file:line` citation at the pinned version;
+- a workaround or a deliberate deviation from the obvious approach;
+- a security-relevant check whose purpose is not evident from the condition itself.
+
+Rules:
+
+- One to three lines. A longer rationale belongs in `docs/decisions/A-n-*.md` or `ARCHITECTURE.md`;
+  the code carries at most a pointer, e.g. `// A-8: the viewer owns measurement ids.`
+- No comments that restate the code, no JSDoc that repeats a name or its types, no section banners.
+- Canon and decision IDs only where a decision is implemented, not on every block; traceability
+  lives in `docs/FEATURE-GRAPH.md`, `ARCHITECTURE.md` and `docs/DEFENCE.md`.
+- No commented-out code, no TODO without an owner and a follow-up entry in `docs/STATE.md`.
 - English only; no mention of AI tools anywhere in code or comments (AI usage is documented in
   `AI-USAGE.md`).
+- Target: comment lines stay under about 10% of non-blank lines in a file. More than that is a
+  signal to rename, extract a function, or move the explanation into the docs.
 
 ## 9. Tests
+
+- Test files live in a `__tests__/` folder inside the folder of the code they test:
+  `host-app/src/form/__tests__/rows.test.ts` tests `host-app/src/form/rows.ts` and imports it as
+  `../rows`. One test file per module under test; shared test helpers go to
+  `__tests__/helpers.ts` in the same folder.
 
 - Vitest. Targeted tests only (X-4): pure logic (reducers, totals, throttle, contract guards) and
   the bridge client behaviour. No snapshot tests, no tests of styling.

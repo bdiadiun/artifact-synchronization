@@ -1,6 +1,3 @@
-// Focused tests for the postMessage contract guards (canon Q-7, X-4: point tests for
-// the sum logic and message serialisation/validation only, no project-wide test suite).
-
 import { describe, expect, it } from 'vitest';
 import {
   isHostCommand,

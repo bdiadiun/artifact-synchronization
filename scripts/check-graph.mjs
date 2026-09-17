@@ -1,35 +1,15 @@
 #!/usr/bin/env node
-// check-graph.mjs
-//
-// Purpose: verify that docs/FEATURE-GRAPH.md stays consistent with docs/CANON.md and with
-// itself, per the invariants listed in CLAUDE.md section 2 ("Feature graph").
-//
-// Input file formats this script parses:
-//
-//   docs/CANON.md
-//     A markdown document containing requirement IDs of the form `C-4.3.5`, `Q-1`, `S-5.1`,
-//     `D-8`, `X-2`, `P-7`, plus a "Decisions on ambiguities" table with rows shaped like
-//     `| A-1 | 2026-09-16 | decision text | rationale | status |`. Everything from the
-//     `## Appendix A` heading onward is the verbatim source text of the assignment and is
-//     ignored: it is not a source of requirement IDs, it just happens to repeat them in prose.
-//
-//   docs/FEATURE-GRAPH.md
-//     A markdown table under a `## Nodes` heading with columns
-//     `| Node | Name | Canon | Depends on | Slice | Status | Verify |`, where `Node` values look
-//     like `F-00`, `Canon` is a comma-separated list of canon IDs (occasionally a range written
-//     as `A-1..A-5`), and `Depends on` is a comma-separated list of `Node` values or `—` for
-//     none. Below that is a ```mermaid block declaring node labels (`F00[F-00 Canon and graph]`)
-//     and edges, possibly written as chains (`F08 --> F09 --> F10`).
+// Verifies that docs/FEATURE-GRAPH.md stays consistent with docs/CANON.md and with itself, per
+// the invariants in CLAUDE.md section 2 ("Feature graph"). Parses canon requirement IDs
+// (`C-4.3.5`, `Q-1`, ...) from docs/CANON.md, ignoring everything from `## Appendix A` onward
+// (the verbatim assignment text, not a source of IDs), and the `## Nodes` table plus the
+// ```mermaid block in docs/FEATURE-GRAPH.md.
 //
 // Usage: node scripts/check-graph.mjs [--root <dir>]
 // Exit code: 0 if every check passes, 1 if any check fails.
 
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-
-// ---------------------------------------------------------------------------
-// CLI arguments
-// ---------------------------------------------------------------------------
 
 const parseArgs = (argv) => {
   let root = process.cwd();
@@ -42,11 +22,6 @@ const parseArgs = (argv) => {
   return { root };
 };
 
-// ---------------------------------------------------------------------------
-// Canon parsing
-// ---------------------------------------------------------------------------
-
-// Matches the exact "## Appendix A" heading that marks the start of the verbatim source text.
 const APPENDIX_HEADING_RE = /^## Appendix A/m;
 
 const loadCanonBody = (canonText) => {
@@ -54,8 +29,8 @@ const loadCanonBody = (canonText) => {
   return match ? canonText.slice(0, match.index) : canonText;
 };
 
-// Matches a requirement ID of a given class, e.g. "C-4.3.5", "Q-1", "A-1". The class letter is
-// supplied by the caller as part of the character class so the same helper serves every check.
+// e.g. "C-4.3.5", "Q-1", "A-1"; the class letters are supplied by the caller so one helper
+// serves every check.
 const makeIdRegex = (classLetters) =>
   new RegExp(`\\b([${classLetters}])-(\\d+(?:\\.\\d+)*)\\b`, 'g');
 
@@ -69,15 +44,9 @@ const findIds = (text, classLetters) => {
   return ids;
 };
 
-// ---------------------------------------------------------------------------
-// Feature graph: Nodes table parsing
-// ---------------------------------------------------------------------------
-
-// Matches the "## Nodes" heading that introduces the node table.
 const NODES_HEADING_RE = /^## Nodes\s*$/m;
 
-// Matches a markdown table separator row such as "|---|---|---|", used to skip it while reading
-// the table body.
+// A markdown table separator row such as "|---|---|---|", skipped while reading the table body.
 const TABLE_SEPARATOR_RE = /^\|\s*-{2,}/;
 
 const extractNodesTableLines = (graphText) => {
@@ -106,16 +75,13 @@ const extractNodesTableLines = (graphText) => {
   return tableLines;
 };
 
-// A markdown row "| a | b | c |" split into ["a", "b", "c"] by stripping the outer pipes and
-// splitting on the remaining "|" characters. Cell contents in this table never contain a
-// literal pipe character.
+// Cell contents in this table never contain a literal pipe character.
 const splitTableRow = (line) => {
   const inner = line.replace(/^\|/, '').replace(/\|$/, '');
   return inner.split('|').map((cell) => cell.trim());
 };
 
-// Matches an "A-1..A-5" style range in a Canon cell: same class letter on both ends, plain
-// integers only (no sub-numbering), expanded before individual IDs are extracted.
+// An "A-1..A-5" style range in a Canon cell, expanded before individual IDs are extracted.
 const RANGE_RE = /\b([A-Z])-(\d+)\.\.\1-(\d+)\b/g;
 
 const expandRanges = (cellText) =>
@@ -134,7 +100,6 @@ const extractCanonIdsFromCell = (cellText) => {
   return Array.from(findIds(expanded, 'CQSDXPA'));
 };
 
-// Matches a graph node ID such as "F-00" or "F-13".
 const NODE_ID_RE = /\bF-\d+\b/g;
 
 const extractNodeIdsFromCell = (cellText) => {
@@ -166,11 +131,6 @@ const parseNodesTable = (graphText) => {
   return rows;
 };
 
-// ---------------------------------------------------------------------------
-// Feature graph: mermaid block parsing
-// ---------------------------------------------------------------------------
-
-// Matches the fenced ```mermaid ... ``` block.
 const MERMAID_BLOCK_RE = /```mermaid\n([\s\S]*?)```/;
 
 const extractMermaidBlock = (graphText) => {
@@ -181,8 +141,7 @@ const extractMermaidBlock = (graphText) => {
   return match[1];
 };
 
-// Matches a node label declaration line, e.g. "  F00[F-00 Canon and graph]", capturing the
-// short mermaid id ("F00") and the full node id used in the label text ("F-00").
+// e.g. "  F00[F-00 Canon and graph]": captures the short mermaid id and the full node id.
 const LABEL_LINE_RE = /^\s*([A-Za-z0-9_]+)\[(F-\d+)\b/;
 
 const parseMermaidLabels = (mermaidText) => {
@@ -203,8 +162,7 @@ const parseMermaidEdges = (mermaidText, labels) => {
     const tokens = line
       .split('-->')
       .map((token) => token.trim())
-      // Strip a trailing "[...]" label from a token that both declares and chains, e.g.
-      // "F00[F-00 Canon and graph]" appearing as the first element of an edge chain.
+      // Strip a trailing "[...]" label from a token that both declares and chains.
       .map((token) => token.replace(/\[.*$/, '').trim())
       .filter((token) => token.length > 0);
     for (let i = 0; i < tokens.length - 1; i += 1) {
@@ -215,10 +173,6 @@ const parseMermaidEdges = (mermaidText, labels) => {
   }
   return edges;
 };
-
-// ---------------------------------------------------------------------------
-// Checks
-// ---------------------------------------------------------------------------
 
 const report = (results, ok, message) => {
   results.push({ ok, message });
@@ -422,10 +376,6 @@ const checkDependencyGating = (results, rows) => {
     report(results, false, `Dependency gating: violations: ${violations.join('; ')}`);
   }
 };
-
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
 
 const main = () => {
   const { root } = parseArgs(process.argv.slice(2));

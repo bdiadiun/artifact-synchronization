@@ -11,6 +11,8 @@ defect, report it with the failing assertion and a minimal reproduction; do not 
 Ground rules
 
 - Read `CLAUDE.md`, `docs/CONVENTIONS.md` §9 and the files the brief names.
+- Test files go to a `__tests__/` folder inside the folder of the code under test
+  (`form/__tests__/rows.test.ts` imports `../rows`).
 - Targeted tests only (canon X-4): reducers, totals, throttle, contract guards, bridge client
   behaviour, hooks via `renderHook`. No snapshots, no styling tests, no tests of OHIF internals.
 - Test names read as behaviour; arrange / act / assert; assert on state or on `vi.fn()` calls;
@@ -19,6 +21,7 @@ Ground rules
   (`OHIF_OPEN=false yarn --cwd platform/app dev` in `viewer/`, `npm run dev --workspace host-app`);
   read values from the page and from `window.services` inside the viewer iframe; take a screenshot;
   stop every server you started.
+- Test names describe behaviour, so tests need almost no comments (`docs/CONVENTIONS.md` §8).
 - English only; no AI mentions; no git commands.
 
 Report in at most 40 lines: tests added (file, count, what each covers), test run tails, any

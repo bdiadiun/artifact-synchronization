@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                       |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 15 `docs: final pass` (branch `docs/final-pass`, node F-25)                                                                                                                                                 |
-| Gate           | 2 — docs final; README verified on a fresh GitHub clone including all bonus features; awaiting result approval                                                                                              |
-| Last merged PR | #16 `ci: checks and fork default branch` (first CI run green, 42 s); mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#8 merged into `scoring` |
-| Next slice     | none planned; optional: S-5.4 (F-17), S-5.6 (F-19), extension unit tests, `MEASUREMENTS_CLEARED`                                                                                                            |
+| Field          | Value                                                                                                                                                                                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 16 `refactor: trim comments` (branch `refactor/trim-comments`, node F-26)                                                                                                                                                                                     |
+| Gate           | 2 — comments trimmed (21% → 6% overall), rationale moved to `docs/notes/bridge-internals.md` and A-8, fork PR #9 merged (`scoring` at `68ffd3c643`), DEFENCE links regenerated; awaiting result approval                                                      |
+| Last merged PR | #17 `docs: final pass`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#8 merged into `scoring`                                                                                                |
+| Next slice     | 17 `refactor: component props files and test folders` (F-27): `{Name}.props.ts` with types, interfaces and styles; tests in per-folder `__tests__/`; lint rule against `style={{…}}`. Rules already in CONVENTIONS §4, §6, §9 and the developer/tester roles. |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -50,6 +50,14 @@ not a log. Update it in every PR (same commit as the work it describes).
 ## Docs page
 
 - `npm run docs:build` regenerates `docs/site/index.html` (commit it with the docs it bundles). The same page is published as a private artifact for the author; republish it after each merge.
+
+## Comment ratio
+
+- After slice 16: 227 comment lines vs 3 499 code lines (6%); rules in CONVENTIONS §8.
+
+## Comment baseline before slice 16
+
+- 937 comment lines vs 3 499 code lines (21%); worst: `focus.ts` 57%, `getCustomizationModule.tsx` 52%, `removals.ts` 48%, `ui-strings.ts` 45%, `bridge.ts` 41%.
 
 ## Lint status
 

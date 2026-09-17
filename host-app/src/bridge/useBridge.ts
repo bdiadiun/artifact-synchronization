@@ -1,6 +1,3 @@
-// React binding for the framework-free bridge (canon Q-5). Kept separate from `createBridge.ts`
-// so the bridge itself stays testable without React and reusable if the iframe wiring changes.
-
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import type { HostCommand } from '@scoring/contract';
 import { createBridge, type Bridge, type BridgeState } from './createBridge';
@@ -13,19 +10,15 @@ export interface UseBridgeResult {
 
 const INITIAL_STATE: BridgeState = { ready: false, queued: 0, lastEvent: null, ignoredOrigins: 0 };
 
-// Creates one bridge instance per mount, tied to the given iframe ref, and disposes it on
-// unmount (Q-5: paired addEventListener/removeEventListener, no leaked subscription). Under
-// StrictMode's mount-unmount-mount dev cycle this runs twice, but the cleanup from the first
-// mount tears its listener down before the second mount adds a new one, so exactly one
-// `message` listener is ever attached at a time.
+// One bridge instance per mount, disposed on unmount; under StrictMode's dev double-mount, the
+// first mount's cleanup runs before the second mount attaches, so only one listener is ever live.
 export const useBridge = (iframeRef: RefObject<HTMLIFrameElement | null>): UseBridgeResult => {
   const [state, setState] = useState<BridgeState>(INITIAL_STATE);
   const bridgeRef = useRef<Bridge | null>(null);
 
   useEffect(() => {
     const bridge = createBridge({
-      // Read the iframe's contentWindow lazily, not at effect-setup time: the iframe can still
-      // be null briefly, and its window is a live value, not a snapshot (P-1).
+      // Read lazily: the iframe can be briefly null and its window is a live value (P-1).
       getViewerWindow: () => iframeRef.current?.contentWindow ?? null,
       viewerOrigin: VIEWER_ORIGIN,
     });
@@ -40,8 +33,7 @@ export const useBridge = (iframeRef: RefObject<HTMLIFrameElement | null>): UseBr
       bridge.dispose();
       bridgeRef.current = null;
     };
-    // `iframeRef` is a ref object with a stable identity across renders, and `VIEWER_ORIGIN` is
-    // a module-level constant, so this effect intentionally runs once per mount.
+    // `iframeRef` and `VIEWER_ORIGIN` are stable, so this effect runs once per mount.
   }, [iframeRef]);
 
   const send = (command: HostCommand): void => {

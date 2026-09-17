@@ -1,46 +1,24 @@
-// The UI language follows the assignment (decision A-7); code and comments stay in English.
+// UI strings are Ukrainian per the assignment (A-7); code and comments stay in English.
 export const UI = {
-  // Panel heading.
   appTitle: 'Скоринг-форма',
-  // Button that creates a new pending row.
   addMeasurement: 'Додати вимірювання',
-  // Button that arms the ellipse tool for a specific row.
   activate: 'Активувати',
-  // Button that cancels an armed row.
   cancel: 'Скасувати',
-  // Button that removes a row (S-5.2): its annotation in the viewer for a `done` row, or just
-  // the row itself for `drawing` / `pending`.
   remove: 'Видалити',
-  // Row status: created, not yet activated.
   statusPending: 'Очікує',
-  // Row status: tool armed, waiting for the user to draw.
   statusDrawing: 'Малювання…',
-  // Row status: measurement received.
   statusDone: 'Готово',
-  // Label for the sum of all row values.
   total: 'Разом',
-  // Iframe accessible title.
   viewerFrameTitle: 'Переглядач OHIF',
-  // Shown when the form has no rows yet.
   emptyHint: 'Рядків ще немає. Натисніть «Додати вимірювання».',
-  // Label for the bridge dev status line (P-9 diagnostic surface, decision A-9).
   bridgeStatus: 'Міст',
-  // Bridge status value: VIEWER_READY has been seen.
   bridgeReady: 'готовий',
-  // Bridge status value: still waiting for the viewer's first VIEWER_READY.
   bridgeNotReady: 'очікує VIEWER_READY',
-  // Label preceding the queued-command count in the bridge status line.
   bridgeQueued: 'у черзі',
-  // Shown next to a px² total (C-4.3.8, Q-6): explains why it has its own line instead of being
-  // folded into the mm² sum.
   totalNoSpacingHint: 'без піксельного spacing, не додається до mm²',
-  // Accessible label for a `done` row, clickable to focus the matching annotation (S-5.3).
   focusRow: 'Показати в переглядачі',
-  // Muted caption on a `done` row hinting that it is clickable (S-5.3).
   focusHint: 'клік — показати в переглядачі',
-  // Ukrainian noun agreement with a count for "вимірювання" (neuter): 1 and 2-4 share the form
-  // "вимірювання", 5+ and 11-14 take "вимірювань". A display footnote, not a reason for an i18n
-  // library (X-3).
+  // Ukrainian noun agreement for "вимірювання": 1 and 2-4 keep that form, 5+/11-14 take "вимірювань".
   measurementsCount(n: number): string {
     const lastTwo = n % 100;
     const lastOne = n % 10;

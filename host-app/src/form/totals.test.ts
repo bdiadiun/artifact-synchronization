@@ -1,5 +1,3 @@
-// Unit tests for the totals sum logic (canon C-4.3.8, Q-6, decision A-11, X-4).
-
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@scoring/contract';
 import { RowStatus, type Row } from './rows';

@@ -1,6 +1,4 @@
-// Human-readable rendering of a wire `Metric` (canon C-4.3.6, Q-6). The wire spelling (`mm2`,
-// `px2`) is normalised here to the display glyphs (`mm²`, `px²`); nothing upstream should format
-// units itself, so this stays the one place that changes if display formatting changes.
+// Wire unit spelling (mm2, px2) to display glyphs (mm², px²); the one place display format lives.
 
 import type { Metric, Unit } from '@scoring/contract';
 

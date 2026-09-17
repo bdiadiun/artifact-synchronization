@@ -1,13 +1,9 @@
-// Style check for our OHIF extension (viewer/extensions/scoring-bridge).
-//
-// The fork's own ESLint does not run at OHIF v3.12.17 (ESLint 9 with a legacy .eslintrc.json and
-// @typescript-eslint 5 crashes while loading rules), and we do not replace OHIF's tooling
-// (CONVENTIONS §11). This config applies the subset of docs/CONVENTIONS.md rules that need no type
-// information, so the extension is held to the same style as host-app.
+// Style check for viewer/extensions/scoring-bridge. OHIF's own ESLint 9 crashes on this fork's
+// legacy .eslintrc.json / @typescript-eslint 5 setup and we do not replace OHIF's tooling
+// (CONVENTIONS §11), so this applies the subset of docs/CONVENTIONS.md that needs no type info.
 // Usage: npm run lint:fork
 import tseslint from 'typescript-eslint';
 
-// Same selectors as eslint.config.js (A-13).
 const numericEnumMemberSelector =
   'TSEnumDeclaration TSEnumMember > :matches(Literal[raw=/^\\d/], UnaryExpression)';
 const constEnumSelector = 'TSEnumDeclaration[const=true]';
