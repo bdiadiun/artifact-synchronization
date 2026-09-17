@@ -1,5 +1,3 @@
-// Unit tests for the pure row-lifecycle reducer (canon C-4.3.2, C-4.3.7, Q-3, decision A-4).
-
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@scoring/contract';
 import { FormActionType, RowStatus, initialFormState, reducer, type FormState } from './rows';

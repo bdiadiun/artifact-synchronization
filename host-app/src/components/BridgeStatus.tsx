@@ -6,9 +6,7 @@ export interface BridgeStatusProps {
   state: BridgeState;
 }
 
-// One-line dev diagnostic surface for the bridge handshake and queue (P-9): when a protocol
-// element such as VIEWER_READY is disabled or breaks, this line is where it shows up on screen
-// instead of only in devtools. Not a product feature; kept deliberately terse.
+// Dev diagnostic surface for the bridge handshake and queue (P-9), not a product feature.
 export const BridgeStatus = ({ state }: BridgeStatusProps): JSX.Element => {
   const readiness = state.ready ? UI.bridgeReady : UI.bridgeNotReady;
   const lastEventType = state.lastEvent?.type ?? '—';

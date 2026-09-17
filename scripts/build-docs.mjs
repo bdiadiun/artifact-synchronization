@@ -1,18 +1,10 @@
 #!/usr/bin/env node
-// build-docs.mjs
-//
-// Purpose: assemble docs/site/index.html, a single-page reader that bundles every project
-// document (README, ARCHITECTURE, canon, feature graph, state journal, defence notes, AI usage,
-// research notes, working rules and the decision log) as JSON and renders it client-side with
-// marked (loaded from cdnjs). The page turns bare requirement IDs (C-*, Q-*, S-5.*, D-*, X-*,
-// P-*, A-*, F-*) found in the rendered markdown into links back to their home document, per
-// scripts/docs-template.html.
-//
-// Output is a complete, self-contained HTML document (doctype/html/head/body) so it also works
-// when opened directly as a file:// URL, not just when served.
+// Assembles docs/site/index.html, a single-page reader that bundles every project document as
+// JSON and renders it client-side with marked, linking bare requirement IDs back to their home
+// document (scripts/docs-template.html). Output is a complete, standalone HTML document so it
+// also works opened directly as a file:// URL.
 //
 // Usage: node scripts/build-docs.mjs [--out <file>]
-// Default output: docs/site/index.html (relative to the repo root, two levels up from this file).
 
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { join, dirname, resolve as resolvePath } from 'node:path';
@@ -20,10 +12,6 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolvePath(__dirname, '..');
-
-// ---------------------------------------------------------------------------
-// Document list: same order and grouping as the docsite prototype this was ported from.
-// ---------------------------------------------------------------------------
 
 const FILES = [
   ['README.md', 'README', 'Start'],
@@ -61,8 +49,8 @@ for (const name of decisionFiles) {
     FILES.push(['docs/decisions/README.md', 'Decisions index', 'Decisions']);
     continue;
   }
-  const stem = name.slice(0, -3); // strip .md
-  // Split into at most 3 parts, e.g. "A-1-mono-repo-with-submodule" -> ["A", "1", "mono-repo-with-submodule"].
+  const stem = name.slice(0, -3);
+  // e.g. "A-1-mono-repo-with-submodule" -> ["A", "1", "mono-repo-with-submodule"].
   const parts = stem.split('-');
   const prefix = parts[0];
   const num = parts[1];
@@ -71,10 +59,6 @@ for (const name of decisionFiles) {
   FILES.push([`docs/decisions/${name}`, title, 'Decisions']);
 }
 
-// ---------------------------------------------------------------------------
-// Read documents.
-// ---------------------------------------------------------------------------
-
 const docs = FILES.map(([path, title, group]) => ({
   path,
   title,
@@ -82,14 +66,8 @@ const docs = FILES.map(([path, title, group]) => ({
   md: readFileSync(join(ROOT, path), 'utf-8'),
 }));
 
-// ---------------------------------------------------------------------------
-// Assemble output: split the template at the first <div class="topbar"> occurrence — everything
-// before it (title, stylesheet link, styles, marked script) goes into <head>; the rest (topbar,
-// shell, nav/article markup, the DOCS payload and app script) goes into <body>. This is the one
-// change from the scratchpad prototype: the generated page must be a complete, standalone HTML
-// document so it also renders correctly opened directly as a file:// URL.
-// ---------------------------------------------------------------------------
-
+// Split the template at the first <div class="topbar">: everything before it goes into <head>,
+// the rest into <body>, so the result is a complete standalone HTML document.
 const templatePath = join(__dirname, 'docs-template.html');
 const template = readFileSync(templatePath, 'utf-8');
 
@@ -110,10 +88,8 @@ if (splitAt === -1) {
 const head = filled.slice(0, splitAt);
 const body = filled.slice(splitAt);
 
-// Mermaid rendering: a pinned CDN script, a one-time initialize() call, and window.renderMermaid
-// — the hook scripts/docs-template.html calls after linkIds(el) inside renderDoc, on every
-// document render. Guarded with try/catch so a CDN outage or a file:// CSP block never breaks
-// the rest of the page.
+// window.renderMermaid is called by scripts/docs-template.html after every document render.
+// Guarded with try/catch so a CDN outage or a file:// CSP block never breaks the rest of the page.
 const mermaidScript = `<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
 <script>
 try {
@@ -138,10 +114,6 @@ ${body}
 ${mermaidScript}</body>
 </html>
 `;
-
-// ---------------------------------------------------------------------------
-// Write output.
-// ---------------------------------------------------------------------------
 
 const args = process.argv.slice(2);
 const outIdx = args.indexOf('--out');

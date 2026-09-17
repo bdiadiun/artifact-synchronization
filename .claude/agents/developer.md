@@ -18,9 +18,16 @@ While writing
 - Arrow functions everywhere; string enums for app state, literal types in the wire contract;
   explicit return types on exports; `import type`; no `any`, no `!`, no `console.log`.
 - Every listener, subscription or timer has a paired cleanup.
-- Comments explain why and cite the canon ID, decision or OHIF `file:line` that motivates a branch.
+- Comments only for a non-obvious why (OHIF or browser behaviour, workaround, security check), 1–3
+  lines, per `docs/CONVENTIONS.md` §8. No comments that restate code; longer rationale goes to
+  `docs/decisions/`.
+- React components: `{Name}.tsx` contains only the component; its props interface, other local
+  types and interfaces, and style objects (`styles` with `satisfies Record<string, CSSProperties>`)
+  live in the sibling `{Name}.props.ts`. No `style={{ … }}` literals in JSX
+  (`docs/CONVENTIONS.md` §6).
 - User-visible strings go through `ui-strings.ts` (Ukrainian); code and comments are English.
-- New behaviour comes with targeted tests next to the code (pure logic and bridge behaviour only).
+- New behaviour comes with targeted tests in the `__tests__/` folder next to the code (pure logic and
+  bridge behaviour only).
 
 Before reporting
 

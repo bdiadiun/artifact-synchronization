@@ -16,8 +16,9 @@ user-editable in the OHIF panel.
 - `ACTIVATE_TOOL { rowId, toolName }` arms the bridge: `pendingRowId = rowId`.
 - On `MEASUREMENT_ADDED` from OHIF the bridge emits `{ rowId: pendingRowId, measurementUid: uid, ... }`,
   stores `uid → rowId` in its own map, and clears `pendingRowId`.
-- `MEASUREMENT_UPDATED` / `MEASUREMENT_REMOVED` carry `measurementUid`; both sides resolve the row
-  through their map (the viewer must keep one too, because REMOVED delivers only the uid string).
+- `MEASUREMENT_UPDATED` / `MEASUREMENT_REMOVED` carry `measurementUid`. The viewer resolves the row
+  through its `uid → rowId` map (OHIF's `MEASUREMENT_REMOVED` delivers only the uid string). The
+  host needs no separate map: each `done` row stores its own `measurementUid`.
 - A measurement created while nothing is armed (drawn from the OHIF toolbar) is forwarded with
   `rowId: null`; the host logs and ignores it.
 - Before activating a tool the bridge snapshots the active primary tool

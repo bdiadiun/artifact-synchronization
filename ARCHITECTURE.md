@@ -110,6 +110,9 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 
 ## Known behaviour
 
+- Deliberate implementation details of the bridge (lifecycle, measurement filtering, command
+  dispatch) are listed in [`docs/notes/bridge-internals.md`](docs/notes/bridge-internals.md).
+
 - The area in `MEASUREMENT_ADDED` is read from cornerstone `cachedStats` at completion time. Those stats are filled in the render pass, so a release in the very same frame as the last mouse move (only reproducible with synthetic input) can carry a one-frame-old value; a human drag always dwells long enough. `MEASUREMENT_UPDATED` (bonus S-5.1) carries the settled value.
 - Units: OHIF reports `mm²` when the image has pixel spacing and `px²` otherwise; a calibration suffix such as `mm² ERMF` is provenance and maps to `mm2`.
 

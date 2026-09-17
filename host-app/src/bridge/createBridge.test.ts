@@ -1,5 +1,3 @@
-// Unit tests for the framework-free bridge client (canon Q-1, Q-2, Q-5, P-1, P-9; decision A-9).
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
   ActivateToolCommand,

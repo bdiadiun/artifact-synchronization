@@ -1,11 +1,8 @@
-// Pure form-row state (canon C-4.3.1, C-4.3.2, C-4.3.7, Q-3, decision A-4). No side effects, no
-// bridge calls here: `useScoringForm.ts` wires this reducer to `send`/`lastEvent`. Kept
-// side-effect-free so the row lifecycle rules can be unit-tested without React or a fake iframe.
+// Pure, side-effect-free reducer; `useScoringForm.ts` wires it to `send`/`lastEvent`.
 
 import type { Metrics, ToolName } from '@scoring/contract';
 import { DEFAULT_TOOL } from '../config';
 
-// A-13: string enum for row lifecycle status (application state, not wire contract data).
 export enum RowStatus {
   Pending = 'pending',
   Drawing = 'drawing',
@@ -26,25 +23,15 @@ export interface FormState {
   armedRowId: string | null;
 }
 
-// A-13: string enum for reducer action types (application state, not wire contract data). Values
-// match the previous string literals so nothing downstream (tests, serialised state) changes.
 export enum FormActionType {
   AddRow = 'ADD_ROW',
   ArmRow = 'ARM_ROW',
   DisarmRow = 'DISARM_ROW',
-  // Wired to the bridge in a later slice (viewer -> host measurement flow); the reducer rule is
-  // implemented now so it does not have to change when that wiring lands.
   MeasurementReceived = 'MEASUREMENT_RECEIVED',
-  // S-5.1 live update: matched by `measurementUid` (not `rowId` - the viewer does not know it),
-  // and only applied to a `done` row, since that is the only status a measurementUid is bound to.
   MeasurementUpdated = 'MEASUREMENT_UPDATED',
-  // S-5.2 deletion, host -> viewer direction: the row is dropped outright, regardless of its
-  // current status (done/drawing/pending all delete the same way once the caller has already
-  // sent whatever command the status required - see useScoringForm.remove).
   RemoveRow = 'REMOVE_ROW',
-  // S-5.2 deletion, viewer -> host direction: the annotation was removed in the viewer and the
-  // event was not our own echo (A-10). The assignment says deletion in the viewer "clears the
-  // row", not removes it, so a `done` row returns to `pending` instead of disappearing.
+  // Viewer-side deletion "clears" a `done` row back to `pending` rather than removing it, per the
+  // assignment's wording.
   MeasurementCleared = 'MEASUREMENT_CLEARED',
 }
 
@@ -86,9 +73,7 @@ export const reducer = (state: FormState, action: FormAction): FormState => {
         if (row.rowId === action.rowId) {
           return row.status === RowStatus.Drawing ? row : { ...row, status: RowStatus.Drawing };
         }
-        // Only one row armed at a time (A-4): any other row currently drawing goes back to
-        // pending, whether or not it was `armedRowId` (defensive, keeps invariant even if state
-        // ever drifted).
+        // Only one row armed at a time (A-4): any other drawing row goes back to pending.
         return row.status === RowStatus.Drawing ? { ...row, status: RowStatus.Pending } : row;
       });
       return { rows, armedRowId: action.rowId };

@@ -1,7 +1,5 @@
-// Tests the React wiring around the row reducer (canon C-4.3.5, C-4.3.6, Q-6, decisions A-8,
-// A-9): activation sends the right command, MEASUREMENT_ADDED moves an armed row to `done`, and
-// stray/duplicate events are no-ops. The reducer's own rules are covered in rows.test.ts; these
-// tests check that the hook decides correctly *when* to dispatch, not the reducer's outcome.
+// Tests the React wiring around the row reducer: when the hook decides to dispatch, not the
+// reducer's outcome (covered in rows.test.ts).
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, renderHook } from '@testing-library/react';
