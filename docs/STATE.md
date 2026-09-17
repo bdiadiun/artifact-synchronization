@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                                                                         |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 16 `refactor: trim comments` (branch `refactor/trim-comments`, node F-26)                                                                                                                                                                                     |
-| Gate           | 2 — comments trimmed (21% → 6% overall), rationale moved to `docs/notes/bridge-internals.md` and A-8, fork PR #9 merged (`scoring` at `68ffd3c643`), DEFENCE links regenerated; awaiting result approval                                                      |
-| Last merged PR | #17 `docs: final pass`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#8 merged into `scoring`                                                                                                |
-| Next slice     | 17 `refactor: component props files and test folders` (F-27): `{Name}.props.ts` with types, interfaces and styles; tests in per-folder `__tests__/`; lint rule against `style={{…}}`. Rules already in CONVENTIONS §4, §6, §9 and the developer/tester roles. |
+| Field          | Value                                                                                                                                                                                                                         |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 17 `refactor: component props files and test folders` (branch `refactor/component-props-and-test-folders`, node F-27)                                                                                                         |
+| Gate           | 2 — five `.props.ts` files, nine tests moved to `__tests__/`, inline-style lint rule (plus a fixed `.tsx` glob that had silently disabled react-refresh), end-to-end unchanged; awaiting result approval                      |
+| Last merged PR | #18 `refactor: trim comments`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#9 merged into `scoring`                                                         |
+| Next slice     | 18 feature graph as JSON: `docs/feature-graph.json` as source of truth (description, canon, dependsOn, status, verify, files), imports scanned automatically, `FEATURE-GRAPH.md` + Mermaid generated, freshness checked in CI |
 
 ## Open decisions (see CANON.md → Decisions)
 

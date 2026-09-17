@@ -3,8 +3,8 @@
 
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ScoringPanel } from './ScoringPanel';
-import { RowStatus, type Row } from '../form/rows';
+import { ScoringPanel } from '../ScoringPanel';
+import { RowStatus, type Row } from '../../form/rows';
 
 const noop = vi.fn();
 

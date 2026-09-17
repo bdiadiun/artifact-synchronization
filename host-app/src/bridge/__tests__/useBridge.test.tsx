@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StrictMode, useRef, type JSX } from 'react';
 import { render, cleanup } from '@testing-library/react';
-import { useBridge } from './useBridge';
+import { useBridge } from '../useBridge';
 
 const Harness = (): JSX.Element => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);

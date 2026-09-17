@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@scoring/contract';
-import { FormActionType, RowStatus, initialFormState, reducer, type FormState } from './rows';
+import { FormActionType, RowStatus, initialFormState, reducer, type FormState } from '../rows';
 
 const metrics: Metrics = { area: { value: 124.5, unit: 'mm2' } };
 

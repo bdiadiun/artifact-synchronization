@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import App from './App';
-import { UI } from './ui-strings';
-import { viewerUrl } from './config';
+import App from '../App';
+import { UI } from '../ui-strings';
+import { viewerUrl } from '../config';
 
 describe('App', () => {
   it('renders the heading, the add button and the viewer iframe', () => {
