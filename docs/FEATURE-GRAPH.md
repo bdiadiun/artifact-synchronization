@@ -24,7 +24,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-11 | Total area with unit handling                                                                    | C-4.3.8, Q-6, X-4                                       | F-10             | 5 `feat: total area calculation`               | done    | Sum is shown per unit (mm² and px² never added together); recalculates on every change; unit tests for the sum logic pass.                                                                              |
 | F-21 | Docs site generator (`npm run docs:build` → `docs/site/index.html`, clickable requirement IDs)   | D-3, D-6                                                | F-12             | 10 `chore: docs site generator`                | done    | `npm run docs:build` produces a single self-contained page; opening it shows every document, IDs link to canon / graph rows / decision files.                                                           |
 | F-22 | Conventions, lint and agent roles (`docs/CONVENTIONS.md`, ESLint + Prettier, `.claude/agents/*`) | Q-7, D-3, A-13                                          | F-20             | 12 `chore: conventions, lint and agent roles`  | done    | `npm run lint` runs ESLint with typescript-eslint strict and react-hooks; `npm run format:check` runs Prettier; agent role files exist and CLAUDE.md points to them.                                    |
-| F-23 | Apply conventions to existing code (host-app, contract, extension)                               | Q-7, A-13                                               | F-22             | 13 `refactor: apply conventions`               | review  | `npm run lint` and `format:check` exit 0 with zero warnings; all tests green; fork extension passes the same rules.                                                                                     |
+| F-23 | Apply conventions to existing code (host-app, contract, extension)                               | Q-7, A-13                                               | F-22             | 13 `refactor: apply conventions`               | done    | `npm run lint` and `format:check` exit 0 with zero warnings; all tests green; fork extension passes the same rules.                                                                                     |
+| F-24 | Continuous integration and fork default branch                                                   | D-3, D-4, D-5, Q-7                                      | F-23             | 14 `ci: checks and fork default branch`        | review  | GitHub Actions runs lint, lint:fork, format:check, typecheck, test, build, check:graph and check:contract on every PR and push to main; the fork's default branch is `scoring`.                         |
 | F-12 | Documentation: README, ARCHITECTURE, AI-USAGE                                                    | D-5, D-6, D-7, P-2, P-5, P-6                            | F-11             | 6 `docs: README, ARCHITECTURE, AI-USAGE`       | done    | Fresh clone → both apps running by following README only; ARCHITECTURE has the diagram, full payload table and "Decisions"; AI-USAGE is honest and specific.                                            |
 | F-13 | Video demo                                                                                       | D-8                                                     | F-12             | 6 (recorded by the author, outside the repo)   | planned | 2–4 min recording covering D-8 (a)–(e).                                                                                                                                                                 |
 | F-14 | Bonus: live update (`MEASUREMENT_UPDATED`) with echo-loop protection                             | S-5.1, Q-4, P-6                                         | F-11             | 7                                              | done    | Dragging a handle updates the row and the sum live; a host-originated change does not bounce back as a second update.                                                                                   |
@@ -83,6 +84,7 @@ graph TD
   F21[F-21 Docs site generator]
   F22[F-22 Conventions, lint, agent roles]
   F23[F-23 Apply conventions]
+  F24[F-24 CI and fork default branch]
   F13[F-13 Video demo]
   F14[F-14 * Live update + echo guard]
   F15[F-15 * Two-way deletion]
@@ -104,7 +106,7 @@ graph TD
   F07 --> F08
   F08 --> F09 --> F10 --> F11 --> F12 --> F13
   F12 --> F21
-  F20 --> F22 --> F23
+  F20 --> F22 --> F23 --> F24
   F11 --> F14
   F11 --> F15
   F11 --> F16

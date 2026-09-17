@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Cancel superseded runs on the same ref (e.g. new pushes to a PR branch).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # `submodules: true` + `fetch-depth: 1` gives a shallow clone of both the repo and the
+          # viewer submodule (the OHIF fork is large); no separate `git submodule update` step is
+          # needed because checkout's own submodule handling already clones shallowly here.
+          submodules: true
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Only the root workspace (host-app + contract) is installed; the viewer submodule uses its
+      # own yarn toolchain and our checks only read its extension's source files, not its
+      # dependencies (CLAUDE.md §5, docs/CONVENTIONS.md §11).
+      - run: npm ci
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Lint fork extension
+        run: npm run lint:fork
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
+
+      - name: Build host-app
+        run: npm run build --workspace host-app
+
+      - name: Check feature graph
+        run: npm run check:graph
+
+      - name: Check contract sync
+        run: npm run check:contract
+
+      - name: Build docs
+        run: npm run docs:build
+
+      - name: Verify docs site is up to date
+        run: |
+          if ! git diff --exit-code docs/site/index.html; then
+            echo "::error::docs/site/index.html is stale. Run 'npm run docs:build' and commit the result."
+            exit 1
+          fi
