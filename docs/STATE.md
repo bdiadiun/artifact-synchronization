@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                                         |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 17 `refactor: component props files and test folders` (branch `refactor/component-props-and-test-folders`, node F-27)                                                                                                         |
-| Gate           | 2 — five `.props.ts` files, nine tests moved to `__tests__/`, inline-style lint rule (plus a fixed `.tsx` glob that had silently disabled react-refresh), end-to-end unchanged; awaiting result approval                      |
-| Last merged PR | #18 `refactor: trim comments`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#9 merged into `scoring`                                                         |
-| Next slice     | 18 feature graph as JSON: `docs/feature-graph.json` as source of truth (description, canon, dependsOn, status, verify, files), imports scanned automatically, `FEATURE-GRAPH.md` + Mermaid generated, freshness checked in CI |
+| Field          | Value                                                                                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 18 `docs: feature graph as JSON` (branch `docs/feature-graph-json`, node F-28)                                                                                                                 |
+| Gate           | 2 — `docs/feature-graph.json` is the source (29 nodes, 21 slices, files and generated imports); `FEATURE-GRAPH.md` generated; `check:graph` 15/15; awaiting result approval                    |
+| Last merged PR | #19 `refactor: component props files and test folders`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#9 merged into `scoring` |
+| Next slice     | Not planned yet                                                                                                                                                                                |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -65,6 +65,6 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Session checklist
 
-1. Read `CLAUDE.md`, this file, then the node rows of `docs/FEATURE-GRAPH.md` for the current slice.
+1. Read `CLAUDE.md`, this file, then the nodes of `docs/feature-graph.json` for the current slice.
 2. Run `npm run check:graph`.
 3. Continue from "Gate" above. Do not re-derive decisions already in `docs/decisions/`.

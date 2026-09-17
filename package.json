@@ -12,7 +12,8 @@
     "packages/*"
   ],
   "scripts": {
-    "check:graph": "node scripts/check-graph.mjs",
+    "graph:build": "node scripts/graph.mjs build",
+    "check:graph": "node scripts/graph.mjs check",
     "check:contract": "node scripts/check-contract-sync.mjs",
     "docs:build": "node scripts/build-docs.mjs",
     "test": "npm run test --workspace host-app",

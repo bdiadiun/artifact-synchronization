@@ -1,0 +1,1267 @@
+{
+  "$schema": "./feature-graph.schema.json",
+  "version": 1,
+  "slices": [
+    {
+      "id": "0",
+      "title": "docs: canon and feature graph",
+      "branch": "docs/canon-and-feature-graph",
+      "pr": 1
+    },
+    {
+      "id": "0.5",
+      "title": "chore: project tooling and state journal",
+      "branch": "chore/project-tooling-and-state-journal",
+      "pr": 2
+    },
+    {
+      "id": "1",
+      "title": "chore: bootstrap host-app",
+      "branch": "chore/bootstrap-host-app",
+      "pr": 3
+    },
+    {
+      "id": "2",
+      "title": "feat: viewer bridge extension",
+      "branch": "feat/viewer-bridge-extension",
+      "pr": 4
+    },
+    {
+      "id": "3",
+      "title": "feat: activate ellipse from form",
+      "branch": "feat/activate-ellipse-from-form",
+      "pr": 5
+    },
+    {
+      "id": "4",
+      "title": "feat: receive measurement into form",
+      "branch": "feat/receive-measurement-into-form",
+      "pr": 6
+    },
+    {
+      "id": "5",
+      "title": "feat: total area calculation",
+      "branch": "feat/total-area-calculation",
+      "pr": 7
+    },
+    {
+      "id": "6",
+      "title": "docs: README, ARCHITECTURE, AI-USAGE",
+      "branch": "docs/readme-architecture-ai-usage",
+      "pr": 8
+    },
+    {
+      "id": "7",
+      "title": "feat: live measurement update",
+      "branch": "feat/live-measurement-update",
+      "pr": 9
+    },
+    {
+      "id": "8",
+      "title": "feat: two-way deletion",
+      "branch": "feat/two-way-deletion",
+      "pr": 10
+    },
+    {
+      "id": "9",
+      "title": "feat: OHIF version on viewport",
+      "branch": "feat/ohif-version-on-viewport",
+      "pr": 11
+    },
+    {
+      "id": "10",
+      "title": "chore: docs site generator",
+      "branch": "chore/docs-site-generator",
+      "pr": 12
+    },
+    {
+      "id": "11",
+      "title": "feat: focus measurement from row",
+      "branch": "feat/focus-measurement-from-row",
+      "pr": 13
+    },
+    {
+      "id": "12",
+      "title": "chore: conventions, lint and agent roles",
+      "branch": "chore/conventions-lint-and-agent-roles",
+      "pr": 14
+    },
+    {
+      "id": "13",
+      "title": "refactor: apply conventions",
+      "branch": "refactor/apply-conventions",
+      "pr": 15
+    },
+    {
+      "id": "14",
+      "title": "ci: checks and fork default branch",
+      "branch": "ci/checks-and-fork-default-branch",
+      "pr": 16
+    },
+    {
+      "id": "15",
+      "title": "docs: final pass",
+      "branch": "docs/final-pass",
+      "pr": 17
+    },
+    {
+      "id": "16",
+      "title": "refactor: trim comments",
+      "branch": "refactor/trim-comments",
+      "pr": 18
+    },
+    {
+      "id": "17",
+      "title": "refactor: component props files and test folders",
+      "branch": "refactor/component-props-and-test-folders",
+      "pr": 19
+    },
+    {
+      "id": "18",
+      "title": "docs: feature graph as JSON",
+      "branch": "docs/feature-graph-json"
+    },
+    {
+      "id": "later",
+      "title": "bonus nodes not yet scheduled",
+      "branch": "one branch per bonus node"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "F-00",
+      "name": "Canon and feature graph",
+      "description": "Splits the test assignment into atomic requirements with immutable IDs (C, Q, S, D, X, P) in docs/CANON.md and derives the feature graph from them. The canon also seeds the decisions section, starting with A-1..A-5 (repository layout, ports, defence-readiness IDs, cancelled activation, deferred bridge decisions). Every later node traces back to these IDs.",
+      "canon": ["A-1", "A-2", "A-3", "A-4", "A-5", "D-2", "D-3", "D-4", "D-6"],
+      "dependsOn": [],
+      "slice": "0",
+      "status": "done",
+      "verify": "Coverage check: every `C/Q/D` ID appears in this table; no cycles; diagram matches table.",
+      "files": ["docs/CANON.md", "docs/FEATURE-GRAPH.md"],
+      "imports": {}
+    },
+    {
+      "id": "F-01",
+      "name": "Host-app scaffold",
+      "description": "Creates the host-app as a Vite + React + TypeScript workspace in strict mode. The dev server is pinned to port 5173 and the viewer origin to port 3000 in a single config module (A-2), so the two apps are cross-origin by construction. User-visible strings are collected in one Ukrainian strings file (A-7).",
+      "canon": ["A-2", "C-3.3", "C-4.2.1", "C-4.2.3"],
+      "dependsOn": ["F-20"],
+      "slice": "1",
+      "status": "done",
+      "verify": "`npm run dev` in `host-app/` serves on port 5173; `tsc --noEmit` and lint pass with `strict`.",
+      "files": [
+        "docs/decisions/A-2-ports.md",
+        "docs/decisions/A-7-ui-language.md",
+        "host-app/.gitignore",
+        "host-app/index.html",
+        "host-app/package.json",
+        "host-app/public/favicon.svg",
+        "host-app/src/config.ts",
+        "host-app/src/index.css",
+        "host-app/src/main.tsx",
+        "host-app/src/setup-tests.ts",
+        "host-app/src/ui-strings.ts",
+        "host-app/tsconfig.app.json",
+        "host-app/tsconfig.json",
+        "host-app/tsconfig.node.json",
+        "host-app/vite.config.ts"
+      ],
+      "imports": {
+        "host-app/src/config.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/main.tsx": {
+          "internal": ["host-app/src/App.tsx", "host-app/src/index.css"],
+          "external": ["react", "react-dom"]
+        },
+        "host-app/src/setup-tests.ts": {
+          "internal": [],
+          "external": ["@testing-library/jest-dom", "@testing-library/react", "vitest"]
+        },
+        "host-app/src/ui-strings.ts": {
+          "internal": [],
+          "external": []
+        },
+        "host-app/vite.config.ts": {
+          "internal": [],
+          "external": ["@vitejs/plugin-react", "vite"]
+        }
+      }
+    },
+    {
+      "id": "F-02",
+      "name": "Page layout: iframe + form panel",
+      "description": "Renders the single page: a flexible full-height iframe on the left and the scoring form panel on the right. The iframe source is the direct study link built from config, which is how OHIF is opened on a specific study.",
+      "canon": ["C-4.1.3", "C-4.2.2"],
+      "dependsOn": ["F-01"],
+      "slice": "1",
+      "status": "done",
+      "verify": "Page shows a full-height flexible iframe on the left pointing at `http://localhost:3000/viewer?StudyInstanceUIDs=…` and a form panel on the right.",
+      "files": [
+        "host-app/src/App.css",
+        "host-app/src/App.tsx",
+        "host-app/src/__tests__/App.test.tsx",
+        "host-app/src/components/ScoringPanel.props.ts",
+        "host-app/src/components/ScoringPanel.tsx",
+        "host-app/src/components/ViewerFrame.props.ts",
+        "host-app/src/components/ViewerFrame.tsx"
+      ],
+      "imports": {
+        "host-app/src/App.tsx": {
+          "internal": [
+            "host-app/src/App.css",
+            "host-app/src/bridge/useBridge.ts",
+            "host-app/src/components/BridgeStatus.tsx",
+            "host-app/src/components/ScoringPanel.tsx",
+            "host-app/src/components/ViewerFrame.tsx",
+            "host-app/src/form/useScoringForm.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/__tests__/App.test.tsx": {
+          "internal": [
+            "host-app/src/App.tsx",
+            "host-app/src/config.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/components/ScoringPanel.props.ts": {
+          "internal": ["host-app/src/form/rows.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/ScoringPanel.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.tsx",
+            "host-app/src/components/ScoringPanel.props.ts",
+            "host-app/src/components/TotalsFooter.tsx",
+            "host-app/src/form/totals.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/components/ViewerFrame.props.ts": {
+          "internal": [],
+          "external": ["react"]
+        },
+        "host-app/src/components/ViewerFrame.tsx": {
+          "internal": [
+            "host-app/src/components/ViewerFrame.props.ts",
+            "host-app/src/config.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["react"]
+        }
+      }
+    },
+    {
+      "id": "F-03",
+      "name": "Shared message contract",
+      "description": "Declares every message type with literal `type` values and `version: 1` in one package, `@scoring/contract`, together with runtime guards `isHostCommand` and `isViewerEvent` that reject malformed or wrong-version payloads. The viewer submodule keeps a byte-identical copy of the file, checked by `npm run check:contract` (A-12). The tool name and the `metrics` object in the payload keep P-7 and P-8 changes local.",
+      "canon": ["C-4.4.1", "C-4.4.2", "C-4.4.3", "P-7", "P-8", "Q-7"],
+      "dependsOn": ["F-00"],
+      "slice": "2",
+      "status": "done",
+      "verify": "Types for the five events with `version: 1`; runtime guard rejects malformed / wrong-version messages; unit tests for serialisation and validation pass (X-4).",
+      "files": [
+        "docs/decisions/A-12-npm-workspaces.md",
+        "packages/contract/README.md",
+        "packages/contract/package.json",
+        "packages/contract/src/__tests__/messages.test.ts",
+        "packages/contract/src/messages.ts",
+        "packages/contract/tsconfig.json",
+        "scripts/check-contract-sync.mjs",
+        "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+      ],
+      "imports": {
+        "packages/contract/src/__tests__/messages.test.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "packages/contract/src/messages.ts": {
+          "internal": [],
+          "external": []
+        },
+        "scripts/check-contract-sync.mjs": {
+          "internal": [],
+          "external": ["node:fs", "node:path"]
+        },
+        "viewer/extensions/scoring-bridge/src/contract/messages.ts": {
+          "internal": [],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-04",
+      "name": "OHIF fork wired in",
+      "description": "Adds the OHIF fork as a git submodule under `viewer/`, on branch `scoring` based on release v3.12.17 (A-1, A-6). The fork runs locally on port 3000 against the default public DICOMweb data source and opens a study by direct link. The extension is registered in the fork's plugin config.",
+      "canon": ["A-1", "C-4.1.1", "C-4.1.2", "C-4.1.3", "D-1"],
+      "dependsOn": ["F-00"],
+      "slice": "2",
+      "status": "done",
+      "verify": "Fork added as submodule under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb.",
+      "files": [
+        ".gitmodules",
+        "docs/decisions/A-1-mono-repo-with-submodule.md",
+        "docs/decisions/A-6-ohif-base-version.md",
+        "viewer/platform/app/package.json",
+        "viewer/platform/app/pluginConfig.json"
+      ],
+      "imports": {}
+    },
+    {
+      "id": "F-05",
+      "name": "Viewer bridge extension: `preRegistration`, origin check, `VIEWER_READY`",
+      "description": "The `scoring-bridge` OHIF extension obtains `servicesManager` and `commandsManager` in `preRegistration` and creates the bridge there. The bridge listens for `message` events, ignores any origin other than the configured host origin, and posts to the parent with an explicit `targetOrigin`. `VIEWER_READY` is sent on the first `VIEWPORT_ADDED`, because tool activation is a no-op before a viewport exists; all subscriptions are released on teardown.",
+      "canon": ["C-3.1", "C-3.2", "C-3.4", "Q-2", "Q-5"],
+      "dependsOn": ["F-03", "F-04"],
+      "slice": "2",
+      "status": "done",
+      "verify": "Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).",
+      "files": [
+        "viewer/extensions/scoring-bridge/babel.config.js",
+        "viewer/extensions/scoring-bridge/package.json",
+        "viewer/extensions/scoring-bridge/src/bridge.ts",
+        "viewer/extensions/scoring-bridge/src/config.ts",
+        "viewer/extensions/scoring-bridge/src/id.js",
+        "viewer/extensions/scoring-bridge/src/index.tsx"
+      ],
+      "imports": {
+        "viewer/extensions/scoring-bridge/babel.config.js": {
+          "internal": [],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/commands.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/focus.ts",
+            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/removals.ts",
+            "viewer/extensions/scoring-bridge/src/throttle.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/config.ts": {
+          "internal": [],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/id.js": {
+          "internal": ["viewer/extensions/scoring-bridge/package.json"],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/index.tsx": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/bridge.ts",
+            "viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx",
+            "viewer/extensions/scoring-bridge/src/id.js"
+          ],
+          "external": ["@ohif/core"]
+        }
+      }
+    },
+    {
+      "id": "F-06",
+      "name": "Host bridge client: origin check, handshake, early-command queue, cleanup",
+      "description": "`createBridge` accepts only messages from the viewer origin that pass `isViewerEvent`, keeps a `ready` flag and a FIFO queue, and flushes queued commands in order on `VIEWER_READY` (A-9). `useBridge` binds it to React and removes the listener on unmount, so StrictMode double mounts leave one listener. `BridgeStatus` shows readiness and the queued count for diagnosis (P-9).",
+      "canon": ["C-3.1", "P-1", "P-9", "Q-1", "Q-2", "Q-5"],
+      "dependsOn": ["F-02", "F-03"],
+      "slice": "2",
+      "status": "done",
+      "verify": "Clicking \"Activate\" before the iframe is ready queues the command; it is flushed after `VIEWER_READY`; listeners are removed on unmount (React StrictMode double-mount leaves one listener).",
+      "files": [
+        "docs/decisions/A-9-handshake-and-queue.md",
+        "host-app/src/bridge/__tests__/createBridge.test.ts",
+        "host-app/src/bridge/__tests__/useBridge.test.tsx",
+        "host-app/src/bridge/createBridge.ts",
+        "host-app/src/bridge/useBridge.ts",
+        "host-app/src/components/BridgeStatus.props.ts",
+        "host-app/src/components/BridgeStatus.tsx"
+      ],
+      "imports": {
+        "host-app/src/bridge/__tests__/createBridge.test.ts": {
+          "internal": ["host-app/src/bridge/createBridge.ts", "packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/bridge/__tests__/useBridge.test.tsx": {
+          "internal": ["host-app/src/bridge/useBridge.ts"],
+          "external": ["@testing-library/react", "react", "vitest"]
+        },
+        "host-app/src/bridge/createBridge.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/bridge/useBridge.ts": {
+          "internal": [
+            "host-app/src/bridge/createBridge.ts",
+            "host-app/src/config.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/components/BridgeStatus.props.ts": {
+          "internal": ["host-app/src/bridge/createBridge.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/BridgeStatus.tsx": {
+          "internal": [
+            "host-app/src/components/BridgeStatus.props.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["react"]
+        }
+      }
+    },
+    {
+      "id": "F-07",
+      "name": "Form rows: add, statuses, row IDs",
+      "description": "The form keeps rows in a pure reducer with string-enum statuses. \"Add measurement\" creates a row with a host-issued UUID and status `Pending`, and any number of rows can be added. The host owns `rowId` so an empty row exists before anything is drawn (A-8).",
+      "canon": ["C-4.3.1", "C-4.3.2", "C-4.3.7", "Q-3"],
+      "dependsOn": ["F-02"],
+      "slice": "3",
+      "status": "done",
+      "verify": "\"Add measurement\" creates rows with unique IDs and status `Pending`; any number of rows can be added.",
+      "files": [
+        "host-app/src/components/MeasurementRow.props.ts",
+        "host-app/src/components/MeasurementRow.tsx",
+        "host-app/src/form/__tests__/rows.test.ts",
+        "host-app/src/form/__tests__/useScoringForm.test.tsx",
+        "host-app/src/form/rows.ts",
+        "host-app/src/form/useScoringForm.ts"
+      ],
+      "imports": {
+        "host-app/src/components/MeasurementRow.props.ts": {
+          "internal": ["host-app/src/form/rows.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/MeasurementRow.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/ui-strings.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/form/__tests__/rows.test.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "host-app/src/form/useScoringForm.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/rows.ts": {
+          "internal": ["host-app/src/config.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        }
+      }
+    },
+    {
+      "id": "F-08",
+      "name": "Activate / deactivate tool from a row",
+      "description": "\"Activate\" sends `ACTIVATE_TOOL` with `rowId` and the configured tool name and moves the row to `Drawing…`; activating another row or cancelling sends `DEACTIVATE_TOOL` and returns the row to `Pending` (A-4). In the viewer, `commands.ts` snapshots the active primary tool, arms the requested tool and restores the snapshot on disarm (A-8). The tool name is one constant in host config (P-7).",
+      "canon": ["A-4", "C-4.3.3", "C-4.4.1", "P-7", "Q-3"],
+      "dependsOn": ["F-05", "F-06", "F-07"],
+      "slice": "3",
+      "status": "done",
+      "verify": "\"Activate\" switches the row to `Drawing…` and the viewer to `EllipticalROI`; cancel sends `DEACTIVATE_TOOL`, row returns to `Pending`, viewer returns to the default tool.",
+      "files": [
+        "docs/decisions/A-4-cancelled-activation.md",
+        "host-app/src/config.ts",
+        "host-app/src/form/useScoringForm.ts",
+        "viewer/extensions/scoring-bridge/src/commands.ts"
+      ],
+      "imports": {
+        "host-app/src/config.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "viewer/extensions/scoring-bridge/src/commands.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-09",
+      "name": "Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool",
+      "description": "The bridge subscribes to `measurementService` `MEASUREMENT_ADDED`, maps the OHIF measurement to `metrics` with its unit copied from `cachedStats`, records `uid → rowId`, and posts `MEASUREMENT_ADDED` with the armed row ID and the annotation UID. It then restores the previous tool and disarms. The viewer issues the measurement ID because OHIF rejects foreign fields on measurements (A-8, P-3).",
+      "canon": ["C-3.4", "C-4.3.4", "C-4.3.5", "C-4.3.6", "P-3", "P-4", "Q-3", "Q-6"],
+      "dependsOn": ["F-08"],
+      "slice": "4",
+      "status": "done",
+      "verify": "Drawing an ellipse produces one `MEASUREMENT_ADDED` with area, units (`mm²` / `px²`), row correlation ID and annotation ID; the viewer tool returns to default.",
+      "files": [
+        "docs/decisions/A-11-units-and-metrics-payload.md",
+        "docs/decisions/A-8-id-correlation.md",
+        "viewer/extensions/scoring-bridge/src/bridge.ts",
+        "viewer/extensions/scoring-bridge/src/commands.ts",
+        "viewer/extensions/scoring-bridge/src/measurements.ts"
+      ],
+      "imports": {
+        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/commands.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/focus.ts",
+            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/removals.ts",
+            "viewer/extensions/scoring-bridge/src/throttle.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/commands.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/measurements.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-10",
+      "name": "Row receives the value",
+      "description": "The form hook applies `MEASUREMENT_ADDED` to the row in `Drawing…` with the matching `rowId`, stores the measurement UID, value and unit, and sets status `Done`. Events with `rowId: null` or for an unknown or non-drawing row are ignored and logged. Values are formatted with their unit.",
+      "canon": ["C-4.3.5", "C-4.3.6", "Q-6"],
+      "dependsOn": ["F-09"],
+      "slice": "4",
+      "status": "done",
+      "verify": "The correct row shows the value with its unit and status `Done`; a measurement that arrives for an unknown or non-`Drawing…` row is ignored and logged.",
+      "files": [
+        "host-app/src/components/MeasurementRow.tsx",
+        "host-app/src/form/__tests__/format.test.ts",
+        "host-app/src/form/__tests__/useScoringForm.test.tsx",
+        "host-app/src/form/format.ts",
+        "host-app/src/form/rows.ts",
+        "host-app/src/form/useScoringForm.ts"
+      ],
+      "imports": {
+        "host-app/src/components/MeasurementRow.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/ui-strings.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/form/__tests__/format.test.ts": {
+          "internal": ["host-app/src/form/format.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "host-app/src/form/useScoringForm.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/format.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/rows.ts": {
+          "internal": ["host-app/src/config.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        }
+      }
+    },
+    {
+      "id": "F-11",
+      "name": "Total area with unit handling",
+      "description": "`computeTotals` sums row values per unit, so mm² and px² are never added together (A-11), and the totals footer re-renders on every row change. The sum logic is covered by unit tests, within the test budget of X-4.",
+      "canon": ["C-4.3.8", "Q-6", "X-4"],
+      "dependsOn": ["F-10"],
+      "slice": "5",
+      "status": "done",
+      "verify": "Sum is shown per unit (mm² and px² never added together); recalculates on every change; unit tests for the sum logic pass.",
+      "files": [
+        "host-app/src/components/TotalsFooter.props.ts",
+        "host-app/src/components/TotalsFooter.tsx",
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx",
+        "host-app/src/form/__tests__/totals.test.ts",
+        "host-app/src/form/totals.ts"
+      ],
+      "imports": {
+        "host-app/src/components/TotalsFooter.props.ts": {
+          "internal": ["host-app/src/form/totals.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/TotalsFooter.tsx": {
+          "internal": [
+            "host-app/src/components/TotalsFooter.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx": {
+          "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/form/rows.ts"],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/__tests__/totals.test.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/totals.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-12",
+      "name": "Documentation: README, ARCHITECTURE, AI-USAGE",
+      "description": "README describes the run from a clean clone to a working screen. ARCHITECTURE holds the exchange diagram, the full message table with payloads and the Decisions section (IDs, handshake, early commands, echo loop). AI-USAGE records where AI was used and what was kept or rewritten; DEFENCE.md answers the P-questions with file pointers.",
+      "canon": ["D-5", "D-6", "D-7", "P-2", "P-5", "P-6"],
+      "dependsOn": ["F-11"],
+      "slice": "6",
+      "status": "done",
+      "verify": "Fresh clone → both apps running by following README only; ARCHITECTURE has the diagram, full payload table and \"Decisions\"; AI-USAGE is honest and specific.",
+      "files": ["AI-USAGE.md", "ARCHITECTURE.md", "README.md", "docs/DEFENCE.md"],
+      "imports": {}
+    },
+    {
+      "id": "F-13",
+      "name": "Video demo",
+      "description": "A 2–4 minute recording showing both apps starting, at least three measurements, the sum updating, a cancelled activation and the implemented bonuses. It is recorded by the author outside the repository; the script lives in DEFENCE.md.",
+      "canon": ["D-8"],
+      "dependsOn": ["F-12"],
+      "slice": "6",
+      "status": "planned",
+      "verify": "2–4 min recording covering D-8 (a)–(e).",
+      "files": [],
+      "imports": {}
+    },
+    {
+      "id": "F-14",
+      "name": "Bonus: live update (`MEASUREMENT_UPDATED`) with echo-loop protection",
+      "description": "The bridge publishes `MEASUREMENT_UPDATED` for measurements bound to a row, throttled per UID to one event per 100 ms with a trailing emit and skipped when the value is unchanged. The host reducer updates the row value and the totals follow. The host never sends a command in reaction to a measurement event, so no loop can form (A-10).",
+      "canon": ["P-6", "Q-4", "S-5.1"],
+      "dependsOn": ["F-11"],
+      "slice": "7",
+      "status": "done",
+      "verify": "Dragging a handle updates the row and the sum live; a host-originated change does not bounce back as a second update.",
+      "files": [
+        "docs/decisions/A-10-echo-guard.md",
+        "host-app/src/form/__tests__/rows.test.ts",
+        "host-app/src/form/__tests__/useScoringForm.test.tsx",
+        "host-app/src/form/rows.ts",
+        "host-app/src/form/useScoringForm.ts",
+        "viewer/extensions/scoring-bridge/src/bridge.ts",
+        "viewer/extensions/scoring-bridge/src/measurements.ts",
+        "viewer/extensions/scoring-bridge/src/throttle.ts"
+      ],
+      "imports": {
+        "host-app/src/form/__tests__/rows.test.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "host-app/src/form/useScoringForm.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/rows.ts": {
+          "internal": ["host-app/src/config.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/commands.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/focus.ts",
+            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/removals.ts",
+            "viewer/extensions/scoring-bridge/src/throttle.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/measurements.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/throttle.ts": {
+          "internal": [],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-15",
+      "name": "Bonus: two-way deletion",
+      "description": "Row \"Delete\" sends `REMOVE_MEASUREMENT` with a `requestId`; the viewer parks the request ID, removes the measurement and returns it as `causedBy` in `MEASUREMENT_REMOVED`. A deletion made in OHIF arrives without the host's `causedBy` and returns the row to `Pending`. The contract gained two message types in version 1 (C-4.4.2).",
+      "canon": ["C-4.4.2", "Q-4", "S-5.2"],
+      "dependsOn": ["F-11"],
+      "slice": "8",
+      "status": "done",
+      "verify": "Row \"Delete\" removes the annotation; deleting in the viewer clears the row.",
+      "files": [
+        "host-app/src/components/MeasurementRow.tsx",
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx",
+        "host-app/src/form/__tests__/rows.test.ts",
+        "host-app/src/form/__tests__/useScoringForm.test.tsx",
+        "host-app/src/form/rows.ts",
+        "host-app/src/form/useScoringForm.ts",
+        "packages/contract/src/__tests__/messages.test.ts",
+        "packages/contract/src/messages.ts",
+        "viewer/extensions/scoring-bridge/src/bridge.ts",
+        "viewer/extensions/scoring-bridge/src/commands.ts",
+        "viewer/extensions/scoring-bridge/src/removals.ts"
+      ],
+      "imports": {
+        "host-app/src/components/MeasurementRow.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/ui-strings.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx": {
+          "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/form/rows.ts"],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/__tests__/rows.test.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "host-app/src/form/useScoringForm.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/rows.ts": {
+          "internal": ["host-app/src/config.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "packages/contract/src/__tests__/messages.test.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "packages/contract/src/messages.ts": {
+          "internal": [],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/commands.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/focus.ts",
+            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/removals.ts",
+            "viewer/extensions/scoring-bridge/src/throttle.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/commands.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/removals.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-16",
+      "name": "Bonus: focus annotation from row",
+      "description": "Clicking a `Done` row sends `FOCUS_MEASUREMENT` with the measurement UID. The viewer calls `measurementService.jumpToMeasurement`, which navigates to the annotation's image and selects it; unknown UIDs are ignored and nothing is sent back.",
+      "canon": ["C-4.4.2", "S-5.3"],
+      "dependsOn": ["F-11"],
+      "slice": "11",
+      "status": "done",
+      "verify": "Clicking a row highlights / jumps to the annotation.",
+      "files": [
+        "host-app/src/components/MeasurementRow.tsx",
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx",
+        "host-app/src/form/__tests__/useScoringForm.test.tsx",
+        "host-app/src/form/useScoringForm.ts",
+        "packages/contract/src/__tests__/messages.test.ts",
+        "packages/contract/src/messages.ts",
+        "viewer/extensions/scoring-bridge/src/commands.ts",
+        "viewer/extensions/scoring-bridge/src/focus.ts"
+      ],
+      "imports": {
+        "host-app/src/components/MeasurementRow.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/ui-strings.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx": {
+          "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/form/rows.ts"],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "host-app/src/form/useScoringForm.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "packages/contract/src/__tests__/messages.test.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "packages/contract/src/messages.ts": {
+          "internal": [],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/commands.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/focus.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-17",
+      "name": "Bonus: Length row type with separate sum",
+      "description": "Adds a \"Length\" row type backed by the `Length` tool, with its sum computed separately from areas. Not implemented; the contract already allows `Length` and `mm`/`px` units.",
+      "canon": ["S-5.4"],
+      "dependsOn": ["F-11"],
+      "slice": "later",
+      "status": "planned",
+      "verify": "Length rows sum separately from area rows.",
+      "files": [],
+      "imports": {}
+    },
+    {
+      "id": "F-18",
+      "name": "Bonus: OHIF version on viewport",
+      "description": "The extension's customization module pushes a version item into `viewportOverlay.bottomRight`, so every viewport, including all panes of a 2×2 grid, shows the OHIF version. The version string is injected at build time by the fork's webpack DefinePlugin from `version.txt`.",
+      "canon": ["S-5.5"],
+      "dependsOn": ["F-04"],
+      "slice": "9",
+      "status": "done",
+      "verify": "Version from `package.json` injected at build time appears on each viewport in a 2×2 grid.",
+      "files": [
+        "viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx",
+        "viewer/extensions/scoring-bridge/src/index.tsx"
+      ],
+      "imports": {
+        "viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx": {
+          "internal": [],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/index.tsx": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/bridge.ts",
+            "viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx",
+            "viewer/extensions/scoring-bridge/src/id.js"
+          ],
+          "external": ["@ohif/core"]
+        }
+      }
+    },
+    {
+      "id": "F-19",
+      "name": "Bonus: state restore after reload",
+      "description": "Restores form rows and viewer annotations after a page reload, keeping both in sync. Not implemented.",
+      "canon": ["S-5.6"],
+      "dependsOn": ["F-11"],
+      "slice": "later",
+      "status": "planned",
+      "verify": "Reload keeps rows and annotations in sync.",
+      "files": [],
+      "imports": {}
+    },
+    {
+      "id": "F-20",
+      "name": "Project tooling and state journal",
+      "description": "Pins Node 22 through `.nvmrc` and `engines`, adds the root `package.json` with the graph checker, and starts `docs/STATE.md` as the resume point for a fresh session. Decision records A-1..A-6 get their own files under `docs/decisions/`.",
+      "canon": ["A-6", "D-2", "D-3", "D-5"],
+      "dependsOn": ["F-00"],
+      "slice": "0.5",
+      "status": "done",
+      "verify": "`npm run check:graph` exits 0; `.nvmrc` + `engines` pin Node 22; `docs/STATE.md` lets a fresh session resume; decision records exist for A-1..A-6.",
+      "files": [
+        ".claude/settings.json",
+        ".nvmrc",
+        "docs/STATE.md",
+        "docs/decisions/A-3-defence-readiness-ids.md",
+        "docs/decisions/A-5-deferred-bridge-decisions.md",
+        "docs/decisions/README.md",
+        "package.json"
+      ],
+      "imports": {}
+    },
+    {
+      "id": "F-21",
+      "name": "Docs site generator (`npm run docs:build` → `docs/site/index.html`, clickable requirement IDs)",
+      "description": "`scripts/build-docs.mjs` bundles every project document into one self-contained HTML page rendered client-side from a template. Requirement and decision IDs link back to their home documents, and Mermaid blocks are rendered when the CDN is reachable. CI fails when the committed page is stale.",
+      "canon": ["D-3", "D-6"],
+      "dependsOn": ["F-12"],
+      "slice": "10",
+      "status": "done",
+      "verify": "`npm run docs:build` produces a single self-contained page; opening it shows every document, IDs link to canon / graph rows / decision files.",
+      "files": ["docs/site/index.html", "scripts/build-docs.mjs", "scripts/docs-template.html"],
+      "imports": {
+        "scripts/build-docs.mjs": {
+          "internal": [],
+          "external": ["node:fs", "node:path", "node:url"]
+        }
+      }
+    },
+    {
+      "id": "F-22",
+      "name": "Conventions, lint and agent roles (`docs/CONVENTIONS.md`, ESLint + Prettier, `.claude/agents/*`)",
+      "description": "Writes the coding conventions (arrow functions, string enums for app state, literal types on the wire, comment rules) and enforces them with ESLint 9, typescript-eslint strict and Prettier (A-13). Agent roles for architect, developer, tester, researcher and git operator are defined in `.claude/agents/`.",
+      "canon": ["A-13", "D-3", "Q-7"],
+      "dependsOn": ["F-20"],
+      "slice": "12",
+      "status": "done",
+      "verify": "`npm run lint` runs ESLint with typescript-eslint strict and react-hooks; `npm run format:check` runs Prettier; agent role files exist and CLAUDE.md points to them.",
+      "files": [
+        ".claude/agents/architect.md",
+        ".claude/agents/developer.md",
+        ".claude/agents/git-operator.md",
+        ".claude/agents/researcher.md",
+        ".claude/agents/tester.md",
+        ".prettierignore",
+        ".prettierrc.json",
+        "docs/CONVENTIONS.md",
+        "docs/decisions/A-13-coding-conventions.md",
+        "eslint.config.js"
+      ],
+      "imports": {
+        "eslint.config.js": {
+          "internal": [],
+          "external": [
+            "@eslint/js",
+            "eslint-config-prettier",
+            "eslint-plugin-react-hooks",
+            "eslint-plugin-react-refresh",
+            "globals",
+            "typescript-eslint"
+          ]
+        }
+      }
+    },
+    {
+      "id": "F-23",
+      "name": "Apply conventions to existing code (host-app, contract, extension)",
+      "description": "Brings host-app, the contract package and the fork extension to zero ESLint findings and Prettier-clean formatting, without behaviour change. The fork extension, whose own ESLint setup does not run at v3.12.17, is linted with a dedicated config through `npm run lint:fork`.",
+      "canon": ["A-13", "Q-7"],
+      "dependsOn": ["F-22"],
+      "slice": "13",
+      "status": "done",
+      "verify": "`npm run lint` and `format:check` exit 0 with zero warnings; all tests green; fork extension passes the same rules.",
+      "files": ["scripts/eslint-fork-style.config.js"],
+      "imports": {
+        "scripts/eslint-fork-style.config.js": {
+          "internal": [],
+          "external": ["typescript-eslint"]
+        }
+      }
+    },
+    {
+      "id": "F-24",
+      "name": "Continuous integration and fork default branch",
+      "description": "A GitHub Actions workflow runs format check, lint, fork lint, typecheck, tests, host build, graph check, contract check and docs freshness on every PR and push to main. The submodule points at the fork's default branch `scoring`, so a plain clone gets the right code.",
+      "canon": ["D-3", "D-4", "D-5", "Q-7"],
+      "dependsOn": ["F-23"],
+      "slice": "14",
+      "status": "done",
+      "verify": "GitHub Actions runs lint, lint:fork, format:check, typecheck, test, build, check:graph and check:contract on every PR and push to main; the fork's default branch is `scoring`.",
+      "files": [".github/workflows/ci.yml", ".gitmodules", "package.json"],
+      "imports": {}
+    },
+    {
+      "id": "F-25",
+      "name": "Final documentation pass: defence pointers after the refactor, AI usage for all slices, README for bonus features, video script",
+      "description": "Re-points every `file:line` link in DEFENCE.md after the refactor slices, extends AI-USAGE to all slices, documents the implemented bonuses in README and adds the video script. It answers the defence questions P-1..P-9 with current pointers.",
+      "canon": [
+        "D-5",
+        "D-6",
+        "D-7",
+        "D-8",
+        "P-1",
+        "P-2",
+        "P-3",
+        "P-4",
+        "P-5",
+        "P-6",
+        "P-7",
+        "P-8",
+        "P-9"
+      ],
+      "dependsOn": ["F-12", "F-24"],
+      "slice": "15",
+      "status": "done",
+      "verify": "Every `file:line` pointer in DEFENCE.md resolves to the cited symbol; AI-USAGE covers slices 0–15; README describes all implemented bonuses; clean-clone run of README succeeds.",
+      "files": ["AI-USAGE.md", "README.md", "docs/DEFENCE.md"],
+      "imports": {}
+    },
+    {
+      "id": "F-26",
+      "name": "Trim comments to a non-obvious why; comment rules made measurable",
+      "description": "Cuts comments across host-app, the contract, scripts and the extension to those that explain a non-obvious why, and makes the rule measurable (about 10% of non-blank lines) in CONVENTIONS §8. Rationale that still matters moved to decision records, ARCHITECTURE, DEFENCE or `docs/notes/bridge-internals.md`. No behaviour change.",
+      "canon": ["A-13", "Q-7"],
+      "dependsOn": ["F-25"],
+      "slice": "16",
+      "status": "done",
+      "verify": "Comment lines ≤ ~10% of non-blank lines per file; no behaviour change (all checks and end-to-end green); every removed rationale that matters is present in `docs/decisions/`, ARCHITECTURE or DEFENCE; DEFENCE links re-verified.",
+      "files": ["docs/CONVENTIONS.md", "docs/notes/bridge-internals.md"],
+      "imports": {}
+    },
+    {
+      "id": "F-27",
+      "name": "Component file layout: `{Name}.props.ts` for types, interfaces and styles; tests in `__tests__/` folders; lint rule against inline style literals",
+      "description": "Every React component keeps only the component in `{Name}.tsx` and its props, local types and style objects in a sibling `{Name}.props.ts`. Tests move to `__tests__/` folders next to their modules, and an ESLint rule forbids inline `style={{…}}` literals (CONVENTIONS §6). No behaviour change.",
+      "canon": ["A-13", "Q-7"],
+      "dependsOn": ["F-26"],
+      "slice": "17",
+      "status": "done",
+      "verify": "Every component with props or styles has a sibling `.props.ts`; no `style={{…}}` literals (lint); every test file sits in a `__tests__/` folder next to its module; lint, typecheck, 89 tests and end-to-end unchanged.",
+      "files": [
+        "docs/CONVENTIONS.md",
+        "eslint.config.js",
+        "host-app/src/__tests__/App.test.tsx",
+        "host-app/src/bridge/__tests__/createBridge.test.ts",
+        "host-app/src/bridge/__tests__/useBridge.test.tsx",
+        "host-app/src/components/BridgeStatus.props.ts",
+        "host-app/src/components/MeasurementRow.props.ts",
+        "host-app/src/components/ScoringPanel.props.ts",
+        "host-app/src/components/TotalsFooter.props.ts",
+        "host-app/src/components/ViewerFrame.props.ts",
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx",
+        "host-app/src/form/__tests__/format.test.ts",
+        "host-app/src/form/__tests__/rows.test.ts",
+        "host-app/src/form/__tests__/totals.test.ts",
+        "host-app/src/form/__tests__/useScoringForm.test.tsx",
+        "packages/contract/src/__tests__/messages.test.ts"
+      ],
+      "imports": {
+        "eslint.config.js": {
+          "internal": [],
+          "external": [
+            "@eslint/js",
+            "eslint-config-prettier",
+            "eslint-plugin-react-hooks",
+            "eslint-plugin-react-refresh",
+            "globals",
+            "typescript-eslint"
+          ]
+        },
+        "host-app/src/__tests__/App.test.tsx": {
+          "internal": [
+            "host-app/src/App.tsx",
+            "host-app/src/config.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/bridge/__tests__/createBridge.test.ts": {
+          "internal": ["host-app/src/bridge/createBridge.ts", "packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/bridge/__tests__/useBridge.test.tsx": {
+          "internal": ["host-app/src/bridge/useBridge.ts"],
+          "external": ["@testing-library/react", "react", "vitest"]
+        },
+        "host-app/src/components/BridgeStatus.props.ts": {
+          "internal": ["host-app/src/bridge/createBridge.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/MeasurementRow.props.ts": {
+          "internal": ["host-app/src/form/rows.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/ScoringPanel.props.ts": {
+          "internal": ["host-app/src/form/rows.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/TotalsFooter.props.ts": {
+          "internal": ["host-app/src/form/totals.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/ViewerFrame.props.ts": {
+          "internal": [],
+          "external": ["react"]
+        },
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx": {
+          "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/form/rows.ts"],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/__tests__/format.test.ts": {
+          "internal": ["host-app/src/form/format.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/rows.test.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/totals.test.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "host-app/src/form/useScoringForm.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "packages/contract/src/__tests__/messages.test.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        }
+      }
+    },
+    {
+      "id": "F-28",
+      "name": "Feature graph as JSON",
+      "description": "`docs/feature-graph.json` becomes the single source of truth of the feature graph, with a description, canon IDs, dependencies, slice, status, verification and implementing files per node. `scripts/graph.mjs build` scans the imports of those files and generates `docs/FEATURE-GRAPH.md` (tables, per-node sections, Mermaid diagram); `check` validates the graph invariants and the freshness of both outputs in CI.",
+      "canon": ["D-3", "D-6", "Q-7"],
+      "dependsOn": ["F-27"],
+      "slice": "18",
+      "status": "review",
+      "verify": "`npm run graph:build` is idempotent; `npm run check:graph` passes and fails on a missing file, a hand edit of FEATURE-GRAPH.md or a stale import list.",
+      "files": [
+        ".claude/agents/architect.md",
+        "CLAUDE.md",
+        "docs/FEATURE-GRAPH.md",
+        "docs/STATE.md",
+        "docs/feature-graph.json",
+        "docs/feature-graph.schema.json",
+        "docs/site/index.html",
+        "package.json",
+        "scripts/graph.mjs"
+      ],
+      "imports": {
+        "scripts/graph.mjs": {
+          "internal": [],
+          "external": ["node:child_process", "node:fs", "node:path", "node:url"]
+        }
+      }
+    }
+  ]
+}

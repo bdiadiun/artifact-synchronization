@@ -50,16 +50,20 @@ while served from different ports.
 
 ## 2. Feature graph
 
-- The feature graph: [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md). It **derives from the canon**
-  and does not exist without it.
+- The feature graph's source of truth: [docs/feature-graph.json](docs/feature-graph.json). It
+  **derives from the canon** and does not exist without it.
+- [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md) (tables, per-node details, Mermaid diagram) is
+  generated from the JSON by `npm run graph:build` and is never edited by hand. Change nodes and
+  statuses in the JSON, then run `npm run graph:build` and commit both files.
 - Every node `F-<nn>` contains:
-  - name and short description;
-  - `canon:` — list of requirement IDs it closes (mandatory, non-empty);
-  - `depends_on:` — nodes it depends on;
-  - `slice:` — the slice / PR in which it is implemented;
-  - `status:` — `planned` → `approved` → `in-progress` → `review` → `done`;
-  - `verify:` — how to verify (manual scenario and/or tests).
-- The graph is visualised as a Mermaid diagram in the same file; table and diagram must match.
+  - `name` and `description`;
+  - `canon` — list of requirement IDs it closes (mandatory, non-empty);
+  - `dependsOn` — nodes it depends on;
+  - `slice` — the slice / PR in which it is implemented;
+  - `status` — `planned` → `approved` → `in-progress` → `review` → `done`;
+  - `verify` — how to verify (manual scenario and/or tests);
+  - `files` — the repository files that implement it; `imports` of those files is generated.
+- The generated Markdown includes the Mermaid diagram; `npm run check:graph` fails when it is stale.
 - Invariants checked before every slice:
   - every mandatory requirement `C-*`, `Q-*`, `D-*` is covered by at least one node;
   - the graph has no cycles;
@@ -154,8 +158,8 @@ Indicative slice order (the minimum from the canon; refined in the graph): 0. `d
 
 ### Session start
 
-1. Read this file, then [docs/STATE.md](docs/STATE.md), then only the rows of
-   [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md) for the current slice.
+1. Read this file, then [docs/STATE.md](docs/STATE.md), then only the nodes of
+   [docs/feature-graph.json](docs/feature-graph.json) for the current slice.
 2. Run `npm run check:graph`.
 3. Continue from the gate recorded in `STATE.md`. Decisions already in `docs/decisions/` are not
    re-derived.
