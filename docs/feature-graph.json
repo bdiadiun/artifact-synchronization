@@ -190,6 +190,11 @@
       "id": "31",
       "title": "chore: drop empty folders",
       "branch": "chore/drop-empty-folders"
+    },
+    {
+      "id": "32",
+      "title": "chore: agent handover skill",
+      "branch": "chore/agent-handover-skill"
     }
   ],
   "nodes": [
@@ -2046,9 +2051,30 @@
       "canon": ["A-13", "Q-7"],
       "dependsOn": ["F-36"],
       "slice": "31",
-      "status": "review",
+      "status": "done",
       "verify": "The three folders are gone, host-app builds and its 149 tests pass, and the layout document and the rule state when each folder is created.",
       "files": [".claude/rules/host-app.md", "docs/PROJECT-STRUCTURE.md"],
+      "imports": {}
+    },
+    {
+      "id": "F-38",
+      "name": "Agent boundaries, instances and context handover",
+      "description": "Gives every role a written boundary: the developer changes application code and never a test, the tester the reverse, the architect documentation and process files only, the researcher one note, the git operator nothing. Fixes one instance per role and forbids an agent from spawning its own role, so two instances never write the same files. An agent whose context fills stops and writes a handover note and a successor of the same role continues from it, because a subagent's context is never compacted back. The procedure lives in one invokable skill so it is visible and can be run on demand.",
+      "canon": ["A-13", "D-2"],
+      "dependsOn": ["F-37"],
+      "slice": "32",
+      "status": "review",
+      "verify": "Each of the five agent definitions states which files it may write, who owns its context and what to do when it fills; CLAUDE.md and the slice skill carry the one-instance rule; the handover skill is listed in the layout document. Enforcement is by brief and by the architect's diff review: Claude Code has no per-agent file permission, only session-wide rules.",
+      "files": [
+        ".claude/agents/architect.md",
+        ".claude/agents/developer.md",
+        ".claude/agents/git-operator.md",
+        ".claude/agents/researcher.md",
+        ".claude/agents/tester.md",
+        ".claude/skills/handover/SKILL.md",
+        ".claude/skills/slice/SKILL.md",
+        "CLAUDE.md"
+      ],
       "imports": {}
     }
   ]
