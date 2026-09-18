@@ -3,6 +3,7 @@
 // message handler to the listener set; the rules live in those two modules.
 
 import type { HostCommand, ViewerEvent } from '@scoring/contract';
+import { createArmedTool } from './armedTool';
 import { createCommandQueue } from './commandQueue';
 import { createListenerSet } from './listeners';
 import { createMessageHandler } from './messageHandler';
@@ -34,8 +35,7 @@ export interface Bridge {
 }
 
 export const createBridge = (options: CreateBridgeOptions): Bridge => {
-  const { getViewerWindow, viewerOrigin } = options;
-  const hostWindow = options.hostWindow ?? window;
+  const { getViewerWindow, viewerOrigin, hostWindow = window } = options;
 
   let state: BridgeState = { ready: false, queued: 0, lastEvent: null, ignoredOrigins: 0 };
   const listeners = createListenerSet();
@@ -50,6 +50,7 @@ export const createBridge = (options: CreateBridgeOptions): Bridge => {
   };
 
   const queue = createCommandQueue({ getViewerWindow, viewerOrigin });
+  const armedTool = createArmedTool(viewerOrigin);
 
   // Every queue change is published as a state-only notification (`event: null`).
   const publishQueueLength = (): void => {
@@ -75,6 +76,7 @@ export const createBridge = (options: CreateBridgeOptions): Bridge => {
     if (disposed) {
       return;
     }
+    armedTool.remember(command);
     const viewerWindow = getViewerWindow();
     // Not ready, or the iframe window is momentarily unavailable: queue instead of losing it (Q-1).
     if (!state.ready || viewerWindow === null) {
@@ -92,6 +94,8 @@ export const createBridge = (options: CreateBridgeOptions): Bridge => {
       return;
     }
     disposed = true;
+    // Never queued: a viewer that never became ready has nothing armed to cancel.
+    armedTool.disarm(state.ready ? getViewerWindow() : null);
     hostWindow.removeEventListener('message', handleMessage);
     queue.clear();
     listeners.clear();

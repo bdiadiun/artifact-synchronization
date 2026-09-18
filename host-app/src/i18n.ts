@@ -5,7 +5,6 @@ import type { RestoreFailureReason } from '@scoring/contract';
 export const t = {
   appTitle: 'Скоринг-форма',
   addMeasurement: 'Додати вимірювання',
-  // Add a length row (S-5.4).
   addLength: 'Додати довжину',
   activate: 'Активувати',
   cancel: 'Скасувати',
@@ -13,12 +12,9 @@ export const t = {
   statusPending: 'Очікує',
   statusDrawing: 'Малювання…',
   statusDone: 'Готово',
-  // Row kind label (S-5.4).
   kindArea: 'Площа',
-  // Row kind label (S-5.4).
   kindLength: 'Довжина',
   total: 'Разом',
-  // Footer label for the length totals section (S-5.4).
   totalLength: 'Разом довжина',
   viewerFrameTitle: 'Переглядач OHIF',
   emptyHint: 'Рядків ще немає. Натисніть «Додати вимірювання».',
@@ -28,10 +24,11 @@ export const t = {
   bridgeQueued: 'у черзі',
   totalNoSpacingHint: 'без піксельного spacing, не додається до mm²',
   focusRow: 'Показати в переглядачі',
+  emptyValue: '—',
+  rowNumberPrefix: '#',
   focusHint: 'клік — показати в переглядачі',
   // A-14: shown on a row whose annotation could not be rebuilt after a reload.
   restoreFailed: 'анотацію не відновлено',
-  // A-14: per-reason detail for the restoreFailed marker's tooltip.
   restoreFailureReason: {
     'already-present': 'анотація вже існує',
     'unknown-study': 'інше дослідження',
@@ -39,7 +36,7 @@ export const t = {
     'viewer-error': 'помилка переглядача',
   } satisfies Record<RestoreFailureReason, string>,
   // Ukrainian noun agreement for "вимірювання": 1 and 2-4 keep that form, 5+/11-14 take "вимірювань".
-  measurementsCount(n: number): string {
+  measurementsCount: (n: number): string => {
     const lastTwo = n % 100;
     const lastOne = n % 10;
     const count = String(n);

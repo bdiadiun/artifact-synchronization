@@ -1,8 +1,6 @@
-// Renders the sum of one metric's rows (canon C-4.3.8, Q-6, decision A-11), grouped strictly by
-// unit: the primary unit (mm² for area, mm for length) gets the labelled top line, any other unit
-// (in practice px²/px — images without pixel spacing) gets its own line with a hint explaining why
-// it is not folded into the primary sum, instead of being silently dropped or added in. ScoringPanel
-// renders one instance per metric (S-5.4), so units of different metrics are never mixed together.
+// A-11 / Q-6: totals are grouped strictly by unit. The primary unit takes the labelled line and
+// any other unit (px²/px, an image without pixel spacing) gets its own line with a hint, rather
+// than being dropped or added into a sum it does not belong to.
 
 import type { JSX } from 'react';
 import { formatMetric } from '../utils/format';
@@ -15,7 +13,11 @@ export const TotalsFooter = ({
   primaryUnit = 'mm2',
 }: TotalsFooterProps): JSX.Element => {
   if (totals.length === 0) {
-    return <div>{label}: —</div>;
+    return (
+      <div>
+        {label}: {t.emptyValue}
+      </div>
+    );
   }
 
   const primary = totals.find((total) => total.unit === primaryUnit);
@@ -25,7 +27,9 @@ export const TotalsFooter = ({
     <div>
       <div>
         {label}:{' '}
-        {primary !== undefined ? formatMetric({ value: primary.value, unit: primaryUnit }) : '—'}
+        {primary !== undefined
+          ? formatMetric({ value: primary.value, unit: primaryUnit })
+          : t.emptyValue}
         {primary !== undefined && (
           <span style={styles.count}>({t.measurementsCount(primary.count)})</span>
         )}

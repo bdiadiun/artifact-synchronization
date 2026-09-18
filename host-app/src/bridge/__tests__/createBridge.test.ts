@@ -163,4 +163,66 @@ describe('createBridge', () => {
       expect(call[1]).not.toBe('*');
     }
   });
+
+  it('disarms on dispose: posts one DEACTIVATE_TOOL with an explicit target origin when armed and ready', () => {
+    dispatchFromViewer(viewerReady);
+    bridge.send(activate);
+    fakeViewerWindow.postMessage.mockClear();
+
+    bridge.dispose();
+
+    expect(fakeViewerWindow.postMessage).toHaveBeenCalledTimes(1);
+    const [posted, targetOrigin] = fakeViewerWindow.postMessage.mock.calls[0] as [unknown, string];
+    expect(posted).toMatchObject({ type: 'DEACTIVATE_TOOL', rowId: 'row-1' });
+    expect(targetOrigin).toBe(VIEWER_ORIGIN);
+    expect(targetOrigin).not.toBe('*');
+  });
+
+  it('posts nothing on dispose when the viewer never became ready', () => {
+    bridge.send(activate);
+    fakeViewerWindow.postMessage.mockClear();
+
+    bridge.dispose();
+
+    expect(fakeViewerWindow.postMessage).not.toHaveBeenCalled();
+  });
+
+  it('posts nothing on dispose when the armed tool was already deactivated', () => {
+    dispatchFromViewer(viewerReady);
+    bridge.send(activate);
+    bridge.send(deactivate);
+    fakeViewerWindow.postMessage.mockClear();
+
+    bridge.dispose();
+
+    expect(fakeViewerWindow.postMessage).not.toHaveBeenCalled();
+  });
+
+  it('posts at most one DEACTIVATE_TOOL when dispose is called twice while armed', () => {
+    dispatchFromViewer(viewerReady);
+    bridge.send(activate);
+    fakeViewerWindow.postMessage.mockClear();
+
+    bridge.dispose();
+    bridge.dispose();
+
+    expect(fakeViewerWindow.postMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('posts nothing and does not throw on dispose when the viewer window no longer exists', () => {
+    let viewerWindow: { postMessage: ReturnType<typeof vi.fn> } | null = fakeViewerWindow;
+    const noWindowBridge = createBridge({
+      getViewerWindow: () => viewerWindow as unknown as Window | null,
+      viewerOrigin: VIEWER_ORIGIN,
+    });
+    window.dispatchEvent(new MessageEvent('message', { data: viewerReady, origin: VIEWER_ORIGIN }));
+    noWindowBridge.send(activate);
+    viewerWindow = null;
+    fakeViewerWindow.postMessage.mockClear();
+
+    expect(() => {
+      noWindowBridge.dispose();
+    }).not.toThrow();
+    expect(fakeViewerWindow.postMessage).not.toHaveBeenCalled();
+  });
 });

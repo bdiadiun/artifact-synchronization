@@ -78,6 +78,13 @@ while served from different ports.
   - bonus `S-*` nodes are planned only after the mandatory part is `done`.
 - Statuses in the graph are updated in the same slice where the work changes.
 
+- **Documentation moves with the code.** A slice that changes behaviour updates, in the same commit,
+  every document that described the old behaviour: the canon when a requirement is affected,
+  `ARCHITECTURE.md`, `README.md`, `docs/CONVENTIONS.md`, `docs/DEFENCE.md`, the node's `files` array
+  and any decision record. Implementation agents do not write documentation; they report what their
+  change invalidated and the architect writes it. Gate 2 does not pass while a document still
+  describes the previous state.
+
 ## 3. Working in slices (mandatory)
 
 The assignment is split into **slices** (vertical, self-contained, each = one branch = one PR).

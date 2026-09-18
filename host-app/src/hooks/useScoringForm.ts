@@ -2,7 +2,8 @@ import { useReducer, useState } from 'react';
 import type { HostCommand, ToolName, ViewerEvent } from '@scoring/contract';
 import { reducer, type FormState, type Row } from '../form/rows';
 import { createRowActions } from '../form/rowActions';
-import { usePersistRows, useRestoredRows } from './usePersistedRows';
+import { usePersistRows } from './usePersistRows';
+import { useRestoredRows } from './useRestoredRows';
 import { useViewerEvents } from './useViewerEvents';
 import { createViewerEventHandlers } from '../form/viewerEventHandlers';
 
@@ -24,8 +25,6 @@ export interface UseScoringFormResult {
   focus: (rowId: string) => void;
 }
 
-// Composition root: wires the reducer, sessionStorage persistence, the outgoing row actions and
-// the incoming viewer events together. No branching logic of its own (CONVENTIONS §5).
 export const useScoringForm = ({
   send,
   lastEvent,

@@ -1,7 +1,6 @@
-// Persists the form's rows in sessionStorage, scoped to a study (A-14): a reload in the same tab
-// restores them, a different tab or a different study never sees another tab's rows. Every read
-// and write is defensive — private mode, a full quota or a cleared store all throw or return
-// nothing, and the form has to render normally either way.
+// A-14: rows are persisted in sessionStorage per study, so a reload in the same tab restores them
+// and another tab or study never sees them. Every access is defensive: private mode, a full quota
+// or a cleared store throw or return nothing, and the form still has to render.
 
 import type { MeasurementGeometry, Metrics, ToolName } from '@scoring/contract';
 import { RowStatus, type Row } from './rows';
