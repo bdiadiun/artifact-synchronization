@@ -143,7 +143,7 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
   handler needs a value the component already has, that value is read inside the handler; when a
   list renders one component per item, the handler lives in that item component, which is why
   `MeasurementRow` owns its own `handleActivate`, `handleCancel` and `handleRemove`.
-- User-visible strings come from `ui-strings.ts` (A-7); no literals in JSX.
+- User-visible strings come from `i18n.ts` (A-7); no literals in JSX.
 
 ## 7. Errors, logging and defensive code
 

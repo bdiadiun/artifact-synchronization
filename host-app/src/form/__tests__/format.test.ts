@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formatMetric, formatRowKind, formatRowMetric, formatRowStatus } from '../format';
 import { RowStatus, type Row } from '../rows';
-import { UI } from '../../ui-strings';
+import { t } from '../../i18n';
 
 describe('formatMetric', () => {
   it('renders mm2 with the mm² glyph and 1 decimal', () => {
@@ -30,19 +30,19 @@ const row = (over: Partial<Row> = {}): Row => ({
 
 describe('formatRowStatus', () => {
   it('maps every status to its Ukrainian label', () => {
-    expect(formatRowStatus(RowStatus.Pending)).toBe(UI.statusPending);
-    expect(formatRowStatus(RowStatus.Drawing)).toBe(UI.statusDrawing);
-    expect(formatRowStatus(RowStatus.Done)).toBe(UI.statusDone);
+    expect(formatRowStatus(RowStatus.Pending)).toBe(t.statusPending);
+    expect(formatRowStatus(RowStatus.Drawing)).toBe(t.statusDrawing);
+    expect(formatRowStatus(RowStatus.Done)).toBe(t.statusDone);
   });
 });
 
 describe('formatRowKind', () => {
   it('labels an area tool as area', () => {
-    expect(formatRowKind(row({ toolName: 'RectangleROI' }))).toBe(UI.kindArea);
+    expect(formatRowKind(row({ toolName: 'RectangleROI' }))).toBe(t.kindArea);
   });
 
   it('labels the length tool as length', () => {
-    expect(formatRowKind(row({ toolName: 'Length' }))).toBe(UI.kindLength);
+    expect(formatRowKind(row({ toolName: 'Length' }))).toBe(t.kindLength);
   });
 });
 

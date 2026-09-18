@@ -45,47 +45,48 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-32 | Bridge split by protocol role                                                                                                                     | A-13, C-3.4, Q-7                                                | F-31             | 25    | done    | npm run lint:fork reports no size or complexity warnings for the extension; the full browser regression (ready, activate, measure, restore tool, live update, delete both ways, focus, version overlay) behaves as before.         |
 | F-33 | Scoring form hook and reducer split                                                                                                               | A-13, Q-7                                                       | F-32             | 26    | done    | npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.                                                                                                                  |
 | F-34 | Contract copy guarded on both sides                                                                                                               | A-12, Q-7                                                       | F-33             | 27    | done    | Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.                                                                                                            |
+| F-35 | User-visible strings under the conventional i18n name                                                                                             | A-7, A-13, Q-7                                                  | F-19             | 29    | review  | No reference to the old name remains outside the historical note in the state journal; 149 tests, lint and typecheck stay green.                                                                                                   |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                   |
-| ------- | ---------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                   |
-| C-3.2   | F-05                                                                         |
-| C-3.3   | F-01                                                                         |
-| C-3.4   | F-05, F-09, F-32                                                             |
-| C-4.1.1 | F-04                                                                         |
-| C-4.1.2 | F-04                                                                         |
-| C-4.1.3 | F-02, F-04                                                                   |
-| C-4.2.1 | F-01                                                                         |
-| C-4.2.2 | F-02                                                                         |
-| C-4.2.3 | F-01                                                                         |
-| C-4.3.1 | F-07                                                                         |
-| C-4.3.2 | F-07                                                                         |
-| C-4.3.3 | F-08                                                                         |
-| C-4.3.4 | F-09                                                                         |
-| C-4.3.5 | F-09, F-10                                                                   |
-| C-4.3.6 | F-09, F-10                                                                   |
-| C-4.3.7 | F-07                                                                         |
-| C-4.3.8 | F-11                                                                         |
-| C-4.4.1 | F-03, F-08                                                                   |
-| C-4.4.2 | F-03, F-15, F-16                                                             |
-| C-4.4.3 | F-03                                                                         |
-| Q-1     | F-06                                                                         |
-| Q-2     | F-05, F-06                                                                   |
-| Q-3     | F-07, F-08, F-09, F-19                                                       |
-| Q-4     | F-14, F-15, F-19                                                             |
-| Q-5     | F-05, F-06                                                                   |
-| Q-6     | F-09, F-10, F-11                                                             |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34 |
-| D-1     | F-04                                                                         |
-| D-2     | F-00, F-20                                                                   |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29                                     |
-| D-4     | F-00, F-24                                                                   |
-| D-5     | F-12, F-20, F-24, F-25                                                       |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                 |
-| D-7     | F-12, F-25                                                                   |
-| D-8     | F-13, F-25                                                                   |
+| ID      | Covered by                                                                         |
+| ------- | ---------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                         |
+| C-3.2   | F-05                                                                               |
+| C-3.3   | F-01                                                                               |
+| C-3.4   | F-05, F-09, F-32                                                                   |
+| C-4.1.1 | F-04                                                                               |
+| C-4.1.2 | F-04                                                                               |
+| C-4.1.3 | F-02, F-04                                                                         |
+| C-4.2.1 | F-01                                                                               |
+| C-4.2.2 | F-02                                                                               |
+| C-4.2.3 | F-01                                                                               |
+| C-4.3.1 | F-07                                                                               |
+| C-4.3.2 | F-07                                                                               |
+| C-4.3.3 | F-08                                                                               |
+| C-4.3.4 | F-09                                                                               |
+| C-4.3.5 | F-09, F-10                                                                         |
+| C-4.3.6 | F-09, F-10                                                                         |
+| C-4.3.7 | F-07                                                                               |
+| C-4.3.8 | F-11                                                                               |
+| C-4.4.1 | F-03, F-08                                                                         |
+| C-4.4.2 | F-03, F-15, F-16                                                                   |
+| C-4.4.3 | F-03                                                                               |
+| Q-1     | F-06                                                                               |
+| Q-2     | F-05, F-06                                                                         |
+| Q-3     | F-07, F-08, F-09, F-19                                                             |
+| Q-4     | F-14, F-15, F-19                                                                   |
+| Q-5     | F-05, F-06                                                                         |
+| Q-6     | F-09, F-10, F-11                                                                   |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35 |
+| D-1     | F-04                                                                               |
+| D-2     | F-00, F-20                                                                         |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29                                           |
+| D-4     | F-00, F-24                                                                         |
+| D-5     | F-12, F-20, F-24, F-25                                                             |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                       |
+| D-7     | F-12, F-25                                                                         |
+| D-8     | F-13, F-25                                                                         |
 
 ## Diagram
 
@@ -126,6 +127,7 @@ graph TD
   F32["F-32 Bridge split by protocol role"]
   F33["F-33 Scoring form hook and reducer split"]
   F34["F-34 Contract copy guarded on both sides"]
+  F35["F-35 User-visible strings under the conventional i18n name"]
 
   F20 --> F01
   F01 --> F02
@@ -166,6 +168,7 @@ graph TD
   F31 --> F32
   F32 --> F33
   F33 --> F34
+  F19 --> F35
 ```
 
 ## Slice → nodes
@@ -203,6 +206,7 @@ graph TD
 | 26 — refactor: split the scoring form hook            | `refactor/split-scoring-form`               | —   | F-33                   |
 | 27 — chore: contract copy guard                       | `chore/contract-guard`                      | —   | F-34                   |
 | 28 — feat: state restore                              | `feat/state-restore`                        | —   | F-19                   |
+| 29 — refactor: i18n naming                            | `refactor/i18n-naming`                      | —   | F-35                   |
 
 ## Node details
 
@@ -232,10 +236,10 @@ Files:
 - `host-app/package.json`
 - `host-app/public/favicon.svg`
 - `host-app/src/config.ts` — internal: `packages/contract/src/messages.ts`
+- `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
 - `host-app/src/index.css`
 - `host-app/src/main.tsx` — internal: `host-app/src/App.tsx`, `host-app/src/index.css`; external: `react`, `react-dom`
 - `host-app/src/setup-tests.ts` — external: `@testing-library/jest-dom`, `@testing-library/react`, `vitest`
-- `host-app/src/ui-strings.ts` — internal: `packages/contract/src/messages.ts`
 - `host-app/tsconfig.app.json`
 - `host-app/tsconfig.json`
 - `host-app/tsconfig.node.json`
@@ -251,11 +255,11 @@ Files:
 
 - `host-app/src/App.css`
 - `host-app/src/App.tsx` — internal: `host-app/src/App.css`, `host-app/src/bridge/useBridge.ts`, `host-app/src/components/BridgeStatus.tsx`, `host-app/src/components/ScoringPanel.tsx`, `host-app/src/components/ViewerFrame.tsx`, `host-app/src/form/useScoringForm.ts`; external: `react`
-- `host-app/src/__tests__/App.test.tsx` — internal: `host-app/src/App.tsx`, `host-app/src/config.ts`, `host-app/src/ui-strings.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/__tests__/App.test.tsx` — internal: `host-app/src/App.tsx`, `host-app/src/config.ts`, `host-app/src/i18n.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/form/totals.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/form/totals.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/ViewerFrame.props.ts` — external: `react`
-- `host-app/src/components/ViewerFrame.tsx` — internal: `host-app/src/components/ViewerFrame.props.ts`, `host-app/src/config.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/ViewerFrame.tsx` — internal: `host-app/src/components/ViewerFrame.props.ts`, `host-app/src/config.ts`, `host-app/src/i18n.ts`; external: `react`
 
 ### F-03 Shared message contract
 
@@ -317,7 +321,7 @@ Files:
 - `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/bridge/useBridge.ts` — internal: `host-app/src/bridge/createBridge.ts`, `host-app/src/config.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/components/BridgeStatus.props.ts` — internal: `host-app/src/bridge/createBridge.ts`; external: `react`
-- `host-app/src/components/BridgeStatus.tsx` — internal: `host-app/src/components/BridgeStatus.props.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/BridgeStatus.tsx` — internal: `host-app/src/components/BridgeStatus.props.ts`, `host-app/src/i18n.ts`; external: `react`
 
 ### F-07 Form rows: add, statuses, row IDs
 
@@ -327,8 +331,8 @@ Canon: C-4.3.1, C-4.3.2, C-4.3.7, Q-3. Depends on: F-02. Slice 3, status `done`.
 
 Files:
 
-- `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
-- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/selectors.ts`, `packages/contract/src/messages.ts`
@@ -369,10 +373,10 @@ Canon: C-4.3.5, C-4.3.6, Q-6. Depends on: F-09. Slice 4, status `done`.
 
 Files:
 
-- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
-- `host-app/src/form/__tests__/format.test.ts` — internal: `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `vitest`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
+- `host-app/src/form/__tests__/format.test.ts` — internal: `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`, `packages/contract/src/messages.ts`
+- `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/usePersistedRows.ts`, `host-app/src/form/useViewerEvents.ts`, `host-app/src/form/viewerEventHandlers.ts`, `packages/contract/src/messages.ts`; external: `react`
 
@@ -385,7 +389,7 @@ Canon: C-4.3.8, Q-6, X-4. Depends on: F-10. Slice 5, status `done`.
 Files:
 
 - `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `host-app/src/components/TotalsFooter.tsx` — internal: `host-app/src/components/TotalsFooter.props.ts`, `host-app/src/form/format.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/TotalsFooter.tsx` — internal: `host-app/src/components/TotalsFooter.props.ts`, `host-app/src/form/format.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/__tests__/totals.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/totals.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`
@@ -438,7 +442,7 @@ Canon: C-4.4.2, Q-4, S-5.2. Depends on: F-11. Slice 8, status `done`.
 
 Files:
 
-- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
@@ -458,7 +462,7 @@ Canon: C-4.4.2, S-5.3. Depends on: F-11. Slice 11, status `done`.
 
 Files:
 
-- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/usePersistedRows.ts`, `host-app/src/form/useViewerEvents.ts`, `host-app/src/form/viewerEventHandlers.ts`, `packages/contract/src/messages.ts`; external: `react`
@@ -476,11 +480,11 @@ Canon: S-5.4. Depends on: F-11. Slice 22, status `done`.
 Files:
 
 - `ARCHITECTURE.md`
-- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/form/totals.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/form/totals.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `host-app/src/components/TotalsFooter.tsx` — internal: `host-app/src/components/TotalsFooter.props.ts`, `host-app/src/form/format.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/TotalsFooter.tsx` — internal: `host-app/src/components/TotalsFooter.props.ts`, `host-app/src/form/format.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/config.ts` — internal: `packages/contract/src/messages.ts`
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `vitest`
@@ -488,7 +492,7 @@ Files:
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/usePersistedRows.ts`, `host-app/src/form/useViewerEvents.ts`, `host-app/src/form/viewerEventHandlers.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `host-app/src/ui-strings.ts` — internal: `packages/contract/src/messages.ts`
+- `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
 
 ### F-18 Bonus: OHIF version on viewport
 
@@ -514,11 +518,11 @@ Files:
 - `docs/decisions/A-14-state-restore.md`
 - `docs/notes/ohif-annotation-restore.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
-- `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
-- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/form/__tests__/storage.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `vitest`
 - `host-app/src/form/commands.ts` — internal: `packages/contract/src/messages.ts`
-- `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`, `packages/contract/src/messages.ts`
+- `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/rowActions.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/selectors.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/storage.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`
@@ -526,7 +530,7 @@ Files:
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/usePersistedRows.ts`, `host-app/src/form/useViewerEvents.ts`, `host-app/src/form/viewerEventHandlers.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/form/useViewerEvents.ts` — internal: `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/selectors.ts`, `host-app/src/form/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `host-app/src/ui-strings.ts` — internal: `packages/contract/src/messages.ts`
+- `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
 - `packages/contract/src/messages.ts` — no imports
 - `scripts/eslint-fork-style.config.js` — external: `typescript-eslint`
 - `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
@@ -634,16 +638,16 @@ Files:
 
 - `docs/CONVENTIONS.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
-- `host-app/src/__tests__/App.test.tsx` — internal: `host-app/src/App.tsx`, `host-app/src/config.ts`, `host-app/src/ui-strings.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/__tests__/App.test.tsx` — internal: `host-app/src/App.tsx`, `host-app/src/config.ts`, `host-app/src/i18n.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/bridge/__tests__/createBridge.test.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/bridge/__tests__/useBridge.test.tsx` — internal: `host-app/src/bridge/useBridge.ts`; external: `@testing-library/react`, `react`, `vitest`
 - `host-app/src/components/BridgeStatus.props.ts` — internal: `host-app/src/bridge/createBridge.ts`; external: `react`
-- `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/components/ViewerFrame.props.ts` — external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/form/__tests__/format.test.ts` — internal: `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `vitest`
+- `host-app/src/form/__tests__/format.test.ts` — internal: `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `vitest`
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/__tests__/totals.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
@@ -691,7 +695,7 @@ Files:
 - `.claude/agents/developer.md`
 - `docs/CONVENTIONS.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
-- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 
 ### F-31 Complexity limits and module-shape rules
 
@@ -739,12 +743,12 @@ Files:
 - `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/bridge/listeners.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/bridge/messageHandler.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`
-- `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
-- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/form/__tests__/commands.test.ts` — internal: `host-app/src/form/commands.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/__tests__/selectors.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/selectors.ts`; external: `vitest`
 - `host-app/src/form/commands.ts` — internal: `packages/contract/src/messages.ts`
-- `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`, `packages/contract/src/messages.ts`
+- `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/selectors.ts` — internal: `host-app/src/form/rows.ts`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/usePersistedRows.ts`, `host-app/src/form/useViewerEvents.ts`, `host-app/src/form/viewerEventHandlers.ts`, `packages/contract/src/messages.ts`; external: `react`
@@ -764,3 +768,17 @@ Files:
 - `scripts/check-contract-sync.mjs` — external: `node:crypto`, `node:fs`, `node:path`
 - `viewer/extensions/scoring-bridge/scripts/check-contract-hash.mjs` — external: `node:crypto`, `node:fs`, `node:path`, `node:url`
 - `viewer/extensions/scoring-bridge/src/contract/messages.sha256`
+
+### F-35 User-visible strings under the conventional i18n name
+
+Renames host-app/src/ui-strings.ts to i18n.ts and its exported object from UI to t, the shape a reader expects from an internationalised app. The strings themselves and decision A-7 are unchanged; the object is not a function, so a real translation library would be a later step.
+
+Canon: A-7, A-13, Q-7. Depends on: F-19. Slice 29, status `review`.
+
+Files:
+
+- `.claude/agents/developer.md`
+- `docs/CANON.md`
+- `docs/CONVENTIONS.md`
+- `docs/decisions/A-7-ui-language.md`
+- `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`

@@ -1,19 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import App from '../App';
-import { UI } from '../ui-strings';
+import { t } from '../i18n';
 import { viewerUrl } from '../config';
 
 describe('App', () => {
   it('renders the heading, the add button and the viewer iframe', () => {
     render(<App />);
 
-    expect(screen.getByRole('heading', { name: UI.appTitle })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: UI.addMeasurement })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: t.appTitle })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: t.addMeasurement })).toBeInTheDocument();
 
-    const iframe = screen.getByTitle<HTMLIFrameElement>(UI.viewerFrameTitle);
+    const iframe = screen.getByTitle<HTMLIFrameElement>(t.viewerFrameTitle);
     expect(iframe.src).toBe(viewerUrl());
 
-    expect(screen.getByText(new RegExp(UI.bridgeNotReady))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(t.bridgeNotReady))).toBeInTheDocument();
   });
 });

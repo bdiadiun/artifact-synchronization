@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { Row } from '../form/rows';
-import { UI } from '../ui-strings';
+import { t } from '../i18n';
 
 export interface MeasurementRowProps {
   row: Row;
@@ -38,4 +38,4 @@ export const rowStyle = (focusable: boolean): CSSProperties =>
   focusable ? { ...styles.row, ...styles.rowClickable } : styles.row;
 
 export const rowInteraction = (focusable: boolean): RowInteraction =>
-  focusable ? { role: 'button', tabIndex: 0, 'aria-label': UI.focusRow } : {};
+  focusable ? { role: 'button', tabIndex: 0, 'aria-label': t.focusRow } : {};

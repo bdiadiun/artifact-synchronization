@@ -1,6 +1,6 @@
 import type { JSX, KeyboardEvent, MouseEvent } from 'react';
 import { RowStatus } from '../form/rows';
-import { UI } from '../ui-strings';
+import { t } from '../i18n';
 import {
   formatRestoreFailureReason,
   formatRowKind,
@@ -63,24 +63,24 @@ export const MeasurementRow = ({
           style={styles.restoreFailed}
           title={formatRestoreFailureReason(row.restoreFailureReason)}
         >
-          {UI.restoreFailed}
+          {t.restoreFailed}
         </span>
       )}
       {row.status === RowStatus.Pending && (
         <button type="button" onClick={handleActivate}>
-          {UI.activate}
+          {t.activate}
         </button>
       )}
       {row.status === RowStatus.Drawing && (
         <button type="button" onClick={handleCancel}>
-          {UI.cancel}
+          {t.cancel}
         </button>
       )}
       {/* S-5.2: available for every status; useScoringForm.remove decides what to send. */}
       <button type="button" onClick={handleRemove}>
-        {UI.remove}
+        {t.remove}
       </button>
-      {focusable && <span style={styles.focusHint}>{UI.focusHint}</span>}
+      {focusable && <span style={styles.focusHint}>{t.focusHint}</span>}
     </div>
   );
 };
