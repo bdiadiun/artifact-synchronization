@@ -125,8 +125,12 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
   e.g. `rowStyle(focusable)` returning `styles.row` merged with `styles.rowClickable`. A component without props or styles does not need the file.
 - Types shared by several components live with the module that owns them (e.g. `Row` in
   `form/rows.ts`), not in a component's `.props.ts`.
-- JSX handlers stay inline only while they are one expression; anything longer becomes a named
-  `handleX` arrow in the component body.
+- No functions are created inside JSX event handler props. `onClick`, `onKeyDown`, `onChange` and
+  every other `on…` prop receives a named `handleX` arrow declared in the component body (or a
+  prop passed in), never an inline arrow, function expression or `.bind` call (lint rule). When a
+  handler needs a value the component already has, that value is read inside the handler; when a
+  list renders one component per item, the handler lives in that item component, which is why
+  `MeasurementRow` owns its own `handleActivate`, `handleCancel` and `handleRemove`.
 - User-visible strings come from `ui-strings.ts` (A-7); no literals in JSX.
 
 ## 7. Errors, logging and defensive code

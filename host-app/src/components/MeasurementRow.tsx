@@ -1,4 +1,4 @@
-import type { KeyboardEvent, JSX } from 'react';
+import type { JSX, KeyboardEvent, MouseEvent } from 'react';
 import type { Metric, Metrics } from '@scoring/contract';
 import { RowStatus, type Row } from '../form/rows';
 import { UI } from '../ui-strings';
@@ -55,6 +55,22 @@ export const MeasurementRow = ({
     }
   };
 
+  const handleActivate = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.stopPropagation();
+    onActivate(row.rowId);
+  };
+
+  const handleCancel = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.stopPropagation();
+    onCancel(row.rowId);
+  };
+
+  // stopPropagation keeps a button click from also triggering the row's focus click.
+  const handleRemove = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.stopPropagation();
+    onRemove(row.rowId);
+  };
+
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     if (!focusable) {
       return;
@@ -79,37 +95,17 @@ export const MeasurementRow = ({
       <span style={styles.status}>{STATUS_LABEL[row.status]}</span>
       {row.status === RowStatus.Done && metricLabel !== null && <span>{metricLabel}</span>}
       {row.status === RowStatus.Pending && (
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onActivate(row.rowId);
-          }}
-        >
+        <button type="button" onClick={handleActivate}>
           {UI.activate}
         </button>
       )}
       {row.status === RowStatus.Drawing && (
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onCancel(row.rowId);
-          }}
-        >
+        <button type="button" onClick={handleCancel}>
           {UI.cancel}
         </button>
       )}
-      {/* S-5.2: available for every status; useScoringForm.remove decides what, if anything, to
-          send to the viewer before dropping the row. stopPropagation keeps this from also
-          triggering the row's own focus click above. */}
-      <button
-        type="button"
-        onClick={(event) => {
-          event.stopPropagation();
-          onRemove(row.rowId);
-        }}
-      >
+      {/* S-5.2: available for every status; useScoringForm.remove decides what to send. */}
+      <button type="button" onClick={handleRemove}>
         {UI.remove}
       </button>
       {focusable && <span style={styles.focusHint}>{UI.focusHint}</span>}

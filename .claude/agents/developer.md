@@ -28,8 +28,9 @@ While writing
 - User-visible strings go through `ui-strings.ts` (Ukrainian); code and comments are English.
 - New behaviour comes with targeted tests in the `__tests__/` folder next to the code (pure logic and
   bridge behaviour only).
-- JSX handlers stay inline only while they are one expression; anything longer becomes a named
-  `handleX` arrow in the component body.
+- No function is created inside a JSX event handler prop: `on…` props take a named `handleX` arrow
+  from the component body or a prop, never an inline arrow, function expression or `.bind`
+  (lint rule, `docs/CONVENTIONS.md` §6).
 - Reducers and pure helpers return the same object reference when nothing changes, and a `switch`
   over an action or message type keeps its `default` branch so an unhandled case fails the type
   check.
