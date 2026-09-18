@@ -13,9 +13,9 @@ import type {
   ViewerReadyEvent,
 } from '@scoring/contract';
 import { DEFAULT_TOOL, STUDY_INSTANCE_UID } from '../../config';
-import { RowStatus, type Row } from '../rows';
-import { saveRows } from '../storage';
-import { computeTotals } from '../totals';
+import { RowStatus, type Row } from '../../form/rows';
+import { saveRows } from '../../form/storage';
+import { computeTotals } from '../../form/totals';
 import { useScoringForm } from '../useScoringForm';
 
 afterEach(() => {

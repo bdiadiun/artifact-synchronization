@@ -30,6 +30,7 @@ for (const name of readdirSync(notesDir)
   FILES.push([`docs/notes/${name}`, name.replace(/\.md$/, ''), 'Research']);
 }
 
+FILES.push(['docs/PROJECT-STRUCTURE.md', 'Project structure', 'Process']);
 FILES.push(['docs/CONVENTIONS.md', 'Conventions', 'Process']);
 FILES.push(['CLAUDE.md', 'Working rules', 'Process']);
 

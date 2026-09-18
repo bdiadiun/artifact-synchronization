@@ -1,10 +1,10 @@
 import { useReducer, useState } from 'react';
 import type { HostCommand, ToolName, ViewerEvent } from '@scoring/contract';
-import { reducer, type FormState, type Row } from './rows';
-import { createRowActions } from './rowActions';
+import { reducer, type FormState, type Row } from '../form/rows';
+import { createRowActions } from '../form/rowActions';
 import { usePersistRows, useRestoredRows } from './usePersistedRows';
 import { useViewerEvents } from './useViewerEvents';
-import { createViewerEventHandlers } from './viewerEventHandlers';
+import { createViewerEventHandlers } from '../form/viewerEventHandlers';
 
 // A-14: reducer stays pure, so restore reads sessionStorage once here, before the first render,
 // and seeds the reducer's initial state instead of dispatching an action.

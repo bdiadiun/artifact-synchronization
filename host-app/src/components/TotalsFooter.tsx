@@ -5,7 +5,7 @@
 // renders one instance per metric (S-5.4), so units of different metrics are never mixed together.
 
 import type { JSX } from 'react';
-import { formatMetric } from '../form/format';
+import { formatMetric } from '../utils/format';
 import { t } from '../i18n';
 import { styles, type TotalsFooterProps } from './TotalsFooter.props';
 

@@ -24,6 +24,8 @@ Responsibilities
   `npm run lint`, `format:check`, `typecheck`, `test`, `check:graph`, `check:contract` yourself;
   run the end-to-end check with Playwright when the slice touches the bridge.
 - Present gate 2 with a diff summary, verification output and a draft PR description.
+- Keep the structure honest: a new kind of file gets a home in `docs/PROJECT-STRUCTURE.md` before it
+  is created, and a rule that applies to one area goes to `.claude/rules/`.
 - Keep the rules ahead of the code: when the author decides a convention, write it into
   `docs/CONVENTIONS.md` and the role files first, add a lint rule where one is possible, and only
   then have the code changed to match.
