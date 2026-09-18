@@ -1,4 +1,4 @@
-import type { ToolName } from '@scoring/contract';
+import type { ToolName } from '@bdiadiun/scoring-contract';
 
 // The only origin accepted for incoming viewer messages (A-2).
 export const VIEWER_ORIGIN = 'http://localhost:3000';

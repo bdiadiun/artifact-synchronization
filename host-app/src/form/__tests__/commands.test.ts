@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isHostCommand, type RestoreMeasurementRequest } from '@scoring/contract';
+import { isHostCommand, type RestoreMeasurementRequest } from '@bdiadiun/scoring-contract';
 import {
   activateToolCommand,
   deactivateToolCommand,

@@ -3,7 +3,7 @@ import type {
   ActivateToolCommand,
   DeactivateToolCommand,
   ViewerReadyEvent,
-} from '@scoring/contract';
+} from '@bdiadiun/scoring-contract';
 import { createBridge, type Bridge } from '../createBridge';
 
 const VIEWER_ORIGIN = 'http://localhost:3000';

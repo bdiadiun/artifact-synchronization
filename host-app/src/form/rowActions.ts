@@ -2,7 +2,7 @@
 // viewerEventHandlers.ts, which does the same job for the incoming half of the form.
 
 import type { Dispatch } from 'react';
-import type { HostCommand, ToolName } from '@scoring/contract';
+import type { HostCommand, ToolName } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL } from '../config';
 import {
   activateToolCommand,

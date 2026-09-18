@@ -1,11 +1,29 @@
 {
-  "name": "@scoring/contract",
+  "name": "@bdiadiun/scoring-contract",
   "version": "0.0.1",
-  "private": true,
+  "description": "postMessage contract shared by the scoring host-app and the OHIF viewer bridge extension",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bdiadiun/artifact-synchronization.git",
+    "directory": "packages/contract"
+  },
   "type": "module",
-  "main": "./src/messages.ts",
-  "types": "./src/messages.ts",
+  "main": "./dist/messages.js",
+  "types": "./dist/messages.d.ts",
   "exports": {
-    ".": "./src/messages.ts"
+    ".": {
+      "types": "./dist/messages.d.ts",
+      "default": "./dist/messages.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepare": "tsc -p ."
   }
 }

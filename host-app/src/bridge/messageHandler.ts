@@ -1,6 +1,6 @@
 // The bridge's `message` listener: origin check, payload guard, viewer-event dispatch (Q-2, A-9).
 
-import { isViewerEvent, type ViewerEvent, type ViewerReadyEvent } from '@scoring/contract';
+import { isViewerEvent, type ViewerEvent, type ViewerReadyEvent } from '@bdiadiun/scoring-contract';
 import type { BridgeState } from './createBridge';
 
 export interface MessageHandlerDeps {

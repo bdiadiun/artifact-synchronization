@@ -1,5 +1,5 @@
 import { useReducer, useState } from 'react';
-import type { HostCommand, ToolName, ViewerEvent } from '@scoring/contract';
+import type { HostCommand, ToolName, ViewerEvent } from '@bdiadiun/scoring-contract';
 import { reducer, type FormState, type Row } from '../form/rows';
 import { createRowActions } from '../form/rowActions';
 import { usePersistRows } from './usePersistRows';

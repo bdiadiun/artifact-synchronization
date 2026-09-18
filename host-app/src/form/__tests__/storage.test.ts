@@ -62,6 +62,19 @@ describe('saveRows / loadStoredRows', () => {
     expect(loadStoredRows(STUDY_A)).toEqual([]);
   });
 
+  it('rejects a stored row whose geometry point has only two coordinates', () => {
+    const rowWithBadGeometry = {
+      ...doneRow(),
+      geometry: { ...doneRow().geometry, points: [[1, 2]] },
+    };
+    window.sessionStorage.setItem(
+      `scoring-form:rows:${STUDY_A}`,
+      JSON.stringify({ studyInstanceUid: STUDY_A, rows: [rowWithBadGeometry] }),
+    );
+
+    expect(loadStoredRows(STUDY_A)).toEqual([]);
+  });
+
   it('renders normally (returns []) when sessionStorage throws on read', () => {
     const getItemSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('storage disabled');

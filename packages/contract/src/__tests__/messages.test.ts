@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   isHostCommand,
   isViewerEvent,
+  METRIC_KEY_BY_TOOL,
+  TOOL_NAME_VALUES,
   type ActivateToolCommand,
   type DeactivateToolCommand,
   type FocusMeasurementCommand,
@@ -10,6 +12,7 @@ import {
   type MeasurementRemovedEvent,
   type MeasurementsRestoredEvent,
   type MeasurementUpdatedEvent,
+  type MetricKey,
   type RemoveMeasurementCommand,
   type RestoreMeasurementsCommand,
   type ViewerReadyEvent,
@@ -206,6 +209,36 @@ describe('isHostCommand', () => {
     ).toBe(false);
   });
 
+  it('rejects geometry with a two-coordinate point', () => {
+    const badGeometry = { ...geometry, points: [[1, 2]] };
+    expect(
+      isHostCommand({
+        ...restoreMeasurements,
+        measurements: [{ ...restoreMeasurements.measurements[0], geometry: badGeometry }],
+      }),
+    ).toBe(false);
+  });
+
+  it('rejects geometry with a four-coordinate point', () => {
+    const badGeometry = { ...geometry, points: [[1, 2, 3, 4]] };
+    expect(
+      isHostCommand({
+        ...restoreMeasurements,
+        measurements: [{ ...restoreMeasurements.measurements[0], geometry: badGeometry }],
+      }),
+    ).toBe(false);
+  });
+
+  it('accepts geometry with a three-coordinate point', () => {
+    const goodGeometry = { ...geometry, points: [[1, 2, 3]] };
+    expect(
+      isHostCommand({
+        ...restoreMeasurements,
+        measurements: [{ ...restoreMeasurements.measurements[0], geometry: goodGeometry }],
+      }),
+    ).toBe(true);
+  });
+
   it('survives a JSON round-trip for RESTORE_MEASUREMENTS', () => {
     expect(isHostCommand(JSON.parse(JSON.stringify(restoreMeasurements)))).toBe(true);
   });
@@ -316,5 +349,19 @@ describe('isViewerEvent', () => {
 
   it('survives a JSON round-trip for MEASUREMENTS_RESTORED', () => {
     expect(isViewerEvent(JSON.parse(JSON.stringify(measurementsRestored)))).toBe(true);
+  });
+});
+
+describe('METRIC_KEY_BY_TOOL', () => {
+  // A Record keyed by every ToolName: a tool added to TOOL_NAME_VALUES without an entry here
+  // fails to compile, and a wrong entry fails the assertion below.
+  const expectedMetricKeyByTool: Record<(typeof TOOL_NAME_VALUES)[number], MetricKey> = {
+    EllipticalROI: 'area',
+    RectangleROI: 'area',
+    Length: 'length',
+  };
+
+  it.each(TOOL_NAME_VALUES)('maps %s to its metric key', (toolName) => {
+    expect(METRIC_KEY_BY_TOOL[toolName]).toBe(expectedMetricKeyByTool[toolName]);
   });
 });

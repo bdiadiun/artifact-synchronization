@@ -11,7 +11,7 @@ import type {
   MeasurementUpdatedEvent,
   ViewerEvent,
   ViewerReadyEvent,
-} from '@scoring/contract';
+} from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL, STUDY_INSTANCE_UID } from '../../config';
 import { RowStatus, type Row } from '../../form/rows';
 import { saveRows } from '../../form/storage';

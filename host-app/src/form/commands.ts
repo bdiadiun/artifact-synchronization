@@ -2,7 +2,7 @@
 // keep the id of a REMOVE_MEASUREMENT to recognise its own echo), this module only shapes the
 // payload so the wire literals live in one place.
 
-import type { HostCommand, RestoreMeasurementRequest, ToolName } from '@scoring/contract';
+import type { HostCommand, RestoreMeasurementRequest, ToolName } from '@bdiadiun/scoring-contract';
 
 export const activateToolCommand = (
   requestId: string,

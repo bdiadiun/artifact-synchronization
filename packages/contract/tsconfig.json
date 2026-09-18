@@ -5,11 +5,14 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
-    "noEmit": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
     "skipLibCheck": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/__tests__"]
 }

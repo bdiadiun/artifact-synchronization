@@ -2,7 +2,14 @@
 // and another tab or study never sees them. Every access is defensive: private mode, a full quota
 // or a cleared store throw or return nothing, and the form still has to render.
 
-import type { MeasurementGeometry, Metrics, ToolName } from '@scoring/contract';
+import {
+  isMeasurementGeometry,
+  isNonEmptyString,
+  isRecord,
+  isToolName,
+  type MeasurementGeometry,
+  type Metrics,
+} from '@bdiadiun/scoring-contract';
 import { RowStatus, type Row } from './rows';
 
 // The fields A-14 asks to persist; `restoreFailureReason` is not among them, so every load starts
@@ -16,19 +23,7 @@ interface StoredState {
 
 const storageKey = (studyInstanceUid: string): string => `scoring-form:rows:${studyInstanceUid}`;
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const isNonEmptyString = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0;
-
-// The contract package does not export its own tool-name list (it is a private guard helper), so
-// this list is kept in step with `ToolName` by hand.
-const TOOL_NAMES: readonly ToolName[] = ['EllipticalROI', 'RectangleROI', 'Length'];
 const ROW_STATUSES: readonly RowStatus[] = Object.values(RowStatus);
-
-const isToolName = (value: unknown): value is ToolName =>
-  typeof value === 'string' && (TOOL_NAMES as readonly string[]).includes(value);
 
 const isRowStatus = (value: unknown): value is RowStatus =>
   typeof value === 'string' && (ROW_STATUSES as readonly string[]).includes(value);
@@ -46,21 +41,8 @@ const isStoredMetrics = (value: unknown): value is Metrics | null => {
   );
 };
 
-const isStoredGeometry = (value: unknown): value is MeasurementGeometry | null => {
-  if (value === null) {
-    return true;
-  }
-  return (
-    isRecord(value) &&
-    isNonEmptyString(value.frameOfReferenceUid) &&
-    isNonEmptyString(value.referencedImageId) &&
-    Array.isArray(value.points) &&
-    value.points.every(
-      (point) => Array.isArray(point) && point.every((coord) => typeof coord === 'number'),
-    ) &&
-    (value.label === undefined || typeof value.label === 'string')
-  );
-};
+const isStoredGeometry = (value: unknown): value is MeasurementGeometry | null =>
+  value === null || isMeasurementGeometry(value);
 
 const isStoredRow = (value: unknown): value is StoredRow =>
   isRecord(value) &&

@@ -1,11 +1,13 @@
 // Pure, side-effect-free reducer; `useScoringForm.ts` wires it to `send`/`lastEvent`.
 
-import type {
-  MeasurementGeometry,
-  Metrics,
-  RestoreFailureReason,
-  ToolName,
-} from '@scoring/contract';
+import {
+  METRIC_KEY_BY_TOOL,
+  type MeasurementGeometry,
+  type MetricKey,
+  type Metrics,
+  type RestoreFailureReason,
+  type ToolName,
+} from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL } from '../config';
 import { findRow, findRowByUid, hasRow } from '../utils/selectors';
 
@@ -34,16 +36,7 @@ export interface FormState {
   armedRowId: string | null;
 }
 
-// S-5.4: the metric a row's tool produces. Derived from `toolName` rather than stored as its own
-// field, so the two can never drift apart.
-export type MetricKey = 'area' | 'length';
-
-const METRIC_KEY_BY_TOOL: Record<ToolName, MetricKey> = {
-  EllipticalROI: 'area',
-  RectangleROI: 'area',
-  Length: 'length',
-};
-
+// S-5.4: the metric a row's tool produces; the table itself belongs to the wire contract.
 export const metricKeyForTool = (toolName: ToolName): MetricKey => METRIC_KEY_BY_TOOL[toolName];
 
 export enum FormActionType {

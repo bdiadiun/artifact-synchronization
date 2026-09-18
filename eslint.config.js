@@ -30,7 +30,11 @@ export default tseslint.config(
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        // The contract package builds to `dist`, so its tsconfig excludes tests; they are linted
+        // against the default project instead of being added to the published compilation.
+        projectService: {
+          allowDefaultProject: ['packages/contract/src/__tests__/*.ts'],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {

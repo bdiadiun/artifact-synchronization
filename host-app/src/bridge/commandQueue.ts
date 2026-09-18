@@ -1,7 +1,7 @@
 // Commands that cannot be delivered yet (A-9). No coalescing: they are kept and flushed in call
 // order.
 
-import type { HostCommand } from '@scoring/contract';
+import type { HostCommand } from '@bdiadiun/scoring-contract';
 
 export interface CommandQueueOptions {
   getViewerWindow: () => Window | null;

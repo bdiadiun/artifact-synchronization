@@ -1,6 +1,6 @@
 // User-visible strings are Ukrainian per decision A-7; code and comments stay in English.
 // `t` is the single place these strings live; a real i18n library is out of scope (X-3).
-import type { RestoreFailureReason } from '@scoring/contract';
+import type { RestoreFailureReason } from '@bdiadiun/scoring-contract';
 
 export const t = {
   appTitle: 'Скоринг-форма',

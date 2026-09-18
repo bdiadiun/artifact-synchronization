@@ -9,7 +9,7 @@ import type {
   MeasurementsRestoredEvent,
   MeasurementUpdatedEvent,
   RestoreMeasurementRequest,
-} from '@scoring/contract';
+} from '@bdiadiun/scoring-contract';
 import { STUDY_INSTANCE_UID } from '../config';
 import { activateToolCommand, restoreMeasurementsCommand } from './commands';
 import { FormActionType, RowStatus, type FormAction, type FormState, type Row } from './rows';

@@ -1,6 +1,6 @@
 // Per-unit sums for the form footer (A-11). mm² and px² are never added together.
 
-import type { Metrics, Unit } from '@scoring/contract';
+import type { Metrics, Unit } from '@bdiadiun/scoring-contract';
 import { RowStatus, type Row } from './rows';
 
 export interface Total {
