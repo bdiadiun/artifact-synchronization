@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                           |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 28 `feat: state restore` (branch `feat/state-restore`, node F-19, bonus S-5.6)                                                  |
-| Gate           | 2 — restore works end to end after a real page reload; fork PR #12 merged (`scoring` at `5f64237128`); awaiting result approval |
-| Last merged PR | #31 `docs: close F-34`; with this slice every bonus task is implemented; only the video (F-13) remains                          |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                             |
+| Field          | Value                                                                                                                                                                |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | none; last merged slice 28 `feat: state restore`                                                                                                                     |
+| Gate           | idle                                                                                                                                                                 |
+| Last merged PR | #32 `feat: state restore` (S-5.6). Every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left, and it belongs to the author. |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                                                  |
 
 ## Open decisions (see CANON.md → Decisions)
 
