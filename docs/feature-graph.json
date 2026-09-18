@@ -1194,7 +1194,7 @@
       "canon": ["A-14", "P-5", "Q-3", "Q-4", "S-5.6"],
       "dependsOn": ["F-11"],
       "slice": "28",
-      "status": "review",
+      "status": "done",
       "verify": "Draw three measurements, reload the page: the rows, their values and the totals are back and the annotations are on the image; a stored state from another study is ignored.",
       "files": [
         "ARCHITECTURE.md",
