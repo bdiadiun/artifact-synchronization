@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 27 `chore: contract copy guard` (branch `chore/contract-guard`, node F-34)                                                 |
-| Gate           | 2 — contract guarded in both repositories, fork PR #11 merged (`scoring` at `0f434fb841`); awaiting result approval        |
-| Last merged PR | #29 `docs: close F-33`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done; S-5.6 not taken |
-| Next slice     | none planned; open: F-13 video (author), optional bonus F-19 (S-5.6 state restore)                                         |
+| Field          | Value                                                                                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Current slice  | none; last merged slice 27 `chore: contract copy guard`                                                                              |
+| Gate           | idle                                                                                                                                 |
+| Last merged PR | #30 `chore: contract copy guard`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done; S-5.6 not taken |
+| Next slice     | none planned; open: F-13 video (author), optional bonus F-19 (S-5.6 state restore)                                                   |
 
 ## Open decisions (see CANON.md → Decisions)
 
