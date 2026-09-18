@@ -1,6 +1,6 @@
 import type { JSX, KeyboardEvent, MouseEvent } from 'react';
 import type { Metric, Metrics } from '@scoring/contract';
-import { RowStatus, type Row } from '../form/rows';
+import { RowStatus, metricKeyForTool, type MetricKey, type Row } from '../form/rows';
 import { UI } from '../ui-strings';
 import { formatMetric } from '../form/format';
 import { styles, rowStyle, type MeasurementRowProps } from './MeasurementRow.props';
@@ -11,22 +11,27 @@ const STATUS_LABEL: Record<RowStatus, string> = {
   [RowStatus.Done]: UI.statusDone,
 };
 
-// Formats whichever metric the row has for display. `area` is the only metric the mandatory
-// part produces (C-4.3.6); if it is absent but the payload carries something else (P-8 —
-// perimeter, mean intensity, ...), that first metric is shown with its key so a future metric
-// type does not silently disappear from the row.
-const displayMetric = (metrics: Row['metrics']): string | null => {
-  if (metrics === null) {
+const KIND_LABEL: Record<MetricKey, string> = {
+  area: UI.kindArea,
+  length: UI.kindLength,
+};
+
+// Formats the metric that matches the row's own tool (S-5.4: area for the ellipse/rectangle
+// tools, length for the length tool). If that key is absent but the payload carries something
+// else (P-8 — perimeter, mean intensity, ...), that first metric is shown with its key so a
+// future metric type does not silently disappear from the row.
+const displayMetric = (row: Row): string | null => {
+  if (row.metrics === null) {
     return null;
   }
-  // `Metrics` is typed as `Record<string, Metric>`, so TS treats `area` as always present; at
+  // `Metrics` is typed as `Record<string, Metric>`, so TS treats every key as always present; at
   // runtime it is optional (only the metrics the viewer actually sent exist), so the lookup is
   // cast to `Partial` to keep this defensive check honest.
-  const area = (metrics as Partial<Metrics>).area;
-  if (area !== undefined) {
-    return formatMetric(area);
+  const own = (row.metrics as Partial<Metrics>)[metricKeyForTool(row.toolName)];
+  if (own !== undefined) {
+    return formatMetric(own);
   }
-  const firstEntry = Object.entries(metrics)[0] as [string, Metric] | undefined;
+  const firstEntry = Object.entries(row.metrics)[0] as [string, Metric] | undefined;
   if (firstEntry === undefined) {
     return null;
   }
@@ -43,7 +48,7 @@ export const MeasurementRow = ({
   onRemove,
   onFocus,
 }: MeasurementRowProps): JSX.Element => {
-  const metricLabel = row.status === RowStatus.Done ? displayMetric(row.metrics) : null;
+  const metricLabel = row.status === RowStatus.Done ? displayMetric(row) : null;
   const focusable = row.status === RowStatus.Done;
 
   // S-5.3: only a `done` row has a matching annotation in the viewer to focus. Clicking the row
@@ -92,6 +97,7 @@ export const MeasurementRow = ({
       onKeyDown={focusable ? handleRowKeyDown : undefined}
     >
       <span>#{index + 1}</span>
+      <span style={styles.status}>{KIND_LABEL[metricKeyForTool(row.toolName)]}</span>
       <span style={styles.status}>{STATUS_LABEL[row.status]}</span>
       {row.status === RowStatus.Done && metricLabel !== null && <span>{metricLabel}</span>}
       {row.status === RowStatus.Pending && (

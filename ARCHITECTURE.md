@@ -38,6 +38,12 @@ simply reject the new type as unknown.
 
 `unit` is `'mm2' | 'px2' | 'mm' | 'px'` and is copied from OHIF's `cachedStats`, never inferred.
 
+`ACTIVATE_TOOL.toolName` now carries the row's own tool (area rows: `EllipticalROI`; length rows:
+`Length`) rather than always the configured default, so a length row arms the length tool on
+activate and on re-arm after a viewer reload. Totals in the host-app footer are computed per
+metric key (`area`, `length`) and per unit within that metric, never mixed across either axis
+(S-5.4).
+
 ## Sequence: one measurement
 
 ```mermaid

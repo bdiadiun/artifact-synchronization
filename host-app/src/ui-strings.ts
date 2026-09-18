@@ -2,13 +2,21 @@
 export const UI = {
   appTitle: 'Скоринг-форма',
   addMeasurement: 'Додати вимірювання',
+  // Add a length row (S-5.4).
+  addLength: 'Додати довжину',
   activate: 'Активувати',
   cancel: 'Скасувати',
   remove: 'Видалити',
   statusPending: 'Очікує',
   statusDrawing: 'Малювання…',
   statusDone: 'Готово',
+  // Row kind label (S-5.4).
+  kindArea: 'Площа',
+  // Row kind label (S-5.4).
+  kindLength: 'Довжина',
   total: 'Разом',
+  // Footer label for the length totals section (S-5.4).
+  totalLength: 'Разом довжина',
   viewerFrameTitle: 'Переглядач OHIF',
   emptyHint: 'Рядків ще немає. Натисніть «Додати вимірювання».',
   bridgeStatus: 'Міст',

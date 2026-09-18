@@ -1,9 +1,10 @@
 import type { CSSProperties } from 'react';
+import type { ToolName } from '@scoring/contract';
 import type { Row } from '../form/rows';
 
 export interface ScoringPanelProps {
   rows: Row[];
-  addRow: () => void;
+  addRow: (toolName?: ToolName) => void;
   activate: (rowId: string) => void;
   cancel: (rowId: string) => void;
   remove: (rowId: string) => void;
