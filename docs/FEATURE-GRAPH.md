@@ -27,7 +27,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-14 | Bonus: live update (`MEASUREMENT_UPDATED`) with echo-loop protection                                                                              | P-6, Q-4, S-5.1                                                 | F-11             | 7     | done    | Dragging a handle updates the row and the sum live; a host-originated change does not bounce back as a second update.                                                                                                              |
 | F-15 | Bonus: two-way deletion                                                                                                                           | C-4.4.2, Q-4, S-5.2                                             | F-11             | 8     | done    | Row "Delete" removes the annotation; deleting in the viewer clears the row.                                                                                                                                                        |
 | F-16 | Bonus: focus annotation from row                                                                                                                  | C-4.4.2, S-5.3                                                  | F-11             | 11    | done    | Clicking a row highlights / jumps to the annotation.                                                                                                                                                                               |
-| F-17 | Bonus: Length row type with separate sum                                                                                                          | S-5.4                                                           | F-11             | 22    | review  | Adding a length row arms the Length tool in OHIF and the drawn line lands in that row in mm; area and length totals are shown separately; 98 unit tests pass.                                                                      |
+| F-17 | Bonus: Length row type with separate sum                                                                                                          | S-5.4                                                           | F-11             | 22    | done    | Adding a length row arms the Length tool in OHIF and the drawn line lands in that row in mm; area and length totals are shown separately; 98 unit tests pass.                                                                      |
 | F-18 | Bonus: OHIF version on viewport                                                                                                                   | S-5.5                                                           | F-04             | 9     | done    | Version from `package.json` injected at build time appears on each viewport in a 2×2 grid.                                                                                                                                         |
 | F-19 | Bonus: state restore after reload                                                                                                                 | S-5.6                                                           | F-11             | later | planned | Reload keeps rows and annotations in sync.                                                                                                                                                                                         |
 | F-20 | Project tooling and state journal                                                                                                                 | A-6, D-2, D-3, D-5                                              | F-00             | 0.5   | done    | `npm run check:graph` exits 0; `.nvmrc` + `engines` pin Node 22; `docs/STATE.md` lets a fresh session resume; decision records exist for A-1..A-6.                                                                                 |
@@ -185,6 +185,7 @@ graph TD
 | 20 — refactor: named event handlers                   | `refactor/named-event-handlers`             | —   | F-30                   |
 | 21 — docs: close graph statuses                       | `docs/close-graph-statuses`                 | —   | —                      |
 | 22 — feat: length row type                            | `feat/length-row-type`                      | —   | F-17                   |
+| 23 — docs: length in defence script                   | `docs/length-in-defence`                    | —   | —                      |
 
 ## Node details
 
@@ -453,7 +454,7 @@ Files:
 
 A form row carries the tool it will arm (EllipticalROI or Length); the metric key to read is derived from that tool, never stored twice. The panel offers a button per kind, each row shows its kind and value, and the footer sums areas and lengths separately, each grouped by unit. The viewer needed no change: it already activates any tool named in ACTIVATE_TOOL and maps Length measurements.
 
-Canon: S-5.4. Depends on: F-11. Slice 22, status `review`.
+Canon: S-5.4. Depends on: F-11. Slice 22, status `done`.
 
 Files:
 

@@ -145,6 +145,11 @@
       "id": "22",
       "title": "feat: length row type",
       "branch": "feat/length-row-type"
+    },
+    {
+      "id": "23",
+      "title": "docs: length in defence script",
+      "branch": "docs/length-in-defence"
     }
   ],
   "nodes": [
@@ -962,7 +967,7 @@
       "canon": ["S-5.4"],
       "dependsOn": ["F-11"],
       "slice": "22",
-      "status": "review",
+      "status": "done",
       "verify": "Adding a length row arms the Length tool in OHIF and the drawn line lands in that row in mm; area and length totals are shown separately; 98 unit tests pass.",
       "files": [
         "ARCHITECTURE.md",
