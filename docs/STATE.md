@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                 |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 20 `refactor: named event handlers` (branch `refactor/named-event-handlers`, node F-30)                                                                               |
-| Gate           | 2 — rule, lint check and the three inline handlers replaced; awaiting result approval                                                                                 |
-| Last merged PR | #21 `docs: agent style rules`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#9 merged into `scoring` |
-| Next slice     | Not planned yet                                                                                                                                                       |
+| Field          | Value                                                                                                                                                                                                   |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 21 `docs: close graph statuses` (branch `docs/close-graph-statuses`)                                                                                                                                    |
+| Gate           | 2 — F-28 and F-30 set to done after their merges; awaiting result approval                                                                                                                              |
+| Last merged PR | #22 `refactor: named event handlers`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; S-5.4 and S-5.6 not taken; fork PRs #1–#9 merged into `scoring` |
+| Next slice     | none planned; open: F-13 video (author), optional bonuses F-17 (S-5.4 Length) and F-19 (S-5.6 state restore)                                                                                            |
 
 ## Open decisions (see CANON.md → Decisions)
 

@@ -135,6 +135,11 @@
       "id": "20",
       "title": "refactor: named event handlers",
       "branch": "refactor/named-event-handlers"
+    },
+    {
+      "id": "21",
+      "title": "docs: close graph statuses",
+      "branch": "docs/close-graph-statuses"
     }
   ],
   "nodes": [
@@ -1297,7 +1302,7 @@
       "canon": ["A-13", "Q-7"],
       "dependsOn": ["F-29"],
       "slice": "20",
-      "status": "review",
+      "status": "done",
       "verify": "npm run lint reports an inline handler as an error; no on-prop in host-app creates a function; 89 tests and the end-to-end scenarios unchanged.",
       "files": [
         ".claude/agents/developer.md",

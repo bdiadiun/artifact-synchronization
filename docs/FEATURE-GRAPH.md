@@ -40,7 +40,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-27 | Component file layout: `{Name}.props.ts` for types, interfaces and styles; tests in `__tests__/` folders; lint rule against inline style literals | A-13, Q-7                                                       | F-26             | 17    | done    | Every component with props or styles has a sibling `.props.ts`; no `style={{…}}` literals (lint); every test file sits in a `__tests__/` folder next to its module; lint, typecheck, 89 tests and end-to-end unchanged.            |
 | F-28 | Feature graph as JSON                                                                                                                             | D-3, D-6, Q-7                                                   | F-27             | 18    | done    | `npm run graph:build` is idempotent; `npm run check:graph` passes and fails on a missing file, a hand edit of FEATURE-GRAPH.md or a stale import list.                                                                             |
 | F-29 | Style rules from recent slices recorded for agents                                                                                                | A-13, D-3, Q-7                                                  | F-28             | 19    | done    | Role files and CONVENTIONS agree; npm run format:check and check:graph pass.                                                                                                                                                       |
-| F-30 | Named event handlers enforced by lint                                                                                                             | A-13, Q-7                                                       | F-29             | 20    | review  | npm run lint reports an inline handler as an error; no on-prop in host-app creates a function; 89 tests and the end-to-end scenarios unchanged.                                                                                    |
+| F-30 | Named event handlers enforced by lint                                                                                                             | A-13, Q-7                                                       | F-29             | 20    | done    | npm run lint reports an inline handler as an error; no on-prop in host-app creates a function; 89 tests and the end-to-end scenarios unchanged.                                                                                    |
 
 ## Coverage of mandatory IDs
 
@@ -183,6 +183,7 @@ graph TD
 | later — bonus nodes not yet scheduled                 | one branch per bonus node                   | —   | F-17, F-19             |
 | 19 — docs: agent style rules                          | `docs/agent-style-rules`                    | —   | F-29                   |
 | 20 — refactor: named event handlers                   | `refactor/named-event-handlers`             | —   | F-30                   |
+| 21 — docs: close graph statuses                       | `docs/close-graph-statuses`                 | —   | —                      |
 
 ## Node details
 
@@ -630,7 +631,7 @@ Files:
 
 Event handler props take a named handleX function declared in the component body; creating a function inside an on-prop is reported by ESLint. MeasurementRow now declares handleActivate, handleCancel and handleRemove instead of three inline arrows.
 
-Canon: A-13, Q-7. Depends on: F-29. Slice 20, status `review`.
+Canon: A-13, Q-7. Depends on: F-29. Slice 20, status `done`.
 
 Files:
 
