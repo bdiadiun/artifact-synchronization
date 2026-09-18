@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                           |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | none; last merged slice 26 `refactor: split the scoring form hook`                                                                              |
-| Gate           | idle                                                                                                                                            |
-| Last merged PR | #28 `refactor: split the scoring form hook`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done; S-5.6 not taken |
-| Next slice     | none planned; open: F-13 video (author), optional bonus F-19 (S-5.6 state restore)                                                              |
+| Field          | Value                                                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 27 `chore: contract copy guard` (branch `chore/contract-guard`, node F-34)                                                 |
+| Gate           | 2 — contract guarded in both repositories, fork PR #11 merged (`scoring` at `0f434fb841`); awaiting result approval        |
+| Last merged PR | #29 `docs: close F-33`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done; S-5.6 not taken |
+| Next slice     | none planned; open: F-13 video (author), optional bonus F-19 (S-5.6 state restore)                                         |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -32,6 +32,10 @@ not a log. Update it in every PR (same commit as the work it describes).
 - Raw OHIF `areaUnit` on the demo study is `mm²` (U+00B2); the bridge normalises the first token to `mm2`/`px2`. The default display set is a CT topogram with large pixel spacing, so areas are in the hundreds of thousands of mm² (real, not a bug).
 - `cachedStats` is filled in cornerstone's render pass; with an instantaneous synthetic release the area in `MEASUREMENT_ADDED` can lag one frame. Human drags are fine; the S-5.1 UPDATED slice would correct it anyway.
 - `VIEWER_READY` is sent on the first `toolGroupService` VIEWPORT_ADDED, not in preRegistration (setToolActive is a silent no-op before a viewport exists).
+
+## Contract duplication
+
+- The contract lives twice on purpose (A-12): the fork must build standalone. `npm run check:contract` compares the two files and the committed hash, `npm run contract:sync` performs the copy, and the fork's own workflow verifies its copy against `messages.sha256`.
 
 ## Facts added in slice 14
 

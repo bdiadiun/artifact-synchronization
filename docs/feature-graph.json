@@ -165,6 +165,11 @@
       "id": "26",
       "title": "refactor: split the scoring form hook",
       "branch": "refactor/split-scoring-form"
+    },
+    {
+      "id": "27",
+      "title": "chore: contract copy guard",
+      "branch": "chore/contract-guard"
     }
   ],
   "nodes": [
@@ -326,7 +331,7 @@
         },
         "scripts/check-contract-sync.mjs": {
           "internal": [],
-          "external": ["node:fs", "node:path"]
+          "external": ["node:crypto", "node:fs", "node:path"]
         },
         "viewer/extensions/scoring-bridge/src/contract/messages.ts": {
           "internal": [],
@@ -1769,6 +1774,33 @@
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
+        }
+      }
+    },
+    {
+      "id": "F-34",
+      "name": "Contract copy guarded on both sides",
+      "description": "The wire contract stays a byte-identical copy inside the fork, because the submodule must build standalone, but now both repositories guard it: the host check compares the two files and the committed hash, and a workflow in the fork verifies its own copy against that hash, so a change made only in the fork is caught by the fork itself.",
+      "canon": ["A-12", "Q-7"],
+      "dependsOn": ["F-33"],
+      "slice": "27",
+      "status": "review",
+      "verify": "Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.",
+      "files": [
+        "docs/decisions/A-12-npm-workspaces.md",
+        "package.json",
+        "scripts/check-contract-sync.mjs",
+        "viewer/extensions/scoring-bridge/scripts/check-contract-hash.mjs",
+        "viewer/extensions/scoring-bridge/src/contract/messages.sha256"
+      ],
+      "imports": {
+        "scripts/check-contract-sync.mjs": {
+          "internal": [],
+          "external": ["node:crypto", "node:fs", "node:path"]
+        },
+        "viewer/extensions/scoring-bridge/scripts/check-contract-hash.mjs": {
+          "internal": [],
+          "external": ["node:crypto", "node:fs", "node:path", "node:url"]
         }
       }
     }
