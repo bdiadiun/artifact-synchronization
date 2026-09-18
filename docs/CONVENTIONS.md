@@ -70,7 +70,19 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
 
 ## 5. Modules and imports
 
-- One concern per module; a file over ~200 lines is a hint to split.
+- One concern per module: a module exports one idea (a factory, a hook, a component, a pure
+  helper set) and is named after it. A file over ~150 lines of code or a function over ~50 lines is
+  a signal to split, and the lint reports it.
+- Split by role, not by size: the bridge is messaging, handshake and the measurement stream; a
+  hook is user actions or event synchronisation, not both. A factory that does more than three
+  things is two factories and a composition root that wires them.
+- A composition root (`createBridge`, `App`, a top-level hook) only creates and connects; it holds
+  no branching logic of its own.
+- Repeated lookups become named selectors (`findRow`, `findRowByUid`) instead of inline `find`
+  calls scattered through a module.
+- Never use a mutable placeholder to break a circular dependency
+  (`let forget = () => undefined` reassigned later). Pass the dependency explicitly, or move the
+  shared state into the module that owns it.
 - Named exports only; no default exports except where a framework requires one (OHIF extension
   entry, Vite config).
 - Import order: node built-ins, external packages, workspace packages (`@scoring/contract`),

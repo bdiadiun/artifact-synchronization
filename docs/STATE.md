@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                         |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 23 `docs: length in defence script` (branch `docs/length-in-defence`)                                                                                                         |
-| Gate           | 2 — F-17 closed, defence notes cover the second tool; awaiting result approval                                                                                                |
-| Last merged PR | #24 `feat: length row type` (S-5.4); mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done; S-5.6 not taken; fork PRs #1–#9 merged into `scoring` |
-| Next slice     | none planned; open: F-13 video (author), optional bonus F-19 (S-5.6 state restore)                                                                                            |
+| Field          | Value                                                                                                                                                           |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 24 `chore: complexity rules` (branch `chore/complexity-rules`, node F-31)                                                                                       |
+| Gate           | 2 — rules and lint metrics in place, hot spots visible as warnings; awaiting result approval                                                                    |
+| Last merged PR | #25 `docs: length in defence script`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done                                         |
+| Next slice     | 25 split `viewer/extensions/scoring-bridge/src/bridge.ts` into messaging, handshake and measurement stream; then 26 split `useScoringForm` and the rows reducer |
 
 ## Open decisions (see CANON.md → Decisions)
 
