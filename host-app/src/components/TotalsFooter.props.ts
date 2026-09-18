@@ -4,7 +4,7 @@ import type { Total } from '../form/totals';
 
 export interface TotalsFooterProps {
   totals: Total[];
-  // Defaults to UI.total (area) so existing callers keep the same label.
+  // Defaults to t.total (area) so existing callers keep the same label.
   label?: string;
   // The unit shown on the primary line; any other unit in `totals` gets its own line below.
   primaryUnit?: Unit;

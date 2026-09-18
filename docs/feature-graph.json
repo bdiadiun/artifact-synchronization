@@ -175,6 +175,11 @@
       "id": "28",
       "title": "feat: state restore",
       "branch": "feat/state-restore"
+    },
+    {
+      "id": "29",
+      "title": "refactor: i18n naming",
+      "branch": "refactor/i18n-naming"
     }
   ],
   "nodes": [
@@ -207,10 +212,10 @@
         "host-app/package.json",
         "host-app/public/favicon.svg",
         "host-app/src/config.ts",
+        "host-app/src/i18n.ts",
         "host-app/src/index.css",
         "host-app/src/main.tsx",
         "host-app/src/setup-tests.ts",
-        "host-app/src/ui-strings.ts",
         "host-app/tsconfig.app.json",
         "host-app/tsconfig.json",
         "host-app/tsconfig.node.json",
@@ -221,6 +226,10 @@
           "internal": ["packages/contract/src/messages.ts"],
           "external": []
         },
+        "host-app/src/i18n.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
         "host-app/src/main.tsx": {
           "internal": ["host-app/src/App.tsx", "host-app/src/index.css"],
           "external": ["react", "react-dom"]
@@ -228,10 +237,6 @@
         "host-app/src/setup-tests.ts": {
           "internal": [],
           "external": ["@testing-library/jest-dom", "@testing-library/react", "vitest"]
-        },
-        "host-app/src/ui-strings.ts": {
-          "internal": ["packages/contract/src/messages.ts"],
-          "external": []
         },
         "host-app/vite.config.ts": {
           "internal": [],
@@ -270,11 +275,7 @@
           "external": ["react"]
         },
         "host-app/src/__tests__/App.test.tsx": {
-          "internal": [
-            "host-app/src/App.tsx",
-            "host-app/src/config.ts",
-            "host-app/src/ui-strings.ts"
-          ],
+          "internal": ["host-app/src/App.tsx", "host-app/src/config.ts", "host-app/src/i18n.ts"],
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/components/ScoringPanel.props.ts": {
@@ -288,7 +289,7 @@
             "host-app/src/components/TotalsFooter.tsx",
             "host-app/src/config.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -300,7 +301,7 @@
           "internal": [
             "host-app/src/components/ViewerFrame.props.ts",
             "host-app/src/config.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         }
@@ -465,10 +466,7 @@
           "external": ["react"]
         },
         "host-app/src/components/BridgeStatus.tsx": {
-          "internal": [
-            "host-app/src/components/BridgeStatus.props.ts",
-            "host-app/src/ui-strings.ts"
-          ],
+          "internal": ["host-app/src/components/BridgeStatus.props.ts", "host-app/src/i18n.ts"],
           "external": ["react"]
         }
       }
@@ -492,7 +490,7 @@
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "host-app/src/ui-strings.ts"],
+          "internal": ["host-app/src/form/rows.ts", "host-app/src/i18n.ts"],
           "external": ["react"]
         },
         "host-app/src/components/MeasurementRow.tsx": {
@@ -500,7 +498,7 @@
             "host-app/src/components/MeasurementRow.props.ts",
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -650,7 +648,7 @@
             "host-app/src/components/MeasurementRow.props.ts",
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -658,7 +656,7 @@
           "internal": [
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["vitest"]
         },
@@ -676,7 +674,7 @@
         "host-app/src/form/format.ts": {
           "internal": [
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts",
+            "host-app/src/i18n.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": []
@@ -727,7 +725,7 @@
           "internal": [
             "host-app/src/components/TotalsFooter.props.ts",
             "host-app/src/form/format.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -882,7 +880,7 @@
             "host-app/src/components/MeasurementRow.props.ts",
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -987,7 +985,7 @@
             "host-app/src/components/MeasurementRow.props.ts",
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -1064,7 +1062,7 @@
         "host-app/src/form/__tests__/useScoringForm.test.tsx",
         "host-app/src/form/rows.ts",
         "host-app/src/form/useScoringForm.ts",
-        "host-app/src/ui-strings.ts"
+        "host-app/src/i18n.ts"
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.tsx": {
@@ -1072,7 +1070,7 @@
             "host-app/src/components/MeasurementRow.props.ts",
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -1087,7 +1085,7 @@
             "host-app/src/components/TotalsFooter.tsx",
             "host-app/src/config.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -1099,7 +1097,7 @@
           "internal": [
             "host-app/src/components/TotalsFooter.props.ts",
             "host-app/src/form/format.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -1153,7 +1151,7 @@
           ],
           "external": ["react"]
         },
-        "host-app/src/ui-strings.ts": {
+        "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/messages.ts"],
           "external": []
         }
@@ -1214,7 +1212,7 @@
         "host-app/src/form/useScoringForm.ts",
         "host-app/src/form/useViewerEvents.ts",
         "host-app/src/form/viewerEventHandlers.ts",
-        "host-app/src/ui-strings.ts",
+        "host-app/src/i18n.ts",
         "packages/contract/src/messages.ts",
         "scripts/eslint-fork-style.config.js",
         "viewer/extensions/scoring-bridge/src/geometry.ts",
@@ -1233,7 +1231,7 @@
           ]
         },
         "host-app/src/components/MeasurementRow.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "host-app/src/ui-strings.ts"],
+          "internal": ["host-app/src/form/rows.ts", "host-app/src/i18n.ts"],
           "external": ["react"]
         },
         "host-app/src/components/MeasurementRow.tsx": {
@@ -1241,7 +1239,7 @@
             "host-app/src/components/MeasurementRow.props.ts",
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -1256,7 +1254,7 @@
         "host-app/src/form/format.ts": {
           "internal": [
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts",
+            "host-app/src/i18n.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": []
@@ -1317,7 +1315,7 @@
           ],
           "external": ["react"]
         },
-        "host-app/src/ui-strings.ts": {
+        "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/messages.ts"],
           "external": []
         },
@@ -1528,11 +1526,7 @@
           ]
         },
         "host-app/src/__tests__/App.test.tsx": {
-          "internal": [
-            "host-app/src/App.tsx",
-            "host-app/src/config.ts",
-            "host-app/src/ui-strings.ts"
-          ],
+          "internal": ["host-app/src/App.tsx", "host-app/src/config.ts", "host-app/src/i18n.ts"],
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/bridge/__tests__/createBridge.test.ts": {
@@ -1548,7 +1542,7 @@
           "external": ["react"]
         },
         "host-app/src/components/MeasurementRow.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "host-app/src/ui-strings.ts"],
+          "internal": ["host-app/src/form/rows.ts", "host-app/src/i18n.ts"],
           "external": ["react"]
         },
         "host-app/src/components/ScoringPanel.props.ts": {
@@ -1571,7 +1565,7 @@
           "internal": [
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["vitest"]
         },
@@ -1680,7 +1674,7 @@
             "host-app/src/components/MeasurementRow.props.ts",
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         }
@@ -1866,7 +1860,7 @@
           "external": []
         },
         "host-app/src/components/MeasurementRow.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "host-app/src/ui-strings.ts"],
+          "internal": ["host-app/src/form/rows.ts", "host-app/src/i18n.ts"],
           "external": ["react"]
         },
         "host-app/src/components/MeasurementRow.tsx": {
@@ -1874,7 +1868,7 @@
             "host-app/src/components/MeasurementRow.props.ts",
             "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts"
+            "host-app/src/i18n.ts"
           ],
           "external": ["react"]
         },
@@ -1893,7 +1887,7 @@
         "host-app/src/form/format.ts": {
           "internal": [
             "host-app/src/form/rows.ts",
-            "host-app/src/ui-strings.ts",
+            "host-app/src/i18n.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": []
@@ -1962,6 +1956,29 @@
         "viewer/extensions/scoring-bridge/scripts/check-contract-hash.mjs": {
           "internal": [],
           "external": ["node:crypto", "node:fs", "node:path", "node:url"]
+        }
+      }
+    },
+    {
+      "id": "F-35",
+      "name": "User-visible strings under the conventional i18n name",
+      "description": "Renames host-app/src/ui-strings.ts to i18n.ts and its exported object from UI to t, the shape a reader expects from an internationalised app. The strings themselves and decision A-7 are unchanged; the object is not a function, so a real translation library would be a later step.",
+      "canon": ["A-7", "A-13", "Q-7"],
+      "dependsOn": ["F-19"],
+      "slice": "29",
+      "status": "review",
+      "verify": "No reference to the old name remains outside the historical note in the state journal; 149 tests, lint and typecheck stay green.",
+      "files": [
+        ".claude/agents/developer.md",
+        "docs/CANON.md",
+        "docs/CONVENTIONS.md",
+        "docs/decisions/A-7-ui-language.md",
+        "host-app/src/i18n.ts"
+      ],
+      "imports": {
+        "host-app/src/i18n.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
         }
       }
     }

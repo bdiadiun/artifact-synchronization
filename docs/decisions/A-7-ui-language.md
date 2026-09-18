@@ -9,7 +9,7 @@ The assignment and its diagram show Ukrainian labels ("Додати вимірю
 
 ## Decision
 
-All user-visible strings live in `host-app/src/ui-strings.ts` in Ukrainian, with English
+All user-visible strings live in `host-app/src/i18n.ts` in Ukrainian, with English
 comments. Components reference keys, never literals. Everything else in the repository is English.
 
 ## Rejected alternatives

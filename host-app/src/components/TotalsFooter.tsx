@@ -6,12 +6,12 @@
 
 import type { JSX } from 'react';
 import { formatMetric } from '../form/format';
-import { UI } from '../ui-strings';
+import { t } from '../i18n';
 import { styles, type TotalsFooterProps } from './TotalsFooter.props';
 
 export const TotalsFooter = ({
   totals,
-  label = UI.total,
+  label = t.total,
   primaryUnit = 'mm2',
 }: TotalsFooterProps): JSX.Element => {
   if (totals.length === 0) {
@@ -27,15 +27,15 @@ export const TotalsFooter = ({
         {label}:{' '}
         {primary !== undefined ? formatMetric({ value: primary.value, unit: primaryUnit }) : '—'}
         {primary !== undefined && (
-          <span style={styles.count}>({UI.measurementsCount(primary.count)})</span>
+          <span style={styles.count}>({t.measurementsCount(primary.count)})</span>
         )}
       </div>
       {others.map((total) => (
         <div key={total.unit} style={styles.otherTotal}>
           {formatMetric({ value: total.value, unit: total.unit })}
-          <span style={styles.count}>({UI.measurementsCount(total.count)})</span>
+          <span style={styles.count}>({t.measurementsCount(total.count)})</span>
           {total.unit.startsWith('px') && (
-            <span style={styles.noSpacingHint}>({UI.totalNoSpacingHint})</span>
+            <span style={styles.noSpacingHint}>({t.totalNoSpacingHint})</span>
           )}
         </div>
       ))}

@@ -2,7 +2,7 @@
 // row shows. The one place display strings for a measurement are built.
 
 import type { Metric, Metrics, RestoreFailureReason, Unit } from '@scoring/contract';
-import { UI } from '../ui-strings';
+import { t } from '../i18n';
 import { RowStatus, metricKeyForTool, type MetricKey, type Row } from './rows';
 
 const UNIT_LABELS: Record<Unit, string> = {
@@ -13,14 +13,14 @@ const UNIT_LABELS: Record<Unit, string> = {
 };
 
 const STATUS_LABELS: Record<RowStatus, string> = {
-  [RowStatus.Pending]: UI.statusPending,
-  [RowStatus.Drawing]: UI.statusDrawing,
-  [RowStatus.Done]: UI.statusDone,
+  [RowStatus.Pending]: t.statusPending,
+  [RowStatus.Drawing]: t.statusDrawing,
+  [RowStatus.Done]: t.statusDone,
 };
 
 const KIND_LABELS: Record<MetricKey, string> = {
-  area: UI.kindArea,
-  length: UI.kindLength,
+  area: t.kindArea,
+  length: t.kindLength,
 };
 
 export const formatMetric = (metric: Metric): string =>
@@ -28,9 +28,9 @@ export const formatMetric = (metric: Metric): string =>
 
 export const formatRowStatus = (status: RowStatus): string => STATUS_LABELS[status];
 
-// A-14: tooltip text for the restoreFailed marker; UI.restoreFailureReason is the single lookup.
+// A-14: tooltip text for the restoreFailed marker; t.restoreFailureReason is the single lookup.
 export const formatRestoreFailureReason = (reason: RestoreFailureReason): string =>
-  UI.restoreFailureReason[reason];
+  t.restoreFailureReason[reason];
 
 export const formatRowKind = (row: Row): string => KIND_LABELS[metricKeyForTool(row.toolName)];
 

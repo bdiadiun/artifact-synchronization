@@ -1,7 +1,8 @@
-// UI strings are Ukrainian per the assignment (A-7); code and comments stay in English.
+// User-visible strings are Ukrainian per decision A-7; code and comments stay in English.
+// `t` is the single place these strings live; a real i18n library is out of scope (X-3).
 import type { RestoreFailureReason } from '@scoring/contract';
 
-export const UI = {
+export const t = {
   appTitle: 'Скоринг-форма',
   addMeasurement: 'Додати вимірювання',
   // Add a length row (S-5.4).

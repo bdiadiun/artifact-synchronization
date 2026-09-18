@@ -29,7 +29,7 @@ While writing
   types and interfaces, and style objects (`styles` with `satisfies Record<string, CSSProperties>`)
   live in the sibling `{Name}.props.ts`. No `style={{ … }}` literals in JSX
   (`docs/CONVENTIONS.md` §6).
-- User-visible strings go through `ui-strings.ts` (Ukrainian); code and comments are English.
+- User-visible strings go through `i18n.ts` (Ukrainian); code and comments are English.
 - New behaviour comes with targeted tests in the `__tests__/` folder next to the code (pure logic and
   bridge behaviour only).
 - No function is created inside a JSX event handler prop: `on…` props take a named `handleX` arrow

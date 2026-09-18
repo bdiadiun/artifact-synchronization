@@ -1,6 +1,6 @@
 import { useMemo, type JSX } from 'react';
 import { DEFAULT_TOOL, LENGTH_TOOL } from '../config';
-import { UI } from '../ui-strings';
+import { t } from '../i18n';
 import { MeasurementRow } from './MeasurementRow';
 import { TotalsFooter } from './TotalsFooter';
 import { computeTotals } from '../form/totals';
@@ -29,15 +29,15 @@ export const ScoringPanel = ({
 
   return (
     <div style={styles.panel}>
-      <h1 style={styles.title}>{UI.appTitle}</h1>
+      <h1 style={styles.title}>{t.appTitle}</h1>
       <button type="button" onClick={handleAddAreaRow}>
-        {UI.addMeasurement}
+        {t.addMeasurement}
       </button>
       <button type="button" onClick={handleAddLengthRow}>
-        {UI.addLength}
+        {t.addLength}
       </button>
       {rows.length === 0 ? (
-        <p style={styles.emptyHint}>{UI.emptyHint}</p>
+        <p style={styles.emptyHint}>{t.emptyHint}</p>
       ) : (
         <div style={styles.rows}>
           {rows.map((row, index) => (
@@ -54,8 +54,8 @@ export const ScoringPanel = ({
         </div>
       )}
       <div style={styles.footer}>
-        <TotalsFooter totals={areaTotals} label={UI.total} primaryUnit="mm2" />
-        <TotalsFooter totals={lengthTotals} label={UI.totalLength} primaryUnit="mm" />
+        <TotalsFooter totals={areaTotals} label={t.total} primaryUnit="mm2" />
+        <TotalsFooter totals={lengthTotals} label={t.totalLength} primaryUnit="mm" />
       </div>
     </div>
   );
