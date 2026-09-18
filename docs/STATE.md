@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                              |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 31 `chore: drop empty folders` (branch `chore/drop-empty-folders`, node F-37)                                                      |
-| Gate           | 2 — placeholder folders removed, the convention kept in the layout document and the rule; awaiting result approval                 |
-| Last merged PR | #36 `chore: project structure`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                |
+| Field          | Value                                                                                                                               |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 32 `chore: agent handover skill` (branch `chore/agent-handover-skill`, node F-38)                                                   |
+| Gate           | 2 — per-role write boundaries and the handover skill written into the agent definitions; awaiting result approval                   |
+| Last merged PR | #37 `chore: drop empty folders`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                 |
 
 ## Open decisions (see CANON.md → Decisions)
 

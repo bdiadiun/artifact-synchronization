@@ -37,6 +37,9 @@ to this gate.
   the architect reviews.
 - Never let two agents write the same files at the same time, and never run the git operator while
   another agent is still writing.
+- One instance per role. Continue a running agent with a message rather than calling a second one,
+  and when an agent runs out of context follow `.claude/skills/handover/SKILL.md` so a successor of
+  the same role picks the work up.
 - Update `docs/feature-graph.json` (never the generated Markdown) and `docs/STATE.md` in the same
   slice as the work they describe.
 

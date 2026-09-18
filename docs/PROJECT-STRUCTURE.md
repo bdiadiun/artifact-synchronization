@@ -36,15 +36,16 @@ Two entries from the reference are **not** real features and are deliberately ab
 
 ### What this repository has
 
-| Path                            | Purpose                                                                                                                       |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `CLAUDE.md`                     | How the work is run: roles, canon, feature graph, slices and gates, git rules, technical rules.                               |
-| `.claude/agents/`               | `architect`, `developer`, `tester`, `researcher`, `git-operator` — model, tools and prompt per role.                          |
-| `.claude/skills/slice/SKILL.md` | The slice procedure: the two gates, delegation, verification, closing a node.                                                 |
-| `.claude/commands/`             | `/verify` (the CI set in order), `/e2e` (both apps plus a browser scenario), `/close-node` (graph bookkeeping after a merge). |
-| `.claude/rules/`                | Path-scoped rules: `host-app.md`, `fork.md`, `contract.md`, each loaded when a file under its globs is touched.               |
-| `.claude/settings.json`         | Permission allow and deny lists, and the hook that formats a file right after it is written.                                  |
-| `.gitignore`                    | Ignores `.claude/settings.local.json` and `CLAUDE.local.md`, which are personal.                                              |
+| Path                               | Purpose                                                                                                                       |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `CLAUDE.md`                        | How the work is run: roles, canon, feature graph, slices and gates, git rules, technical rules.                               |
+| `.claude/agents/`                  | `architect`, `developer`, `tester`, `researcher`, `git-operator` — model, tools and prompt per role.                          |
+| `.claude/skills/slice/SKILL.md`    | The slice procedure: the two gates, delegation, verification, closing a node.                                                 |
+| `.claude/skills/handover/SKILL.md` | How a role hands its work to a fresh instance of itself when its context fills up.                                            |
+| `.claude/commands/`                | `/verify` (the CI set in order), `/e2e` (both apps plus a browser scenario), `/close-node` (graph bookkeeping after a merge). |
+| `.claude/rules/`                   | Path-scoped rules: `host-app.md`, `fork.md`, `contract.md`, each loaded when a file under its globs is touched.               |
+| `.claude/settings.json`            | Permission allow and deny lists, and the hook that formats a file right after it is written.                                  |
+| `.gitignore`                       | Ignores `.claude/settings.local.json` and `CLAUDE.local.md`, which are personal.                                              |
 
 ## 2. The React (Vite) application
 

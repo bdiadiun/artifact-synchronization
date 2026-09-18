@@ -17,6 +17,10 @@ while served from different ports.
   review), `developer` (implementation), `tester` (tests and verification), `researcher`
   (read-only investigation with citations), `git-operator` (commit / PR / merge after approval).
   Each file fixes the model, the tools and the prompt; briefs are written for one of these roles.
+- **Each role writes only its own kind of file.** The developer changes application code and never
+  a test; the tester changes tests and never application code; the architect writes documentation
+  and process files and neither of the other two; the researcher writes one note; the git operator
+  writes nothing. Every agent definition states its own boundary.
 - **Folder layout is defined in [`docs/PROJECT-STRUCTURE.md`](docs/PROJECT-STRUCTURE.md)**, which
   also documents what the `.claude/` folder holds and which parts of the popular template are not
   real features.
@@ -178,6 +182,19 @@ Indicative slice order (the minimum from the canon; refined in the graph): 0. `d
   No transcripts, no file dumps.
 - Large command output goes to a file in the scratchpad and is summarised, not pasted.
 
+### Agent instances and handover
+
+- **One role, one instance at a time.** A slice runs at most one developer, one tester, one
+  researcher and one git operator. Two instances of the same role never write the same files.
+- **No agent spawns its own role.** Only the architect delegates, and never to another architect;
+  of the five definitions only `architect` has the `Agent` tool.
+- **Continue an instance instead of re-creating it.** More work for a role that is already running
+  is sent to that instance so its context stays intact; a fresh call starts from nothing.
+- **A full context is handed over, not lost.** An agent running out of room stops, writes a
+  handover note to the session scratchpad, and reports its path; the architect then starts a
+  successor of the same role from that note. The procedure for both sides is
+  [`.claude/skills/handover/SKILL.md`](.claude/skills/handover/SKILL.md).
+
 ### Subagent brief template
 
 Every implementation / test / git subagent receives a self-contained brief with these sections:
@@ -186,6 +203,7 @@ Every implementation / test / git subagent receives a self-contained brief with 
 Role: <developer | test writer | git operator>   Model: <opus | sonnet>
 Repository: <path>; branch: <name>; do not run git unless you are the git operator.
 Read first: CLAUDE.md (follow it), docs/CONVENTIONS.md, then <exact files>.
+Handover note to continue from (if any): <path>.
 Scope: closes <F-nn> / canon <IDs>. Files you may create or modify: <list>. Nothing else.
 Constraints: English only; no AI mentions; TypeScript strict; no new dependencies unless listed: <list>.
 Decisions already made (do not revisit): <A-n summaries or links>.
