@@ -2,7 +2,7 @@
 // wired through the reducer, this file targets the echo bookkeeping in isolation.
 
 import { describe, expect, it, vi } from 'vitest';
-import type { MeasurementRemovedEvent } from '@scoring/contract';
+import type { MeasurementRemovedEvent } from '@bdiadiun/scoring-contract';
 import { createViewerEventHandlers, type ViewerEventContext } from '../viewerEventHandlers';
 import { initialFormState } from '../rows';
 

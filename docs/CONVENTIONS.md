@@ -90,7 +90,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   shared state into the module that owns it.
 - Named exports only; no default exports except where a framework requires one (OHIF extension
   entry, Vite config).
-- Import order: node built-ins, external packages, workspace packages (`@scoring/contract`),
+- Import order: node built-ins, external packages, workspace and published packages (`@bdiadiun/scoring-contract`),
   relative imports; blank line between groups. Use `import type` for type-only imports (lint rule).
 - No barrel `index.ts` re-exports inside the app; import from the module that owns the symbol.
 - Never reach into another package's internals; the contract package is consumed through its

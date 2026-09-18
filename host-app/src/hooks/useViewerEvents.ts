@@ -8,7 +8,7 @@ import type {
   MeasurementsRestoredEvent,
   MeasurementUpdatedEvent,
   ViewerEvent,
-} from '@scoring/contract';
+} from '@bdiadiun/scoring-contract';
 
 export interface ViewerEventHandlers {
   // `isReload` is false for the first READY of the session and true for every later one (A-9).

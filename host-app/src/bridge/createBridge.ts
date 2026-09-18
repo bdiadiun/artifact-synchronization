@@ -2,7 +2,7 @@
 // unit-testable and reused by the `useBridge.ts` hook. This module only wires the queue and the
 // message handler to the listener set; the rules live in those two modules.
 
-import type { HostCommand, ViewerEvent } from '@scoring/contract';
+import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
 import { createArmedTool } from './armedTool';
 import { createCommandQueue } from './commandQueue';
 import { createListenerSet } from './listeners';

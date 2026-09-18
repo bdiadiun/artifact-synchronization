@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { Unit } from '@scoring/contract';
+import type { Unit } from '@bdiadiun/scoring-contract';
 import type { Total } from '../form/totals';
 
 export interface TotalsFooterProps {

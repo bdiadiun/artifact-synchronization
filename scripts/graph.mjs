@@ -17,7 +17,7 @@ const CANON_MD = 'docs/CANON.md';
 
 const STATUSES = ['planned', 'approved', 'in-progress', 'review', 'done'];
 const CODE_EXTENSIONS = ['.ts', '.tsx', '.js', '.mjs'];
-const CONTRACT_PACKAGE = '@scoring/contract';
+const CONTRACT_PACKAGE = '@bdiadiun/scoring-contract';
 const CONTRACT_SOURCE = 'packages/contract/src/messages.ts';
 
 const readText = (relPath) => readFileSync(join(ROOT, relPath), 'utf8');

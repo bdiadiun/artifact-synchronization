@@ -1,6 +1,8 @@
 # A-12 — npm workspaces for host-app and the contract package; the viewer stays outside
 
-Status: approved 2026-09-16. Canon: Q-7, D-1, A-1.
+Status: approved 2026-09-16; superseded in part by
+[A-15](A-15-publish-contract-package.md) on 2026-09-18, which publishes the contract to npm and
+ends the duplication. The workspace layout below still holds. Canon: Q-7, D-1, A-1.
 
 ## Context
 
@@ -36,9 +38,8 @@ the reasoning is spelled out here.
 
 ## Rejected alternatives for the duplication
 
-- **Publishing `@scoring/contract` to npm** and depending on it from the fork. This is the right
-  answer for a product: one source, an explicit version, no copying. It was rejected for the
-  assignment because it adds a registry, a release step and a version bump to every contract
+- **Publishing the contract to npm** and depending on it from the fork. This is the right
+  answer for a product: one source, an explicit version, no copying. It was rejected at the time because it adds a registry, a release step and a version bump to every contract
   change, and it makes a reviewer's clean-machine run depend on a published artefact.
 - **A `file:` dependency from the fork to `packages/contract`.** It breaks the standalone clone:
   the path escapes the fork's repository root.

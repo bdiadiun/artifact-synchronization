@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Metrics } from '@scoring/contract';
+import type { Metrics } from '@bdiadiun/scoring-contract';
 import {
   FormActionType,
   RowStatus,

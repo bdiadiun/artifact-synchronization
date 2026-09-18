@@ -1,7 +1,7 @@
 // The bridge's subscriber set. Kept apart from `createBridge` so the factory only wires; adding
 // or removing a listener never touches bridge state.
 
-import type { ViewerEvent } from '@scoring/contract';
+import type { ViewerEvent } from '@bdiadiun/scoring-contract';
 import type { BridgeListener, BridgeState } from './createBridge';
 
 export interface ListenerSet {

@@ -205,6 +205,11 @@
       "id": "34",
       "title": "chore: workflow ownership and the return-statement rule",
       "branch": "chore/git-operator-workflows"
+    },
+    {
+      "id": "35",
+      "title": "feat: publish the contract package",
+      "branch": "feat/publish-contract-package"
     }
   ],
   "nodes": [
@@ -328,7 +333,7 @@
     {
       "id": "F-03",
       "name": "Shared message contract",
-      "description": "Declares every message type with literal `type` values and `version: 1` in one package, `@scoring/contract`, together with runtime guards `isHostCommand` and `isViewerEvent` that reject malformed or wrong-version payloads. The viewer submodule keeps a byte-identical copy of the file, checked by `npm run check:contract` (A-12). The tool name and the `metrics` object in the payload keep P-7 and P-8 changes local.",
+      "description": "Declares every message type with literal `type` values and `version: 1` in one published package, `@bdiadiun/scoring-contract`, together with runtime guards `isHostCommand` and `isViewerEvent` that reject malformed or wrong-version payloads. The viewer submodule keeps a byte-identical copy of the file, checked by `npm run check:contract` (A-12). The tool name and the `metrics` object in the payload keep P-7 and P-8 changes local.",
       "canon": ["C-4.4.1", "C-4.4.2", "C-4.4.3", "P-7", "P-8", "Q-7"],
       "dependsOn": ["F-00"],
       "slice": "2",
@@ -1376,7 +1381,6 @@
           "internal": [
             "viewer/extensions/scoring-bridge/src/config.ts",
             "viewer/extensions/scoring-bridge/src/contract/messages.ts",
-            "viewer/extensions/scoring-bridge/src/geometry.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
           ],
@@ -2191,7 +2195,7 @@
       "canon": ["A-13", "D-2"],
       "dependsOn": ["F-39"],
       "slice": "34",
-      "status": "review",
+      "status": "done",
       "verify": "The git operator definition lists the workflow files as the only thing it may write and its tool list allows writing; CLAUDE.md agrees. `npm run lint` passes with the widened selector, which proves no component creates a function inside a JSX prop.",
       "files": [
         ".claude/agents/git-operator.md",
@@ -2211,6 +2215,52 @@
             "globals",
             "typescript-eslint"
           ]
+        }
+      }
+    },
+    {
+      "id": "F-41",
+      "name": "The contract becomes a published package",
+      "description": "Turns the shared contract into `@bdiadiun/scoring-contract`, a real package on the public npm registry, built to `dist` by its own prepare script. It now exports what both sides were re-implementing: the record, string and tool-name guards, the geometry guard and the map from a tool to the metric it produces. A world point must be exactly three coordinates, which removes a drift where the contract accepted geometry the viewer would refuse to restore. A workflow publishes a patch release when a merge into main changes the package.",
+      "canon": ["A-15", "D-1", "Q-7"],
+      "dependsOn": ["F-40"],
+      "slice": "35",
+      "status": "review",
+      "verify": "A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.",
+      "files": [
+        ".github/workflows/publish-contract.yml",
+        "docs/decisions/A-15-publish-contract-package.md",
+        "host-app/src/form/rows.ts",
+        "host-app/src/form/storage.ts",
+        "packages/contract/package.json",
+        "packages/contract/src/messages.ts",
+        "packages/contract/tsconfig.json",
+        "viewer/extensions/scoring-bridge/src/geometry.ts"
+      ],
+      "imports": {
+        "host-app/src/form/rows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/form/storage.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "packages/contract/src/messages.ts": {
+          "internal": [],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/geometry.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/measurements.ts"
+          ],
+          "external": []
         }
       }
     }

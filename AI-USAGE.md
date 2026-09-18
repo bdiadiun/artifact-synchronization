@@ -41,7 +41,7 @@ did, what was kept, what was rewritten, and how the author stays able to defend 
   primary tool in the longitudinal mode is WindowLevel, so the decision became "restore the tool
   that was active before arming" (A-8) rather than hardcoding a name.
 - The contract was first wired as a Vite alias to a shared folder; it was reworked into an npm
-  workspace package (`@scoring/contract`, A-12) so the dependency is explicit.
+  published package (`@bdiadiun/scoring-contract`, A-12 and A-15) so the dependency is explicit.
 - `VIEWER_READY` was planned to be sent from `preRegistration`; the implementation session found
   that `setToolActive` is a silent no-op before a viewport exists and moved the announcement to the
   first `VIEWPORT_ADDED`. The decision record was updated to match.
