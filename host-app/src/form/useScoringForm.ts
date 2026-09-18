@@ -1,16 +1,14 @@
 import { useReducer, useState } from 'react';
 import type { HostCommand, ToolName, ViewerEvent } from '@scoring/contract';
-import { DEFAULT_TOOL } from '../config';
-import {
-  activateToolCommand,
-  deactivateToolCommand,
-  focusMeasurementCommand,
-  removeMeasurementCommand,
-} from './commands';
-import { FormActionType, RowStatus, initialFormState, reducer, type Row } from './rows';
-import { findRow } from './selectors';
+import { reducer, type FormState, type Row } from './rows';
+import { createRowActions } from './rowActions';
+import { usePersistRows, useRestoredRows } from './usePersistedRows';
 import { useViewerEvents } from './useViewerEvents';
 import { createViewerEventHandlers } from './viewerEventHandlers';
+
+// A-14: reducer stays pure, so restore reads sessionStorage once here, before the first render,
+// and seeds the reducer's initial state instead of dispatching an action.
+const buildInitialState = (rows: Row[]): FormState => ({ rows, armedRowId: null });
 
 export interface UseScoringFormOptions {
   send: (command: HostCommand) => void;
@@ -26,78 +24,33 @@ export interface UseScoringFormResult {
   focus: (rowId: string) => void;
 }
 
+// Composition root: wires the reducer, sessionStorage persistence, the outgoing row actions and
+// the incoming viewer events together. No branching logic of its own (CONVENTIONS §5).
 export const useScoringForm = ({
   send,
   lastEvent,
 }: UseScoringFormOptions): UseScoringFormResult => {
-  const [state, dispatch] = useReducer(reducer, initialFormState);
+  const restoredRows = useRestoredRows();
+  const [state, dispatch] = useReducer(reducer, restoredRows, buildInitialState);
   // requestIds of REMOVE_MEASUREMENT commands issued below; the removal handler drops their echo
   // (A-10). Held through a `useState` initializer rather than a ref: it is a per-mount identity
   // that never affects rendering, and a ref may not be handed to a helper during render.
   const [issuedRemovalRequestIds] = useState<Set<string>>(() => new Set());
+  // A-14: same pattern, for the one RESTORE_MEASUREMENTS request a session can issue.
+  const [issuedRestoreRequestIds] = useState<Set<string>>(() => new Set());
+  usePersistRows(state.rows);
 
-  const addRow = (toolName: ToolName = DEFAULT_TOOL): void => {
-    dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID(), toolName });
-  };
-
-  const activate = (rowId: string): void => {
-    const previousArmedRowId = state.armedRowId;
-    const targetRow = findRow(state.rows, rowId);
-    dispatch({ type: FormActionType.ArmRow, rowId });
-    // Only one row can be armed at a time (A-4): deactivate the previous one first.
-    if (previousArmedRowId !== null && previousArmedRowId !== rowId) {
-      send(deactivateToolCommand(crypto.randomUUID(), previousArmedRowId));
-    }
-    if (targetRow !== undefined) {
-      send(activateToolCommand(crypto.randomUUID(), rowId, targetRow.toolName));
-    }
-  };
-
-  const cancel = (rowId: string): void => {
-    dispatch({ type: FormActionType.DisarmRow, rowId });
-    send(deactivateToolCommand(crypto.randomUUID(), rowId));
-  };
-
-  // Behaviour depends on row status: `done` removes the real annotation in the viewer; `drawing`
-  // is cancelled first (nothing drawn yet); `pending` just drops the row.
-  const remove = (rowId: string): void => {
-    const row = findRow(state.rows, rowId);
-    if (row === undefined) {
-      return;
-    }
-    if (row.status === RowStatus.Done) {
-      if (row.measurementUid === null) {
-        return;
-      }
-      const requestId = crypto.randomUUID();
-      // A-10: record the requestId so the REMOVE_MEASUREMENT echo is recognised and ignored.
-      issuedRemovalRequestIds.add(requestId);
-      dispatch({ type: FormActionType.RemoveRow, rowId });
-      send(removeMeasurementCommand(requestId, rowId, row.measurementUid));
-      return;
-    }
-    if (row.status === RowStatus.Drawing) {
-      send(deactivateToolCommand(crypto.randomUUID(), rowId));
-    }
-    dispatch({ type: FormActionType.RemoveRow, rowId });
-  };
-
-  // Only a `done` row has a real annotation to scroll/highlight to; no reply expected.
-  const focus = (rowId: string): void => {
-    const row = findRow(state.rows, rowId);
-    if (row?.status !== RowStatus.Done || row.measurementUid === null) {
-      return;
-    }
-    send(focusMeasurementCommand(crypto.randomUUID(), rowId, row.measurementUid));
-  };
+  const rowActions = createRowActions({ state, dispatch, send, issuedRemovalRequestIds });
 
   const eventHandlers = createViewerEventHandlers({
     state,
     dispatch,
     send,
     issuedRemovalRequestIds,
+    restoredRows,
+    issuedRestoreRequestIds,
   });
   useViewerEvents(lastEvent, eventHandlers);
 
-  return { rows: state.rows, addRow, activate, cancel, remove, focus };
+  return { rows: state.rows, ...rowActions };
 };

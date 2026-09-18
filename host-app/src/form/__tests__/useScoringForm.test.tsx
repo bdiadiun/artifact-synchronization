@@ -7,11 +7,14 @@ import type {
   HostCommand,
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
+  MeasurementsRestoredEvent,
   MeasurementUpdatedEvent,
   ViewerEvent,
+  ViewerReadyEvent,
 } from '@scoring/contract';
-import { DEFAULT_TOOL } from '../../config';
-import { RowStatus } from '../rows';
+import { DEFAULT_TOOL, STUDY_INSTANCE_UID } from '../../config';
+import { RowStatus, type Row } from '../rows';
+import { saveRows } from '../storage';
 import { computeTotals } from '../totals';
 import { useScoringForm } from '../useScoringForm';
 
@@ -55,6 +58,32 @@ const measurementRemoved = (
   type: 'MEASUREMENT_REMOVED',
   measurementUid,
   ...overrides,
+});
+
+const viewerReady = (viewerVersion = '1.0.0'): ViewerReadyEvent => ({
+  version: 1,
+  type: 'VIEWER_READY',
+  viewerVersion,
+});
+
+const measurementsRestored = (
+  overrides: Partial<MeasurementsRestoredEvent> = {},
+): MeasurementsRestoredEvent => ({
+  version: 1,
+  type: 'MEASUREMENTS_RESTORED',
+  restored: [],
+  failed: [],
+  ...overrides,
+});
+
+const storedRow = (rowId: string, measurementUid: string): Row => ({
+  rowId,
+  status: RowStatus.Done,
+  toolName: 'EllipticalROI',
+  metrics: { area: { value: 124.5, unit: 'mm2' } },
+  measurementUid,
+  geometry: { frameOfReferenceUid: 'for-1', referencedImageId: 'image-1', points: [[1, 2, 3]] },
+  restoreFailureReason: null,
 });
 
 describe('useScoringForm', () => {
@@ -446,5 +475,108 @@ describe('useScoringForm', () => {
 
     expect(send).toHaveBeenCalledWith(expect.objectContaining({ type: 'DEACTIVATE_TOOL', rowId }));
     expect(result.current.rows).toHaveLength(0);
+  });
+});
+
+describe('useScoringForm restore (A-14)', () => {
+  it('sends RESTORE_MEASUREMENTS on the first VIEWER_READY when sessionStorage has rows', () => {
+    saveRows(STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1')]);
+    const send = createSend();
+    const { rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => {
+      rerender({ lastEvent: viewerReady() });
+    });
+
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'RESTORE_MEASUREMENTS',
+        studyInstanceUid: STUDY_INSTANCE_UID,
+        measurements: [
+          expect.objectContaining({ rowId: 'row-1', measurementUid: 'uid-1' }) as unknown,
+        ],
+      }),
+    );
+  });
+
+  it('sends nothing when there is no stored state', () => {
+    const send = createSend();
+    const { rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => {
+      rerender({ lastEvent: viewerReady() });
+    });
+
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it('MEASUREMENTS_RESTORED marks the failed rows and leaves the restored rows untouched', () => {
+    saveRows(STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1'), storedRow('row-2', 'uid-2')]);
+    const send = createSend();
+    const { result, rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => {
+      rerender({ lastEvent: viewerReady() });
+    });
+    const restoreCall = send.mock.calls.find((call) => call[0].type === 'RESTORE_MEASUREMENTS');
+    const requestId = restoreCall?.[0].requestId ?? '';
+
+    act(() => {
+      rerender({
+        lastEvent: measurementsRestored({
+          causedBy: requestId,
+          restored: ['uid-1'],
+          failed: [{ rowId: 'row-2', reason: 'invalid-geometry' }],
+        }),
+      });
+    });
+
+    const rowOne = result.current.rows.find((row) => row.rowId === 'row-1');
+    const rowTwo = result.current.rows.find((row) => row.rowId === 'row-2');
+    expect(rowOne).toMatchObject({ restoreFailureReason: null, status: RowStatus.Done });
+    expect(rowTwo).toMatchObject({
+      restoreFailureReason: 'invalid-geometry',
+      status: RowStatus.Done,
+    });
+    // The stored value stays on screen (A-14: no MEASUREMENT_UPDATED will follow a failed restore).
+    expect(rowTwo?.metrics).toEqual({ area: { value: 124.5, unit: 'mm2' } });
+  });
+
+  it('a MEASUREMENTS_RESTORED with an unmatched causedBy is ignored', () => {
+    saveRows(STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1')]);
+    const send = createSend();
+    const debugSpy = vi.spyOn(console, 'debug').mockImplementation(vi.fn());
+    const { result, rerender } = renderHook(
+      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
+      { initialProps: { lastEvent: null as ViewerEvent | null } },
+    );
+
+    act(() => {
+      rerender({ lastEvent: viewerReady() });
+    });
+    const rowsBefore = result.current.rows;
+
+    act(() => {
+      rerender({
+        lastEvent: measurementsRestored({
+          causedBy: 'unrelated-request',
+          failed: [{ rowId: 'row-1', reason: 'unknown-study' }],
+        }),
+      });
+    });
+
+    expect(result.current.rows).toBe(rowsBefore);
+    expect(debugSpy).toHaveBeenCalled();
+
+    debugSpy.mockRestore();
   });
 });

@@ -6,9 +6,12 @@ import {
   type DeactivateToolCommand,
   type FocusMeasurementCommand,
   type MeasurementAddedEvent,
+  type MeasurementGeometry,
   type MeasurementRemovedEvent,
+  type MeasurementsRestoredEvent,
   type MeasurementUpdatedEvent,
   type RemoveMeasurementCommand,
+  type RestoreMeasurementsCommand,
   type ViewerReadyEvent,
 } from '../messages';
 
@@ -74,6 +77,31 @@ const measurementRemoved: MeasurementRemovedEvent = {
   causedBy: 'req-3',
 };
 
+const geometry: MeasurementGeometry = {
+  frameOfReferenceUid: 'for-1',
+  referencedImageId: 'image-1',
+  points: [
+    [1, 2, 3],
+    [4, 5, 6],
+  ],
+};
+
+const restoreMeasurements: RestoreMeasurementsCommand = {
+  version: 1,
+  type: 'RESTORE_MEASUREMENTS',
+  requestId: 'req-5',
+  studyInstanceUid: 'study-1',
+  measurements: [{ rowId: 'row-1', measurementUid: 'uid-1', toolName: 'EllipticalROI', geometry }],
+};
+
+const measurementsRestored: MeasurementsRestoredEvent = {
+  version: 1,
+  type: 'MEASUREMENTS_RESTORED',
+  causedBy: 'req-5',
+  restored: ['uid-1'],
+  failed: [{ rowId: 'row-2', reason: 'unknown-study' }],
+};
+
 describe('isHostCommand', () => {
   it('accepts a valid ACTIVATE_TOOL command', () => {
     expect(isHostCommand(activateTool)).toBe(true);
@@ -132,6 +160,54 @@ describe('isHostCommand', () => {
   it('rejects FOCUS_MEASUREMENT missing measurementUid', () => {
     const { measurementUid: _measurementUid, ...withoutUid } = focusMeasurement;
     expect(isHostCommand(withoutUid)).toBe(false);
+  });
+
+  it('accepts a valid RESTORE_MEASUREMENTS command', () => {
+    expect(isHostCommand(restoreMeasurements)).toBe(true);
+  });
+
+  it('rejects RESTORE_MEASUREMENTS missing studyInstanceUid', () => {
+    const { studyInstanceUid: _studyInstanceUid, ...withoutStudy } = restoreMeasurements;
+    expect(isHostCommand(withoutStudy)).toBe(false);
+  });
+
+  it('rejects RESTORE_MEASUREMENTS with a non-array measurements field', () => {
+    expect(isHostCommand({ ...restoreMeasurements, measurements: 'nope' })).toBe(false);
+  });
+
+  it('accepts RESTORE_MEASUREMENTS with an empty measurements array', () => {
+    expect(isHostCommand({ ...restoreMeasurements, measurements: [] })).toBe(true);
+  });
+
+  it('rejects a restore request without geometry', () => {
+    const { geometry: _geometry, ...requestWithoutGeometry } = restoreMeasurements.measurements[0];
+    expect(isHostCommand({ ...restoreMeasurements, measurements: [requestWithoutGeometry] })).toBe(
+      false,
+    );
+  });
+
+  it('rejects geometry with a non-finite point value', () => {
+    const badGeometry = { ...geometry, points: [[1, Infinity, 3]] };
+    expect(
+      isHostCommand({
+        ...restoreMeasurements,
+        measurements: [{ ...restoreMeasurements.measurements[0], geometry: badGeometry }],
+      }),
+    ).toBe(false);
+  });
+
+  it('rejects geometry with an empty points array', () => {
+    const badGeometry = { ...geometry, points: [] };
+    expect(
+      isHostCommand({
+        ...restoreMeasurements,
+        measurements: [{ ...restoreMeasurements.measurements[0], geometry: badGeometry }],
+      }),
+    ).toBe(false);
+  });
+
+  it('survives a JSON round-trip for RESTORE_MEASUREMENTS', () => {
+    expect(isHostCommand(JSON.parse(JSON.stringify(restoreMeasurements)))).toBe(true);
   });
 });
 
@@ -204,5 +280,41 @@ describe('isViewerEvent', () => {
 
   it('rejects MEASUREMENT_REMOVED with a wrong-type causedBy', () => {
     expect(isViewerEvent({ ...measurementRemoved, causedBy: 42 })).toBe(false);
+  });
+
+  it('accepts MEASUREMENT_ADDED with geometry', () => {
+    expect(isViewerEvent({ ...measurementAdded, geometry })).toBe(true);
+  });
+
+  it('accepts MEASUREMENT_ADDED without geometry', () => {
+    expect(isViewerEvent(measurementAdded)).toBe(true);
+  });
+
+  it('rejects MEASUREMENT_UPDATED with invalid geometry', () => {
+    expect(isViewerEvent({ ...measurementUpdated, geometry: { ...geometry, points: [] } })).toBe(
+      false,
+    );
+  });
+
+  it('accepts a valid MEASUREMENTS_RESTORED event with causedBy', () => {
+    expect(isViewerEvent(measurementsRestored)).toBe(true);
+  });
+
+  it('accepts a valid MEASUREMENTS_RESTORED event without causedBy', () => {
+    const { causedBy: _causedBy, ...withoutCausedBy } = measurementsRestored;
+    expect(isViewerEvent(withoutCausedBy)).toBe(true);
+  });
+
+  it('rejects MEASUREMENTS_RESTORED with an unknown failure reason', () => {
+    expect(
+      isViewerEvent({
+        ...measurementsRestored,
+        failed: [{ rowId: 'row-2', reason: 'gremlins' }],
+      }),
+    ).toBe(false);
+  });
+
+  it('survives a JSON round-trip for MEASUREMENTS_RESTORED', () => {
+    expect(isViewerEvent(JSON.parse(JSON.stringify(measurementsRestored)))).toBe(true);
   });
 });

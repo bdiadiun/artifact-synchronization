@@ -1,6 +1,11 @@
 // Pure, side-effect-free reducer; `useScoringForm.ts` wires it to `send`/`lastEvent`.
 
-import type { Metrics, ToolName } from '@scoring/contract';
+import type {
+  MeasurementGeometry,
+  Metrics,
+  RestoreFailureReason,
+  ToolName,
+} from '@scoring/contract';
 import { DEFAULT_TOOL } from '../config';
 import { findRow, findRowByUid, hasRow } from './selectors';
 
@@ -16,6 +21,11 @@ export interface Row {
   toolName: ToolName;
   metrics: Metrics | null;
   measurementUid: string | null;
+  // A-14: kept so a restored row can be re-sent to the viewer; null until a measurement arrives.
+  geometry: MeasurementGeometry | null;
+  // A-14: null unless a RESTORE_MEASUREMENTS reply named this row as failed; the reason drives the
+  // marker `MeasurementRow` shows next to a value that has no annotation behind it.
+  restoreFailureReason: RestoreFailureReason | null;
 }
 
 export interface FormState {
@@ -46,6 +56,8 @@ export enum FormActionType {
   // Viewer-side deletion "clears" a `done` row back to `pending` rather than removing it, per the
   // assignment's wording.
   MeasurementCleared = 'MEASUREMENT_CLEARED',
+  // A-14: a row named in a MEASUREMENTS_RESTORED reply's `failed` list.
+  RestoreFailed = 'RESTORE_FAILED',
 }
 
 export type FormAction =
@@ -57,10 +69,12 @@ export type FormAction =
       rowId: string;
       measurementUid: string;
       metrics: Metrics;
+      geometry: MeasurementGeometry | null;
     }
   | { type: FormActionType.MeasurementUpdated; measurementUid: string; metrics: Metrics }
   | { type: FormActionType.RemoveRow; rowId: string }
-  | { type: FormActionType.MeasurementCleared; rowId: string };
+  | { type: FormActionType.MeasurementCleared; rowId: string }
+  | { type: FormActionType.RestoreFailed; rowId: string; reason: RestoreFailureReason };
 
 type ActionOf<T extends FormActionType> = Extract<FormAction, { type: T }>;
 
@@ -79,6 +93,8 @@ const addRow = (state: FormState, action: ActionOf<FormActionType.AddRow>): Form
     toolName: action.toolName ?? DEFAULT_TOOL,
     metrics: null,
     measurementUid: null,
+    geometry: null,
+    restoreFailureReason: null,
   };
   return { ...state, rows: [...state.rows, newRow] };
 };
@@ -121,6 +137,7 @@ const receiveMeasurement = (
       status: RowStatus.Done,
       metrics: action.metrics,
       measurementUid: action.measurementUid,
+      geometry: action.geometry,
     }),
     armedRowId: clearArmed(state, action.rowId),
   };
@@ -168,6 +185,20 @@ const clearMeasurement = (
   };
 };
 
+const markRestoreFailed = (
+  state: FormState,
+  action: ActionOf<FormActionType.RestoreFailed>,
+): FormState => {
+  const target = findRow(state.rows, action.rowId);
+  if (target === undefined || target.restoreFailureReason === action.reason) {
+    return state;
+  }
+  return {
+    ...state,
+    rows: replaceRow(state, action.rowId, { restoreFailureReason: action.reason }),
+  };
+};
+
 export const reducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
     case FormActionType.AddRow:
@@ -184,6 +215,8 @@ export const reducer = (state: FormState, action: FormAction): FormState => {
       return removeRow(state, action);
     case FormActionType.MeasurementCleared:
       return clearMeasurement(state, action);
+    case FormActionType.RestoreFailed:
+      return markRestoreFailed(state, action);
     default: {
       const exhaustiveCheck: never = action;
       return exhaustiveCheck;

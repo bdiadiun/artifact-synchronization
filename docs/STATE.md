@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Current slice  | none; last merged slice 27 `chore: contract copy guard`                                                                              |
-| Gate           | idle                                                                                                                                 |
-| Last merged PR | #30 `chore: contract copy guard`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done; S-5.6 not taken |
-| Next slice     | none planned; open: F-13 video (author), optional bonus F-19 (S-5.6 state restore)                                                   |
+| Field          | Value                                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 28 `feat: state restore` (branch `feat/state-restore`, node F-19, bonus S-5.6)                                                  |
+| Gate           | 2 — restore works end to end after a real page reload; fork PR #12 merged (`scoring` at `5f64237128`); awaiting result approval |
+| Last merged PR | #31 `docs: close F-34`; with this slice every bonus task is implemented; only the video (F-13) remains                          |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                             |
 
 ## Open decisions (see CANON.md → Decisions)
 

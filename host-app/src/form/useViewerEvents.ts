@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import type {
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
+  MeasurementsRestoredEvent,
   MeasurementUpdatedEvent,
   ViewerEvent,
 } from '@scoring/contract';
@@ -15,6 +16,7 @@ export interface ViewerEventHandlers {
   onMeasurementAdded: (event: MeasurementAddedEvent) => void;
   onMeasurementUpdated: (event: MeasurementUpdatedEvent) => void;
   onMeasurementRemoved: (event: MeasurementRemovedEvent) => void;
+  onMeasurementsRestored: (event: MeasurementsRestoredEvent) => void;
 }
 
 const dispatchViewerEvent = (
@@ -34,6 +36,9 @@ const dispatchViewerEvent = (
       return;
     case 'MEASUREMENT_REMOVED':
       handlers.onMeasurementRemoved(event);
+      return;
+    case 'MEASUREMENTS_RESTORED':
+      handlers.onMeasurementsRestored(event);
       return;
     default: {
       const exhaustiveCheck: never = event;

@@ -14,6 +14,8 @@ const doneRow = (rowId: string, value: number, unit: 'mm2' | 'px2'): Row => ({
   toolName: 'EllipticalROI',
   metrics: { area: { value, unit } },
   measurementUid: `uid-${rowId}`,
+  geometry: null,
+  restoreFailureReason: null,
 });
 
 const doneLengthRow = (rowId: string, value: number, unit: 'mm' | 'px'): Row => ({
@@ -22,6 +24,8 @@ const doneLengthRow = (rowId: string, value: number, unit: 'mm' | 'px'): Row => 
   toolName: 'Length',
   metrics: { length: { value, unit } },
   measurementUid: `uid-${rowId}`,
+  geometry: null,
+  restoreFailureReason: null,
 });
 
 const pendingRow = (rowId: string): Row => ({
@@ -30,6 +34,8 @@ const pendingRow = (rowId: string): Row => ({
   toolName: 'EllipticalROI',
   metrics: null,
   measurementUid: null,
+  geometry: null,
+  restoreFailureReason: null,
 });
 
 describe('ScoringPanel totals footer', () => {
