@@ -1645,7 +1645,7 @@
       "canon": ["A-13", "Q-7"],
       "dependsOn": ["F-32"],
       "slice": "26",
-      "status": "review",
+      "status": "done",
       "verify": "npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.",
       "files": [
         "ARCHITECTURE.md",

@@ -43,7 +43,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-30 | Named event handlers enforced by lint                                                                                                             | A-13, Q-7                                                       | F-29             | 20    | done    | npm run lint reports an inline handler as an error; no on-prop in host-app creates a function; 89 tests and the end-to-end scenarios unchanged.                                                                                    |
 | F-31 | Complexity limits and module-shape rules                                                                                                          | A-13, Q-7                                                       | F-30             | 24    | done    | npm run lint and lint:fork report the seven known hot spots as warnings and nothing else; the rules are off for test suites.                                                                                                       |
 | F-32 | Bridge split by protocol role                                                                                                                     | A-13, C-3.4, Q-7                                                | F-31             | 25    | done    | npm run lint:fork reports no size or complexity warnings for the extension; the full browser regression (ready, activate, measure, restore tool, live update, delete both ways, focus, version overlay) behaves as before.         |
-| F-33 | Scoring form hook and reducer split                                                                                                               | A-13, Q-7                                                       | F-32             | 26    | review  | npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.                                                                                                                  |
+| F-33 | Scoring form hook and reducer split                                                                                                               | A-13, Q-7                                                       | F-32             | 26    | done    | npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.                                                                                                                  |
 
 ## Coverage of mandatory IDs
 
@@ -703,7 +703,7 @@ Files:
 
 Separates the two concerns that shared one hook: user actions on rows and synchronisation with viewer events. Row lookups become named selectors, the reducer delegates each action to a small pure function, and the complexity limits become errors once the code is under them.
 
-Canon: A-13, Q-7. Depends on: F-32. Slice 26, status `review`.
+Canon: A-13, Q-7. Depends on: F-32. Slice 26, status `done`.
 
 Files:
 
