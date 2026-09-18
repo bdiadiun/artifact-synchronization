@@ -39,48 +39,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-26 | Trim comments to a non-obvious why; comment rules made measurable                                                                                 | A-13, Q-7                                                       | F-25             | 16    | done    | Comment lines ≤ ~10% of non-blank lines per file; no behaviour change (all checks and end-to-end green); every removed rationale that matters is present in `docs/decisions/`, ARCHITECTURE or DEFENCE; DEFENCE links re-verified. |
 | F-27 | Component file layout: `{Name}.props.ts` for types, interfaces and styles; tests in `__tests__/` folders; lint rule against inline style literals | A-13, Q-7                                                       | F-26             | 17    | done    | Every component with props or styles has a sibling `.props.ts`; no `style={{…}}` literals (lint); every test file sits in a `__tests__/` folder next to its module; lint, typecheck, 89 tests and end-to-end unchanged.            |
 | F-28 | Feature graph as JSON                                                                                                                             | D-3, D-6, Q-7                                                   | F-27             | 18    | done    | `npm run graph:build` is idempotent; `npm run check:graph` passes and fails on a missing file, a hand edit of FEATURE-GRAPH.md or a stale import list.                                                                             |
-| F-29 | Style rules from recent slices recorded for agents                                                                                                | A-13, D-3, Q-7                                                  | F-28             | 19    | review  | Role files and CONVENTIONS agree; npm run format:check and check:graph pass.                                                                                                                                                       |
+| F-29 | Style rules from recent slices recorded for agents                                                                                                | A-13, D-3, Q-7                                                  | F-28             | 19    | done    | Role files and CONVENTIONS agree; npm run format:check and check:graph pass.                                                                                                                                                       |
+| F-30 | Named event handlers enforced by lint                                                                                                             | A-13, Q-7                                                       | F-29             | 20    | review  | npm run lint reports an inline handler as an error; no on-prop in host-app creates a function; 89 tests and the end-to-end scenarios unchanged.                                                                                    |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                     |
-| ------- | ---------------------------------------------- |
-| C-3.1   | F-05, F-06                                     |
-| C-3.2   | F-05                                           |
-| C-3.3   | F-01                                           |
-| C-3.4   | F-05, F-09                                     |
-| C-4.1.1 | F-04                                           |
-| C-4.1.2 | F-04                                           |
-| C-4.1.3 | F-02, F-04                                     |
-| C-4.2.1 | F-01                                           |
-| C-4.2.2 | F-02                                           |
-| C-4.2.3 | F-01                                           |
-| C-4.3.1 | F-07                                           |
-| C-4.3.2 | F-07                                           |
-| C-4.3.3 | F-08                                           |
-| C-4.3.4 | F-09                                           |
-| C-4.3.5 | F-09, F-10                                     |
-| C-4.3.6 | F-09, F-10                                     |
-| C-4.3.7 | F-07                                           |
-| C-4.3.8 | F-11                                           |
-| C-4.4.1 | F-03, F-08                                     |
-| C-4.4.2 | F-03, F-15, F-16                               |
-| C-4.4.3 | F-03                                           |
-| Q-1     | F-06                                           |
-| Q-2     | F-05, F-06                                     |
-| Q-3     | F-07, F-08, F-09                               |
-| Q-4     | F-14, F-15                                     |
-| Q-5     | F-05, F-06                                     |
-| Q-6     | F-09, F-10, F-11                               |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29 |
-| D-1     | F-04                                           |
-| D-2     | F-00, F-20                                     |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29       |
-| D-4     | F-00, F-24                                     |
-| D-5     | F-12, F-20, F-24, F-25                         |
-| D-6     | F-00, F-12, F-21, F-25, F-28                   |
-| D-7     | F-12, F-25                                     |
-| D-8     | F-13, F-25                                     |
+| ID      | Covered by                                           |
+| ------- | ---------------------------------------------------- |
+| C-3.1   | F-05, F-06                                           |
+| C-3.2   | F-05                                                 |
+| C-3.3   | F-01                                                 |
+| C-3.4   | F-05, F-09                                           |
+| C-4.1.1 | F-04                                                 |
+| C-4.1.2 | F-04                                                 |
+| C-4.1.3 | F-02, F-04                                           |
+| C-4.2.1 | F-01                                                 |
+| C-4.2.2 | F-02                                                 |
+| C-4.2.3 | F-01                                                 |
+| C-4.3.1 | F-07                                                 |
+| C-4.3.2 | F-07                                                 |
+| C-4.3.3 | F-08                                                 |
+| C-4.3.4 | F-09                                                 |
+| C-4.3.5 | F-09, F-10                                           |
+| C-4.3.6 | F-09, F-10                                           |
+| C-4.3.7 | F-07                                                 |
+| C-4.3.8 | F-11                                                 |
+| C-4.4.1 | F-03, F-08                                           |
+| C-4.4.2 | F-03, F-15, F-16                                     |
+| C-4.4.3 | F-03                                                 |
+| Q-1     | F-06                                                 |
+| Q-2     | F-05, F-06                                           |
+| Q-3     | F-07, F-08, F-09                                     |
+| Q-4     | F-14, F-15                                           |
+| Q-5     | F-05, F-06                                           |
+| Q-6     | F-09, F-10, F-11                                     |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30 |
+| D-1     | F-04                                                 |
+| D-2     | F-00, F-20                                           |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29             |
+| D-4     | F-00, F-24                                           |
+| D-5     | F-12, F-20, F-24, F-25                               |
+| D-6     | F-00, F-12, F-21, F-25, F-28                         |
+| D-7     | F-12, F-25                                           |
+| D-8     | F-13, F-25                                           |
 
 ## Diagram
 
@@ -116,6 +117,7 @@ graph TD
   F27["F-27 Component file layout: {Name}.props.ts for types, interfaces and styles; tests in __tests__/ folders; lint rule against inline style literals"]
   F28["F-28 Feature graph as JSON"]
   F29["F-29 Style rules from recent slices recorded for agents"]
+  F30["F-30 Named event handlers enforced by lint"]
 
   F20 --> F01
   F01 --> F02
@@ -151,6 +153,7 @@ graph TD
   F26 --> F27
   F27 --> F28
   F28 --> F29
+  F29 --> F30
 ```
 
 ## Slice → nodes
@@ -179,6 +182,7 @@ graph TD
 | 18 — docs: feature graph as JSON                      | `docs/feature-graph-json`                   | —   | F-28                   |
 | later — bonus nodes not yet scheduled                 | one branch per bonus node                   | —   | F-17, F-19             |
 | 19 — docs: agent style rules                          | `docs/agent-style-rules`                    | —   | F-29                   |
+| 20 — refactor: named event handlers                   | `refactor/named-event-handlers`             | —   | F-30                   |
 
 ## Node details
 
@@ -613,7 +617,7 @@ Files:
 
 Consolidates the conventions that emerged while refactoring (function style, enums, comments, component props files, test folders, generated files, dependency placement, verification set) into docs/CONVENTIONS.md and the .claude/agents role files, so every delegated task starts from the same rules.
 
-Canon: A-13, D-3, Q-7. Depends on: F-28. Slice 19, status `review`.
+Canon: A-13, D-3, Q-7. Depends on: F-28. Slice 19, status `done`.
 
 Files:
 
@@ -621,3 +625,16 @@ Files:
 - `.claude/agents/developer.md`
 - `.claude/agents/tester.md`
 - `docs/CONVENTIONS.md`
+
+### F-30 Named event handlers enforced by lint
+
+Event handler props take a named handleX function declared in the component body; creating a function inside an on-prop is reported by ESLint. MeasurementRow now declares handleActivate, handleCancel and handleRemove instead of three inline arrows.
+
+Canon: A-13, Q-7. Depends on: F-29. Slice 20, status `review`.
+
+Files:
+
+- `.claude/agents/developer.md`
+- `docs/CONVENTIONS.md`
+- `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`, `packages/contract/src/messages.ts`; external: `react`

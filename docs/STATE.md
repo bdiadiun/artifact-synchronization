@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                     |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 19 `docs: agent style rules` (branch `docs/agent-style-rules`, node F-29)                                                                                                 |
-| Gate           | 2 — style rules from slices 12–18 recorded in CONVENTIONS and the role files; awaiting result approval                                                                    |
-| Last merged PR | #20 `docs: feature graph as JSON`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#9 merged into `scoring` |
-| Next slice     | Not planned yet                                                                                                                                                           |
+| Field          | Value                                                                                                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 20 `refactor: named event handlers` (branch `refactor/named-event-handlers`, node F-30)                                                                               |
+| Gate           | 2 — rule, lint check and the three inline handlers replaced; awaiting result approval                                                                                 |
+| Last merged PR | #21 `docs: agent style rules`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; fork PRs #1–#9 merged into `scoring` |
+| Next slice     | Not planned yet                                                                                                                                                       |
 
 ## Open decisions (see CANON.md → Decisions)
 

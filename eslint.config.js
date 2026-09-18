@@ -16,6 +16,11 @@ const constEnumSelector = 'TSEnumDeclaration[const=true]';
 const inlineStyleObjectSelector =
   "JSXAttribute[name.name='style'] > JSXExpressionContainer > ObjectExpression";
 
+// A function created inside an `on…` prop is a new identity on every render and hides the handler
+// from the component body (CONVENTIONS §6).
+const inlineEventHandlerSelector =
+  "JSXAttribute[name.name=/^on[A-Z]/] > JSXExpressionContainer > :matches(ArrowFunctionExpression, FunctionExpression, CallExpression[callee.property.name='bind'])";
+
 export default tseslint.config(
   {
     ignores: ['**/dist/**', '**/node_modules/**', 'viewer/**', 'docs/site/**'],
@@ -115,6 +120,11 @@ export default tseslint.config(
           selector: inlineStyleObjectSelector,
           message:
             'Inline style objects are forbidden (CONVENTIONS §6); use styles from {Name}.props.ts.',
+        },
+        {
+          selector: inlineEventHandlerSelector,
+          message:
+            'Event handler props take a named handleX function (CONVENTIONS §6); no functions created inline.',
         },
       ],
     },

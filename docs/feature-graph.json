@@ -130,6 +130,11 @@
       "id": "19",
       "title": "docs: agent style rules",
       "branch": "docs/agent-style-rules"
+    },
+    {
+      "id": "20",
+      "title": "refactor: named event handlers",
+      "branch": "refactor/named-event-handlers"
     }
   ],
   "nodes": [
@@ -1275,7 +1280,7 @@
       "canon": ["A-13", "D-3", "Q-7"],
       "dependsOn": ["F-28"],
       "slice": "19",
-      "status": "review",
+      "status": "done",
       "verify": "Role files and CONVENTIONS agree; npm run format:check and check:graph pass.",
       "files": [
         ".claude/agents/architect.md",
@@ -1284,6 +1289,45 @@
         "docs/CONVENTIONS.md"
       ],
       "imports": {}
+    },
+    {
+      "id": "F-30",
+      "name": "Named event handlers enforced by lint",
+      "description": "Event handler props take a named handleX function declared in the component body; creating a function inside an on-prop is reported by ESLint. MeasurementRow now declares handleActivate, handleCancel and handleRemove instead of three inline arrows.",
+      "canon": ["A-13", "Q-7"],
+      "dependsOn": ["F-29"],
+      "slice": "20",
+      "status": "review",
+      "verify": "npm run lint reports an inline handler as an error; no on-prop in host-app creates a function; 89 tests and the end-to-end scenarios unchanged.",
+      "files": [
+        ".claude/agents/developer.md",
+        "docs/CONVENTIONS.md",
+        "eslint.config.js",
+        "host-app/src/components/MeasurementRow.tsx"
+      ],
+      "imports": {
+        "eslint.config.js": {
+          "internal": [],
+          "external": [
+            "@eslint/js",
+            "eslint-config-prettier",
+            "eslint-plugin-react-hooks",
+            "eslint-plugin-react-refresh",
+            "globals",
+            "typescript-eslint"
+          ]
+        },
+        "host-app/src/components/MeasurementRow.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/ui-strings.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        }
+      }
     }
   ]
 }
