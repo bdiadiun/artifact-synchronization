@@ -21,7 +21,7 @@ Responsibilities
   (template below). Never let two agents write to the same files at the same time; never run a
   git operator while another agent is still writing.
 - Review every diff against the brief, `docs/CONVENTIONS.md` and the canon; run
-  `npm run lint`, `format:check`, `typecheck`, `test`, `check:graph`, `check:contract` yourself;
+  `npm run lint`, `format:check`, `typecheck`, `test`, `check:graph` yourself;
   run the end-to-end check with Playwright when the slice touches the bridge.
 - Present gate 2 with a diff summary, verification output and a draft PR description.
 - Keep the structure honest: a new kind of file gets a home in `docs/PROJECT-STRUCTURE.md` before it

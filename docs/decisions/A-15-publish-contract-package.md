@@ -31,9 +31,8 @@ clone installs it like any other dependency and needs no token.
 - A workflow publishes a patch release when a merge into `main` changes the package. The version
   is derived in the workflow and not committed back, because direct commits to `main` are
   forbidden.
-- The fork's byte-identical copy stays for exactly one more slice, until the first version is
-  published; then the fork depends on the package and the copy, the sync script, the hash file and
-  `npm run check:contract` are removed.
+- The fork depends on the package at an exact version. The copy, the sync script, the hash file
+  and `npm run check:contract` are gone.
 
 ## Why this way
 

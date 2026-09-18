@@ -99,7 +99,7 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 
 1. Extension: in [`toMetrics`][fork-metrics] add `mean: { value: stats.mean, unit: … }`; if a new
    unit is needed, extend `Unit` in [`packages/contract/src/messages.ts`](../packages/contract/src/messages.ts)
-   and copy the file into the extension (`npm run check:contract` says when they differ).
+   then publish the package and raise its pinned version in the extension.
 2. Host: `MeasurementRow` already renders the first non-area metric; to show both, map over the
    metrics object.
 3. Optional: `computeTotals(rows, 'mean')`.

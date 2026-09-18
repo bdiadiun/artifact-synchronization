@@ -1,7 +1,7 @@
 // Single source of truth for the host-app <-> viewer postMessage contract. No imports, no
-// runtime dependencies, so it can be copied byte-identical into
-// `viewer/extensions/scoring-bridge/src/contract/messages.ts` (the submodule must build
-// standalone); `npm run check:contract` enforces the copies match (Q-7).
+// runtime dependencies, so both sides consume it as the published package
+// `@bdiadiun/scoring-contract`, the host-app as a workspace and the viewer submodule as a
+// registry dependency (A-15, Q-7).
 
 // Adding a message shape stays within version 1; only a breaking change bumps it.
 export const CONTRACT_VERSION = 1 as const;

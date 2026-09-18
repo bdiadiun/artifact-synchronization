@@ -34,7 +34,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-21 | Docs site generator (`npm run docs:build` → `docs/site/index.html`, clickable requirement IDs)                                                    | D-3, D-6                                                        | F-12             | 10    | done    | `npm run docs:build` produces a single self-contained page; opening it shows every document, IDs link to canon / graph rows / decision files.                                                                                                                                                                                                                             |
 | F-22 | Conventions, lint and agent roles (`docs/CONVENTIONS.md`, ESLint + Prettier, `.claude/agents/*`)                                                  | A-13, D-3, Q-7                                                  | F-20             | 12    | done    | `npm run lint` runs ESLint with typescript-eslint strict and react-hooks; `npm run format:check` runs Prettier; agent role files exist and CLAUDE.md points to them.                                                                                                                                                                                                      |
 | F-23 | Apply conventions to existing code (host-app, contract, extension)                                                                                | A-13, Q-7                                                       | F-22             | 13    | done    | `npm run lint` and `format:check` exit 0 with zero warnings; all tests green; fork extension passes the same rules.                                                                                                                                                                                                                                                       |
-| F-24 | Continuous integration and fork default branch                                                                                                    | D-3, D-4, D-5, Q-7                                              | F-23             | 14    | done    | GitHub Actions runs lint, lint:fork, format:check, typecheck, test, build, check:graph and check:contract on every PR and push to main; the fork's default branch is `scoring`.                                                                                                                                                                                           |
+| F-24 | Continuous integration and fork default branch                                                                                                    | D-3, D-4, D-5, Q-7                                              | F-23             | 14    | done    | GitHub Actions runs lint, lint:fork, format:check, typecheck, test, build, check:graph on every PR and push to main; the fork's default branch is `scoring`.                                                                                                                                                                                                              |
 | F-25 | Final documentation pass: defence pointers after the refactor, AI usage for all slices, README for bonus features, video script                   | D-5, D-6, D-7, D-8, P-1, P-2, P-3, P-4, P-5, P-6, P-7, P-8, P-9 | F-12, F-24       | 15    | done    | Every `file:line` pointer in DEFENCE.md resolves to the cited symbol; AI-USAGE covers slices 0–15; README describes all implemented bonuses; clean-clone run of README succeeds.                                                                                                                                                                                          |
 | F-26 | Trim comments to a non-obvious why; comment rules made measurable                                                                                 | A-13, Q-7                                                       | F-25             | 16    | done    | Comment lines ≤ ~10% of non-blank lines per file; no behaviour change (all checks and end-to-end green); every removed rationale that matters is present in `docs/decisions/`, ARCHITECTURE or DEFENCE; DEFENCE links re-verified.                                                                                                                                        |
 | F-27 | Component file layout: `{Name}.props.ts` for types, interfaces and styles; tests in `__tests__/` folders; lint rule against inline style literals | A-13, Q-7                                                       | F-26             | 17    | done    | Every component with props or styles has a sibling `.props.ts`; no `style={{…}}` literals (lint); every test file sits in a `__tests__/` folder next to its module; lint, typecheck, 89 tests and end-to-end unchanged.                                                                                                                                                   |
@@ -44,7 +44,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-31 | Complexity limits and module-shape rules                                                                                                          | A-13, Q-7                                                       | F-30             | 24    | done    | npm run lint and lint:fork report the seven known hot spots as warnings and nothing else; the rules are off for test suites.                                                                                                                                                                                                                                              |
 | F-32 | Bridge split by protocol role                                                                                                                     | A-13, C-3.4, Q-7                                                | F-31             | 25    | done    | npm run lint:fork reports no size or complexity warnings for the extension; the full browser regression (ready, activate, measure, restore tool, live update, delete both ways, focus, version overlay) behaves as before.                                                                                                                                                |
 | F-33 | Scoring form hook and reducer split                                                                                                               | A-13, Q-7                                                       | F-32             | 26    | done    | npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.                                                                                                                                                                                                                                                         |
-| F-34 | Contract copy guarded on both sides                                                                                                               | A-12, Q-7                                                       | F-33             | 27    | done    | Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.                                                                                                                                                                                                                                                   |
+| F-34 | Contract published as one package                                                                                                                 | A-15, Q-7                                                       | F-33             | 27    | done    | The fork builds from a clean install with no copy of the contract in its tree; the package resolves from the public registry without a token.                                                                                                                                                                                                                             |
 | F-35 | User-visible strings under the conventional i18n name                                                                                             | A-7, A-13, Q-7                                                  | F-19             | 29    | done    | No reference to the old name remains outside the historical note in the state journal; 149 tests, lint and typecheck stay green.                                                                                                                                                                                                                                          |
 | F-36 | Folder layout and the .claude workspace documented and applied                                                                                    | A-13, D-3, Q-7                                                  | F-35             | 30    | done    | host-app builds and its 149 tests pass after the move; npm run lint is clean; the docs page lists the structure document; the format hook rewrites a touched file.                                                                                                                                                                                                        |
 | F-37 | Layout folders created on first use                                                                                                               | A-13, Q-7                                                       | F-36             | 31    | done    | The three folders are gone, host-app builds and its 149 tests pass, and the layout document and the rule state when each folder is created.                                                                                                                                                                                                                               |
@@ -52,48 +52,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-39 | Audit fixes: disarm on teardown, answered removals, conventions                                                                                   | A-13, Q-4, Q-5, S-5.2                                           | F-38             | 33    | done    | The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.                                                                                                                |
 | F-40 | Workflow ownership and the return-statement rule                                                                                                  | A-13, D-2                                                       | F-39             | 34    | done    | The git operator definition lists the workflow files as the only thing it may write and its tool list allows writing; CLAUDE.md agrees. `npm run lint` passes with the widened selector, which proves no component creates a function inside a JSX prop.                                                                                                                  |
 | F-41 | The contract becomes a published package                                                                                                          | A-15, D-1, Q-7                                                  | F-40             | 35    | done    | A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.                                                                            |
-| F-42 | The first release publishes                                                                                                                       | A-15, Q-7                                                       | F-41             | 36    | review  | A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.                                                                                                                                                                                                                                                 |
+| F-42 | The first release publishes                                                                                                                       | A-15, Q-7                                                       | F-41             | 36    | done    | A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.                                                                                                                                                                                                                                                 |
+| F-43 | The fork depends on the package, the copy is gone                                                                                                 | A-15, Q-7                                                       | F-42             | 37    | review  | The fork's tree holds no contract file; a clean install fetches the package from the public registry with no token and no registry configuration, and the viewer builds with the extension bundled.                                                                                                                                                                       |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                                                 |
-| ------- | ---------------------------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                                                 |
-| C-3.2   | F-05                                                                                                       |
-| C-3.3   | F-01                                                                                                       |
-| C-3.4   | F-05, F-09, F-32                                                                                           |
-| C-4.1.1 | F-04                                                                                                       |
-| C-4.1.2 | F-04                                                                                                       |
-| C-4.1.3 | F-02, F-04                                                                                                 |
-| C-4.2.1 | F-01                                                                                                       |
-| C-4.2.2 | F-02                                                                                                       |
-| C-4.2.3 | F-01                                                                                                       |
-| C-4.3.1 | F-07                                                                                                       |
-| C-4.3.2 | F-07                                                                                                       |
-| C-4.3.3 | F-08                                                                                                       |
-| C-4.3.4 | F-09                                                                                                       |
-| C-4.3.5 | F-09, F-10                                                                                                 |
-| C-4.3.6 | F-09, F-10                                                                                                 |
-| C-4.3.7 | F-07                                                                                                       |
-| C-4.3.8 | F-11                                                                                                       |
-| C-4.4.1 | F-03, F-08                                                                                                 |
-| C-4.4.2 | F-03, F-15, F-16                                                                                           |
-| C-4.4.3 | F-03                                                                                                       |
-| Q-1     | F-06                                                                                                       |
-| Q-2     | F-05, F-06                                                                                                 |
-| Q-3     | F-07, F-08, F-09, F-19                                                                                     |
-| Q-4     | F-14, F-15, F-19, F-39                                                                                     |
-| Q-5     | F-05, F-06, F-39                                                                                           |
-| Q-6     | F-09, F-10, F-11                                                                                           |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42 |
-| D-1     | F-04, F-41                                                                                                 |
-| D-2     | F-00, F-20, F-38, F-40                                                                                     |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                             |
-| D-4     | F-00, F-24                                                                                                 |
-| D-5     | F-12, F-20, F-24, F-25                                                                                     |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                                               |
-| D-7     | F-12, F-25                                                                                                 |
-| D-8     | F-13, F-25                                                                                                 |
+| ID      | Covered by                                                                                                       |
+| ------- | ---------------------------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                                       |
+| C-3.2   | F-05                                                                                                             |
+| C-3.3   | F-01                                                                                                             |
+| C-3.4   | F-05, F-09, F-32                                                                                                 |
+| C-4.1.1 | F-04                                                                                                             |
+| C-4.1.2 | F-04                                                                                                             |
+| C-4.1.3 | F-02, F-04                                                                                                       |
+| C-4.2.1 | F-01                                                                                                             |
+| C-4.2.2 | F-02                                                                                                             |
+| C-4.2.3 | F-01                                                                                                             |
+| C-4.3.1 | F-07                                                                                                             |
+| C-4.3.2 | F-07                                                                                                             |
+| C-4.3.3 | F-08                                                                                                             |
+| C-4.3.4 | F-09                                                                                                             |
+| C-4.3.5 | F-09, F-10                                                                                                       |
+| C-4.3.6 | F-09, F-10                                                                                                       |
+| C-4.3.7 | F-07                                                                                                             |
+| C-4.3.8 | F-11                                                                                                             |
+| C-4.4.1 | F-03, F-08                                                                                                       |
+| C-4.4.2 | F-03, F-15, F-16                                                                                                 |
+| C-4.4.3 | F-03                                                                                                             |
+| Q-1     | F-06                                                                                                             |
+| Q-2     | F-05, F-06                                                                                                       |
+| Q-3     | F-07, F-08, F-09, F-19                                                                                           |
+| Q-4     | F-14, F-15, F-19, F-39                                                                                           |
+| Q-5     | F-05, F-06, F-39                                                                                                 |
+| Q-6     | F-09, F-10, F-11                                                                                                 |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43 |
+| D-1     | F-04, F-41                                                                                                       |
+| D-2     | F-00, F-20, F-38, F-40                                                                                           |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                   |
+| D-4     | F-00, F-24                                                                                                       |
+| D-5     | F-12, F-20, F-24, F-25                                                                                           |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                     |
+| D-7     | F-12, F-25                                                                                                       |
+| D-8     | F-13, F-25                                                                                                       |
 
 ## Diagram
 
@@ -133,7 +134,7 @@ graph TD
   F31["F-31 Complexity limits and module-shape rules"]
   F32["F-32 Bridge split by protocol role"]
   F33["F-33 Scoring form hook and reducer split"]
-  F34["F-34 Contract copy guarded on both sides"]
+  F34["F-34 Contract published as one package"]
   F35["F-35 User-visible strings under the conventional i18n name"]
   F36["F-36 Folder layout and the .claude workspace documented and applied"]
   F37["F-37 Layout folders created on first use"]
@@ -142,6 +143,7 @@ graph TD
   F40["F-40 Workflow ownership and the return-statement rule"]
   F41["F-41 The contract becomes a published package"]
   F42["F-42 The first release publishes"]
+  F43["F-43 The fork depends on the package, the copy is gone"]
 
   F20 --> F01
   F01 --> F02
@@ -190,6 +192,7 @@ graph TD
   F39 --> F40
   F40 --> F41
   F41 --> F42
+  F42 --> F43
 ```
 
 ## Slice → nodes
@@ -235,6 +238,7 @@ graph TD
 | 34 — chore: workflow ownership and the return-statement rule | `chore/git-operator-workflows`              | —   | F-40                   |
 | 35 — feat: publish the contract package                      | `feat/publish-contract-package`             | —   | F-41                   |
 | 36 — fix: publish the first release                          | `fix/publish-first-release`                 | —   | F-42                   |
+| 37 — chore: the fork consumes the published contract         | `chore/fork-consumes-contract`              | —   | F-43                   |
 
 ## Node details
 
@@ -291,7 +295,7 @@ Files:
 
 ### F-03 Shared message contract
 
-Declares every message type with literal `type` values and `version: 1` in one published package, `@bdiadiun/scoring-contract`, together with runtime guards `isHostCommand` and `isViewerEvent` that reject malformed or wrong-version payloads. The viewer submodule keeps a byte-identical copy of the file, checked by `npm run check:contract` (A-12). The tool name and the `metrics` object in the payload keep P-7 and P-8 changes local.
+Declares every message type with literal `type` values and `version: 1` in one published package, `@bdiadiun/scoring-contract`, together with runtime guards `isHostCommand` and `isViewerEvent` that reject malformed or wrong-version payloads. Both the host app and the viewer extension depend on that package at an exact version (A-15). The tool name and the `metrics` object in the payload keep P-7 and P-8 changes local.
 
 Canon: C-4.4.1, C-4.4.2, C-4.4.3, P-7, P-8, Q-7. Depends on: F-00. Slice 2, status `done`.
 
@@ -303,8 +307,6 @@ Files:
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
 - `packages/contract/src/messages.ts` — no imports
 - `packages/contract/tsconfig.json`
-- `scripts/check-contract-sync.mjs` — external: `node:crypto`, `node:fs`, `node:path`
-- `viewer/extensions/scoring-bridge/src/contract/messages.ts` — no imports
 
 ### F-04 OHIF fork wired in
 
@@ -377,7 +379,7 @@ Files:
 - `docs/decisions/A-4-cancelled-activation.md`
 - `host-app/src/config.ts` — internal: `packages/contract/src/messages.ts`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 
 ### F-09 Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool
 
@@ -390,8 +392,8 @@ Files:
 - `docs/decisions/A-11-units-and-metrics-payload.md`
 - `docs/decisions/A-8-id-correlation.md`
 - `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
-- `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 
 ### F-10 Row receives the value
 
@@ -459,7 +461,7 @@ Files:
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
+- `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 - `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports
 
 ### F-15 Bonus: two-way deletion
@@ -479,8 +481,8 @@ Files:
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
 - `packages/contract/src/messages.ts` — no imports
 - `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
-- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
 
 ### F-16 Bonus: focus annotation from row
 
@@ -496,8 +498,8 @@ Files:
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
 - `packages/contract/src/messages.ts` — no imports
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
-- `viewer/extensions/scoring-bridge/src/focus.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `viewer/extensions/scoring-bridge/src/focus.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 
 ### F-17 Bonus: Length row type with separate sum
 
@@ -562,8 +564,8 @@ Files:
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
 - `packages/contract/src/messages.ts` — no imports
 - `scripts/eslint-fork-style.config.js` — external: `typescript-eslint`
-- `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
-- `viewer/extensions/scoring-bridge/src/restore.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`; external: `@cornerstonejs/tools`
+- `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
+- `viewer/extensions/scoring-bridge/src/restore.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`; external: `@cornerstonejs/tools`
 
 ### F-20 Project tooling and state journal
 
@@ -751,11 +753,11 @@ Files:
 - `docs/DEFENCE.md`
 - `docs/notes/bridge-internals.md`
 - `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
-- `viewer/extensions/scoring-bridge/src/handshake.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
-- `viewer/extensions/scoring-bridge/src/measurementStream.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/geometry.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
-- `viewer/extensions/scoring-bridge/src/messaging.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
-- `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `viewer/extensions/scoring-bridge/src/handshake.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
+- `viewer/extensions/scoring-bridge/src/measurementStream.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/geometry.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
+- `viewer/extensions/scoring-bridge/src/messaging.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
 - `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports
 
 ### F-33 Scoring form hook and reducer split
@@ -784,19 +786,17 @@ Files:
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/utils/selectors.ts` — internal: `host-app/src/form/rows.ts`
 
-### F-34 Contract copy guarded on both sides
+### F-34 Contract published as one package
 
-The wire contract stays a byte-identical copy inside the fork, because the submodule must build standalone, but now both repositories guard it: the host check compares the two files and the committed hash, and a workflow in the fork verifies its own copy against that hash, so a change made only in the fork is caught by the fork itself.
+The wire contract has a single owner and an explicit version: it is published to the public npm registry as `@bdiadiun/scoring-contract` and both sides depend on it. The earlier arrangement, a byte-identical copy inside the fork guarded by a committed hash, is gone together with its sync script and its checks.
 
-Canon: A-12, Q-7. Depends on: F-33. Slice 27, status `done`.
+Canon: A-15, Q-7. Depends on: F-33. Slice 27, status `done`.
 
 Files:
 
+- `.github/workflows/publish-contract.yml`
 - `docs/decisions/A-12-npm-workspaces.md`
 - `package.json`
-- `scripts/check-contract-sync.mjs` — external: `node:crypto`, `node:fs`, `node:path`
-- `viewer/extensions/scoring-bridge/scripts/check-contract-hash.mjs` — external: `node:crypto`, `node:fs`, `node:path`, `node:url`
-- `viewer/extensions/scoring-bridge/src/contract/messages.sha256`
 
 ### F-35 User-visible strings under the conventional i18n name
 
@@ -882,8 +882,8 @@ Files:
 - `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
-- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
 
 ### F-40 Workflow ownership and the return-statement rule
 
@@ -914,14 +914,29 @@ Files:
 - `packages/contract/package.json`
 - `packages/contract/src/messages.ts` — no imports
 - `packages/contract/tsconfig.json`
-- `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
+- `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
 
 ### F-42 The first release publishes
 
 The publish workflow failed on its first real run: it asked npm to set the version the manifest already carried, and npm refuses that as a non-change. The step now writes a version only when it differs, and says in the log that the first release keeps the manifest version.
 
-Canon: A-15, Q-7. Depends on: F-41. Slice 36, status `review`.
+Canon: A-15, Q-7. Depends on: F-41. Slice 36, status `done`.
 
 Files:
 
 - `.github/workflows/publish-contract.yml`
+
+### F-43 The fork depends on the package, the copy is gone
+
+Ends the duplication that decision A-12 accepted. The extension takes the contract from `@bdiadiun/scoring-contract`, pinned to an exact version, and its copy of the file, the committed hash, the sync script and both contract checks are deleted. The fork's own workflow now builds the viewer with the extension instead of comparing hashes.
+
+Canon: A-15, Q-7. Depends on: F-42. Slice 37, status `review`.
+
+Files:
+
+- `.claude/rules/contract.md`
+- `.claude/rules/fork.md`
+- `.github/workflows/ci.yml`
+- `docs/decisions/A-15-publish-contract-package.md`
+- `viewer/extensions/scoring-bridge/package.json`
+- `viewer/extensions/scoring-bridge/src/messaging.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`

@@ -59,9 +59,6 @@ jobs:
       - name: Check feature graph
         run: npm run check:graph
 
-      - name: Check contract sync
-        run: npm run check:contract
-
       - name: Build docs
         run: npm run docs:build
 

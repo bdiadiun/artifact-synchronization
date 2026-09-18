@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                        |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 36 `fix: publish the first release` (branch `fix/publish-first-release`, node F-42)                                                          |
-| Gate           | 2 — the publish step no longer fails when the manifest already carries the version; awaiting result approval                                 |
-| Last merged PR | #41 `feat: publish the contract package`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                          |
+| Field          | Value                                                                                                                                    |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 37 `chore: the fork consumes the published contract` (branch `chore/fork-consumes-contract`, node F-43)                                  |
+| Gate           | 2 — the fork depends on the published package and the copy is deleted; awaiting result approval                                          |
+| Last merged PR | #42 `fix: publish the first release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                      |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -35,7 +35,7 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Contract duplication
 
-- The contract lives twice on purpose (A-12): the fork must build standalone. `npm run check:contract` compares the two files and the committed hash, `npm run contract:sync` performs the copy, and the fork's own workflow verifies its copy against `messages.sha256`.
+- The contract is one published package, `@bdiadiun/scoring-contract` (A-15). The host and the fork both depend on it at an exact version; the fork no longer carries a copy. A merge into `main` that touches the package publishes a patch release.
 
 ## Facts added in slice 14
 
