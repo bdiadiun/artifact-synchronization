@@ -210,6 +210,11 @@
       "id": "35",
       "title": "feat: publish the contract package",
       "branch": "feat/publish-contract-package"
+    },
+    {
+      "id": "36",
+      "title": "fix: publish the first release",
+      "branch": "fix/publish-first-release"
     }
   ],
   "nodes": [
@@ -2225,7 +2230,7 @@
       "canon": ["A-15", "D-1", "Q-7"],
       "dependsOn": ["F-40"],
       "slice": "35",
-      "status": "review",
+      "status": "done",
       "verify": "A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.",
       "files": [
         ".github/workflows/publish-contract.yml",
@@ -2263,6 +2268,18 @@
           "external": []
         }
       }
+    },
+    {
+      "id": "F-42",
+      "name": "The first release publishes",
+      "description": "The publish workflow failed on its first real run: it asked npm to set the version the manifest already carried, and npm refuses that as a non-change. The step now writes a version only when it differs, and says in the log that the first release keeps the manifest version.",
+      "canon": ["A-15", "Q-7"],
+      "dependsOn": ["F-41"],
+      "slice": "36",
+      "status": "review",
+      "verify": "A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.",
+      "files": [".github/workflows/publish-contract.yml"],
+      "imports": {}
     }
   ]
 }

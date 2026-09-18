@@ -51,48 +51,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-38 | Agent boundaries, instances and context handover                                                                                                  | A-13, D-2                                                       | F-37             | 32    | done    | Each of the five agent definitions states which files it may write, who owns its context and what to do when it fills; CLAUDE.md and the slice skill carry the one-instance rule; the handover skill is listed in the layout document. Enforcement is by brief and by the architect's diff review: Claude Code has no per-agent file permission, only session-wide rules. |
 | F-39 | Audit fixes: disarm on teardown, answered removals, conventions                                                                                   | A-13, Q-4, Q-5, S-5.2                                           | F-38             | 33    | done    | The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.                                                                                                                |
 | F-40 | Workflow ownership and the return-statement rule                                                                                                  | A-13, D-2                                                       | F-39             | 34    | done    | The git operator definition lists the workflow files as the only thing it may write and its tool list allows writing; CLAUDE.md agrees. `npm run lint` passes with the widened selector, which proves no component creates a function inside a JSX prop.                                                                                                                  |
-| F-41 | The contract becomes a published package                                                                                                          | A-15, D-1, Q-7                                                  | F-40             | 35    | review  | A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.                                                                            |
+| F-41 | The contract becomes a published package                                                                                                          | A-15, D-1, Q-7                                                  | F-40             | 35    | done    | A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.                                                                            |
+| F-42 | The first release publishes                                                                                                                       | A-15, Q-7                                                       | F-41             | 36    | review  | A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.                                                                                                                                                                                                                                                 |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                                           |
-| ------- | ---------------------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                                           |
-| C-3.2   | F-05                                                                                                 |
-| C-3.3   | F-01                                                                                                 |
-| C-3.4   | F-05, F-09, F-32                                                                                     |
-| C-4.1.1 | F-04                                                                                                 |
-| C-4.1.2 | F-04                                                                                                 |
-| C-4.1.3 | F-02, F-04                                                                                           |
-| C-4.2.1 | F-01                                                                                                 |
-| C-4.2.2 | F-02                                                                                                 |
-| C-4.2.3 | F-01                                                                                                 |
-| C-4.3.1 | F-07                                                                                                 |
-| C-4.3.2 | F-07                                                                                                 |
-| C-4.3.3 | F-08                                                                                                 |
-| C-4.3.4 | F-09                                                                                                 |
-| C-4.3.5 | F-09, F-10                                                                                           |
-| C-4.3.6 | F-09, F-10                                                                                           |
-| C-4.3.7 | F-07                                                                                                 |
-| C-4.3.8 | F-11                                                                                                 |
-| C-4.4.1 | F-03, F-08                                                                                           |
-| C-4.4.2 | F-03, F-15, F-16                                                                                     |
-| C-4.4.3 | F-03                                                                                                 |
-| Q-1     | F-06                                                                                                 |
-| Q-2     | F-05, F-06                                                                                           |
-| Q-3     | F-07, F-08, F-09, F-19                                                                               |
-| Q-4     | F-14, F-15, F-19, F-39                                                                               |
-| Q-5     | F-05, F-06, F-39                                                                                     |
-| Q-6     | F-09, F-10, F-11                                                                                     |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41 |
-| D-1     | F-04, F-41                                                                                           |
-| D-2     | F-00, F-20, F-38, F-40                                                                               |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                       |
-| D-4     | F-00, F-24                                                                                           |
-| D-5     | F-12, F-20, F-24, F-25                                                                               |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                                         |
-| D-7     | F-12, F-25                                                                                           |
-| D-8     | F-13, F-25                                                                                           |
+| ID      | Covered by                                                                                                 |
+| ------- | ---------------------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                                 |
+| C-3.2   | F-05                                                                                                       |
+| C-3.3   | F-01                                                                                                       |
+| C-3.4   | F-05, F-09, F-32                                                                                           |
+| C-4.1.1 | F-04                                                                                                       |
+| C-4.1.2 | F-04                                                                                                       |
+| C-4.1.3 | F-02, F-04                                                                                                 |
+| C-4.2.1 | F-01                                                                                                       |
+| C-4.2.2 | F-02                                                                                                       |
+| C-4.2.3 | F-01                                                                                                       |
+| C-4.3.1 | F-07                                                                                                       |
+| C-4.3.2 | F-07                                                                                                       |
+| C-4.3.3 | F-08                                                                                                       |
+| C-4.3.4 | F-09                                                                                                       |
+| C-4.3.5 | F-09, F-10                                                                                                 |
+| C-4.3.6 | F-09, F-10                                                                                                 |
+| C-4.3.7 | F-07                                                                                                       |
+| C-4.3.8 | F-11                                                                                                       |
+| C-4.4.1 | F-03, F-08                                                                                                 |
+| C-4.4.2 | F-03, F-15, F-16                                                                                           |
+| C-4.4.3 | F-03                                                                                                       |
+| Q-1     | F-06                                                                                                       |
+| Q-2     | F-05, F-06                                                                                                 |
+| Q-3     | F-07, F-08, F-09, F-19                                                                                     |
+| Q-4     | F-14, F-15, F-19, F-39                                                                                     |
+| Q-5     | F-05, F-06, F-39                                                                                           |
+| Q-6     | F-09, F-10, F-11                                                                                           |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42 |
+| D-1     | F-04, F-41                                                                                                 |
+| D-2     | F-00, F-20, F-38, F-40                                                                                     |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                             |
+| D-4     | F-00, F-24                                                                                                 |
+| D-5     | F-12, F-20, F-24, F-25                                                                                     |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                               |
+| D-7     | F-12, F-25                                                                                                 |
+| D-8     | F-13, F-25                                                                                                 |
 
 ## Diagram
 
@@ -140,6 +141,7 @@ graph TD
   F39["F-39 Audit fixes: disarm on teardown, answered removals, conventions"]
   F40["F-40 Workflow ownership and the return-statement rule"]
   F41["F-41 The contract becomes a published package"]
+  F42["F-42 The first release publishes"]
 
   F20 --> F01
   F01 --> F02
@@ -187,6 +189,7 @@ graph TD
   F38 --> F39
   F39 --> F40
   F40 --> F41
+  F41 --> F42
 ```
 
 ## Slice → nodes
@@ -231,6 +234,7 @@ graph TD
 | 33 — fix: cleanup and conventions                            | `fix/cleanup-and-conventions`               | —   | F-39                   |
 | 34 — chore: workflow ownership and the return-statement rule | `chore/git-operator-workflows`              | —   | F-40                   |
 | 35 — feat: publish the contract package                      | `feat/publish-contract-package`             | —   | F-41                   |
+| 36 — fix: publish the first release                          | `fix/publish-first-release`                 | —   | F-42                   |
 
 ## Node details
 
@@ -899,7 +903,7 @@ Files:
 
 Turns the shared contract into `@bdiadiun/scoring-contract`, a real package on the public npm registry, built to `dist` by its own prepare script. It now exports what both sides were re-implementing: the record, string and tool-name guards, the geometry guard and the map from a tool to the metric it produces. A world point must be exactly three coordinates, which removes a drift where the contract accepted geometry the viewer would refuse to restore. A workflow publishes a patch release when a merge into main changes the package.
 
-Canon: A-15, D-1, Q-7. Depends on: F-40. Slice 35, status `review`.
+Canon: A-15, D-1, Q-7. Depends on: F-40. Slice 35, status `done`.
 
 Files:
 
@@ -911,3 +915,13 @@ Files:
 - `packages/contract/src/messages.ts` — no imports
 - `packages/contract/tsconfig.json`
 - `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
+
+### F-42 The first release publishes
+
+The publish workflow failed on its first real run: it asked npm to set the version the manifest already carried, and npm refuses that as a non-change. The step now writes a version only when it differs, and says in the log that the first release keeps the manifest version.
+
+Canon: A-15, Q-7. Depends on: F-41. Slice 36, status `review`.
+
+Files:
+
+- `.github/workflows/publish-contract.yml`
