@@ -41,48 +41,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-28 | Feature graph as JSON                                                                                                                             | D-3, D-6, Q-7                                                   | F-27             | 18    | done    | `npm run graph:build` is idempotent; `npm run check:graph` passes and fails on a missing file, a hand edit of FEATURE-GRAPH.md or a stale import list.                                                                             |
 | F-29 | Style rules from recent slices recorded for agents                                                                                                | A-13, D-3, Q-7                                                  | F-28             | 19    | done    | Role files and CONVENTIONS agree; npm run format:check and check:graph pass.                                                                                                                                                       |
 | F-30 | Named event handlers enforced by lint                                                                                                             | A-13, Q-7                                                       | F-29             | 20    | done    | npm run lint reports an inline handler as an error; no on-prop in host-app creates a function; 89 tests and the end-to-end scenarios unchanged.                                                                                    |
-| F-31 | Complexity limits and module-shape rules                                                                                                          | A-13, Q-7                                                       | F-30             | 24    | review  | npm run lint and lint:fork report the seven known hot spots as warnings and nothing else; the rules are off for test suites.                                                                                                       |
+| F-31 | Complexity limits and module-shape rules                                                                                                          | A-13, Q-7                                                       | F-30             | 24    | done    | npm run lint and lint:fork report the seven known hot spots as warnings and nothing else; the rules are off for test suites.                                                                                                       |
+| F-32 | Bridge split by protocol role                                                                                                                     | A-13, C-3.4, Q-7                                                | F-31             | 25    | review  | npm run lint:fork reports no size or complexity warnings for the extension; the full browser regression (ready, activate, measure, restore tool, live update, delete both ways, focus, version overlay) behaves as before.         |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                 |
-| ------- | ---------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                 |
-| C-3.2   | F-05                                                       |
-| C-3.3   | F-01                                                       |
-| C-3.4   | F-05, F-09                                                 |
-| C-4.1.1 | F-04                                                       |
-| C-4.1.2 | F-04                                                       |
-| C-4.1.3 | F-02, F-04                                                 |
-| C-4.2.1 | F-01                                                       |
-| C-4.2.2 | F-02                                                       |
-| C-4.2.3 | F-01                                                       |
-| C-4.3.1 | F-07                                                       |
-| C-4.3.2 | F-07                                                       |
-| C-4.3.3 | F-08                                                       |
-| C-4.3.4 | F-09                                                       |
-| C-4.3.5 | F-09, F-10                                                 |
-| C-4.3.6 | F-09, F-10                                                 |
-| C-4.3.7 | F-07                                                       |
-| C-4.3.8 | F-11                                                       |
-| C-4.4.1 | F-03, F-08                                                 |
-| C-4.4.2 | F-03, F-15, F-16                                           |
-| C-4.4.3 | F-03                                                       |
-| Q-1     | F-06                                                       |
-| Q-2     | F-05, F-06                                                 |
-| Q-3     | F-07, F-08, F-09                                           |
-| Q-4     | F-14, F-15                                                 |
-| Q-5     | F-05, F-06                                                 |
-| Q-6     | F-09, F-10, F-11                                           |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31 |
-| D-1     | F-04                                                       |
-| D-2     | F-00, F-20                                                 |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29                   |
-| D-4     | F-00, F-24                                                 |
-| D-5     | F-12, F-20, F-24, F-25                                     |
-| D-6     | F-00, F-12, F-21, F-25, F-28                               |
-| D-7     | F-12, F-25                                                 |
-| D-8     | F-13, F-25                                                 |
+| ID      | Covered by                                                       |
+| ------- | ---------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                       |
+| C-3.2   | F-05                                                             |
+| C-3.3   | F-01                                                             |
+| C-3.4   | F-05, F-09, F-32                                                 |
+| C-4.1.1 | F-04                                                             |
+| C-4.1.2 | F-04                                                             |
+| C-4.1.3 | F-02, F-04                                                       |
+| C-4.2.1 | F-01                                                             |
+| C-4.2.2 | F-02                                                             |
+| C-4.2.3 | F-01                                                             |
+| C-4.3.1 | F-07                                                             |
+| C-4.3.2 | F-07                                                             |
+| C-4.3.3 | F-08                                                             |
+| C-4.3.4 | F-09                                                             |
+| C-4.3.5 | F-09, F-10                                                       |
+| C-4.3.6 | F-09, F-10                                                       |
+| C-4.3.7 | F-07                                                             |
+| C-4.3.8 | F-11                                                             |
+| C-4.4.1 | F-03, F-08                                                       |
+| C-4.4.2 | F-03, F-15, F-16                                                 |
+| C-4.4.3 | F-03                                                             |
+| Q-1     | F-06                                                             |
+| Q-2     | F-05, F-06                                                       |
+| Q-3     | F-07, F-08, F-09                                                 |
+| Q-4     | F-14, F-15                                                       |
+| Q-5     | F-05, F-06                                                       |
+| Q-6     | F-09, F-10, F-11                                                 |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32 |
+| D-1     | F-04                                                             |
+| D-2     | F-00, F-20                                                       |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29                         |
+| D-4     | F-00, F-24                                                       |
+| D-5     | F-12, F-20, F-24, F-25                                           |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                     |
+| D-7     | F-12, F-25                                                       |
+| D-8     | F-13, F-25                                                       |
 
 ## Diagram
 
@@ -120,6 +121,7 @@ graph TD
   F29["F-29 Style rules from recent slices recorded for agents"]
   F30["F-30 Named event handlers enforced by lint"]
   F31["F-31 Complexity limits and module-shape rules"]
+  F32["F-32 Bridge split by protocol role"]
 
   F20 --> F01
   F01 --> F02
@@ -157,6 +159,7 @@ graph TD
   F28 --> F29
   F29 --> F30
   F30 --> F31
+  F31 --> F32
 ```
 
 ## Slice → nodes
@@ -190,6 +193,7 @@ graph TD
 | 22 — feat: length row type                            | `feat/length-row-type`                      | —   | F-17                   |
 | 23 — docs: length in defence script                   | `docs/length-in-defence`                    | —   | —                      |
 | 24 — chore: complexity rules                          | `chore/complexity-rules`                    | —   | F-31                   |
+| 25 — refactor: split the bridge                       | `refactor/split-bridge`                     | —   | F-32                   |
 
 ## Node details
 
@@ -285,7 +289,7 @@ Files:
 
 - `viewer/extensions/scoring-bridge/babel.config.js` — no imports
 - `viewer/extensions/scoring-bridge/package.json`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
 - `viewer/extensions/scoring-bridge/src/config.ts` — no imports
 - `viewer/extensions/scoring-bridge/src/id.js` — internal: `viewer/extensions/scoring-bridge/package.json`
 - `viewer/extensions/scoring-bridge/src/index.tsx` — internal: `viewer/extensions/scoring-bridge/src/bridge.ts`, `viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx`, `viewer/extensions/scoring-bridge/src/id.js`; external: `@ohif/core`
@@ -344,7 +348,7 @@ Files:
 
 - `docs/decisions/A-11-units-and-metrics-payload.md`
 - `docs/decisions/A-8-id-correlation.md`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
 - `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
 
@@ -413,7 +417,7 @@ Files:
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
 - `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
 - `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports
 
@@ -433,7 +437,7 @@ Files:
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
 - `packages/contract/src/messages.ts` — no imports
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
 - `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
 
@@ -663,7 +667,7 @@ Files:
 
 Records how the code is split: one exported concept per module, functions under about fifty lines, composition roots that only wire, named selectors instead of repeated lookups, and no mutable placeholders for circular dependencies. ESLint reports size, complexity, depth and parameter limits as warnings in host-app and in the extension, so the two known hot spots are visible before they are split.
 
-Canon: A-13, Q-7. Depends on: F-30. Slice 24, status `review`.
+Canon: A-13, Q-7. Depends on: F-30. Slice 24, status `done`.
 
 Files:
 
@@ -671,3 +675,22 @@ Files:
 - `docs/CONVENTIONS.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `scripts/eslint-fork-style.config.js` — external: `typescript-eslint`
+
+### F-32 Bridge split by protocol role
+
+Splits the viewer bridge factory by role: messaging owns posting to the host, the origin check and command routing; handshake owns waiting for the first viewport and announcing VIEWER_READY; the measurement stream owns the three measurementService subscriptions, the uid-to-row map, the throttled updates and the correction after an added measurement. createBridge becomes a composition root and the mutable placeholder that broke the circular dependency is gone.
+
+Canon: A-13, C-3.4, Q-7. Depends on: F-31. Slice 25, status `review`.
+
+Files:
+
+- `ARCHITECTURE.md`
+- `docs/DEFENCE.md`
+- `docs/notes/bridge-internals.md`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
+- `viewer/extensions/scoring-bridge/src/handshake.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
+- `viewer/extensions/scoring-bridge/src/measurementStream.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
+- `viewer/extensions/scoring-bridge/src/messaging.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
+- `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
+- `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports

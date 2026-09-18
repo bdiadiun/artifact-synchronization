@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                           |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 24 `chore: complexity rules` (branch `chore/complexity-rules`, node F-31)                                                                                       |
-| Gate           | 2 — rules and lint metrics in place, hot spots visible as warnings; awaiting result approval                                                                    |
-| Last merged PR | #25 `docs: length in defence script`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done                                         |
-| Next slice     | 25 split `viewer/extensions/scoring-bridge/src/bridge.ts` into messaging, handshake and measurement stream; then 26 split `useScoringForm` and the rows reducer |
+| Field          | Value                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 25 `refactor: split the bridge` (branch `refactor/split-bridge`, node F-32)                                                           |
+| Gate           | 2 — bridge split by role, fork PR #10 merged (`scoring` at `cbe79d8a0a`), lint:fork clean, regression green; awaiting result approval |
+| Last merged PR | #26 `chore: complexity rules`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done                      |
+| Next slice     | 26 split `useScoringForm` (event sync vs actions) and the rows reducer, then turn the complexity limits into errors                   |
 
 ## Open decisions (see CANON.md → Decisions)
 
