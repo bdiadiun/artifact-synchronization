@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                 |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 25 `refactor: split the bridge` (branch `refactor/split-bridge`, node F-32)                                                           |
-| Gate           | 2 — bridge split by role, fork PR #10 merged (`scoring` at `cbe79d8a0a`), lint:fork clean, regression green; awaiting result approval |
-| Last merged PR | #26 `chore: complexity rules`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done                      |
-| Next slice     | 26 split `useScoringForm` (event sync vs actions) and the rows reducer, then turn the complexity limits into errors                   |
+| Field          | Value                                                                                                               |
+| -------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 26 `refactor: split the scoring form hook` (branch `refactor/split-scoring-form`, node F-33)                        |
+| Gate           | 2 — host split done, size limits are errors now, 118 tests, browser regression green; awaiting result approval      |
+| Last merged PR | #27 `refactor: split the bridge`; mandatory part complete except the video (F-13, author); bonuses S-5.1–S-5.5 done |
+| Next slice     | none planned; open: F-13 video (author), optional bonus F-19 (S-5.6 state restore)                                  |
 
 ## Open decisions (see CANON.md → Decisions)
 

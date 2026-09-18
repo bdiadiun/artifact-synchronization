@@ -1,7 +1,11 @@
 // Framework-free postMessage bridge client (A-9, A-10). No React dependency, so it is
-// unit-testable and reused by the `useBridge.ts` hook.
+// unit-testable and reused by the `useBridge.ts` hook. This module only wires the queue and the
+// message handler to the listener set; the rules live in those two modules.
 
-import { isViewerEvent, type HostCommand, type ViewerEvent } from '@scoring/contract';
+import type { HostCommand, ViewerEvent } from '@scoring/contract';
+import { createCommandQueue } from './commandQueue';
+import { createListenerSet } from './listeners';
+import { createMessageHandler } from './messageHandler';
 
 export interface BridgeState {
   ready: boolean;
@@ -34,11 +38,7 @@ export const createBridge = (options: CreateBridgeOptions): Bridge => {
   const hostWindow = options.hostWindow ?? window;
 
   let state: BridgeState = { ready: false, queued: 0, lastEvent: null, ignoredOrigins: 0 };
-  // No coalescing (A-9): commands sent before READY are kept and flushed in call order.
-  const queue: HostCommand[] = [];
-  const listeners = new Set<BridgeListener>();
-  // Logged once per foreign origin, not once per message.
-  const loggedOrigins = new Set<string>();
+  const listeners = createListenerSet();
   let disposed = false;
 
   const setState = (patch: Partial<BridgeState>): void => {
@@ -46,61 +46,29 @@ export const createBridge = (options: CreateBridgeOptions): Bridge => {
   };
 
   const notify = (event: ViewerEvent | null): void => {
-    for (const listener of listeners) {
-      listener(event, state);
-    }
+    listeners.notify(event, state);
   };
 
-  const flushQueue = (): void => {
-    // Re-checked per command: if the iframe window disappears mid-flush, the remainder stays
-    // queued instead of being dropped (Q-1).
-    while (queue.length > 0) {
-      const viewerWindow = getViewerWindow();
-      if (viewerWindow === null) {
-        break;
-      }
-      const command = queue.shift();
-      if (command === undefined) {
-        break;
-      }
-      viewerWindow.postMessage(command, viewerOrigin);
-    }
-    setState({ queued: queue.length });
+  const queue = createCommandQueue({ getViewerWindow, viewerOrigin });
+
+  // Every queue change is published as a state-only notification (`event: null`).
+  const publishQueueLength = (): void => {
+    setState({ queued: queue.size() });
     notify(null);
   };
 
-  const handleMessage = (event: MessageEvent): void => {
-    // Origin check (Q-2): never trust the payload to say who sent it.
-    if (event.origin !== viewerOrigin) {
-      setState({ ignoredOrigins: state.ignoredOrigins + 1 });
-      if (!loggedOrigins.has(event.origin)) {
-        loggedOrigins.add(event.origin);
-        console.debug('[bridge] ignoring message from foreign origin', event.origin);
-      }
-      notify(null);
-      return;
-    }
-    if (!isViewerEvent(event.data)) {
-      console.warn('[bridge] ignoring malformed payload of type', typeof event.data);
-      return;
-    }
-    const viewerEvent = event.data;
-    if (viewerEvent.type === 'VIEWER_READY') {
-      // A second READY means a reload (A-9): flip ready false-then-true so subscribers can
-      // observe the edge (e.g. re-arm a row stuck in "Drawing…"), then flush what queued up.
-      if (state.ready) {
-        setState({ ready: false });
-        notify(viewerEvent);
-      }
-      setState({ ready: true, lastEvent: viewerEvent });
-      notify(viewerEvent);
-      flushQueue();
-      return;
-    }
-    setState({ lastEvent: viewerEvent });
-    notify(viewerEvent);
+  const flushQueue = (): void => {
+    queue.flush();
+    publishQueueLength();
   };
 
+  const handleMessage = createMessageHandler({
+    viewerOrigin,
+    getState: () => state,
+    setState,
+    notify,
+    flushQueue,
+  });
   hostWindow.addEventListener('message', handleMessage);
 
   const send = (command: HostCommand): void => {
@@ -111,22 +79,12 @@ export const createBridge = (options: CreateBridgeOptions): Bridge => {
     // Not ready, or the iframe window is momentarily unavailable: queue instead of losing it (Q-1).
     if (!state.ready || viewerWindow === null) {
       queue.push(command);
-      setState({ queued: queue.length });
-      notify(null);
+      publishQueueLength();
       return;
     }
     // Never '*': targetOrigin is always the configured viewer origin (Q-2).
     viewerWindow.postMessage(command, viewerOrigin);
   };
-
-  const subscribe = (listener: BridgeListener): (() => void) => {
-    listeners.add(listener);
-    return () => {
-      listeners.delete(listener);
-    };
-  };
-
-  const getState = (): BridgeState => state;
 
   const dispose = (): void => {
     // Idempotent: a second call is a no-op.
@@ -135,10 +93,15 @@ export const createBridge = (options: CreateBridgeOptions): Bridge => {
     }
     disposed = true;
     hostWindow.removeEventListener('message', handleMessage);
-    queue.length = 0;
+    queue.clear();
     listeners.clear();
     setState({ ready: false, queued: 0 });
   };
 
-  return { send, subscribe, getState, dispose };
+  return {
+    send,
+    subscribe: listeners.subscribe,
+    getState: (): BridgeState => state,
+    dispose,
+  };
 };
