@@ -44,47 +44,48 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-31 | Complexity limits and module-shape rules                                                                                                          | A-13, Q-7                                                       | F-30             | 24    | done    | npm run lint and lint:fork report the seven known hot spots as warnings and nothing else; the rules are off for test suites.                                                                                                       |
 | F-32 | Bridge split by protocol role                                                                                                                     | A-13, C-3.4, Q-7                                                | F-31             | 25    | done    | npm run lint:fork reports no size or complexity warnings for the extension; the full browser regression (ready, activate, measure, restore tool, live update, delete both ways, focus, version overlay) behaves as before.         |
 | F-33 | Scoring form hook and reducer split                                                                                                               | A-13, Q-7                                                       | F-32             | 26    | done    | npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.                                                                                                                  |
+| F-34 | Contract copy guarded on both sides                                                                                                               | A-12, Q-7                                                       | F-33             | 27    | review  | Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.                                                                                                            |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                             |
-| ------- | ---------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                             |
-| C-3.2   | F-05                                                                   |
-| C-3.3   | F-01                                                                   |
-| C-3.4   | F-05, F-09, F-32                                                       |
-| C-4.1.1 | F-04                                                                   |
-| C-4.1.2 | F-04                                                                   |
-| C-4.1.3 | F-02, F-04                                                             |
-| C-4.2.1 | F-01                                                                   |
-| C-4.2.2 | F-02                                                                   |
-| C-4.2.3 | F-01                                                                   |
-| C-4.3.1 | F-07                                                                   |
-| C-4.3.2 | F-07                                                                   |
-| C-4.3.3 | F-08                                                                   |
-| C-4.3.4 | F-09                                                                   |
-| C-4.3.5 | F-09, F-10                                                             |
-| C-4.3.6 | F-09, F-10                                                             |
-| C-4.3.7 | F-07                                                                   |
-| C-4.3.8 | F-11                                                                   |
-| C-4.4.1 | F-03, F-08                                                             |
-| C-4.4.2 | F-03, F-15, F-16                                                       |
-| C-4.4.3 | F-03                                                                   |
-| Q-1     | F-06                                                                   |
-| Q-2     | F-05, F-06                                                             |
-| Q-3     | F-07, F-08, F-09                                                       |
-| Q-4     | F-14, F-15                                                             |
-| Q-5     | F-05, F-06                                                             |
-| Q-6     | F-09, F-10, F-11                                                       |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33 |
-| D-1     | F-04                                                                   |
-| D-2     | F-00, F-20                                                             |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29                               |
-| D-4     | F-00, F-24                                                             |
-| D-5     | F-12, F-20, F-24, F-25                                                 |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                           |
-| D-7     | F-12, F-25                                                             |
-| D-8     | F-13, F-25                                                             |
+| ID      | Covered by                                                                   |
+| ------- | ---------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                   |
+| C-3.2   | F-05                                                                         |
+| C-3.3   | F-01                                                                         |
+| C-3.4   | F-05, F-09, F-32                                                             |
+| C-4.1.1 | F-04                                                                         |
+| C-4.1.2 | F-04                                                                         |
+| C-4.1.3 | F-02, F-04                                                                   |
+| C-4.2.1 | F-01                                                                         |
+| C-4.2.2 | F-02                                                                         |
+| C-4.2.3 | F-01                                                                         |
+| C-4.3.1 | F-07                                                                         |
+| C-4.3.2 | F-07                                                                         |
+| C-4.3.3 | F-08                                                                         |
+| C-4.3.4 | F-09                                                                         |
+| C-4.3.5 | F-09, F-10                                                                   |
+| C-4.3.6 | F-09, F-10                                                                   |
+| C-4.3.7 | F-07                                                                         |
+| C-4.3.8 | F-11                                                                         |
+| C-4.4.1 | F-03, F-08                                                                   |
+| C-4.4.2 | F-03, F-15, F-16                                                             |
+| C-4.4.3 | F-03                                                                         |
+| Q-1     | F-06                                                                         |
+| Q-2     | F-05, F-06                                                                   |
+| Q-3     | F-07, F-08, F-09                                                             |
+| Q-4     | F-14, F-15                                                                   |
+| Q-5     | F-05, F-06                                                                   |
+| Q-6     | F-09, F-10, F-11                                                             |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34 |
+| D-1     | F-04                                                                         |
+| D-2     | F-00, F-20                                                                   |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29                                     |
+| D-4     | F-00, F-24                                                                   |
+| D-5     | F-12, F-20, F-24, F-25                                                       |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                 |
+| D-7     | F-12, F-25                                                                   |
+| D-8     | F-13, F-25                                                                   |
 
 ## Diagram
 
@@ -124,6 +125,7 @@ graph TD
   F31["F-31 Complexity limits and module-shape rules"]
   F32["F-32 Bridge split by protocol role"]
   F33["F-33 Scoring form hook and reducer split"]
+  F34["F-34 Contract copy guarded on both sides"]
 
   F20 --> F01
   F01 --> F02
@@ -163,6 +165,7 @@ graph TD
   F30 --> F31
   F31 --> F32
   F32 --> F33
+  F33 --> F34
 ```
 
 ## Slice → nodes
@@ -198,6 +201,7 @@ graph TD
 | 24 — chore: complexity rules                          | `chore/complexity-rules`                    | —   | F-31                   |
 | 25 — refactor: split the bridge                       | `refactor/split-bridge`                     | —   | F-32                   |
 | 26 — refactor: split the scoring form hook            | `refactor/split-scoring-form`               | —   | F-33                   |
+| 27 — chore: contract copy guard                       | `chore/contract-guard`                      | —   | F-34                   |
 
 ## Node details
 
@@ -266,7 +270,7 @@ Files:
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
 - `packages/contract/src/messages.ts` — no imports
 - `packages/contract/tsconfig.json`
-- `scripts/check-contract-sync.mjs` — external: `node:fs`, `node:path`
+- `scripts/check-contract-sync.mjs` — external: `node:crypto`, `node:fs`, `node:path`
 - `viewer/extensions/scoring-bridge/src/contract/messages.ts` — no imports
 
 ### F-04 OHIF fork wired in
@@ -724,3 +728,17 @@ Files:
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/selectors.ts`, `host-app/src/form/useViewerEvents.ts`, `host-app/src/form/viewerEventHandlers.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/form/useViewerEvents.ts` — internal: `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/selectors.ts`, `host-app/src/form/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+
+### F-34 Contract copy guarded on both sides
+
+The wire contract stays a byte-identical copy inside the fork, because the submodule must build standalone, but now both repositories guard it: the host check compares the two files and the committed hash, and a workflow in the fork verifies its own copy against that hash, so a change made only in the fork is caught by the fork itself.
+
+Canon: A-12, Q-7. Depends on: F-33. Slice 27, status `review`.
+
+Files:
+
+- `docs/decisions/A-12-npm-workspaces.md`
+- `package.json`
+- `scripts/check-contract-sync.mjs` — external: `node:crypto`, `node:fs`, `node:path`
+- `viewer/extensions/scoring-bridge/scripts/check-contract-hash.mjs` — external: `node:crypto`, `node:fs`, `node:path`, `node:url`
+- `viewer/extensions/scoring-bridge/src/contract/messages.sha256`
