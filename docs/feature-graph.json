@@ -185,6 +185,11 @@
       "id": "30",
       "title": "chore: project structure",
       "branch": "refactor/project-structure"
+    },
+    {
+      "id": "31",
+      "title": "chore: drop empty folders",
+      "branch": "chore/drop-empty-folders"
     }
   ],
   "nodes": [
@@ -1987,7 +1992,7 @@
       "canon": ["A-13", "D-3", "Q-7"],
       "dependsOn": ["F-35"],
       "slice": "30",
-      "status": "review",
+      "status": "done",
       "verify": "host-app builds and its 149 tests pass after the move; npm run lint is clean; the docs page lists the structure document; the format hook rewrites a touched file.",
       "files": [
         ".claude/agents/architect.md",
@@ -2033,6 +2038,18 @@
           "external": ["node:child_process"]
         }
       }
+    },
+    {
+      "id": "F-37",
+      "name": "Layout folders created on first use",
+      "description": "Removes assets, context and redux from host-app: they held nothing but a README and a folder that exists only to be empty says nothing true about the code. The layout document and the host-app rule keep the names, so the folder is created under the same name when its first file arrives.",
+      "canon": ["A-13", "Q-7"],
+      "dependsOn": ["F-36"],
+      "slice": "31",
+      "status": "review",
+      "verify": "The three folders are gone, host-app builds and its 149 tests pass, and the layout document and the rule state when each folder is created.",
+      "files": [".claude/rules/host-app.md", "docs/PROJECT-STRUCTURE.md"],
+      "imports": {}
     }
   ]
 }

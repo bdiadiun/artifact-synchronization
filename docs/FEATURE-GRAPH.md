@@ -46,48 +46,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-33 | Scoring form hook and reducer split                                                                                                               | A-13, Q-7                                                       | F-32             | 26    | done    | npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.                                                                                                                  |
 | F-34 | Contract copy guarded on both sides                                                                                                               | A-12, Q-7                                                       | F-33             | 27    | done    | Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.                                                                                                            |
 | F-35 | User-visible strings under the conventional i18n name                                                                                             | A-7, A-13, Q-7                                                  | F-19             | 29    | done    | No reference to the old name remains outside the historical note in the state journal; 149 tests, lint and typecheck stay green.                                                                                                   |
-| F-36 | Folder layout and the .claude workspace documented and applied                                                                                    | A-13, D-3, Q-7                                                  | F-35             | 30    | review  | host-app builds and its 149 tests pass after the move; npm run lint is clean; the docs page lists the structure document; the format hook rewrites a touched file.                                                                 |
+| F-36 | Folder layout and the .claude workspace documented and applied                                                                                    | A-13, D-3, Q-7                                                  | F-35             | 30    | done    | host-app builds and its 149 tests pass after the move; npm run lint is clean; the docs page lists the structure document; the format hook rewrites a touched file.                                                                 |
+| F-37 | Layout folders created on first use                                                                                                               | A-13, Q-7                                                       | F-36             | 31    | review  | The three folders are gone, host-app builds and its 149 tests pass, and the layout document and the rule state when each folder is created.                                                                                        |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                               |
-| ------- | ---------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                               |
-| C-3.2   | F-05                                                                                     |
-| C-3.3   | F-01                                                                                     |
-| C-3.4   | F-05, F-09, F-32                                                                         |
-| C-4.1.1 | F-04                                                                                     |
-| C-4.1.2 | F-04                                                                                     |
-| C-4.1.3 | F-02, F-04                                                                               |
-| C-4.2.1 | F-01                                                                                     |
-| C-4.2.2 | F-02                                                                                     |
-| C-4.2.3 | F-01                                                                                     |
-| C-4.3.1 | F-07                                                                                     |
-| C-4.3.2 | F-07                                                                                     |
-| C-4.3.3 | F-08                                                                                     |
-| C-4.3.4 | F-09                                                                                     |
-| C-4.3.5 | F-09, F-10                                                                               |
-| C-4.3.6 | F-09, F-10                                                                               |
-| C-4.3.7 | F-07                                                                                     |
-| C-4.3.8 | F-11                                                                                     |
-| C-4.4.1 | F-03, F-08                                                                               |
-| C-4.4.2 | F-03, F-15, F-16                                                                         |
-| C-4.4.3 | F-03                                                                                     |
-| Q-1     | F-06                                                                                     |
-| Q-2     | F-05, F-06                                                                               |
-| Q-3     | F-07, F-08, F-09, F-19                                                                   |
-| Q-4     | F-14, F-15, F-19                                                                         |
-| Q-5     | F-05, F-06                                                                               |
-| Q-6     | F-09, F-10, F-11                                                                         |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36 |
-| D-1     | F-04                                                                                     |
-| D-2     | F-00, F-20                                                                               |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                           |
-| D-4     | F-00, F-24                                                                               |
-| D-5     | F-12, F-20, F-24, F-25                                                                   |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                             |
-| D-7     | F-12, F-25                                                                               |
-| D-8     | F-13, F-25                                                                               |
+| ID      | Covered by                                                                                     |
+| ------- | ---------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                     |
+| C-3.2   | F-05                                                                                           |
+| C-3.3   | F-01                                                                                           |
+| C-3.4   | F-05, F-09, F-32                                                                               |
+| C-4.1.1 | F-04                                                                                           |
+| C-4.1.2 | F-04                                                                                           |
+| C-4.1.3 | F-02, F-04                                                                                     |
+| C-4.2.1 | F-01                                                                                           |
+| C-4.2.2 | F-02                                                                                           |
+| C-4.2.3 | F-01                                                                                           |
+| C-4.3.1 | F-07                                                                                           |
+| C-4.3.2 | F-07                                                                                           |
+| C-4.3.3 | F-08                                                                                           |
+| C-4.3.4 | F-09                                                                                           |
+| C-4.3.5 | F-09, F-10                                                                                     |
+| C-4.3.6 | F-09, F-10                                                                                     |
+| C-4.3.7 | F-07                                                                                           |
+| C-4.3.8 | F-11                                                                                           |
+| C-4.4.1 | F-03, F-08                                                                                     |
+| C-4.4.2 | F-03, F-15, F-16                                                                               |
+| C-4.4.3 | F-03                                                                                           |
+| Q-1     | F-06                                                                                           |
+| Q-2     | F-05, F-06                                                                                     |
+| Q-3     | F-07, F-08, F-09, F-19                                                                         |
+| Q-4     | F-14, F-15, F-19                                                                               |
+| Q-5     | F-05, F-06                                                                                     |
+| Q-6     | F-09, F-10, F-11                                                                               |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37 |
+| D-1     | F-04                                                                                           |
+| D-2     | F-00, F-20                                                                                     |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                 |
+| D-4     | F-00, F-24                                                                                     |
+| D-5     | F-12, F-20, F-24, F-25                                                                         |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                   |
+| D-7     | F-12, F-25                                                                                     |
+| D-8     | F-13, F-25                                                                                     |
 
 ## Diagram
 
@@ -130,6 +131,7 @@ graph TD
   F34["F-34 Contract copy guarded on both sides"]
   F35["F-35 User-visible strings under the conventional i18n name"]
   F36["F-36 Folder layout and the .claude workspace documented and applied"]
+  F37["F-37 Layout folders created on first use"]
 
   F20 --> F01
   F01 --> F02
@@ -172,6 +174,7 @@ graph TD
   F33 --> F34
   F19 --> F35
   F35 --> F36
+  F36 --> F37
 ```
 
 ## Slice → nodes
@@ -211,6 +214,7 @@ graph TD
 | 28 — feat: state restore                              | `feat/state-restore`                        | —   | F-19                   |
 | 29 — refactor: i18n naming                            | `refactor/i18n-naming`                      | —   | F-35                   |
 | 30 — chore: project structure                         | `refactor/project-structure`                | —   | F-36                   |
+| 31 — chore: drop empty folders                        | `chore/drop-empty-folders`                  | —   | F-37                   |
 
 ## Node details
 
@@ -791,7 +795,7 @@ Files:
 
 Documents the conventional React layout and the anatomy of a .claude folder, separating the parts that are real features from the ones that are not, and applies the layout to host-app: pages, hooks, utils, assets, context and redux alongside the bridge and form feature folders. Adds slash commands for the repeated procedures, path-scoped rules for host-app, the fork and the contract, a slice skill, and a hook that formats a file right after it is written.
 
-Canon: A-13, D-3, Q-7. Depends on: F-35. Slice 30, status `review`.
+Canon: A-13, D-3, Q-7. Depends on: F-35. Slice 30, status `done`.
 
 Files:
 
@@ -813,3 +817,14 @@ Files:
 - `host-app/src/pages/ScoringPage.tsx` — internal: `host-app/src/components/BridgeStatus.tsx`, `host-app/src/components/ScoringPanel.tsx`, `host-app/src/components/ViewerFrame.tsx`, `host-app/src/hooks/useBridge.ts`, `host-app/src/hooks/useScoringForm.ts`; external: `react`
 - `scripts/build-docs.mjs` — external: `node:fs`, `node:path`, `node:url`
 - `scripts/hooks/format-touched.mjs` — external: `node:child_process`
+
+### F-37 Layout folders created on first use
+
+Removes assets, context and redux from host-app: they held nothing but a README and a folder that exists only to be empty says nothing true about the code. The layout document and the host-app rule keep the names, so the folder is created under the same name when its first file arrives.
+
+Canon: A-13, Q-7. Depends on: F-36. Slice 31, status `review`.
+
+Files:
+
+- `.claude/rules/host-app.md`
+- `docs/PROJECT-STRUCTURE.md`

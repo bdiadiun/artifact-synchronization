@@ -8,6 +8,9 @@ paths:
   sibling `{Name}.props.ts`. No inline `style={{ … }}` and no function created inside an `on…` prop.
 - User-visible strings come from `src/i18n.ts` as `t.<key>` (Ukrainian, decision A-7).
 - Tests live in a `__tests__/` folder next to the code they test.
+- Folder layout follows `docs/PROJECT-STRUCTURE.md`. A folder the layout names but the repository
+  does not have yet (`assets/`, `context/`, `redux/`) is created only when its first file arrives,
+  under that exact name.
 - Never trust an incoming message: validate it with the contract guards, check `event.origin`, and
   never call `postMessage` with `'*'`.
 - Size limits are lint errors: a function under 60 lines, a file under 200, complexity under 10.
