@@ -155,6 +155,11 @@
       "id": "24",
       "title": "chore: complexity rules",
       "branch": "chore/complexity-rules"
+    },
+    {
+      "id": "25",
+      "title": "refactor: split the bridge",
+      "branch": "refactor/split-bridge"
     }
   ],
   "nodes": [
@@ -368,11 +373,12 @@
           "internal": [
             "viewer/extensions/scoring-bridge/src/commands.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/handshake.ts",
+            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/throttle.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
           ],
           "external": []
         },
@@ -564,11 +570,12 @@
           "internal": [
             "viewer/extensions/scoring-bridge/src/commands.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/handshake.ts",
+            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/throttle.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
           ],
           "external": []
         },
@@ -769,11 +776,12 @@
           "internal": [
             "viewer/extensions/scoring-bridge/src/commands.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/handshake.ts",
+            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/throttle.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
           ],
           "external": []
         },
@@ -865,11 +873,12 @@
           "internal": [
             "viewer/extensions/scoring-bridge/src/commands.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/handshake.ts",
+            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/throttle.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
           ],
           "external": []
         },
@@ -1456,7 +1465,7 @@
       "canon": ["A-13", "Q-7"],
       "dependsOn": ["F-30"],
       "slice": "24",
-      "status": "review",
+      "status": "done",
       "verify": "npm run lint and lint:fork report the seven known hot spots as warnings and nothing else; the rules are off for test suites.",
       "files": [
         ".claude/agents/developer.md",
@@ -1479,6 +1488,89 @@
         "scripts/eslint-fork-style.config.js": {
           "internal": [],
           "external": ["typescript-eslint"]
+        }
+      }
+    },
+    {
+      "id": "F-32",
+      "name": "Bridge split by protocol role",
+      "description": "Splits the viewer bridge factory by role: messaging owns posting to the host, the origin check and command routing; handshake owns waiting for the first viewport and announcing VIEWER_READY; the measurement stream owns the three measurementService subscriptions, the uid-to-row map, the throttled updates and the correction after an added measurement. createBridge becomes a composition root and the mutable placeholder that broke the circular dependency is gone.",
+      "canon": ["A-13", "C-3.4", "Q-7"],
+      "dependsOn": ["F-31"],
+      "slice": "25",
+      "status": "review",
+      "verify": "npm run lint:fork reports no size or complexity warnings for the extension; the full browser regression (ready, activate, measure, restore tool, live update, delete both ways, focus, version overlay) behaves as before.",
+      "files": [
+        "ARCHITECTURE.md",
+        "docs/DEFENCE.md",
+        "docs/notes/bridge-internals.md",
+        "viewer/extensions/scoring-bridge/src/bridge.ts",
+        "viewer/extensions/scoring-bridge/src/commands.ts",
+        "viewer/extensions/scoring-bridge/src/handshake.ts",
+        "viewer/extensions/scoring-bridge/src/measurementStream.ts",
+        "viewer/extensions/scoring-bridge/src/messaging.ts",
+        "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
+        "viewer/extensions/scoring-bridge/src/throttle.ts"
+      ],
+      "imports": {
+        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/commands.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/focus.ts",
+            "viewer/extensions/scoring-bridge/src/handshake.ts",
+            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/removals.ts",
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/commands.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/handshake.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/measurementStream.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/commands.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/measurements.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/messaging.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/throttle.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/throttle.ts": {
+          "internal": [],
+          "external": []
         }
       }
     }
