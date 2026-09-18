@@ -6,4 +6,4 @@ Single source of truth for the host-app <-> viewer `postMessage` contract (canon
 The same file must be copied byte-for-byte into
 `viewer/extensions/scoring-bridge/src/contract/messages.ts`, because the viewer is a git
 submodule that must stay self-contained and cannot import outside itself. Run
-`npm run check:contract` at the repo root to verify the copy is in sync.
+It is published to npm; both the host app and the viewer extension depend on it at an exact version.

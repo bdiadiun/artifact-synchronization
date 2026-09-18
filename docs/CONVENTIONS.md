@@ -210,12 +210,10 @@ Rules:
 - Conventional Commits, English, no trailers, no AI mentions (CLAUDE.md §4).
 - Generated files are never edited by hand and are committed with their source in the same commit:
   `docs/FEATURE-GRAPH.md` from `docs/feature-graph.json` (`npm run graph:build`),
-  `docs/site/index.html` (`npm run docs:build`), and the extension's `contract/messages.ts` copied
-  from `packages/contract/src/messages.ts` (`npm run check:contract`). CI fails when any of them is
-  stale.
+  `docs/site/index.html` (`npm run docs:build`). CI fails when either is stale.
 - A PR is one slice; its description follows the template in CLAUDE.md and cites canon IDs.
-- `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test`, `npm run check:graph`,
-  `npm run check:contract` all pass before gate 2. A PR that changes docs also runs
+- `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test`, `npm run check:graph`
+  all pass before gate 2. A PR that changes docs also runs
   `npm run docs:build` and commits the result.
 
 ## 11. The OHIF fork
@@ -225,7 +223,6 @@ Rules:
   with a legacy `.eslintrc.json` and `@typescript-eslint` 5 crashes while loading rules), and we do
   not replace OHIF's tooling. `npm run lint:fork` applies the rules from this document that need no
   type information (`scripts/eslint-fork-style.config.js`); the fork's Prettier formats the
-  extension, except the contract copy, which keeps this repository's formatting to stay
-  byte-identical. Type-aware rules are checked in review.
+  extension. Type-aware rules are checked in review.
 - `AppTypes` and other OHIF globals are used as typed; no `any` for OHIF objects, use the narrowest
   structural type that covers what we read.

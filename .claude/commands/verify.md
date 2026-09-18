@@ -12,7 +12,6 @@ npm run typecheck
 npm run test
 npm run build --workspace host-app
 npm run check:graph
-npm run check:contract
 npm run graph:build && npm run docs:build && git status --short
 ```
 

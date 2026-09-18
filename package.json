@@ -14,8 +14,6 @@
   "scripts": {
     "graph:build": "node scripts/graph.mjs build",
     "check:graph": "node scripts/graph.mjs check",
-    "check:contract": "node scripts/check-contract-sync.mjs",
-    "contract:sync": "node scripts/check-contract-sync.mjs --write",
     "docs:build": "node scripts/build-docs.mjs",
     "test": "npm run test --workspace host-app",
     "lint": "eslint .",

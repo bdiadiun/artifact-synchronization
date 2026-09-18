@@ -12,8 +12,8 @@ host-app  http://localhost:5173                   viewer  http://localhost:3000 
 │  - rowId ↔ measurementUid    │  VIEWER_READY    │   commandsManager.run(setToolActive)│
 │                              │  MEASUREMENT_*   │   uid ↔ rowId map                  │
 └──────────────────────────────┘                  └────────────────────────────────────┘
-              packages/contract/src/messages.ts  (types + guards, version: 1)
-              byte-identical copy: viewer/extensions/scoring-bridge/src/contract/messages.ts
+        @bdiadiun/scoring-contract  (types + guards, version: 1), published to npm
+              and depended on by both the host app and the viewer extension
 ```
 
 ## Message contract (version 1)
@@ -116,7 +116,7 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 | Totals                    | `host-app/src/form/totals.ts` (per-unit sums), `components/TotalsFooter.tsx`                                                                                                                                                                                                                                                                                                                                                                                                       |
 | Tool to arm               | `host-app/src/config.ts` `DEFAULT_TOOL` (the one constant for the RectangleROI live change)                                                                                                                                                                                                                                                                                                                                                                                        |
 | Origins and study link    | `host-app/src/config.ts`, `viewer/extensions/scoring-bridge/src/config.ts`                                                                                                                                                                                                                                                                                                                                                                                                         |
-| Contract sync check       | `scripts/check-contract-sync.mjs`                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Contract release          | `.github/workflows/publish-contract.yml`                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 ## Known behaviour
 

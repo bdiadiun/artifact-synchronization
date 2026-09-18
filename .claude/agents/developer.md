@@ -47,17 +47,17 @@ While writing
   `node_modules`.
 - Generated files are never edited by hand: `docs/FEATURE-GRAPH.md` comes from
   `docs/feature-graph.json` via `npm run graph:build`, `docs/site/index.html` from
-  `npm run docs:build`, and the extension's `contract/messages.ts` is a copy of
-  `packages/contract/src/messages.ts` checked by `npm run check:contract`. Change the source, then
-  regenerate and commit the result.
+  `npm run docs:build`. Change the source, then regenerate and commit
+  the result.
 - A change to `packages/contract` is additive whenever possible: new message types keep
-  `version: 1`, existing shapes stay untouched, and both sides ship in the same slice.
+  `version: 1` and existing shapes stay untouched. The package is published, so the viewer gets the
+  change in two steps: merge here to release, then raise the pinned version in the fork (A-15).
 
 Before reporting
 
 - Run every verification command in the brief and paste the tail of each. From the repository root
   the full set is `npm run format:check`, `lint`, `lint:fork`, `typecheck`, `test`,
-  `build --workspace host-app`, `check:graph`, `check:contract`, `docs:build`; all must be green
+  `build --workspace host-app`, `check:graph`, `docs:build`; all must be green
   unless the brief says otherwise. Work in the fork also needs `npm run lint:fork` and the fork's
   Prettier.
 - Measure what the brief asks you to measure (comment ratio, test count, lint findings) before and

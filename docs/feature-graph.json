@@ -215,6 +215,11 @@
       "id": "36",
       "title": "fix: publish the first release",
       "branch": "fix/publish-first-release"
+    },
+    {
+      "id": "37",
+      "title": "chore: the fork consumes the published contract",
+      "branch": "chore/fork-consumes-contract"
     }
   ],
   "nodes": [
@@ -338,7 +343,7 @@
     {
       "id": "F-03",
       "name": "Shared message contract",
-      "description": "Declares every message type with literal `type` values and `version: 1` in one published package, `@bdiadiun/scoring-contract`, together with runtime guards `isHostCommand` and `isViewerEvent` that reject malformed or wrong-version payloads. The viewer submodule keeps a byte-identical copy of the file, checked by `npm run check:contract` (A-12). The tool name and the `metrics` object in the payload keep P-7 and P-8 changes local.",
+      "description": "Declares every message type with literal `type` values and `version: 1` in one published package, `@bdiadiun/scoring-contract`, together with runtime guards `isHostCommand` and `isViewerEvent` that reject malformed or wrong-version payloads. Both the host app and the viewer extension depend on that package at an exact version (A-15). The tool name and the `metrics` object in the payload keep P-7 and P-8 changes local.",
       "canon": ["C-4.4.1", "C-4.4.2", "C-4.4.3", "P-7", "P-8", "Q-7"],
       "dependsOn": ["F-00"],
       "slice": "2",
@@ -350,9 +355,7 @@
         "packages/contract/package.json",
         "packages/contract/src/__tests__/messages.test.ts",
         "packages/contract/src/messages.ts",
-        "packages/contract/tsconfig.json",
-        "scripts/check-contract-sync.mjs",
-        "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+        "packages/contract/tsconfig.json"
       ],
       "imports": {
         "packages/contract/src/__tests__/messages.test.ts": {
@@ -360,14 +363,6 @@
           "external": ["vitest"]
         },
         "packages/contract/src/messages.ts": {
-          "internal": [],
-          "external": []
-        },
-        "scripts/check-contract-sync.mjs": {
-          "internal": [],
-          "external": ["node:crypto", "node:fs", "node:path"]
-        },
-        "viewer/extensions/scoring-bridge/src/contract/messages.ts": {
           "internal": [],
           "external": []
         }
@@ -602,8 +597,8 @@
         },
         "viewer/extensions/scoring-bridge/src/commands.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         }
@@ -642,15 +637,15 @@
         },
         "viewer/extensions/scoring-bridge/src/commands.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/measurements.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         }
@@ -874,8 +869,8 @@
         },
         "viewer/extensions/scoring-bridge/src/measurements.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         },
@@ -980,15 +975,15 @@
         },
         "viewer/extensions/scoring-bridge/src/commands.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/removals.ts": {
           "internal": [
+            "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts"
           ],
           "external": []
@@ -1061,15 +1056,15 @@
         },
         "viewer/extensions/scoring-bridge/src/commands.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/focus.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         }
@@ -1376,16 +1371,16 @@
         },
         "viewer/extensions/scoring-bridge/src/geometry.ts": {
           "internal": [
+            "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/measurements.ts"
           ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/restore.ts": {
           "internal": [
+            "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
           ],
@@ -1490,7 +1485,7 @@
       "dependsOn": ["F-23"],
       "slice": "14",
       "status": "done",
-      "verify": "GitHub Actions runs lint, lint:fork, format:check, typecheck, test, build, check:graph and check:contract on every PR and push to main; the fork's default branch is `scoring`.",
+      "verify": "GitHub Actions runs lint, lint:fork, format:check, typecheck, test, build, check:graph on every PR and push to main; the fork's default branch is `scoring`.",
       "files": [".github/workflows/ci.yml", ".gitmodules", "package.json"],
       "imports": {}
     },
@@ -1797,24 +1792,24 @@
         },
         "viewer/extensions/scoring-bridge/src/commands.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/handshake.ts": {
           "internal": [
+            "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts"
           ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/measurementStream.ts": {
           "internal": [
+            "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/commands.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/geometry.ts",
             "viewer/extensions/scoring-bridge/src/measurements.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
@@ -1824,15 +1819,15 @@
         },
         "viewer/extensions/scoring-bridge/src/messaging.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts": {
           "internal": [
+            "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/throttle.ts"
           ],
@@ -1982,30 +1977,19 @@
     },
     {
       "id": "F-34",
-      "name": "Contract copy guarded on both sides",
-      "description": "The wire contract stays a byte-identical copy inside the fork, because the submodule must build standalone, but now both repositories guard it: the host check compares the two files and the committed hash, and a workflow in the fork verifies its own copy against that hash, so a change made only in the fork is caught by the fork itself.",
-      "canon": ["A-12", "Q-7"],
+      "name": "Contract published as one package",
+      "description": "The wire contract has a single owner and an explicit version: it is published to the public npm registry as `@bdiadiun/scoring-contract` and both sides depend on it. The earlier arrangement, a byte-identical copy inside the fork guarded by a committed hash, is gone together with its sync script and its checks.",
+      "canon": ["A-15", "Q-7"],
       "dependsOn": ["F-33"],
       "slice": "27",
       "status": "done",
-      "verify": "Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.",
+      "verify": "The fork builds from a clean install with no copy of the contract in its tree; the package resolves from the public registry without a token.",
       "files": [
+        ".github/workflows/publish-contract.yml",
         "docs/decisions/A-12-npm-workspaces.md",
-        "package.json",
-        "scripts/check-contract-sync.mjs",
-        "viewer/extensions/scoring-bridge/scripts/check-contract-hash.mjs",
-        "viewer/extensions/scoring-bridge/src/contract/messages.sha256"
+        "package.json"
       ],
-      "imports": {
-        "scripts/check-contract-sync.mjs": {
-          "internal": [],
-          "external": ["node:crypto", "node:fs", "node:path"]
-        },
-        "viewer/extensions/scoring-bridge/scripts/check-contract-hash.mjs": {
-          "internal": [],
-          "external": ["node:crypto", "node:fs", "node:path", "node:url"]
-        }
-      }
+      "imports": {}
     },
     {
       "id": "F-35",
@@ -2178,15 +2162,15 @@
         },
         "viewer/extensions/scoring-bridge/src/commands.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
           ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/removals.ts": {
           "internal": [
+            "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts"
           ],
           "external": []
@@ -2261,8 +2245,8 @@
         },
         "viewer/extensions/scoring-bridge/src/geometry.ts": {
           "internal": [
+            "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
             "viewer/extensions/scoring-bridge/src/measurements.ts"
           ],
           "external": []
@@ -2276,10 +2260,37 @@
       "canon": ["A-15", "Q-7"],
       "dependsOn": ["F-41"],
       "slice": "36",
-      "status": "review",
+      "status": "done",
       "verify": "A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.",
       "files": [".github/workflows/publish-contract.yml"],
       "imports": {}
+    },
+    {
+      "id": "F-43",
+      "name": "The fork depends on the package, the copy is gone",
+      "description": "Ends the duplication that decision A-12 accepted. The extension takes the contract from `@bdiadiun/scoring-contract`, pinned to an exact version, and its copy of the file, the committed hash, the sync script and both contract checks are deleted. The fork's own workflow now builds the viewer with the extension instead of comparing hashes.",
+      "canon": ["A-15", "Q-7"],
+      "dependsOn": ["F-42"],
+      "slice": "37",
+      "status": "review",
+      "verify": "The fork's tree holds no contract file; a clean install fetches the package from the public registry with no token and no registry configuration, and the viewer builds with the extension bundled.",
+      "files": [
+        ".claude/rules/contract.md",
+        ".claude/rules/fork.md",
+        ".github/workflows/ci.yml",
+        "docs/decisions/A-15-publish-contract-package.md",
+        "viewer/extensions/scoring-bridge/package.json",
+        "viewer/extensions/scoring-bridge/src/messaging.ts"
+      ],
+      "imports": {
+        "viewer/extensions/scoring-bridge/src/messaging.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
+          ],
+          "external": []
+        }
+      }
     }
   ]
 }
