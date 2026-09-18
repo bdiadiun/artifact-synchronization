@@ -49,7 +49,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-36 | Folder layout and the .claude workspace documented and applied                                                                                    | A-13, D-3, Q-7                                                  | F-35             | 30    | done    | host-app builds and its 149 tests pass after the move; npm run lint is clean; the docs page lists the structure document; the format hook rewrites a touched file.                                                                                                                                                                                                        |
 | F-37 | Layout folders created on first use                                                                                                               | A-13, Q-7                                                       | F-36             | 31    | done    | The three folders are gone, host-app builds and its 149 tests pass, and the layout document and the rule state when each folder is created.                                                                                                                                                                                                                               |
 | F-38 | Agent boundaries, instances and context handover                                                                                                  | A-13, D-2                                                       | F-37             | 32    | done    | Each of the five agent definitions states which files it may write, who owns its context and what to do when it fills; CLAUDE.md and the slice skill carry the one-instance rule; the handover skill is listed in the layout document. Enforcement is by brief and by the architect's diff review: Claude Code has no per-agent file permission, only session-wide rules. |
-| F-39 | Audit fixes: disarm on teardown, answered removals, conventions                                                                                   | A-13, Q-4, Q-5, S-5.2                                           | F-38             | 33    | review  | The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.                                                                                                                |
+| F-39 | Audit fixes: disarm on teardown, answered removals, conventions                                                                                   | A-13, Q-4, Q-5, S-5.2                                           | F-38             | 33    | done    | The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.                                                                                                                |
+| F-40 | Workflow ownership and the return-statement rule                                                                                                  | A-13, D-2                                                       | F-39             | 34    | review  | The git operator definition lists the workflow files as the only thing it may write and its tool list allows writing; CLAUDE.md agrees. `npm run lint` passes with the widened selector, which proves no component creates a function inside a JSX prop.                                                                                                                  |
 
 ## Coverage of mandatory IDs
 
@@ -84,7 +85,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Q-6     | F-09, F-10, F-11                                                                               |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37 |
 | D-1     | F-04                                                                                           |
-| D-2     | F-00, F-20, F-38                                                                               |
+| D-2     | F-00, F-20, F-38, F-40                                                                         |
 | D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                 |
 | D-4     | F-00, F-24                                                                                     |
 | D-5     | F-12, F-20, F-24, F-25                                                                         |
@@ -136,6 +137,7 @@ graph TD
   F37["F-37 Layout folders created on first use"]
   F38["F-38 Agent boundaries, instances and context handover"]
   F39["F-39 Audit fixes: disarm on teardown, answered removals, conventions"]
+  F40["F-40 Workflow ownership and the return-statement rule"]
 
   F20 --> F01
   F01 --> F02
@@ -181,48 +183,50 @@ graph TD
   F36 --> F37
   F37 --> F38
   F38 --> F39
+  F39 --> F40
 ```
 
 ## Slice → nodes
 
-| Slice                                                 | Branch                                      | PR  | Nodes                  |
-| ----------------------------------------------------- | ------------------------------------------- | --- | ---------------------- |
-| 0 — docs: canon and feature graph                     | `docs/canon-and-feature-graph`              | #1  | F-00                   |
-| 0.5 — chore: project tooling and state journal        | `chore/project-tooling-and-state-journal`   | #2  | F-20                   |
-| 1 — chore: bootstrap host-app                         | `chore/bootstrap-host-app`                  | #3  | F-01, F-02             |
-| 2 — feat: viewer bridge extension                     | `feat/viewer-bridge-extension`              | #4  | F-03, F-04, F-05, F-06 |
-| 3 — feat: activate ellipse from form                  | `feat/activate-ellipse-from-form`           | #5  | F-07, F-08             |
-| 4 — feat: receive measurement into form               | `feat/receive-measurement-into-form`        | #6  | F-09, F-10             |
-| 5 — feat: total area calculation                      | `feat/total-area-calculation`               | #7  | F-11                   |
-| 6 — docs: README, ARCHITECTURE, AI-USAGE              | `docs/readme-architecture-ai-usage`         | #8  | F-12, F-13             |
-| 7 — feat: live measurement update                     | `feat/live-measurement-update`              | #9  | F-14                   |
-| 8 — feat: two-way deletion                            | `feat/two-way-deletion`                     | #10 | F-15                   |
-| 9 — feat: OHIF version on viewport                    | `feat/ohif-version-on-viewport`             | #11 | F-18                   |
-| 10 — chore: docs site generator                       | `chore/docs-site-generator`                 | #12 | F-21                   |
-| 11 — feat: focus measurement from row                 | `feat/focus-measurement-from-row`           | #13 | F-16                   |
-| 12 — chore: conventions, lint and agent roles         | `chore/conventions-lint-and-agent-roles`    | #14 | F-22                   |
-| 13 — refactor: apply conventions                      | `refactor/apply-conventions`                | #15 | F-23                   |
-| 14 — ci: checks and fork default branch               | `ci/checks-and-fork-default-branch`         | #16 | F-24                   |
-| 15 — docs: final pass                                 | `docs/final-pass`                           | #17 | F-25                   |
-| 16 — refactor: trim comments                          | `refactor/trim-comments`                    | #18 | F-26                   |
-| 17 — refactor: component props files and test folders | `refactor/component-props-and-test-folders` | #19 | F-27                   |
-| 18 — docs: feature graph as JSON                      | `docs/feature-graph-json`                   | —   | F-28                   |
-| later — bonus nodes not yet scheduled                 | one branch per bonus node                   | —   | —                      |
-| 19 — docs: agent style rules                          | `docs/agent-style-rules`                    | —   | F-29                   |
-| 20 — refactor: named event handlers                   | `refactor/named-event-handlers`             | —   | F-30                   |
-| 21 — docs: close graph statuses                       | `docs/close-graph-statuses`                 | —   | —                      |
-| 22 — feat: length row type                            | `feat/length-row-type`                      | —   | F-17                   |
-| 23 — docs: length in defence script                   | `docs/length-in-defence`                    | —   | —                      |
-| 24 — chore: complexity rules                          | `chore/complexity-rules`                    | —   | F-31                   |
-| 25 — refactor: split the bridge                       | `refactor/split-bridge`                     | —   | F-32                   |
-| 26 — refactor: split the scoring form hook            | `refactor/split-scoring-form`               | —   | F-33                   |
-| 27 — chore: contract copy guard                       | `chore/contract-guard`                      | —   | F-34                   |
-| 28 — feat: state restore                              | `feat/state-restore`                        | —   | F-19                   |
-| 29 — refactor: i18n naming                            | `refactor/i18n-naming`                      | —   | F-35                   |
-| 30 — chore: project structure                         | `refactor/project-structure`                | —   | F-36                   |
-| 31 — chore: drop empty folders                        | `chore/drop-empty-folders`                  | —   | F-37                   |
-| 32 — chore: agent handover skill                      | `chore/agent-handover-skill`                | —   | F-38                   |
-| 33 — fix: cleanup and conventions                     | `fix/cleanup-and-conventions`               | —   | F-39                   |
+| Slice                                                        | Branch                                      | PR  | Nodes                  |
+| ------------------------------------------------------------ | ------------------------------------------- | --- | ---------------------- |
+| 0 — docs: canon and feature graph                            | `docs/canon-and-feature-graph`              | #1  | F-00                   |
+| 0.5 — chore: project tooling and state journal               | `chore/project-tooling-and-state-journal`   | #2  | F-20                   |
+| 1 — chore: bootstrap host-app                                | `chore/bootstrap-host-app`                  | #3  | F-01, F-02             |
+| 2 — feat: viewer bridge extension                            | `feat/viewer-bridge-extension`              | #4  | F-03, F-04, F-05, F-06 |
+| 3 — feat: activate ellipse from form                         | `feat/activate-ellipse-from-form`           | #5  | F-07, F-08             |
+| 4 — feat: receive measurement into form                      | `feat/receive-measurement-into-form`        | #6  | F-09, F-10             |
+| 5 — feat: total area calculation                             | `feat/total-area-calculation`               | #7  | F-11                   |
+| 6 — docs: README, ARCHITECTURE, AI-USAGE                     | `docs/readme-architecture-ai-usage`         | #8  | F-12, F-13             |
+| 7 — feat: live measurement update                            | `feat/live-measurement-update`              | #9  | F-14                   |
+| 8 — feat: two-way deletion                                   | `feat/two-way-deletion`                     | #10 | F-15                   |
+| 9 — feat: OHIF version on viewport                           | `feat/ohif-version-on-viewport`             | #11 | F-18                   |
+| 10 — chore: docs site generator                              | `chore/docs-site-generator`                 | #12 | F-21                   |
+| 11 — feat: focus measurement from row                        | `feat/focus-measurement-from-row`           | #13 | F-16                   |
+| 12 — chore: conventions, lint and agent roles                | `chore/conventions-lint-and-agent-roles`    | #14 | F-22                   |
+| 13 — refactor: apply conventions                             | `refactor/apply-conventions`                | #15 | F-23                   |
+| 14 — ci: checks and fork default branch                      | `ci/checks-and-fork-default-branch`         | #16 | F-24                   |
+| 15 — docs: final pass                                        | `docs/final-pass`                           | #17 | F-25                   |
+| 16 — refactor: trim comments                                 | `refactor/trim-comments`                    | #18 | F-26                   |
+| 17 — refactor: component props files and test folders        | `refactor/component-props-and-test-folders` | #19 | F-27                   |
+| 18 — docs: feature graph as JSON                             | `docs/feature-graph-json`                   | —   | F-28                   |
+| later — bonus nodes not yet scheduled                        | one branch per bonus node                   | —   | —                      |
+| 19 — docs: agent style rules                                 | `docs/agent-style-rules`                    | —   | F-29                   |
+| 20 — refactor: named event handlers                          | `refactor/named-event-handlers`             | —   | F-30                   |
+| 21 — docs: close graph statuses                              | `docs/close-graph-statuses`                 | —   | —                      |
+| 22 — feat: length row type                                   | `feat/length-row-type`                      | —   | F-17                   |
+| 23 — docs: length in defence script                          | `docs/length-in-defence`                    | —   | —                      |
+| 24 — chore: complexity rules                                 | `chore/complexity-rules`                    | —   | F-31                   |
+| 25 — refactor: split the bridge                              | `refactor/split-bridge`                     | —   | F-32                   |
+| 26 — refactor: split the scoring form hook                   | `refactor/split-scoring-form`               | —   | F-33                   |
+| 27 — chore: contract copy guard                              | `chore/contract-guard`                      | —   | F-34                   |
+| 28 — feat: state restore                                     | `feat/state-restore`                        | —   | F-19                   |
+| 29 — refactor: i18n naming                                   | `refactor/i18n-naming`                      | —   | F-35                   |
+| 30 — chore: project structure                                | `refactor/project-structure`                | —   | F-36                   |
+| 31 — chore: drop empty folders                               | `chore/drop-empty-folders`                  | —   | F-37                   |
+| 32 — chore: agent handover skill                             | `chore/agent-handover-skill`                | —   | F-38                   |
+| 33 — fix: cleanup and conventions                            | `fix/cleanup-and-conventions`               | —   | F-39                   |
+| 34 — chore: workflow ownership and the return-statement rule | `chore/git-operator-workflows`              | —   | F-40                   |
 
 ## Node details
 
@@ -859,7 +863,7 @@ Files:
 
 Closes what a read-only audit found. The bridge now remembers that it armed a tool and posts one DEACTIVATE_TOOL when it is disposed, so a host unmount cannot leave the viewer armed. A REMOVE_MEASUREMENT for a measurement the viewer no longer holds is answered instead of ignored, so the host's set of issued request ids stops growing. The rest is convention debt no linter catches: a default export, a missing return type behind forwardRef, user-visible literals outside i18n, a module exporting two hooks, over-long comments, a switch that did not narrow to never, a dead export and two unexplained assertions.
 
-Canon: A-13, Q-4, Q-5, S-5.2. Depends on: F-38. Slice 33, status `review`.
+Canon: A-13, Q-4, Q-5, S-5.2. Depends on: F-38. Slice 33, status `done`.
 
 Files:
 
@@ -872,3 +876,17 @@ Files:
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
 - `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
+
+### F-40 Workflow ownership and the return-statement rule
+
+Widens one role boundary and closes one style gap. The git operator may write `.github/workflows/*.yml` in either repository, because continuous integration is the automation around git and nobody else was allowed to touch it; every other file stays closed to it. Separately, no function may be created inside a component's `return`: it is declared with a name above it, and the lint rule that covered `on…` props now covers every JSX prop. A list render's `.map` callback is the stated exception.
+
+Canon: A-13, D-2. Depends on: F-39. Slice 34, status `review`.
+
+Files:
+
+- `.claude/agents/git-operator.md`
+- `.claude/rules/host-app.md`
+- `CLAUDE.md`
+- `docs/CONVENTIONS.md`
+- `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`

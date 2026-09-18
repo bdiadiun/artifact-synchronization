@@ -142,6 +142,10 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   e.g. `rowStyle(focusable)` returning `styles.row` merged with `styles.rowClickable`. A component without props or styles does not need the file.
 - Types shared by several components live with the module that owns them (e.g. `Row` in
   `form/rows.ts`), not in a component's `.props.ts`.
+- No function is created inside the `return` statement. Every function a component renders with is
+  declared in the component body with a name, above the `return`, and the returned JSX mentions it
+  by that name. The one exception is the callback of a list render, `rows.map(...)`, because
+  extracting it would mean inventing a component for every list.
 - No functions are created inside JSX event handler props. `onClick`, `onKeyDown`, `onChange` and
   every other `on…` prop receives a named `handleX` arrow declared in the component body (or a
   prop passed in), never an inline arrow, function expression or `.bind` call (lint rule). When a

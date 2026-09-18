@@ -19,8 +19,8 @@ while served from different ports.
   Each file fixes the model, the tools and the prompt; briefs are written for one of these roles.
 - **Each role writes only its own kind of file.** The developer changes application code and never
   a test; the tester changes tests and never application code; the architect writes documentation
-  and process files and neither of the other two; the researcher writes one note; the git operator
-  writes nothing. Every agent definition states its own boundary.
+  and process files and neither of the other two; the researcher writes one note; the git operator writes
+  only the continuous-integration workflows. Every agent definition states its own boundary.
 - **Folder layout is defined in [`docs/PROJECT-STRUCTURE.md`](docs/PROJECT-STRUCTURE.md)**, which
   also documents what the `.claude/` folder holds and which parts of the popular template are not
   real features.
