@@ -30,6 +30,8 @@ export const styles = {
   rowClickable: { cursor: 'pointer' },
   status: { color: '#666' },
   focusHint: { color: '#999', fontSize: '12px' },
+  // A-14: stands out from the grey status text so a failed restore is not missed.
+  restoreFailed: { color: '#b00020', fontSize: '12px' },
 } satisfies Record<string, CSSProperties>;
 
 export const rowStyle = (focusable: boolean): CSSProperties =>

@@ -8,6 +8,8 @@ const row = (rowId: string, measurementUid: string | null): Row => ({
   toolName: 'EllipticalROI',
   metrics: null,
   measurementUid,
+  geometry: null,
+  restoreFailureReason: null,
 });
 
 const rows: Row[] = [row('row-1', null), row('row-2', 'uid-2')];

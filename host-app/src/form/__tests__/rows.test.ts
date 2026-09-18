@@ -87,6 +87,7 @@ describe('rows reducer', () => {
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
+      geometry: null,
     });
 
     expect(state.rows[0]).toMatchObject({
@@ -104,6 +105,7 @@ describe('rows reducer', () => {
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
+      geometry: null,
     });
     expect(next).toBe(state);
   });
@@ -116,12 +118,14 @@ describe('rows reducer', () => {
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
+      geometry: null,
     });
     const next = reducer(state, {
       type: FormActionType.MeasurementReceived,
       rowId: 'row-1',
       measurementUid: 'uid-2',
       metrics: { area: { value: 1, unit: 'px2' } },
+      geometry: null,
     });
     expect(next).toBe(state);
   });
@@ -133,6 +137,7 @@ describe('rows reducer', () => {
       rowId: 'ghost',
       measurementUid: 'uid-1',
       metrics,
+      geometry: null,
     });
     expect(next).toBe(state);
   });
@@ -145,6 +150,7 @@ describe('rows reducer', () => {
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
+      geometry: null,
     });
 
     const updatedMetrics: Metrics = { area: { value: 200, unit: 'mm2' } };
@@ -169,6 +175,7 @@ describe('rows reducer', () => {
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
+      geometry: null,
     });
 
     const next = reducer(state, {
@@ -191,6 +198,8 @@ describe('rows reducer', () => {
           toolName: 'EllipticalROI',
           metrics: null,
           measurementUid: 'uid-1',
+          geometry: null,
+          restoreFailureReason: null,
         },
       ],
       armedRowId: null,
@@ -227,6 +236,7 @@ describe('rows reducer', () => {
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
+      geometry: null,
     });
 
     const next = reducer(state, { type: FormActionType.MeasurementCleared, rowId: 'row-1' });
@@ -270,6 +280,7 @@ describe('rows reducer', () => {
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics: { length: { value: 12, unit: 'mm' } },
+      geometry: null,
     });
     state = reducer(state, { type: FormActionType.MeasurementCleared, rowId: 'row-1' });
 
@@ -281,6 +292,55 @@ describe('rows reducer', () => {
     const state = addRows(initialFormState, ...rowIds);
     expect(state.rows).toHaveLength(50);
     expect(state.rows.every((row) => row.status === RowStatus.Pending)).toBe(true);
+  });
+
+  it('RESTORE_FAILED marks the row with the given reason and keeps its value', () => {
+    let state = addRows(initialFormState, 'row-1');
+    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    state = reducer(state, {
+      type: FormActionType.MeasurementReceived,
+      rowId: 'row-1',
+      measurementUid: 'uid-1',
+      metrics,
+      geometry: null,
+    });
+
+    const next = reducer(state, {
+      type: FormActionType.RestoreFailed,
+      rowId: 'row-1',
+      reason: 'invalid-geometry',
+    });
+
+    expect(next.rows[0]).toMatchObject({
+      status: RowStatus.Done,
+      metrics,
+      restoreFailureReason: 'invalid-geometry',
+    });
+  });
+
+  it('RESTORE_FAILED with an unknown rowId leaves state unchanged', () => {
+    const state = addRows(initialFormState, 'row-1');
+    const next = reducer(state, {
+      type: FormActionType.RestoreFailed,
+      rowId: 'ghost',
+      reason: 'unknown-study',
+    });
+    expect(next).toBe(state);
+  });
+
+  it('RESTORE_FAILED twice with the same reason is a no-op the second time', () => {
+    let state = addRows(initialFormState, 'row-1');
+    state = reducer(state, {
+      type: FormActionType.RestoreFailed,
+      rowId: 'row-1',
+      reason: 'viewer-error',
+    });
+    const next = reducer(state, {
+      type: FormActionType.RestoreFailed,
+      rowId: 'row-1',
+      reason: 'viewer-error',
+    });
+    expect(next).toBe(state);
   });
 });
 

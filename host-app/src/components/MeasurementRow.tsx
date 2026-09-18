@@ -1,8 +1,22 @@
 import type { JSX, KeyboardEvent, MouseEvent } from 'react';
 import { RowStatus } from '../form/rows';
 import { UI } from '../ui-strings';
-import { formatRowKind, formatRowMetric, formatRowStatus } from '../form/format';
+import {
+  formatRestoreFailureReason,
+  formatRowKind,
+  formatRowMetric,
+  formatRowStatus,
+} from '../form/format';
 import { rowInteraction, rowStyle, styles, type MeasurementRowProps } from './MeasurementRow.props';
+
+// stopPropagation keeps a button click from also triggering the row's focus click. Module scope:
+// the row id and the action are its only inputs, so no component closure is needed.
+const createRowActionHandler =
+  (rowId: string, action: (rowId: string) => void) =>
+  (event: MouseEvent<HTMLButtonElement>): void => {
+    event.stopPropagation();
+    action(rowId);
+  };
 
 // Native elements, minimal grey styling (X-3: no design work required).
 export const MeasurementRow = ({
@@ -16,17 +30,9 @@ export const MeasurementRow = ({
   const metricLabel = formatRowMetric(row);
   const focusable = row.status === RowStatus.Done;
 
-  // stopPropagation keeps a button click from also triggering the row's focus click.
-  const rowButtonHandler =
-    (action: (rowId: string) => void) =>
-    (event: MouseEvent<HTMLButtonElement>): void => {
-      event.stopPropagation();
-      action(row.rowId);
-    };
-
-  const handleActivate = rowButtonHandler(onActivate);
-  const handleCancel = rowButtonHandler(onCancel);
-  const handleRemove = rowButtonHandler(onRemove);
+  const handleActivate = createRowActionHandler(row.rowId, onActivate);
+  const handleCancel = createRowActionHandler(row.rowId, onCancel);
+  const handleRemove = createRowActionHandler(row.rowId, onRemove);
 
   // S-5.3: both are attached only while the row is focusable, so neither re-checks the status.
   const handleRowClick = (): void => {
@@ -52,6 +58,14 @@ export const MeasurementRow = ({
       <span style={styles.status}>{formatRowKind(row)}</span>
       <span style={styles.status}>{formatRowStatus(row.status)}</span>
       {metricLabel !== null && <span>{metricLabel}</span>}
+      {row.restoreFailureReason !== null && (
+        <span
+          style={styles.restoreFailed}
+          title={formatRestoreFailureReason(row.restoreFailureReason)}
+        >
+          {UI.restoreFailed}
+        </span>
+      )}
       {row.status === RowStatus.Pending && (
         <button type="button" onClick={handleActivate}>
           {UI.activate}

@@ -1,7 +1,7 @@
 // Display format for a row: wire unit spelling (mm2, px2) to glyphs (mm², px²), and the labels a
 // row shows. The one place display strings for a measurement are built.
 
-import type { Metric, Metrics, Unit } from '@scoring/contract';
+import type { Metric, Metrics, RestoreFailureReason, Unit } from '@scoring/contract';
 import { UI } from '../ui-strings';
 import { RowStatus, metricKeyForTool, type MetricKey, type Row } from './rows';
 
@@ -27,6 +27,10 @@ export const formatMetric = (metric: Metric): string =>
   `${metric.value.toFixed(1)} ${UNIT_LABELS[metric.unit]}`;
 
 export const formatRowStatus = (status: RowStatus): string => STATUS_LABELS[status];
+
+// A-14: tooltip text for the restoreFailed marker; UI.restoreFailureReason is the single lookup.
+export const formatRestoreFailureReason = (reason: RestoreFailureReason): string =>
+  UI.restoreFailureReason[reason];
 
 export const formatRowKind = (row: Row): string => KIND_LABELS[metricKeyForTool(row.toolName)];
 

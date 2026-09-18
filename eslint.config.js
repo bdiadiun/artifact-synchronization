@@ -137,6 +137,15 @@ export default tseslint.config(
     },
   },
   {
+    // The wire contract is deliberately one self-contained file: the fork copies it verbatim and
+    // `npm run check:contract` compares a single path (A-12, A-14). Splitting it to satisfy a line
+    // count would trade a real property for a number.
+    files: ['packages/contract/src/messages.ts'],
+    rules: {
+      'max-lines': 'off',
+    },
+  },
+  {
     // describe/it blocks are functions to the parser but not units of code: size limits there
     // measure the suite, not the design.
     files: ['**/__tests__/**'],

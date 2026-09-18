@@ -170,6 +170,11 @@
       "id": "27",
       "title": "chore: contract copy guard",
       "branch": "chore/contract-guard"
+    },
+    {
+      "id": "28",
+      "title": "feat: state restore",
+      "branch": "feat/state-restore"
     }
   ],
   "nodes": [
@@ -225,7 +230,7 @@
           "external": ["@testing-library/jest-dom", "@testing-library/react", "vitest"]
         },
         "host-app/src/ui-strings.ts": {
-          "internal": [],
+          "internal": ["packages/contract/src/messages.ts"],
           "external": []
         },
         "host-app/vite.config.ts": {
@@ -388,7 +393,8 @@
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
+            "viewer/extensions/scoring-bridge/src/restore.ts"
           ],
           "external": []
         },
@@ -506,6 +512,7 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
             "packages/contract/src/messages.ts"
@@ -522,10 +529,9 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
+            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/form/usePersistedRows.ts",
             "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
             "packages/contract/src/messages.ts"
@@ -556,10 +562,9 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
+            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/form/usePersistedRows.ts",
             "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
             "packages/contract/src/messages.ts"
@@ -601,7 +606,8 @@
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
+            "viewer/extensions/scoring-bridge/src/restore.ts"
           ],
           "external": []
         },
@@ -660,6 +666,7 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
             "packages/contract/src/messages.ts"
@@ -684,10 +691,9 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
+            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/form/usePersistedRows.ts",
             "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
             "packages/contract/src/messages.ts"
@@ -795,6 +801,7 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
             "packages/contract/src/messages.ts"
@@ -811,10 +818,9 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
+            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/form/usePersistedRows.ts",
             "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
             "packages/contract/src/messages.ts"
@@ -830,7 +836,8 @@
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
+            "viewer/extensions/scoring-bridge/src/restore.ts"
           ],
           "external": []
         },
@@ -891,6 +898,7 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
             "packages/contract/src/messages.ts"
@@ -907,10 +915,9 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
+            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/form/usePersistedRows.ts",
             "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
             "packages/contract/src/messages.ts"
@@ -934,7 +941,8 @@
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
+            "viewer/extensions/scoring-bridge/src/restore.ts"
           ],
           "external": []
         },
@@ -991,6 +999,7 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
             "packages/contract/src/messages.ts"
@@ -999,10 +1008,9 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
+            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/form/usePersistedRows.ts",
             "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
             "packages/contract/src/messages.ts"
@@ -1119,6 +1127,7 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
             "packages/contract/src/messages.ts"
@@ -1135,10 +1144,9 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
+            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/form/usePersistedRows.ts",
             "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
             "packages/contract/src/messages.ts"
@@ -1146,7 +1154,7 @@
           "external": ["react"]
         },
         "host-app/src/ui-strings.ts": {
-          "internal": [],
+          "internal": ["packages/contract/src/messages.ts"],
           "external": []
         }
       }
@@ -1182,14 +1190,164 @@
     {
       "id": "F-19",
       "name": "Bonus: state restore after reload",
-      "description": "Restores form rows and viewer annotations after a page reload, keeping both in sync. Not implemented.",
-      "canon": ["S-5.6"],
+      "description": "After a reload the form restores its rows from sessionStorage for the same study and asks the viewer to rebuild the annotations with their original uids; the viewer waits for viewport data, seeds its uid map, adds the annotations and reports what was restored. Values are replaced by the recomputed measurement update, and rows whose annotation could not be rebuilt are marked.",
+      "canon": ["A-14", "P-5", "Q-3", "Q-4", "S-5.6"],
       "dependsOn": ["F-11"],
-      "slice": "later",
-      "status": "planned",
-      "verify": "Reload keeps rows and annotations in sync.",
-      "files": [],
-      "imports": {}
+      "slice": "28",
+      "status": "review",
+      "verify": "Draw three measurements, reload the page: the rows, their values and the totals are back and the annotations are on the image; a stored state from another study is ignored.",
+      "files": [
+        "ARCHITECTURE.md",
+        "docs/DEFENCE.md",
+        "docs/decisions/A-14-state-restore.md",
+        "docs/notes/ohif-annotation-restore.md",
+        "eslint.config.js",
+        "host-app/src/components/MeasurementRow.props.ts",
+        "host-app/src/components/MeasurementRow.tsx",
+        "host-app/src/form/__tests__/storage.test.ts",
+        "host-app/src/form/commands.ts",
+        "host-app/src/form/format.ts",
+        "host-app/src/form/rowActions.ts",
+        "host-app/src/form/rows.ts",
+        "host-app/src/form/storage.ts",
+        "host-app/src/form/usePersistedRows.ts",
+        "host-app/src/form/useScoringForm.ts",
+        "host-app/src/form/useViewerEvents.ts",
+        "host-app/src/form/viewerEventHandlers.ts",
+        "host-app/src/ui-strings.ts",
+        "packages/contract/src/messages.ts",
+        "scripts/eslint-fork-style.config.js",
+        "viewer/extensions/scoring-bridge/src/geometry.ts",
+        "viewer/extensions/scoring-bridge/src/restore.ts"
+      ],
+      "imports": {
+        "eslint.config.js": {
+          "internal": [],
+          "external": [
+            "@eslint/js",
+            "eslint-config-prettier",
+            "eslint-plugin-react-hooks",
+            "eslint-plugin-react-refresh",
+            "globals",
+            "typescript-eslint"
+          ]
+        },
+        "host-app/src/components/MeasurementRow.props.ts": {
+          "internal": ["host-app/src/form/rows.ts", "host-app/src/ui-strings.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/MeasurementRow.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/form/__tests__/storage.test.ts": {
+          "internal": ["host-app/src/form/rows.ts", "host-app/src/form/storage.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/commands.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/format.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/ui-strings.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/form/rowActions.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/commands.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/form/rows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/form/storage.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/usePersistedRows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/form/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/form/rowActions.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/usePersistedRows.ts",
+            "host-app/src/form/useViewerEvents.ts",
+            "host-app/src/form/viewerEventHandlers.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/form/useViewerEvents.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/form/viewerEventHandlers.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/commands.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/selectors.ts",
+            "host-app/src/form/useViewerEvents.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/ui-strings.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "packages/contract/src/messages.ts": {
+          "internal": [],
+          "external": []
+        },
+        "scripts/eslint-fork-style.config.js": {
+          "internal": [],
+          "external": ["typescript-eslint"]
+        },
+        "viewer/extensions/scoring-bridge/src/geometry.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/measurements.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/restore.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/geometry.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+          ],
+          "external": ["@cornerstonejs/tools"]
+        }
+      }
     },
     {
       "id": "F-20",
@@ -1433,6 +1591,7 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
             "packages/contract/src/messages.ts"
@@ -1591,7 +1750,8 @@
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
+            "viewer/extensions/scoring-bridge/src/restore.ts"
           ],
           "external": []
         },
@@ -1615,6 +1775,7 @@
             "viewer/extensions/scoring-bridge/src/commands.ts",
             "viewer/extensions/scoring-bridge/src/config.ts",
             "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/geometry.ts",
             "viewer/extensions/scoring-bridge/src/measurements.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
             "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
@@ -1751,10 +1912,9 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
+            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/form/usePersistedRows.ts",
             "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
             "packages/contract/src/messages.ts"
@@ -1767,6 +1927,7 @@
         },
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
+            "host-app/src/config.ts",
             "host-app/src/form/commands.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/selectors.ts",

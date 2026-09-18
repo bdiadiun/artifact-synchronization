@@ -8,6 +8,8 @@ const row = (overrides: Partial<Row> & { rowId: string }): Row => ({
   toolName: 'EllipticalROI',
   metrics: null,
   measurementUid: null,
+  geometry: null,
+  restoreFailureReason: null,
   ...overrides,
 });
 

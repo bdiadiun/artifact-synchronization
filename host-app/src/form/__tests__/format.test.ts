@@ -23,6 +23,8 @@ const row = (over: Partial<Row> = {}): Row => ({
   toolName: 'EllipticalROI',
   metrics: { area: { value: 124.5, unit: 'mm2' } },
   measurementUid: 'uid-1',
+  geometry: null,
+  restoreFailureReason: null,
   ...over,
 });
 
