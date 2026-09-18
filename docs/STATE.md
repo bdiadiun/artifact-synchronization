@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 29 `refactor: i18n naming` (branch `refactor/i18n-naming`, node F-35)                                                      |
-| Gate           | 2 — rename done, canon path updated with the author's approval; awaiting result approval                                   |
-| Last merged PR | #33 `docs: close F-19`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                        |
+| Field          | Value                                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | none; last merged slice 29 `refactor: i18n naming`                                                                              |
+| Gate           | idle                                                                                                                            |
+| Last merged PR | #34 `refactor: i18n naming`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                             |
 
 ## Open decisions (see CANON.md → Decisions)
 

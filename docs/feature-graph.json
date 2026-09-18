@@ -1966,7 +1966,7 @@
       "canon": ["A-7", "A-13", "Q-7"],
       "dependsOn": ["F-19"],
       "slice": "29",
-      "status": "review",
+      "status": "done",
       "verify": "No reference to the old name remains outside the historical note in the state journal; 149 tests, lint and typecheck stay green.",
       "files": [
         ".claude/agents/developer.md",

@@ -45,7 +45,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-32 | Bridge split by protocol role                                                                                                                     | A-13, C-3.4, Q-7                                                | F-31             | 25    | done    | npm run lint:fork reports no size or complexity warnings for the extension; the full browser regression (ready, activate, measure, restore tool, live update, delete both ways, focus, version overlay) behaves as before.         |
 | F-33 | Scoring form hook and reducer split                                                                                                               | A-13, Q-7                                                       | F-32             | 26    | done    | npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.                                                                                                                  |
 | F-34 | Contract copy guarded on both sides                                                                                                               | A-12, Q-7                                                       | F-33             | 27    | done    | Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.                                                                                                            |
-| F-35 | User-visible strings under the conventional i18n name                                                                                             | A-7, A-13, Q-7                                                  | F-19             | 29    | review  | No reference to the old name remains outside the historical note in the state journal; 149 tests, lint and typecheck stay green.                                                                                                   |
+| F-35 | User-visible strings under the conventional i18n name                                                                                             | A-7, A-13, Q-7                                                  | F-19             | 29    | done    | No reference to the old name remains outside the historical note in the state journal; 149 tests, lint and typecheck stay green.                                                                                                   |
 
 ## Coverage of mandatory IDs
 
@@ -773,7 +773,7 @@ Files:
 
 Renames host-app/src/ui-strings.ts to i18n.ts and its exported object from UI to t, the shape a reader expects from an internationalised app. The strings themselves and decision A-7 are unchanged; the object is not a function, so a real translation library would be a later step.
 
-Canon: A-7, A-13, Q-7. Depends on: F-19. Slice 29, status `review`.
+Canon: A-7, A-13, Q-7. Depends on: F-19. Slice 29, status `done`.
 
 Files:
 
