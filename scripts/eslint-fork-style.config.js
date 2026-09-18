@@ -18,6 +18,12 @@ export default tseslint.config({
   linterOptions: { reportUnusedDisableDirectives: 'error' },
   rules: {
     'func-style': ['error', 'expression'],
+    // Size and shape limits (CONVENTIONS §5), warnings while the bridge is being split.
+    'max-lines-per-function': ['warn', { max: 60, skipBlankLines: true, skipComments: true }],
+    'max-lines': ['warn', { max: 200, skipBlankLines: true, skipComments: true }],
+    complexity: ['warn', 10],
+    'max-depth': ['warn', 3],
+    'max-params': ['warn', 4],
     'prefer-arrow-callback': 'error',
     'no-console': ['error', { allow: ['warn', 'error', 'debug', 'info'] }],
     'no-restricted-syntax': [

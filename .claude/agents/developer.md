@@ -18,6 +18,10 @@ While writing
 - Arrow functions everywhere; string enums for app state, literal types in the wire contract;
   explicit return types on exports; `import type`; no `any`, no `!`, no `console.log`.
 - Every listener, subscription or timer has a paired cleanup.
+- Keep units small: a function under ~50 lines, a module under ~150 lines of code, one exported
+  concept per module, and a composition root that only wires things together. Split by role, not by
+  size (`docs/CONVENTIONS.md` §5). No mutable placeholders to break a circular dependency; repeated
+  lookups become named selectors.
 - Comments only for a non-obvious why (OHIF or browser behaviour, workaround, security check), 1–3
   lines, per `docs/CONVENTIONS.md` §8. No comments that restate code; longer rationale goes to
   `docs/decisions/`.

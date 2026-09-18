@@ -49,6 +49,13 @@ export default tseslint.config(
 
       'func-style': ['error', 'expression'],
       'prefer-arrow-callback': 'error',
+      // Size and shape limits (CONVENTIONS §5). Warnings for now: the two known hot spots are
+      // being split in the next slices, and an error here would block unrelated work.
+      'max-lines-per-function': ['warn', { max: 60, skipBlankLines: true, skipComments: true }],
+      'max-lines': ['warn', { max: 200, skipBlankLines: true, skipComments: true }],
+      complexity: ['warn', 10],
+      'max-depth': ['warn', 3],
+      'max-params': ['warn', 4],
       eqeqeq: 'error',
       'no-console': ['warn', { allow: ['warn', 'error', 'debug', 'info'] }],
       'no-restricted-syntax': [
@@ -127,6 +134,15 @@ export default tseslint.config(
             'Event handler props take a named handleX function (CONVENTIONS §6); no functions created inline.',
         },
       ],
+    },
+  },
+  {
+    // describe/it blocks are functions to the parser but not units of code: size limits there
+    // measure the suite, not the design.
+    files: ['**/__tests__/**'],
+    rules: {
+      'max-lines-per-function': 'off',
+      'max-lines': 'off',
     },
   },
   {

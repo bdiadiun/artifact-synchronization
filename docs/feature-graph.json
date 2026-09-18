@@ -150,6 +150,11 @@
       "id": "23",
       "title": "docs: length in defence script",
       "branch": "docs/length-in-defence"
+    },
+    {
+      "id": "24",
+      "title": "chore: complexity rules",
+      "branch": "chore/complexity-rules"
     }
   ],
   "nodes": [
@@ -1441,6 +1446,39 @@
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
+        }
+      }
+    },
+    {
+      "id": "F-31",
+      "name": "Complexity limits and module-shape rules",
+      "description": "Records how the code is split: one exported concept per module, functions under about fifty lines, composition roots that only wire, named selectors instead of repeated lookups, and no mutable placeholders for circular dependencies. ESLint reports size, complexity, depth and parameter limits as warnings in host-app and in the extension, so the two known hot spots are visible before they are split.",
+      "canon": ["A-13", "Q-7"],
+      "dependsOn": ["F-30"],
+      "slice": "24",
+      "status": "review",
+      "verify": "npm run lint and lint:fork report the seven known hot spots as warnings and nothing else; the rules are off for test suites.",
+      "files": [
+        ".claude/agents/developer.md",
+        "docs/CONVENTIONS.md",
+        "eslint.config.js",
+        "scripts/eslint-fork-style.config.js"
+      ],
+      "imports": {
+        "eslint.config.js": {
+          "internal": [],
+          "external": [
+            "@eslint/js",
+            "eslint-config-prettier",
+            "eslint-plugin-react-hooks",
+            "eslint-plugin-react-refresh",
+            "globals",
+            "typescript-eslint"
+          ]
+        },
+        "scripts/eslint-fork-style.config.js": {
+          "internal": [],
+          "external": ["typescript-eslint"]
         }
       }
     }
