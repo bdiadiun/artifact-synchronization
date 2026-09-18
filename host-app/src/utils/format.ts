@@ -3,7 +3,7 @@
 
 import type { Metric, Metrics, RestoreFailureReason, Unit } from '@scoring/contract';
 import { t } from '../i18n';
-import { RowStatus, metricKeyForTool, type MetricKey, type Row } from './rows';
+import { RowStatus, metricKeyForTool, type MetricKey, type Row } from '../form/rows';
 
 const UNIT_LABELS: Record<Unit, string> = {
   mm2: 'mm²',

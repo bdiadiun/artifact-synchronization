@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import type { HostCommand } from '@scoring/contract';
-import { createBridge, type Bridge, type BridgeState } from './createBridge';
+import { createBridge, type Bridge, type BridgeState } from '../bridge/createBridge';
 import { VIEWER_ORIGIN } from '../config';
 
 export interface UseBridgeResult {

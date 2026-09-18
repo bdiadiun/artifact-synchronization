@@ -11,7 +11,7 @@ import {
   removeMeasurementCommand,
 } from './commands';
 import { FormActionType, RowStatus, type FormAction, type FormState } from './rows';
-import { findRow } from './selectors';
+import { findRow } from '../utils/selectors';
 
 export interface RowActionsContext {
   state: FormState;

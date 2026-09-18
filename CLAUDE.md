@@ -17,6 +17,9 @@ while served from different ports.
   review), `developer` (implementation), `tester` (tests and verification), `researcher`
   (read-only investigation with citations), `git-operator` (commit / PR / merge after approval).
   Each file fixes the model, the tools and the prompt; briefs are written for one of these roles.
+- **Folder layout is defined in [`docs/PROJECT-STRUCTURE.md`](docs/PROJECT-STRUCTURE.md)**, which
+  also documents what the `.claude/` folder holds and which parts of the popular template are not
+  real features.
 - **Code style is defined in [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md)** (decision A-13) and
   enforced by `npm run lint` and `npm run format:check`; both must be green before gate 2.
 - **Architect verifies subagent output** before presenting a slice result: reads the diff, runs

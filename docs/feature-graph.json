@@ -180,6 +180,11 @@
       "id": "29",
       "title": "refactor: i18n naming",
       "branch": "refactor/i18n-naming"
+    },
+    {
+      "id": "30",
+      "title": "chore: project structure",
+      "branch": "refactor/project-structure"
     }
   ],
   "nodes": [
@@ -264,14 +269,7 @@
       ],
       "imports": {
         "host-app/src/App.tsx": {
-          "internal": [
-            "host-app/src/App.css",
-            "host-app/src/bridge/useBridge.ts",
-            "host-app/src/components/BridgeStatus.tsx",
-            "host-app/src/components/ScoringPanel.tsx",
-            "host-app/src/components/ViewerFrame.tsx",
-            "host-app/src/form/useScoringForm.ts"
-          ],
+          "internal": ["host-app/src/App.css", "host-app/src/pages/ScoringPage.tsx"],
           "external": ["react"]
         },
         "host-app/src/__tests__/App.test.tsx": {
@@ -429,20 +427,16 @@
       "files": [
         "docs/decisions/A-9-handshake-and-queue.md",
         "host-app/src/bridge/__tests__/createBridge.test.ts",
-        "host-app/src/bridge/__tests__/useBridge.test.tsx",
         "host-app/src/bridge/createBridge.ts",
-        "host-app/src/bridge/useBridge.ts",
         "host-app/src/components/BridgeStatus.props.ts",
-        "host-app/src/components/BridgeStatus.tsx"
+        "host-app/src/components/BridgeStatus.tsx",
+        "host-app/src/hooks/__tests__/useBridge.test.tsx",
+        "host-app/src/hooks/useBridge.ts"
       ],
       "imports": {
         "host-app/src/bridge/__tests__/createBridge.test.ts": {
           "internal": ["host-app/src/bridge/createBridge.ts", "packages/contract/src/messages.ts"],
           "external": ["vitest"]
-        },
-        "host-app/src/bridge/__tests__/useBridge.test.tsx": {
-          "internal": ["host-app/src/bridge/useBridge.ts"],
-          "external": ["@testing-library/react", "react", "vitest"]
         },
         "host-app/src/bridge/createBridge.ts": {
           "internal": [
@@ -453,20 +447,24 @@
           ],
           "external": []
         },
-        "host-app/src/bridge/useBridge.ts": {
-          "internal": [
-            "host-app/src/bridge/createBridge.ts",
-            "host-app/src/config.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": ["react"]
-        },
         "host-app/src/components/BridgeStatus.props.ts": {
           "internal": ["host-app/src/bridge/createBridge.ts"],
           "external": ["react"]
         },
         "host-app/src/components/BridgeStatus.tsx": {
           "internal": ["host-app/src/components/BridgeStatus.props.ts", "host-app/src/i18n.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/hooks/__tests__/useBridge.test.tsx": {
+          "internal": ["host-app/src/hooks/useBridge.ts"],
+          "external": ["@testing-library/react", "react", "vitest"]
+        },
+        "host-app/src/hooks/useBridge.ts": {
+          "internal": [
+            "host-app/src/bridge/createBridge.ts",
+            "host-app/src/config.ts",
+            "packages/contract/src/messages.ts"
+          ],
           "external": ["react"]
         }
       }
@@ -484,9 +482,9 @@
         "host-app/src/components/MeasurementRow.props.ts",
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/form/__tests__/rows.test.ts",
-        "host-app/src/form/__tests__/useScoringForm.test.tsx",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/useScoringForm.ts"
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
+        "host-app/src/hooks/useScoringForm.ts"
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.props.ts": {
@@ -496,9 +494,9 @@
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
-            "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
@@ -506,32 +504,32 @@
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
           "external": ["vitest"]
         },
-        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+        "host-app/src/form/rows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/form/useScoringForm.ts",
+            "host-app/src/hooks/useScoringForm.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/form/rows.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/selectors.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
-        "host-app/src/form/useScoringForm.ts": {
+        "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
@@ -550,7 +548,7 @@
       "files": [
         "docs/decisions/A-4-cancelled-activation.md",
         "host-app/src/config.ts",
-        "host-app/src/form/useScoringForm.ts",
+        "host-app/src/hooks/useScoringForm.ts",
         "viewer/extensions/scoring-bridge/src/commands.ts"
       ],
       "imports": {
@@ -558,13 +556,13 @@
           "internal": ["packages/contract/src/messages.ts"],
           "external": []
         },
-        "host-app/src/form/useScoringForm.ts": {
+        "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
@@ -636,67 +634,67 @@
       "verify": "The correct row shows the value with its unit and status `Done`; a measurement that arrives for an unknown or non-`Drawing…` row is ignored and logged.",
       "files": [
         "host-app/src/components/MeasurementRow.tsx",
-        "host-app/src/form/__tests__/format.test.ts",
-        "host-app/src/form/__tests__/useScoringForm.test.tsx",
-        "host-app/src/form/format.ts",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/useScoringForm.ts"
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
+        "host-app/src/hooks/useScoringForm.ts",
+        "host-app/src/utils/__tests__/format.test.ts",
+        "host-app/src/utils/format.ts"
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
-            "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
-        "host-app/src/form/__tests__/format.test.ts": {
+        "host-app/src/form/rows.ts": {
           "internal": [
-            "host-app/src/form/format.ts",
-            "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/config.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
           ],
-          "external": ["vitest"]
+          "external": []
         },
-        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/form/useScoringForm.ts",
+            "host-app/src/hooks/useScoringForm.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/form/format.ts": {
+        "host-app/src/hooks/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/form/rowActions.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/utils/__tests__/format.test.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
+          ],
+          "external": ["vitest"]
+        },
+        "host-app/src/utils/format.ts": {
           "internal": [
             "host-app/src/form/rows.ts",
             "host-app/src/i18n.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": []
-        },
-        "host-app/src/form/rows.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/selectors.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
-        "host-app/src/form/useScoringForm.ts": {
-          "internal": [
-            "host-app/src/form/rowActions.ts",
-            "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
-            "host-app/src/form/viewerEventHandlers.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": ["react"]
         }
       }
     },
@@ -724,8 +722,8 @@
         "host-app/src/components/TotalsFooter.tsx": {
           "internal": [
             "host-app/src/components/TotalsFooter.props.ts",
-            "host-app/src/form/format.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
@@ -783,9 +781,9 @@
       "files": [
         "docs/decisions/A-10-echo-guard.md",
         "host-app/src/form/__tests__/rows.test.ts",
-        "host-app/src/form/__tests__/useScoringForm.test.tsx",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/useScoringForm.ts",
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
+        "host-app/src/hooks/useScoringForm.ts",
         "viewer/extensions/scoring-bridge/src/bridge.ts",
         "viewer/extensions/scoring-bridge/src/measurements.ts",
         "viewer/extensions/scoring-bridge/src/throttle.ts"
@@ -795,32 +793,32 @@
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
           "external": ["vitest"]
         },
-        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+        "host-app/src/form/rows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/form/useScoringForm.ts",
+            "host-app/src/hooks/useScoringForm.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/form/rows.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/selectors.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
-        "host-app/src/form/useScoringForm.ts": {
+        "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
@@ -865,9 +863,9 @@
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/components/__tests__/ScoringPanel.test.tsx",
         "host-app/src/form/__tests__/rows.test.ts",
-        "host-app/src/form/__tests__/useScoringForm.test.tsx",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/useScoringForm.ts",
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
+        "host-app/src/hooks/useScoringForm.ts",
         "packages/contract/src/__tests__/messages.test.ts",
         "packages/contract/src/messages.ts",
         "viewer/extensions/scoring-bridge/src/bridge.ts",
@@ -878,9 +876,9 @@
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
-            "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
@@ -892,32 +890,32 @@
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
           "external": ["vitest"]
         },
-        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+        "host-app/src/form/rows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/form/useScoringForm.ts",
+            "host-app/src/hooks/useScoringForm.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/form/rows.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/selectors.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
-        "host-app/src/form/useScoringForm.ts": {
+        "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
@@ -972,8 +970,8 @@
       "files": [
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/components/__tests__/ScoringPanel.test.tsx",
-        "host-app/src/form/__tests__/useScoringForm.test.tsx",
-        "host-app/src/form/useScoringForm.ts",
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
+        "host-app/src/hooks/useScoringForm.ts",
         "packages/contract/src/__tests__/messages.test.ts",
         "packages/contract/src/messages.ts",
         "viewer/extensions/scoring-bridge/src/commands.ts",
@@ -983,9 +981,9 @@
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
-            "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
@@ -993,24 +991,24 @@
           "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/form/rows.ts"],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/form/useScoringForm.ts",
+            "host-app/src/hooks/useScoringForm.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/form/useScoringForm.ts": {
+        "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
@@ -1059,18 +1057,18 @@
         "host-app/src/config.ts",
         "host-app/src/form/__tests__/rows.test.ts",
         "host-app/src/form/__tests__/totals.test.ts",
-        "host-app/src/form/__tests__/useScoringForm.test.tsx",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/useScoringForm.ts",
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
+        "host-app/src/hooks/useScoringForm.ts",
         "host-app/src/i18n.ts"
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
-            "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
@@ -1096,8 +1094,8 @@
         "host-app/src/components/TotalsFooter.tsx": {
           "internal": [
             "host-app/src/components/TotalsFooter.props.ts",
-            "host-app/src/form/format.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
@@ -1121,32 +1119,32 @@
           ],
           "external": ["vitest"]
         },
-        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+        "host-app/src/form/rows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/form/useScoringForm.ts",
+            "host-app/src/hooks/useScoringForm.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/form/rows.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/selectors.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
-        "host-app/src/form/useScoringForm.ts": {
+        "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
@@ -1204,15 +1202,15 @@
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/form/__tests__/storage.test.ts",
         "host-app/src/form/commands.ts",
-        "host-app/src/form/format.ts",
         "host-app/src/form/rowActions.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
-        "host-app/src/form/usePersistedRows.ts",
-        "host-app/src/form/useScoringForm.ts",
-        "host-app/src/form/useViewerEvents.ts",
         "host-app/src/form/viewerEventHandlers.ts",
+        "host-app/src/hooks/usePersistedRows.ts",
+        "host-app/src/hooks/useScoringForm.ts",
+        "host-app/src/hooks/useViewerEvents.ts",
         "host-app/src/i18n.ts",
+        "host-app/src/utils/format.ts",
         "packages/contract/src/messages.ts",
         "scripts/eslint-fork-style.config.js",
         "viewer/extensions/scoring-bridge/src/geometry.ts",
@@ -1237,9 +1235,9 @@
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
-            "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
@@ -1251,20 +1249,12 @@
           "internal": ["packages/contract/src/messages.ts"],
           "external": []
         },
-        "host-app/src/form/format.ts": {
-          "internal": [
-            "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
         "host-app/src/form/rowActions.ts": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/commands.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/utils/selectors.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
@@ -1272,7 +1262,7 @@
         "host-app/src/form/rows.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/selectors.ts",
+            "host-app/src/utils/selectors.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": []
@@ -1281,7 +1271,18 @@
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
           "external": []
         },
-        "host-app/src/form/usePersistedRows.ts": {
+        "host-app/src/form/viewerEventHandlers.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/commands.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/hooks/usePersistedRows.ts": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
@@ -1289,34 +1290,31 @@
           ],
           "external": ["react"]
         },
-        "host-app/src/form/useScoringForm.ts": {
+        "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
             "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["react"]
         },
-        "host-app/src/form/useViewerEvents.ts": {
+        "host-app/src/hooks/useViewerEvents.ts": {
           "internal": ["packages/contract/src/messages.ts"],
-          "external": ["react"]
-        },
-        "host-app/src/form/viewerEventHandlers.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
-            "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
-            "host-app/src/form/useViewerEvents.ts",
-            "packages/contract/src/messages.ts"
-          ],
           "external": ["react"]
         },
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/utils/format.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/i18n.ts",
+            "packages/contract/src/messages.ts"
+          ],
           "external": []
         },
         "packages/contract/src/messages.ts": {
@@ -1500,17 +1498,17 @@
         "eslint.config.js",
         "host-app/src/__tests__/App.test.tsx",
         "host-app/src/bridge/__tests__/createBridge.test.ts",
-        "host-app/src/bridge/__tests__/useBridge.test.tsx",
         "host-app/src/components/BridgeStatus.props.ts",
         "host-app/src/components/MeasurementRow.props.ts",
         "host-app/src/components/ScoringPanel.props.ts",
         "host-app/src/components/TotalsFooter.props.ts",
         "host-app/src/components/ViewerFrame.props.ts",
         "host-app/src/components/__tests__/ScoringPanel.test.tsx",
-        "host-app/src/form/__tests__/format.test.ts",
         "host-app/src/form/__tests__/rows.test.ts",
         "host-app/src/form/__tests__/totals.test.ts",
-        "host-app/src/form/__tests__/useScoringForm.test.tsx",
+        "host-app/src/hooks/__tests__/useBridge.test.tsx",
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
+        "host-app/src/utils/__tests__/format.test.ts",
         "packages/contract/src/__tests__/messages.test.ts"
       ],
       "imports": {
@@ -1532,10 +1530,6 @@
         "host-app/src/bridge/__tests__/createBridge.test.ts": {
           "internal": ["host-app/src/bridge/createBridge.ts", "packages/contract/src/messages.ts"],
           "external": ["vitest"]
-        },
-        "host-app/src/bridge/__tests__/useBridge.test.tsx": {
-          "internal": ["host-app/src/bridge/useBridge.ts"],
-          "external": ["@testing-library/react", "react", "vitest"]
         },
         "host-app/src/components/BridgeStatus.props.ts": {
           "internal": ["host-app/src/bridge/createBridge.ts"],
@@ -1561,14 +1555,6 @@
           "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/form/rows.ts"],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/form/__tests__/format.test.ts": {
-          "internal": [
-            "host-app/src/form/format.ts",
-            "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
-          ],
-          "external": ["vitest"]
-        },
         "host-app/src/form/__tests__/rows.test.ts": {
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
           "external": ["vitest"]
@@ -1581,16 +1567,28 @@
           ],
           "external": ["vitest"]
         },
-        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+        "host-app/src/hooks/__tests__/useBridge.test.tsx": {
+          "internal": ["host-app/src/hooks/useBridge.ts"],
+          "external": ["@testing-library/react", "react", "vitest"]
+        },
+        "host-app/src/hooks/__tests__/useScoringForm.test.tsx": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
-            "host-app/src/form/useScoringForm.ts",
+            "host-app/src/hooks/useScoringForm.ts",
             "packages/contract/src/messages.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/utils/__tests__/format.test.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
+          ],
+          "external": ["vitest"]
         },
         "packages/contract/src/__tests__/messages.test.ts": {
           "internal": ["packages/contract/src/messages.ts"],
@@ -1672,9 +1670,9 @@
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
-            "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         }
@@ -1817,14 +1815,14 @@
         "host-app/src/components/MeasurementRow.props.ts",
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/form/__tests__/commands.test.ts",
-        "host-app/src/form/__tests__/selectors.test.ts",
         "host-app/src/form/commands.ts",
-        "host-app/src/form/format.ts",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/selectors.ts",
-        "host-app/src/form/useScoringForm.ts",
-        "host-app/src/form/useViewerEvents.ts",
-        "host-app/src/form/viewerEventHandlers.ts"
+        "host-app/src/form/viewerEventHandlers.ts",
+        "host-app/src/hooks/useScoringForm.ts",
+        "host-app/src/hooks/useViewerEvents.ts",
+        "host-app/src/utils/__tests__/selectors.test.ts",
+        "host-app/src/utils/format.ts",
+        "host-app/src/utils/selectors.ts"
       ],
       "imports": {
         "eslint.config.js": {
@@ -1866,9 +1864,9 @@
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
-            "host-app/src/form/format.ts",
             "host-app/src/form/rows.ts",
-            "host-app/src/i18n.ts"
+            "host-app/src/i18n.ts",
+            "host-app/src/utils/format.ts"
           ],
           "external": ["react"]
         },
@@ -1876,15 +1874,49 @@
           "internal": ["host-app/src/form/commands.ts", "packages/contract/src/messages.ts"],
           "external": ["vitest"]
         },
-        "host-app/src/form/__tests__/selectors.test.ts": {
-          "internal": ["host-app/src/form/rows.ts", "host-app/src/form/selectors.ts"],
-          "external": ["vitest"]
-        },
         "host-app/src/form/commands.ts": {
           "internal": ["packages/contract/src/messages.ts"],
           "external": []
         },
-        "host-app/src/form/format.ts": {
+        "host-app/src/form/rows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/form/viewerEventHandlers.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/commands.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/hooks/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/form/rowActions.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/viewerEventHandlers.ts",
+            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/hooks/useViewerEvents.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/utils/__tests__/selectors.test.ts": {
+          "internal": ["host-app/src/form/rows.ts", "host-app/src/utils/selectors.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/utils/format.ts": {
           "internal": [
             "host-app/src/form/rows.ts",
             "host-app/src/i18n.ts",
@@ -1892,43 +1924,9 @@
           ],
           "external": []
         },
-        "host-app/src/form/rows.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/selectors.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
-        "host-app/src/form/selectors.ts": {
+        "host-app/src/utils/selectors.ts": {
           "internal": ["host-app/src/form/rows.ts"],
           "external": []
-        },
-        "host-app/src/form/useScoringForm.ts": {
-          "internal": [
-            "host-app/src/form/rowActions.ts",
-            "host-app/src/form/rows.ts",
-            "host-app/src/form/usePersistedRows.ts",
-            "host-app/src/form/useViewerEvents.ts",
-            "host-app/src/form/viewerEventHandlers.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": ["react"]
-        },
-        "host-app/src/form/useViewerEvents.ts": {
-          "internal": ["packages/contract/src/messages.ts"],
-          "external": ["react"]
-        },
-        "host-app/src/form/viewerEventHandlers.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
-            "host-app/src/form/rows.ts",
-            "host-app/src/form/selectors.ts",
-            "host-app/src/form/useViewerEvents.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": ["react"]
         }
       }
     },
@@ -1979,6 +1977,60 @@
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/messages.ts"],
           "external": []
+        }
+      }
+    },
+    {
+      "id": "F-36",
+      "name": "Folder layout and the .claude workspace documented and applied",
+      "description": "Documents the conventional React layout and the anatomy of a .claude folder, separating the parts that are real features from the ones that are not, and applies the layout to host-app: pages, hooks, utils, assets, context and redux alongside the bridge and form feature folders. Adds slash commands for the repeated procedures, path-scoped rules for host-app, the fork and the contract, a slice skill, and a hook that formats a file right after it is written.",
+      "canon": ["A-13", "D-3", "Q-7"],
+      "dependsOn": ["F-35"],
+      "slice": "30",
+      "status": "review",
+      "verify": "host-app builds and its 149 tests pass after the move; npm run lint is clean; the docs page lists the structure document; the format hook rewrites a touched file.",
+      "files": [
+        ".claude/agents/architect.md",
+        ".claude/agents/developer.md",
+        ".claude/commands/close-node.md",
+        ".claude/commands/e2e.md",
+        ".claude/commands/verify.md",
+        ".claude/rules/contract.md",
+        ".claude/rules/fork.md",
+        ".claude/rules/host-app.md",
+        ".claude/settings.json",
+        ".claude/skills/slice/SKILL.md",
+        ".gitignore",
+        "CLAUDE.md",
+        "docs/CONVENTIONS.md",
+        "docs/PROJECT-STRUCTURE.md",
+        "host-app/src/App.tsx",
+        "host-app/src/pages/ScoringPage.tsx",
+        "scripts/build-docs.mjs",
+        "scripts/hooks/format-touched.mjs"
+      ],
+      "imports": {
+        "host-app/src/App.tsx": {
+          "internal": ["host-app/src/App.css", "host-app/src/pages/ScoringPage.tsx"],
+          "external": ["react"]
+        },
+        "host-app/src/pages/ScoringPage.tsx": {
+          "internal": [
+            "host-app/src/components/BridgeStatus.tsx",
+            "host-app/src/components/ScoringPanel.tsx",
+            "host-app/src/components/ViewerFrame.tsx",
+            "host-app/src/hooks/useBridge.ts",
+            "host-app/src/hooks/useScoringForm.ts"
+          ],
+          "external": ["react"]
+        },
+        "scripts/build-docs.mjs": {
+          "internal": [],
+          "external": ["node:fs", "node:path", "node:url"]
+        },
+        "scripts/hooks/format-touched.mjs": {
+          "internal": [],
+          "external": ["node:child_process"]
         }
       }
     }

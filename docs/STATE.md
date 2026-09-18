@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                           |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | none; last merged slice 29 `refactor: i18n naming`                                                                              |
-| Gate           | idle                                                                                                                            |
-| Last merged PR | #34 `refactor: i18n naming`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                             |
+| Field          | Value                                                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 30 `chore: project structure` (branch `refactor/project-structure`, node F-36)                                             |
+| Gate           | 2 — layout applied and documented, `.claude` workspace filled in; awaiting result approval                                 |
+| Last merged PR | #35 `docs: close F-35`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                        |
 
 ## Open decisions (see CANON.md → Decisions)
 

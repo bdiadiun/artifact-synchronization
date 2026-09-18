@@ -70,6 +70,11 @@ No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`
 
 ## 5. Modules and imports
 
+Where a file belongs is set by [`docs/PROJECT-STRUCTURE.md`](PROJECT-STRUCTURE.md): components,
+pages, hooks and generic helpers follow the conventional React layout, while the message channel and
+the row model keep their own feature folders. Instructions that apply to one part of the repository
+live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
+
 - One concern per module: a module exports one idea (a factory, a hook, a component, a pure
   helper set) and is named after it. A file over ~150 lines of code or a function over ~50 lines is
   a signal to split, and the lint reports it.

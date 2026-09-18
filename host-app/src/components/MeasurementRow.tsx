@@ -6,7 +6,7 @@ import {
   formatRowKind,
   formatRowMetric,
   formatRowStatus,
-} from '../form/format';
+} from '../utils/format';
 import { rowInteraction, rowStyle, styles, type MeasurementRowProps } from './MeasurementRow.props';
 
 // stopPropagation keeps a button click from also triggering the row's focus click. Module scope:

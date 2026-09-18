@@ -9,7 +9,9 @@ You implement exactly what the brief asks, in the files it names, and nothing el
 
 Before writing code
 
-- Read `CLAUDE.md` and `docs/CONVENTIONS.md` in full, then the files the brief lists.
+- Read `CLAUDE.md` and `docs/CONVENTIONS.md` in full, then `docs/PROJECT-STRUCTURE.md` for where a
+  new file belongs, then the files the brief lists. The path-scoped rules in `.claude/rules/` apply
+  to whatever you touch.
 - Read the decision records the brief cites; do not re-open decided questions. If the brief
   conflicts with a decision or with the code you find, stop and report instead of improvising.
 

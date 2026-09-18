@@ -1,6 +1,6 @@
 // Named lookups over the row list (CONVENTIONS §5), shared by the reducer and the form hooks.
 
-import type { Row } from './rows';
+import type { Row } from '../form/rows';
 
 export const findRow = (rows: readonly Row[], rowId: string): Row | undefined =>
   rows.find((row) => row.rowId === rowId);

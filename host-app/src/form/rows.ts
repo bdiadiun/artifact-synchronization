@@ -7,7 +7,7 @@ import type {
   ToolName,
 } from '@scoring/contract';
 import { DEFAULT_TOOL } from '../config';
-import { findRow, findRowByUid, hasRow } from './selectors';
+import { findRow, findRowByUid, hasRow } from '../utils/selectors';
 
 export enum RowStatus {
   Pending = 'pending',

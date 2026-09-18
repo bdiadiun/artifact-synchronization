@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RowStatus, type Row } from '../rows';
+import { RowStatus, type Row } from '../../form/rows';
 import { findRow, findRowByUid, hasRow } from '../selectors';
 
 const row = (rowId: string, measurementUid: string | null): Row => ({
