@@ -2,6 +2,7 @@
 
 import type { Metrics, ToolName } from '@scoring/contract';
 import { DEFAULT_TOOL } from '../config';
+import { findRow, findRowByUid, hasRow } from './selectors';
 
 export enum RowStatus {
   Pending = 'pending',
@@ -61,101 +62,128 @@ export type FormAction =
   | { type: FormActionType.RemoveRow; rowId: string }
   | { type: FormActionType.MeasurementCleared; rowId: string };
 
+type ActionOf<T extends FormActionType> = Extract<FormAction, { type: T }>;
+
 export const initialFormState: FormState = { rows: [], armedRowId: null };
+
+const clearArmed = (state: FormState, rowId: string): string | null =>
+  state.armedRowId === rowId ? null : state.armedRowId;
+
+const replaceRow = (state: FormState, rowId: string, patch: Partial<Row>): Row[] =>
+  state.rows.map((row) => (row.rowId === rowId ? { ...row, ...patch } : row));
+
+const addRow = (state: FormState, action: ActionOf<FormActionType.AddRow>): FormState => {
+  const newRow: Row = {
+    rowId: action.rowId,
+    status: RowStatus.Pending,
+    toolName: action.toolName ?? DEFAULT_TOOL,
+    metrics: null,
+    measurementUid: null,
+  };
+  return { ...state, rows: [...state.rows, newRow] };
+};
+
+const armRow = (state: FormState, action: ActionOf<FormActionType.ArmRow>): FormState => {
+  if (!hasRow(state.rows, action.rowId)) {
+    return state;
+  }
+  const rows = state.rows.map((row) => {
+    if (row.rowId === action.rowId) {
+      return row.status === RowStatus.Drawing ? row : { ...row, status: RowStatus.Drawing };
+    }
+    // Only one row armed at a time (A-4): any other drawing row goes back to pending.
+    return row.status === RowStatus.Drawing ? { ...row, status: RowStatus.Pending } : row;
+  });
+  return { rows, armedRowId: action.rowId };
+};
+
+const disarmRow = (state: FormState, action: ActionOf<FormActionType.DisarmRow>): FormState => {
+  const target = findRow(state.rows, action.rowId);
+  if (target?.status !== RowStatus.Drawing) {
+    return state;
+  }
+  return {
+    rows: replaceRow(state, action.rowId, { status: RowStatus.Pending }),
+    armedRowId: clearArmed(state, action.rowId),
+  };
+};
+
+const receiveMeasurement = (
+  state: FormState,
+  action: ActionOf<FormActionType.MeasurementReceived>,
+): FormState => {
+  const target = findRow(state.rows, action.rowId);
+  if (target?.status !== RowStatus.Drawing) {
+    return state;
+  }
+  return {
+    rows: replaceRow(state, action.rowId, {
+      status: RowStatus.Done,
+      metrics: action.metrics,
+      measurementUid: action.measurementUid,
+    }),
+    armedRowId: clearArmed(state, action.rowId),
+  };
+};
+
+const updateMeasurement = (
+  state: FormState,
+  action: ActionOf<FormActionType.MeasurementUpdated>,
+): FormState => {
+  const target = findRowByUid(state.rows, action.measurementUid);
+  if (target?.status !== RowStatus.Done) {
+    return state;
+  }
+  const rows = state.rows.map((row) =>
+    row.measurementUid === action.measurementUid ? { ...row, metrics: action.metrics } : row,
+  );
+  return { ...state, rows };
+};
+
+const removeRow = (state: FormState, action: ActionOf<FormActionType.RemoveRow>): FormState => {
+  if (!hasRow(state.rows, action.rowId)) {
+    return state;
+  }
+  return {
+    rows: state.rows.filter((row) => row.rowId !== action.rowId),
+    armedRowId: clearArmed(state, action.rowId),
+  };
+};
+
+const clearMeasurement = (
+  state: FormState,
+  action: ActionOf<FormActionType.MeasurementCleared>,
+): FormState => {
+  const target = findRow(state.rows, action.rowId);
+  if (target?.status !== RowStatus.Done) {
+    return state;
+  }
+  return {
+    ...state,
+    rows: replaceRow(state, action.rowId, {
+      status: RowStatus.Pending,
+      metrics: null,
+      measurementUid: null,
+    }),
+  };
+};
 
 export const reducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
-    case FormActionType.AddRow: {
-      const newRow: Row = {
-        rowId: action.rowId,
-        status: RowStatus.Pending,
-        toolName: action.toolName ?? DEFAULT_TOOL,
-        metrics: null,
-        measurementUid: null,
-      };
-      return { ...state, rows: [...state.rows, newRow] };
-    }
-
-    case FormActionType.ArmRow: {
-      const targetExists = state.rows.some((row) => row.rowId === action.rowId);
-      if (!targetExists) {
-        return state;
-      }
-      const rows = state.rows.map((row) => {
-        if (row.rowId === action.rowId) {
-          return row.status === RowStatus.Drawing ? row : { ...row, status: RowStatus.Drawing };
-        }
-        // Only one row armed at a time (A-4): any other drawing row goes back to pending.
-        return row.status === RowStatus.Drawing ? { ...row, status: RowStatus.Pending } : row;
-      });
-      return { rows, armedRowId: action.rowId };
-    }
-
-    case FormActionType.DisarmRow: {
-      const target = state.rows.find((row) => row.rowId === action.rowId);
-      if (target?.status !== RowStatus.Drawing) {
-        return state;
-      }
-      const rows = state.rows.map((row) =>
-        row.rowId === action.rowId ? { ...row, status: RowStatus.Pending } : row,
-      );
-      const armedRowId = state.armedRowId === action.rowId ? null : state.armedRowId;
-      return { rows, armedRowId };
-    }
-
-    case FormActionType.MeasurementReceived: {
-      const target = state.rows.find((row) => row.rowId === action.rowId);
-      if (target?.status !== RowStatus.Drawing) {
-        return state;
-      }
-      const rows = state.rows.map((row) =>
-        row.rowId === action.rowId
-          ? {
-              ...row,
-              status: RowStatus.Done,
-              metrics: action.metrics,
-              measurementUid: action.measurementUid,
-            }
-          : row,
-      );
-      const armedRowId = state.armedRowId === action.rowId ? null : state.armedRowId;
-      return { rows, armedRowId };
-    }
-
-    case FormActionType.MeasurementUpdated: {
-      const target = state.rows.find((row) => row.measurementUid === action.measurementUid);
-      if (target?.status !== RowStatus.Done) {
-        return state;
-      }
-      const rows = state.rows.map((row) =>
-        row.measurementUid === action.measurementUid ? { ...row, metrics: action.metrics } : row,
-      );
-      return { ...state, rows };
-    }
-
-    case FormActionType.RemoveRow: {
-      const targetExists = state.rows.some((row) => row.rowId === action.rowId);
-      if (!targetExists) {
-        return state;
-      }
-      const rows = state.rows.filter((row) => row.rowId !== action.rowId);
-      const armedRowId = state.armedRowId === action.rowId ? null : state.armedRowId;
-      return { rows, armedRowId };
-    }
-
-    case FormActionType.MeasurementCleared: {
-      const target = state.rows.find((row) => row.rowId === action.rowId);
-      if (target?.status !== RowStatus.Done) {
-        return state;
-      }
-      const rows = state.rows.map((row) =>
-        row.rowId === action.rowId
-          ? { ...row, status: RowStatus.Pending, metrics: null, measurementUid: null }
-          : row,
-      );
-      return { ...state, rows };
-    }
-
+    case FormActionType.AddRow:
+      return addRow(state, action);
+    case FormActionType.ArmRow:
+      return armRow(state, action);
+    case FormActionType.DisarmRow:
+      return disarmRow(state, action);
+    case FormActionType.MeasurementReceived:
+      return receiveMeasurement(state, action);
+    case FormActionType.MeasurementUpdated:
+      return updateMeasurement(state, action);
+    case FormActionType.RemoveRow:
+      return removeRow(state, action);
+    case FormActionType.MeasurementCleared:
+      return clearMeasurement(state, action);
     default: {
       const exhaustiveCheck: never = action;
       return exhaustiveCheck;

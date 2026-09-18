@@ -1,43 +1,8 @@
 import type { JSX, KeyboardEvent, MouseEvent } from 'react';
-import type { Metric, Metrics } from '@scoring/contract';
-import { RowStatus, metricKeyForTool, type MetricKey, type Row } from '../form/rows';
+import { RowStatus } from '../form/rows';
 import { UI } from '../ui-strings';
-import { formatMetric } from '../form/format';
-import { styles, rowStyle, type MeasurementRowProps } from './MeasurementRow.props';
-
-const STATUS_LABEL: Record<RowStatus, string> = {
-  [RowStatus.Pending]: UI.statusPending,
-  [RowStatus.Drawing]: UI.statusDrawing,
-  [RowStatus.Done]: UI.statusDone,
-};
-
-const KIND_LABEL: Record<MetricKey, string> = {
-  area: UI.kindArea,
-  length: UI.kindLength,
-};
-
-// Formats the metric that matches the row's own tool (S-5.4: area for the ellipse/rectangle
-// tools, length for the length tool). If that key is absent but the payload carries something
-// else (P-8 — perimeter, mean intensity, ...), that first metric is shown with its key so a
-// future metric type does not silently disappear from the row.
-const displayMetric = (row: Row): string | null => {
-  if (row.metrics === null) {
-    return null;
-  }
-  // `Metrics` is typed as `Record<string, Metric>`, so TS treats every key as always present; at
-  // runtime it is optional (only the metrics the viewer actually sent exist), so the lookup is
-  // cast to `Partial` to keep this defensive check honest.
-  const own = (row.metrics as Partial<Metrics>)[metricKeyForTool(row.toolName)];
-  if (own !== undefined) {
-    return formatMetric(own);
-  }
-  const firstEntry = Object.entries(row.metrics)[0] as [string, Metric] | undefined;
-  if (firstEntry === undefined) {
-    return null;
-  }
-  const [key, metric] = firstEntry;
-  return `${key}: ${formatMetric(metric)}`;
-};
+import { formatRowKind, formatRowMetric, formatRowStatus } from '../form/format';
+import { rowInteraction, rowStyle, styles, type MeasurementRowProps } from './MeasurementRow.props';
 
 // Native elements, minimal grey styling (X-3: no design work required).
 export const MeasurementRow = ({
@@ -48,38 +13,27 @@ export const MeasurementRow = ({
   onRemove,
   onFocus,
 }: MeasurementRowProps): JSX.Element => {
-  const metricLabel = row.status === RowStatus.Done ? displayMetric(row) : null;
+  const metricLabel = formatRowMetric(row);
   const focusable = row.status === RowStatus.Done;
 
-  // S-5.3: only a `done` row has a matching annotation in the viewer to focus. Clicking the row
-  // body (not its buttons, see stopPropagation below) sends FOCUS_MEASUREMENT; other statuses are
-  // not interactive, so no role/handlers are attached to them.
-  const handleRowClick = (): void => {
-    if (focusable) {
-      onFocus(row.rowId);
-    }
-  };
-
-  const handleActivate = (event: MouseEvent<HTMLButtonElement>): void => {
-    event.stopPropagation();
-    onActivate(row.rowId);
-  };
-
-  const handleCancel = (event: MouseEvent<HTMLButtonElement>): void => {
-    event.stopPropagation();
-    onCancel(row.rowId);
-  };
-
   // stopPropagation keeps a button click from also triggering the row's focus click.
-  const handleRemove = (event: MouseEvent<HTMLButtonElement>): void => {
-    event.stopPropagation();
-    onRemove(row.rowId);
+  const rowButtonHandler =
+    (action: (rowId: string) => void) =>
+    (event: MouseEvent<HTMLButtonElement>): void => {
+      event.stopPropagation();
+      action(row.rowId);
+    };
+
+  const handleActivate = rowButtonHandler(onActivate);
+  const handleCancel = rowButtonHandler(onCancel);
+  const handleRemove = rowButtonHandler(onRemove);
+
+  // S-5.3: both are attached only while the row is focusable, so neither re-checks the status.
+  const handleRowClick = (): void => {
+    onFocus(row.rowId);
   };
 
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
-    if (!focusable) {
-      return;
-    }
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       onFocus(row.rowId);
@@ -90,16 +44,14 @@ export const MeasurementRow = ({
     <div
       style={rowStyle(focusable)}
       title={row.measurementUid ?? undefined}
-      role={focusable ? 'button' : undefined}
-      tabIndex={focusable ? 0 : undefined}
-      aria-label={focusable ? UI.focusRow : undefined}
+      {...rowInteraction(focusable)}
       onClick={focusable ? handleRowClick : undefined}
       onKeyDown={focusable ? handleRowKeyDown : undefined}
     >
       <span>#{index + 1}</span>
-      <span style={styles.status}>{KIND_LABEL[metricKeyForTool(row.toolName)]}</span>
-      <span style={styles.status}>{STATUS_LABEL[row.status]}</span>
-      {row.status === RowStatus.Done && metricLabel !== null && <span>{metricLabel}</span>}
+      <span style={styles.status}>{formatRowKind(row)}</span>
+      <span style={styles.status}>{formatRowStatus(row.status)}</span>
+      {metricLabel !== null && <span>{metricLabel}</span>}
       {row.status === RowStatus.Pending && (
         <button type="button" onClick={handleActivate}>
           {UI.activate}

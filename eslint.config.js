@@ -49,13 +49,13 @@ export default tseslint.config(
 
       'func-style': ['error', 'expression'],
       'prefer-arrow-callback': 'error',
-      // Size and shape limits (CONVENTIONS §5). Warnings for now: the two known hot spots are
-      // being split in the next slices, and an error here would block unrelated work.
-      'max-lines-per-function': ['warn', { max: 60, skipBlankLines: true, skipComments: true }],
-      'max-lines': ['warn', { max: 200, skipBlankLines: true, skipComments: true }],
-      complexity: ['warn', 10],
-      'max-depth': ['warn', 3],
-      'max-params': ['warn', 4],
+      // Size and shape limits (CONVENTIONS §5). Errors since F-33: every unit is under them, so a
+      // new one that is not has to be split rather than merged.
+      'max-lines-per-function': ['error', { max: 60, skipBlankLines: true, skipComments: true }],
+      'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }],
+      complexity: ['error', 10],
+      'max-depth': ['error', 3],
+      'max-params': ['error', 4],
       eqeqeq: 'error',
       'no-console': ['warn', { allow: ['warn', 'error', 'debug', 'info'] }],
       'no-restricted-syntax': [
