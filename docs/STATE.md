@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                   |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 21 `docs: close graph statuses` (branch `docs/close-graph-statuses`)                                                                                                                                    |
-| Gate           | 2 — F-28 and F-30 set to done after their merges; awaiting result approval                                                                                                                              |
-| Last merged PR | #22 `refactor: named event handlers`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.5 done; S-5.4 and S-5.6 not taken; fork PRs #1–#9 merged into `scoring` |
-| Next slice     | none planned; open: F-13 video (author), optional bonuses F-17 (S-5.4 Length) and F-19 (S-5.6 state restore)                                                                                            |
+| Field          | Value                                                                                                                                                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Current slice  | 22 `feat: length row type` (branch `feat/length-row-type`, node F-17, bonus S-5.4)                                                                                                               |
+| Gate           | 2 — implemented and verified end to end (98 tests); awaiting result approval                                                                                                                     |
+| Last merged PR | #23 `docs: close graph statuses`; mandatory part complete except the video (F-13, author); bonuses S-5.1, S-5.2, S-5.3, S-5.4, S-5.5 done; S-5.6 not taken; fork PRs #1–#9 merged into `scoring` |
+| Next slice     | none planned; open: F-13 video (author), optional bonus F-19 (S-5.6 state restore)                                                                                                               |
 
 ## Open decisions (see CANON.md → Decisions)
 

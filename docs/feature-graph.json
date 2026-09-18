@@ -140,6 +140,11 @@
       "id": "21",
       "title": "docs: close graph statuses",
       "branch": "docs/close-graph-statuses"
+    },
+    {
+      "id": "22",
+      "title": "feat: length row type",
+      "branch": "feat/length-row-type"
     }
   ],
   "nodes": [
@@ -243,7 +248,7 @@
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/components/ScoringPanel.props.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
           "external": ["react"]
         },
         "host-app/src/components/ScoringPanel.tsx": {
@@ -251,6 +256,7 @@
             "host-app/src/components/MeasurementRow.tsx",
             "host-app/src/components/ScoringPanel.props.ts",
             "host-app/src/components/TotalsFooter.tsx",
+            "host-app/src/config.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/ui-strings.ts"
           ],
@@ -650,7 +656,7 @@
       ],
       "imports": {
         "host-app/src/components/TotalsFooter.props.ts": {
-          "internal": ["host-app/src/form/totals.ts"],
+          "internal": ["host-app/src/form/totals.ts", "packages/contract/src/messages.ts"],
           "external": ["react"]
         },
         "host-app/src/components/TotalsFooter.tsx": {
@@ -952,14 +958,113 @@
     {
       "id": "F-17",
       "name": "Bonus: Length row type with separate sum",
-      "description": "Adds a \"Length\" row type backed by the `Length` tool, with its sum computed separately from areas. Not implemented; the contract already allows `Length` and `mm`/`px` units.",
+      "description": "A form row carries the tool it will arm (EllipticalROI or Length); the metric key to read is derived from that tool, never stored twice. The panel offers a button per kind, each row shows its kind and value, and the footer sums areas and lengths separately, each grouped by unit. The viewer needed no change: it already activates any tool named in ACTIVATE_TOOL and maps Length measurements.",
       "canon": ["S-5.4"],
       "dependsOn": ["F-11"],
-      "slice": "later",
-      "status": "planned",
-      "verify": "Length rows sum separately from area rows.",
-      "files": [],
-      "imports": {}
+      "slice": "22",
+      "status": "review",
+      "verify": "Adding a length row arms the Length tool in OHIF and the drawn line lands in that row in mm; area and length totals are shown separately; 98 unit tests pass.",
+      "files": [
+        "ARCHITECTURE.md",
+        "host-app/src/components/MeasurementRow.tsx",
+        "host-app/src/components/ScoringPanel.props.ts",
+        "host-app/src/components/ScoringPanel.tsx",
+        "host-app/src/components/TotalsFooter.props.ts",
+        "host-app/src/components/TotalsFooter.tsx",
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx",
+        "host-app/src/config.ts",
+        "host-app/src/form/__tests__/rows.test.ts",
+        "host-app/src/form/__tests__/totals.test.ts",
+        "host-app/src/form/__tests__/useScoringForm.test.tsx",
+        "host-app/src/form/rows.ts",
+        "host-app/src/form/useScoringForm.ts",
+        "host-app/src/ui-strings.ts"
+      ],
+      "imports": {
+        "host-app/src/components/MeasurementRow.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/ui-strings.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/components/ScoringPanel.props.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/ScoringPanel.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.tsx",
+            "host-app/src/components/ScoringPanel.props.ts",
+            "host-app/src/components/TotalsFooter.tsx",
+            "host-app/src/config.ts",
+            "host-app/src/form/totals.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/components/TotalsFooter.props.ts": {
+          "internal": ["host-app/src/form/totals.ts", "packages/contract/src/messages.ts"],
+          "external": ["react"]
+        },
+        "host-app/src/components/TotalsFooter.tsx": {
+          "internal": [
+            "host-app/src/components/TotalsFooter.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/ui-strings.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/components/__tests__/ScoringPanel.test.tsx": {
+          "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/form/rows.ts"],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/config.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/__tests__/rows.test.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/totals.test.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["vitest"]
+        },
+        "host-app/src/form/__tests__/useScoringForm.test.tsx": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/totals.ts",
+            "host-app/src/form/useScoringForm.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/form/rows.ts": {
+          "internal": ["host-app/src/config.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/form/useScoringForm.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/ui-strings.ts": {
+          "internal": [],
+          "external": []
+        }
+      }
     },
     {
       "id": "F-18",
@@ -1204,11 +1309,11 @@
           "external": ["react"]
         },
         "host-app/src/components/ScoringPanel.props.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/messages.ts"],
           "external": ["react"]
         },
         "host-app/src/components/TotalsFooter.props.ts": {
-          "internal": ["host-app/src/form/totals.ts"],
+          "internal": ["host-app/src/form/totals.ts", "packages/contract/src/messages.ts"],
           "external": ["react"]
         },
         "host-app/src/components/ViewerFrame.props.ts": {

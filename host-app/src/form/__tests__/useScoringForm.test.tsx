@@ -80,6 +80,35 @@ describe('useScoringForm', () => {
     );
   });
 
+  it('activate sends the length tool for a row added as a length row', () => {
+    const send = createSend();
+    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+
+    act(() => {
+      result.current.addRow('Length');
+    });
+    const rowId = result.current.rows[0].rowId;
+
+    act(() => {
+      result.current.activate(rowId);
+    });
+
+    expect(send).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId, toolName: 'Length' }),
+    );
+  });
+
+  it('addRow with no argument still uses the configured area tool', () => {
+    const send = createSend();
+    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+
+    act(() => {
+      result.current.addRow();
+    });
+
+    expect(result.current.rows[0].toolName).toBe(DEFAULT_TOOL);
+  });
+
   it('a MEASUREMENT_ADDED for the armed row moves it to done with metrics', () => {
     const send = createSend();
     const { result, rerender } = renderHook(

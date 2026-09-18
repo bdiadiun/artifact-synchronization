@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef } from 'react';
-import type { HostCommand, ViewerEvent } from '@scoring/contract';
+import type { HostCommand, ToolName, ViewerEvent } from '@scoring/contract';
 import { DEFAULT_TOOL } from '../config';
 import { FormActionType, RowStatus, initialFormState, reducer, type Row } from './rows';
 
@@ -10,7 +10,7 @@ export interface UseScoringFormOptions {
 
 export interface UseScoringFormResult {
   rows: Row[];
-  addRow: () => void;
+  addRow: (toolName?: ToolName) => void;
   activate: (rowId: string) => void;
   cancel: (rowId: string) => void;
   remove: (rowId: string) => void;
@@ -23,12 +23,13 @@ export const useScoringForm = ({
 }: UseScoringFormOptions): UseScoringFormResult => {
   const [state, dispatch] = useReducer(reducer, initialFormState);
 
-  const addRow = (): void => {
-    dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID() });
+  const addRow = (toolName: ToolName = DEFAULT_TOOL): void => {
+    dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID(), toolName });
   };
 
   const activate = (rowId: string): void => {
     const previousArmedRowId = state.armedRowId;
+    const targetRow = state.rows.find((row) => row.rowId === rowId);
     dispatch({ type: FormActionType.ArmRow, rowId });
     // Only one row can be armed at a time (A-4): deactivate the previous one first.
     if (previousArmedRowId !== null && previousArmedRowId !== rowId) {
@@ -39,12 +40,15 @@ export const useScoringForm = ({
         rowId: previousArmedRowId,
       });
     }
+    if (targetRow === undefined) {
+      return;
+    }
     send({
       version: 1,
       type: 'ACTIVATE_TOOL',
       requestId: crypto.randomUUID(),
       rowId,
-      toolName: DEFAULT_TOOL,
+      toolName: targetRow.toolName,
     });
   };
 

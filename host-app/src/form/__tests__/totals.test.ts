@@ -73,6 +73,20 @@ describe('computeTotals', () => {
     expect(computeTotals(rows)[0].count).toBe(3);
   });
 
+  it('sums only length rows and keeps mm and px apart', () => {
+    const rows: Row[] = [
+      doneRow('a', { length: { value: 10, unit: 'mm' } }),
+      doneRow('b', { length: { value: 5, unit: 'mm' } }),
+      doneRow('c', { length: { value: 3, unit: 'px' } }),
+      doneRow('d', { area: { value: 20, unit: 'mm2' } }),
+    ];
+    const totals = computeTotals(rows, 'length');
+    expect(totals).toEqual([
+      { unit: 'mm', value: 15, count: 2 },
+      { unit: 'px', value: 3, count: 1 },
+    ]);
+  });
+
   it('sums floating-point values stably, deferring rounding to display', () => {
     const rows: Row[] = [
       doneRow('a', { area: { value: 0.1, unit: 'mm2' } }),

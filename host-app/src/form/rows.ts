@@ -23,6 +23,18 @@ export interface FormState {
   armedRowId: string | null;
 }
 
+// S-5.4: the metric a row's tool produces. Derived from `toolName` rather than stored as its own
+// field, so the two can never drift apart.
+export type MetricKey = 'area' | 'length';
+
+const METRIC_KEY_BY_TOOL: Record<ToolName, MetricKey> = {
+  EllipticalROI: 'area',
+  RectangleROI: 'area',
+  Length: 'length',
+};
+
+export const metricKeyForTool = (toolName: ToolName): MetricKey => METRIC_KEY_BY_TOOL[toolName];
+
 export enum FormActionType {
   AddRow = 'ADD_ROW',
   ArmRow = 'ARM_ROW',
@@ -36,7 +48,7 @@ export enum FormActionType {
 }
 
 export type FormAction =
-  | { type: FormActionType.AddRow; rowId: string }
+  | { type: FormActionType.AddRow; rowId: string; toolName?: ToolName }
   | { type: FormActionType.ArmRow; rowId: string }
   | { type: FormActionType.DisarmRow; rowId: string }
   | {
@@ -57,7 +69,7 @@ export const reducer = (state: FormState, action: FormAction): FormState => {
       const newRow: Row = {
         rowId: action.rowId,
         status: RowStatus.Pending,
-        toolName: DEFAULT_TOOL,
+        toolName: action.toolName ?? DEFAULT_TOOL,
         metrics: null,
         measurementUid: null,
       };

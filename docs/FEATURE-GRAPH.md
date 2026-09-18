@@ -27,7 +27,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-14 | Bonus: live update (`MEASUREMENT_UPDATED`) with echo-loop protection                                                                              | P-6, Q-4, S-5.1                                                 | F-11             | 7     | done    | Dragging a handle updates the row and the sum live; a host-originated change does not bounce back as a second update.                                                                                                              |
 | F-15 | Bonus: two-way deletion                                                                                                                           | C-4.4.2, Q-4, S-5.2                                             | F-11             | 8     | done    | Row "Delete" removes the annotation; deleting in the viewer clears the row.                                                                                                                                                        |
 | F-16 | Bonus: focus annotation from row                                                                                                                  | C-4.4.2, S-5.3                                                  | F-11             | 11    | done    | Clicking a row highlights / jumps to the annotation.                                                                                                                                                                               |
-| F-17 | Bonus: Length row type with separate sum                                                                                                          | S-5.4                                                           | F-11             | later | planned | Length rows sum separately from area rows.                                                                                                                                                                                         |
+| F-17 | Bonus: Length row type with separate sum                                                                                                          | S-5.4                                                           | F-11             | 22    | review  | Adding a length row arms the Length tool in OHIF and the drawn line lands in that row in mm; area and length totals are shown separately; 98 unit tests pass.                                                                      |
 | F-18 | Bonus: OHIF version on viewport                                                                                                                   | S-5.5                                                           | F-04             | 9     | done    | Version from `package.json` injected at build time appears on each viewport in a 2×2 grid.                                                                                                                                         |
 | F-19 | Bonus: state restore after reload                                                                                                                 | S-5.6                                                           | F-11             | later | planned | Reload keeps rows and annotations in sync.                                                                                                                                                                                         |
 | F-20 | Project tooling and state journal                                                                                                                 | A-6, D-2, D-3, D-5                                              | F-00             | 0.5   | done    | `npm run check:graph` exits 0; `.nvmrc` + `engines` pin Node 22; `docs/STATE.md` lets a fresh session resume; decision records exist for A-1..A-6.                                                                                 |
@@ -180,10 +180,11 @@ graph TD
 | 16 — refactor: trim comments                          | `refactor/trim-comments`                    | #18 | F-26                   |
 | 17 — refactor: component props files and test folders | `refactor/component-props-and-test-folders` | #19 | F-27                   |
 | 18 — docs: feature graph as JSON                      | `docs/feature-graph-json`                   | —   | F-28                   |
-| later — bonus nodes not yet scheduled                 | one branch per bonus node                   | —   | F-17, F-19             |
+| later — bonus nodes not yet scheduled                 | one branch per bonus node                   | —   | F-19                   |
 | 19 — docs: agent style rules                          | `docs/agent-style-rules`                    | —   | F-29                   |
 | 20 — refactor: named event handlers                   | `refactor/named-event-handlers`             | —   | F-30                   |
 | 21 — docs: close graph statuses                       | `docs/close-graph-statuses`                 | —   | —                      |
+| 22 — feat: length row type                            | `feat/length-row-type`                      | —   | F-17                   |
 
 ## Node details
 
@@ -233,8 +234,8 @@ Files:
 - `host-app/src/App.css`
 - `host-app/src/App.tsx` — internal: `host-app/src/App.css`, `host-app/src/bridge/useBridge.ts`, `host-app/src/components/BridgeStatus.tsx`, `host-app/src/components/ScoringPanel.tsx`, `host-app/src/components/ViewerFrame.tsx`, `host-app/src/form/useScoringForm.ts`; external: `react`
 - `host-app/src/__tests__/App.test.tsx` — internal: `host-app/src/App.tsx`, `host-app/src/config.ts`, `host-app/src/ui-strings.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`; external: `react`
-- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/form/totals.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/form/totals.ts`, `host-app/src/ui-strings.ts`; external: `react`
 - `host-app/src/components/ViewerFrame.props.ts` — external: `react`
 - `host-app/src/components/ViewerFrame.tsx` — internal: `host-app/src/components/ViewerFrame.props.ts`, `host-app/src/config.ts`, `host-app/src/ui-strings.ts`; external: `react`
 
@@ -365,7 +366,7 @@ Canon: C-4.3.8, Q-6, X-4. Depends on: F-10. Slice 5, status `done`.
 
 Files:
 
-- `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`; external: `react`
+- `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/components/TotalsFooter.tsx` — internal: `host-app/src/components/TotalsFooter.props.ts`, `host-app/src/form/format.ts`, `host-app/src/ui-strings.ts`; external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/__tests__/totals.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `vitest`
@@ -450,13 +451,26 @@ Files:
 
 ### F-17 Bonus: Length row type with separate sum
 
-Adds a "Length" row type backed by the `Length` tool, with its sum computed separately from areas. Not implemented; the contract already allows `Length` and `mm`/`px` units.
+A form row carries the tool it will arm (EllipticalROI or Length); the metric key to read is derived from that tool, never stored twice. The panel offers a button per kind, each row shows its kind and value, and the footer sums areas and lengths separately, each grouped by unit. The viewer needed no change: it already activates any tool named in ACTIVATE_TOOL and maps Length measurements.
 
-Canon: S-5.4. Depends on: F-11. Slice later, status `planned`.
+Canon: S-5.4. Depends on: F-11. Slice 22, status `review`.
 
 Files:
 
-_No files yet._
+- `ARCHITECTURE.md`
+- `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/ui-strings.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/form/totals.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/components/TotalsFooter.tsx` — internal: `host-app/src/components/TotalsFooter.props.ts`, `host-app/src/form/format.ts`, `host-app/src/ui-strings.ts`; external: `react`
+- `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/config.ts` — internal: `packages/contract/src/messages.ts`
+- `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `vitest`
+- `host-app/src/form/__tests__/totals.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `vitest`
+- `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `packages/contract/src/messages.ts`
+- `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/ui-strings.ts` — no imports
 
 ### F-18 Bonus: OHIF version on viewport
 
@@ -586,8 +600,8 @@ Files:
 - `host-app/src/bridge/__tests__/useBridge.test.tsx` — internal: `host-app/src/bridge/useBridge.ts`; external: `@testing-library/react`, `react`, `vitest`
 - `host-app/src/components/BridgeStatus.props.ts` — internal: `host-app/src/bridge/createBridge.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`; external: `react`
-- `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`; external: `react`
-- `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/components/ViewerFrame.props.ts` — external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/__tests__/format.test.ts` — internal: `host-app/src/form/format.ts`; external: `vitest`

@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@scoring/contract';
-import { FormActionType, RowStatus, initialFormState, reducer, type FormState } from '../rows';
+import {
+  FormActionType,
+  RowStatus,
+  initialFormState,
+  metricKeyForTool,
+  reducer,
+  type FormState,
+} from '../rows';
 
 const metrics: Metrics = { area: { value: 124.5, unit: 'mm2' } };
 
@@ -237,10 +244,53 @@ describe('rows reducer', () => {
     expect(next).toBe(state);
   });
 
+  it('ADD_ROW defaults to the configured area tool when no toolName is given', () => {
+    const state = reducer(initialFormState, { type: FormActionType.AddRow, rowId: 'row-1' });
+    expect(state.rows[0].toolName).toBe('EllipticalROI');
+  });
+
+  it('ADD_ROW keeps the given toolName on the new row', () => {
+    const state = reducer(initialFormState, {
+      type: FormActionType.AddRow,
+      rowId: 'row-1',
+      toolName: 'Length',
+    });
+    expect(state.rows[0].toolName).toBe('Length');
+  });
+
+  it('a row keeps its own toolName through arm/measure/clear (re-arm uses the same tool)', () => {
+    let state = reducer(initialFormState, {
+      type: FormActionType.AddRow,
+      rowId: 'row-1',
+      toolName: 'Length',
+    });
+    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    state = reducer(state, {
+      type: FormActionType.MeasurementReceived,
+      rowId: 'row-1',
+      measurementUid: 'uid-1',
+      metrics: { length: { value: 12, unit: 'mm' } },
+    });
+    state = reducer(state, { type: FormActionType.MeasurementCleared, rowId: 'row-1' });
+
+    expect(state.rows[0].toolName).toBe('Length');
+  });
+
   it('rows are unlimited: add 50 rows', () => {
     const rowIds = Array.from({ length: 50 }, (_, i) => `row-${String(i)}`);
     const state = addRows(initialFormState, ...rowIds);
     expect(state.rows).toHaveLength(50);
     expect(state.rows.every((row) => row.status === RowStatus.Pending)).toBe(true);
+  });
+});
+
+describe('metricKeyForTool', () => {
+  it('maps the area tools to "area"', () => {
+    expect(metricKeyForTool('EllipticalROI')).toBe('area');
+    expect(metricKeyForTool('RectangleROI')).toBe('area');
+  });
+
+  it('maps the length tool to "length"', () => {
+    expect(metricKeyForTool('Length')).toBe('length');
   });
 });

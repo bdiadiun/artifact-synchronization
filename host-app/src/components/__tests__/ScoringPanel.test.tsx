@@ -16,6 +16,14 @@ const doneRow = (rowId: string, value: number, unit: 'mm2' | 'px2'): Row => ({
   measurementUid: `uid-${rowId}`,
 });
 
+const doneLengthRow = (rowId: string, value: number, unit: 'mm' | 'px'): Row => ({
+  rowId,
+  status: RowStatus.Done,
+  toolName: 'Length',
+  metrics: { length: { value, unit } },
+  measurementUid: `uid-${rowId}`,
+});
+
 const pendingRow = (rowId: string): Row => ({
   rowId,
   status: RowStatus.Pending,
@@ -46,6 +54,24 @@ describe('ScoringPanel totals footer', () => {
     expect(screen.getByText(/212\.7 mm²/)).toBeInTheDocument();
     expect(screen.getAllByText(/1520\.0 px²/).length).toBeGreaterThan(0);
     expect(screen.getByText(/без піксельного spacing/)).toBeInTheDocument();
+  });
+
+  it('renders both the area and the length totals when both row kinds are present', () => {
+    const rows: Row[] = [doneRow('row-1', 124.5, 'mm2'), doneLengthRow('row-2', 30, 'mm')];
+
+    render(
+      <ScoringPanel
+        rows={rows}
+        addRow={noop}
+        activate={noop}
+        cancel={noop}
+        remove={noop}
+        focus={noop}
+      />,
+    );
+
+    expect(screen.getByText(/Разом:.*124\.5 mm²/)).toBeInTheDocument();
+    expect(screen.getByText(/Разом довжина:.*30\.0 mm/)).toBeInTheDocument();
   });
 
   it('shows — when only pending rows are present', () => {
