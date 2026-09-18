@@ -71,12 +71,13 @@ my-react-app/
 └── vite.config.ts
 ```
 
-`host-app` follows it. Two notes, so the layout is read correctly:
+`host-app` follows it, with one rule about the folders it does not need yet.
 
-- **`context/` and `redux/` exist but hold no code.** The form's state lives in one `useReducer` and
-  is passed down as props; there is no provider and no store to put there. Each folder carries a
-  short README saying what belongs in it. They are kept so the layout matches the convention a
-  reader expects, not because the code needs them today.
+- **A folder appears when its first file does.** This project has no images, no context provider and
+  no store, so `assets/`, `context/` and `redux/` do not exist on disk. The names above are the
+  convention: whoever adds the first image creates `assets/`, whoever needs a provider creates
+  `context/`, and so on. A folder kept alive by a placeholder file says nothing true about the code.
+
 - **The domain folders `bridge/` and `form/` have no counterpart in the reference.** The reference
   covers presentation, hooks and generic helpers; it says nothing about the modules that own the
   message channel and the row model. Splitting those across `utils/` would hide the two concepts the
@@ -84,12 +85,12 @@ my-react-app/
 
 | Folder            | What is in it here                                                                                                              |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `src/assets/`     | Nothing yet; the form uses native elements and no imagery (canon X-3).                                                          |
+| `src/assets/`     | Not created yet: the form uses native elements and no imagery (canon X-3).                                                      |
 | `src/components/` | `ViewerFrame`, `ScoringPanel`, `MeasurementRow`, `TotalsFooter`, `BridgeStatus`, each with its `.props.ts`.                     |
 | `src/pages/`      | `ScoringPage` — the single page: the viewer iframe on the left, the form panel on the right.                                    |
 | `src/hooks/`      | `useBridge`, `useScoringForm`, `useViewerEvents`, `usePersistedRows`.                                                           |
-| `src/context/`    | Reserved, see the note above.                                                                                                   |
-| `src/redux/`      | Reserved, see the note above.                                                                                                   |
+| `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                  |
+| `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                |
 | `src/utils/`      | `format` (values, statuses, kinds) and `selectors` (row lookups).                                                               |
 | `src/bridge/`     | The host side of the channel: `createBridge`, `messageHandler`, `commandQueue`, `listeners`.                                    |
 | `src/form/`       | The row model and everything around it: `rows` (reducer), `rowActions`, `commands`, `viewerEventHandlers`, `storage`, `totals`. |
@@ -102,7 +103,7 @@ notes). `ARCHITECTURE.md` maps every concern to the file that owns it.
 ## 3. Rules that follow from this
 
 - A new component goes to `components/` with its `.props.ts`; a new page to `pages/`; a new hook to
-  `hooks/`; a generic helper to `utils/`. Anything that belongs to the channel or the row model goes
+  `hooks/`; a generic helper to `utils/`. A folder the layout names but the repository does not have yet is created when its first file arrives, under that exact name. Anything that belongs to the channel or the row model goes
   to `bridge/` or `form/`.
 - Tests live in a `__tests__/` folder inside the folder of the code under test.
 - Instructions that apply only to one part of the repository belong in `.claude/rules/` with a
