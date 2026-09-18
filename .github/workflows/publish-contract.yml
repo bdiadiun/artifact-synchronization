@@ -62,7 +62,13 @@ jobs:
           echo "next=$next" >> "$GITHUB_OUTPUT"
 
       - name: Set package version
-        run: npm version ${{ steps.version.outputs.next }} --no-git-tag-version --workspace @bdiadiun/scoring-contract
+        run: |
+          manifest=$(node -p "require('./packages/contract/package.json').version")
+          if [ "$manifest" = "${{ steps.version.outputs.next }}" ]; then
+            echo "Manifest already at ${{ steps.version.outputs.next }} (first release); leaving it unchanged."
+          else
+            npm version ${{ steps.version.outputs.next }} --no-git-tag-version --workspace @bdiadiun/scoring-contract
+          fi
 
       - name: Publish
         run: npm publish --workspace @bdiadiun/scoring-contract --access public

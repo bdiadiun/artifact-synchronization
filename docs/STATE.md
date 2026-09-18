@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                             |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 35 `feat: publish the contract package` (branch `feat/publish-contract-package`, node F-41)                                                                       |
-| Gate           | 2 — contract published as a package and the re-implementations removed; awaiting result approval                                                                  |
-| Last merged PR | #40 `chore: workflow ownership and the return-statement rule`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                                               |
+| Field          | Value                                                                                                                                        |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 36 `fix: publish the first release` (branch `fix/publish-first-release`, node F-42)                                                          |
+| Gate           | 2 — the publish step no longer fails when the manifest already carries the version; awaiting result approval                                 |
+| Last merged PR | #41 `feat: publish the contract package`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                          |
 
 ## Open decisions (see CANON.md → Decisions)
 
