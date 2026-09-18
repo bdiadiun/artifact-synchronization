@@ -1784,7 +1784,7 @@
       "canon": ["A-12", "Q-7"],
       "dependsOn": ["F-33"],
       "slice": "27",
-      "status": "review",
+      "status": "done",
       "verify": "Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.",
       "files": [
         "docs/decisions/A-12-npm-workspaces.md",

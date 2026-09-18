@@ -44,7 +44,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-31 | Complexity limits and module-shape rules                                                                                                          | A-13, Q-7                                                       | F-30             | 24    | done    | npm run lint and lint:fork report the seven known hot spots as warnings and nothing else; the rules are off for test suites.                                                                                                       |
 | F-32 | Bridge split by protocol role                                                                                                                     | A-13, C-3.4, Q-7                                                | F-31             | 25    | done    | npm run lint:fork reports no size or complexity warnings for the extension; the full browser regression (ready, activate, measure, restore tool, live update, delete both ways, focus, version overlay) behaves as before.         |
 | F-33 | Scoring form hook and reducer split                                                                                                               | A-13, Q-7                                                       | F-32             | 26    | done    | npm run lint reports no size or complexity warnings; 98 tests still pass; the browser scenarios behave as before.                                                                                                                  |
-| F-34 | Contract copy guarded on both sides                                                                                                               | A-12, Q-7                                                       | F-33             | 27    | review  | Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.                                                                                                            |
+| F-34 | Contract copy guarded on both sides                                                                                                               | A-12, Q-7                                                       | F-33             | 27    | done    | Editing either copy fails npm run check:contract in the host repo; editing the fork copy alone fails the fork workflow.                                                                                                            |
 
 ## Coverage of mandatory IDs
 
@@ -733,7 +733,7 @@ Files:
 
 The wire contract stays a byte-identical copy inside the fork, because the submodule must build standalone, but now both repositories guard it: the host check compares the two files and the committed hash, and a workflow in the fork verifies its own copy against that hash, so a change made only in the fork is caught by the fork itself.
 
-Canon: A-12, Q-7. Depends on: F-33. Slice 27, status `review`.
+Canon: A-12, Q-7. Depends on: F-33. Slice 27, status `done`.
 
 Files:
 
