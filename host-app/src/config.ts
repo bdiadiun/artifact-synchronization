@@ -6,7 +6,6 @@ export const VIEWER_ORIGIN = 'http://localhost:3000';
 // Single edit point for the ellipse -> RectangleROI live change (P-7).
 export const DEFAULT_TOOL: ToolName = 'EllipticalROI';
 
-// Tool armed for length rows (S-5.4); kept beside DEFAULT_TOOL as the other row kind's edit point.
 export const LENGTH_TOOL: ToolName = 'Length';
 
 export const HOST_ORIGIN = 'http://localhost:5173';

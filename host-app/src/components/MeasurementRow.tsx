@@ -54,7 +54,7 @@ export const MeasurementRow = ({
       onClick={focusable ? handleRowClick : undefined}
       onKeyDown={focusable ? handleRowKeyDown : undefined}
     >
-      <span>#{index + 1}</span>
+      <span>{`${t.rowNumberPrefix}${String(index + 1)}`}</span>
       <span style={styles.status}>{formatRowKind(row)}</span>
       <span style={styles.status}>{formatRowStatus(row.status)}</span>
       {metricLabel !== null && <span>{metricLabel}</span>}

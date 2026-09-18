@@ -48,7 +48,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-35 | User-visible strings under the conventional i18n name                                                                                             | A-7, A-13, Q-7                                                  | F-19             | 29    | done    | No reference to the old name remains outside the historical note in the state journal; 149 tests, lint and typecheck stay green.                                                                                                                                                                                                                                          |
 | F-36 | Folder layout and the .claude workspace documented and applied                                                                                    | A-13, D-3, Q-7                                                  | F-35             | 30    | done    | host-app builds and its 149 tests pass after the move; npm run lint is clean; the docs page lists the structure document; the format hook rewrites a touched file.                                                                                                                                                                                                        |
 | F-37 | Layout folders created on first use                                                                                                               | A-13, Q-7                                                       | F-36             | 31    | done    | The three folders are gone, host-app builds and its 149 tests pass, and the layout document and the rule state when each folder is created.                                                                                                                                                                                                                               |
-| F-38 | Agent boundaries, instances and context handover                                                                                                  | A-13, D-2                                                       | F-37             | 32    | review  | Each of the five agent definitions states which files it may write, who owns its context and what to do when it fills; CLAUDE.md and the slice skill carry the one-instance rule; the handover skill is listed in the layout document. Enforcement is by brief and by the architect's diff review: Claude Code has no per-agent file permission, only session-wide rules. |
+| F-38 | Agent boundaries, instances and context handover                                                                                                  | A-13, D-2                                                       | F-37             | 32    | done    | Each of the five agent definitions states which files it may write, who owns its context and what to do when it fills; CLAUDE.md and the slice skill carry the one-instance rule; the handover skill is listed in the layout document. Enforcement is by brief and by the architect's diff review: Claude Code has no per-agent file permission, only session-wide rules. |
+| F-39 | Audit fixes: disarm on teardown, answered removals, conventions                                                                                   | A-13, Q-4, Q-5, S-5.2                                           | F-38             | 33    | review  | The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.                                                                                                                |
 
 ## Coverage of mandatory IDs
 
@@ -78,8 +79,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Q-1     | F-06                                                                                           |
 | Q-2     | F-05, F-06                                                                                     |
 | Q-3     | F-07, F-08, F-09, F-19                                                                         |
-| Q-4     | F-14, F-15, F-19                                                                               |
-| Q-5     | F-05, F-06                                                                                     |
+| Q-4     | F-14, F-15, F-19, F-39                                                                         |
+| Q-5     | F-05, F-06, F-39                                                                               |
 | Q-6     | F-09, F-10, F-11                                                                               |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37 |
 | D-1     | F-04                                                                                           |
@@ -134,6 +135,7 @@ graph TD
   F36["F-36 Folder layout and the .claude workspace documented and applied"]
   F37["F-37 Layout folders created on first use"]
   F38["F-38 Agent boundaries, instances and context handover"]
+  F39["F-39 Audit fixes: disarm on teardown, answered removals, conventions"]
 
   F20 --> F01
   F01 --> F02
@@ -178,6 +180,7 @@ graph TD
   F35 --> F36
   F36 --> F37
   F37 --> F38
+  F38 --> F39
 ```
 
 ## Slice → nodes
@@ -219,6 +222,7 @@ graph TD
 | 30 — chore: project structure                         | `refactor/project-structure`                | —   | F-36                   |
 | 31 — chore: drop empty folders                        | `chore/drop-empty-folders`                  | —   | F-37                   |
 | 32 — chore: agent handover skill                      | `chore/agent-handover-skill`                | —   | F-38                   |
+| 33 — fix: cleanup and conventions                     | `fix/cleanup-and-conventions`               | —   | F-39                   |
 
 ## Node details
 
@@ -329,7 +333,7 @@ Files:
 
 - `docs/decisions/A-9-handshake-and-queue.md`
 - `host-app/src/bridge/__tests__/createBridge.test.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`; external: `vitest`
-- `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
+- `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/armedTool.ts`, `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/components/BridgeStatus.props.ts` — internal: `host-app/src/bridge/createBridge.ts`; external: `react`
 - `host-app/src/components/BridgeStatus.tsx` — internal: `host-app/src/components/BridgeStatus.props.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/hooks/__tests__/useBridge.test.tsx` — internal: `host-app/src/hooks/useBridge.ts`; external: `@testing-library/react`, `react`, `vitest`
@@ -348,7 +352,7 @@ Files:
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 
 ### F-08 Activate / deactivate tool from a row
 
@@ -360,7 +364,7 @@ Files:
 
 - `docs/decisions/A-4-cancelled-activation.md`
 - `host-app/src/config.ts` — internal: `packages/contract/src/messages.ts`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
 
 ### F-09 Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool
@@ -388,7 +392,7 @@ Files:
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/utils/__tests__/format.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `vitest`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
 
@@ -441,7 +445,7 @@ Files:
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
 - `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
 - `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports
@@ -459,12 +463,12 @@ Files:
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
 - `packages/contract/src/messages.ts` — no imports
 - `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
-- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
+- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
 
 ### F-16 Bonus: focus annotation from row
 
@@ -477,7 +481,7 @@ Files:
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
 - `packages/contract/src/messages.ts` — no imports
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
@@ -503,7 +507,7 @@ Files:
 - `host-app/src/form/__tests__/totals.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `vitest`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
 
 ### F-18 Bonus: OHIF version on viewport
@@ -538,8 +542,9 @@ Files:
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/storage.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `host-app/src/hooks/usePersistedRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
+- `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/hooks/useViewerEvents.ts` — internal: `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
@@ -752,7 +757,7 @@ Files:
 - `ARCHITECTURE.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/bridge/commandQueue.ts` — internal: `packages/contract/src/messages.ts`
-- `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
+- `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/armedTool.ts`, `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/bridge/listeners.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/bridge/messageHandler.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
@@ -761,7 +766,7 @@ Files:
 - `host-app/src/form/commands.ts` — internal: `packages/contract/src/messages.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistedRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/hooks/useViewerEvents.ts` — internal: `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/utils/__tests__/selectors.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/utils/selectors.ts`; external: `vitest`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
@@ -837,7 +842,7 @@ Files:
 
 Gives every role a written boundary: the developer changes application code and never a test, the tester the reverse, the architect documentation and process files only, the researcher one note, the git operator nothing. Fixes one instance per role and forbids an agent from spawning its own role, so two instances never write the same files. An agent whose context fills stops and writes a handover note and a successor of the same role continues from it, because a subagent's context is never compacted back. The procedure lives in one invokable skill so it is visible and can be run on demand.
 
-Canon: A-13, D-2. Depends on: F-37. Slice 32, status `review`.
+Canon: A-13, D-2. Depends on: F-37. Slice 32, status `done`.
 
 Files:
 
@@ -849,3 +854,21 @@ Files:
 - `.claude/skills/handover/SKILL.md`
 - `.claude/skills/slice/SKILL.md`
 - `CLAUDE.md`
+
+### F-39 Audit fixes: disarm on teardown, answered removals, conventions
+
+Closes what a read-only audit found. The bridge now remembers that it armed a tool and posts one DEACTIVATE_TOOL when it is disposed, so a host unmount cannot leave the viewer armed. A REMOVE_MEASUREMENT for a measurement the viewer no longer holds is answered instead of ignored, so the host's set of issued request ids stops growing. The rest is convention debt no linter catches: a default export, a missing return type behind forwardRef, user-visible literals outside i18n, a module exporting two hooks, over-long comments, a switch that did not narrow to never, a dead export and two unexplained assertions.
+
+Canon: A-13, Q-4, Q-5, S-5.2. Depends on: F-38. Slice 33, status `review`.
+
+Files:
+
+- `ARCHITECTURE.md`
+- `host-app/src/App.tsx` — internal: `host-app/src/App.css`, `host-app/src/pages/ScoringPage.tsx`; external: `react`
+- `host-app/src/bridge/armedTool.ts` — internal: `host-app/src/form/commands.ts`, `packages/contract/src/messages.ts`
+- `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/armedTool.ts`, `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
+- `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
+- `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
+- `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`
+- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/contract/messages.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`

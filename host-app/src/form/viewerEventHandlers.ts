@@ -55,10 +55,9 @@ const sendRestoreIfNeeded = (context: ViewerEventContext): void => {
   context.send(restoreMeasurementsCommand(requestId, STUDY_INSTANCE_UID, measurements));
 };
 
-// A reload means the viewer forgot any already-flushed command, so an armed row is re-sent. The
-// first-ever READY needs no such re-send: an activation clicked before it is still queued in the
-// bridge and flushed automatically (A-9). That first READY is instead when a page reload of the
-// host itself is detected (A-14): if sessionStorage had rows, ask the viewer to rebuild them.
+// A viewer reload forgot any flushed command, so an armed row is re-sent; on the first READY an
+// early activation is still queued in the bridge and flushes itself (A-9). That first READY is
+// instead where a reload of the host is answered with a restore request (A-14).
 const handleViewerReady = (context: ViewerEventContext, isReload: boolean): void => {
   if (!isReload) {
     sendRestoreIfNeeded(context);

@@ -1,6 +1,3 @@
-// Display format for a row: wire unit spelling (mm2, px2) to glyphs (mm², px²), and the labels a
-// row shows. The one place display strings for a measurement are built.
-
 import type { Metric, Metrics, RestoreFailureReason, Unit } from '@scoring/contract';
 import { t } from '../i18n';
 import { RowStatus, metricKeyForTool, type MetricKey, type Row } from '../form/rows';
@@ -34,17 +31,15 @@ export const formatRestoreFailureReason = (reason: RestoreFailureReason): string
 
 export const formatRowKind = (row: Row): string => KIND_LABELS[metricKeyForTool(row.toolName)];
 
-// Formats the metric that matches the row's own tool (S-5.4: area for the ellipse/rectangle
-// tools, length for the length tool). If that key is absent but the payload carries something
-// else (P-8 — perimeter, mean intensity, ...), that first metric is shown with its key so a
-// future metric type does not silently disappear from the row.
+// S-5.4: shows the metric matching the row's own tool. If that key is absent, the first metric in
+// the payload is shown with its key (P-8), so a metric type added later is visible instead of
+// silently dropped.
 export const formatRowMetric = (row: Row): string | null => {
   if (row.status !== RowStatus.Done || row.metrics === null) {
     return null;
   }
-  // `Metrics` is typed as `Record<string, Metric>`, so TS treats every key as always present; at
-  // runtime it is optional (only the metrics the viewer actually sent exist), so the lookup is
-  // cast to `Partial` to keep this defensive check honest.
+  // `Metrics` is `Record<string, Metric>`, so TS treats every key as present while at runtime only
+  // the metrics the viewer sent exist; `Partial` keeps the check below honest.
   const own = (row.metrics as Partial<Metrics>)[metricKeyForTool(row.toolName)];
   if (own !== undefined) {
     return formatMetric(own);

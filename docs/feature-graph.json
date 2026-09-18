@@ -195,6 +195,11 @@
       "id": "32",
       "title": "chore: agent handover skill",
       "branch": "chore/agent-handover-skill"
+    },
+    {
+      "id": "33",
+      "title": "fix: cleanup and conventions",
+      "branch": "fix/cleanup-and-conventions"
     }
   ],
   "nodes": [
@@ -450,6 +455,7 @@
         },
         "host-app/src/bridge/createBridge.ts": {
           "internal": [
+            "host-app/src/bridge/armedTool.ts",
             "host-app/src/bridge/commandQueue.ts",
             "host-app/src/bridge/listeners.ts",
             "host-app/src/bridge/messageHandler.ts",
@@ -538,7 +544,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -571,7 +578,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -684,7 +692,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -827,7 +836,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -924,7 +934,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -962,7 +973,8 @@
         "viewer/extensions/scoring-bridge/src/removals.ts": {
           "internal": [
             "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts"
           ],
           "external": []
         }
@@ -1017,7 +1029,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -1153,7 +1166,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -1216,7 +1230,8 @@
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
         "host-app/src/form/viewerEventHandlers.ts",
-        "host-app/src/hooks/usePersistedRows.ts",
+        "host-app/src/hooks/usePersistRows.ts",
+        "host-app/src/hooks/useRestoredRows.ts",
         "host-app/src/hooks/useScoringForm.ts",
         "host-app/src/hooks/useViewerEvents.ts",
         "host-app/src/i18n.ts",
@@ -1292,7 +1307,15 @@
           ],
           "external": ["react"]
         },
-        "host-app/src/hooks/usePersistedRows.ts": {
+        "host-app/src/hooks/usePersistRows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/hooks/useRestoredRows.ts": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
@@ -1305,7 +1328,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -1852,6 +1876,7 @@
         },
         "host-app/src/bridge/createBridge.ts": {
           "internal": [
+            "host-app/src/bridge/armedTool.ts",
             "host-app/src/bridge/commandQueue.ts",
             "host-app/src/bridge/listeners.ts",
             "host-app/src/bridge/messageHandler.ts",
@@ -1912,7 +1937,8 @@
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/viewerEventHandlers.ts",
-            "host-app/src/hooks/usePersistedRows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/messages.ts"
           ],
@@ -2063,7 +2089,7 @@
       "canon": ["A-13", "D-2"],
       "dependsOn": ["F-37"],
       "slice": "32",
-      "status": "review",
+      "status": "done",
       "verify": "Each of the five agent definitions states which files it may write, who owns its context and what to do when it fills; CLAUDE.md and the slice skill carry the one-instance rule; the handover skill is listed in the layout document. Enforcement is by brief and by the architect's diff review: Claude Code has no per-agent file permission, only session-wide rules.",
       "files": [
         ".claude/agents/architect.md",
@@ -2076,6 +2102,82 @@
         "CLAUDE.md"
       ],
       "imports": {}
+    },
+    {
+      "id": "F-39",
+      "name": "Audit fixes: disarm on teardown, answered removals, conventions",
+      "description": "Closes what a read-only audit found. The bridge now remembers that it armed a tool and posts one DEACTIVATE_TOOL when it is disposed, so a host unmount cannot leave the viewer armed. A REMOVE_MEASUREMENT for a measurement the viewer no longer holds is answered instead of ignored, so the host's set of issued request ids stops growing. The rest is convention debt no linter catches: a default export, a missing return type behind forwardRef, user-visible literals outside i18n, a module exporting two hooks, over-long comments, a switch that did not narrow to never, a dead export and two unexplained assertions.",
+      "canon": ["A-13", "Q-4", "Q-5", "S-5.2"],
+      "dependsOn": ["F-38"],
+      "slice": "33",
+      "status": "review",
+      "verify": "The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.",
+      "files": [
+        "ARCHITECTURE.md",
+        "host-app/src/App.tsx",
+        "host-app/src/bridge/armedTool.ts",
+        "host-app/src/bridge/createBridge.ts",
+        "host-app/src/hooks/usePersistRows.ts",
+        "host-app/src/hooks/useRestoredRows.ts",
+        "host-app/src/i18n.ts",
+        "viewer/extensions/scoring-bridge/src/commands.ts",
+        "viewer/extensions/scoring-bridge/src/removals.ts"
+      ],
+      "imports": {
+        "host-app/src/App.tsx": {
+          "internal": ["host-app/src/App.css", "host-app/src/pages/ScoringPage.tsx"],
+          "external": ["react"]
+        },
+        "host-app/src/bridge/armedTool.ts": {
+          "internal": ["host-app/src/form/commands.ts", "packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "host-app/src/bridge/createBridge.ts": {
+          "internal": [
+            "host-app/src/bridge/armedTool.ts",
+            "host-app/src/bridge/commandQueue.ts",
+            "host-app/src/bridge/listeners.ts",
+            "host-app/src/bridge/messageHandler.ts",
+            "packages/contract/src/messages.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/hooks/usePersistRows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/hooks/useRestoredRows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/i18n.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/commands.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/removals.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/contract/messages.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts"
+          ],
+          "external": []
+        }
+      }
     }
   ]
 }

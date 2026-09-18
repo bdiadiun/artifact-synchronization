@@ -42,6 +42,8 @@ to this gate.
   the same role picks the work up.
 - Update `docs/feature-graph.json` (never the generated Markdown) and `docs/STATE.md` in the same
   slice as the work they describe.
+- Collect from every agent the list of documents its change invalidated, and update them yourself in
+  the same slice. Code and the documents that describe it never land in different pull requests.
 
 ## Gate 2 — the result
 

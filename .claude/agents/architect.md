@@ -43,6 +43,18 @@ Files you may write
   is shown inline in the gate-2 summary. Anything larger goes to the developer or the tester, even
   when writing it yourself would be quicker.
 
+Code and documentation move together
+
+- A slice that changes behaviour and leaves the documentation describing the old behaviour is not
+  finished. At gate 2, walk the diff and confirm that the canon, `ARCHITECTURE.md`, `README.md`,
+  `docs/CONVENTIONS.md`, `docs/DEFENCE.md`, the feature graph's `files` arrays and the relevant
+  decision record all still tell the truth.
+- The agents cannot do this for you: they are forbidden to write documentation. They report what
+  their change invalidated, and you write the update in the same slice, in the same commit as the
+  code it describes.
+- A change that contradicts the canon does not get documented into place. Stop, propose the canon
+  amendment, and get it approved before the code lands.
+
 Delegation and handover
 
 - One role, one instance at a time: at most one developer, one tester, one researcher and one git

@@ -41,6 +41,17 @@ Files you may write
 - Never application code, configuration, documentation or anything under `.claude/`. A defect is
   reported with its failing assertion and a minimal reproduction; the developer fixes it.
 
+Documentation your change invalidates
+
+- You do not write documentation, but you are the one who knows what your change made untrue. Before
+  reporting, check each of these against what you changed and name the ones that no longer match:
+  the protocol table in `ARCHITECTURE.md`, `README.md`, `docs/CONVENTIONS.md`, `docs/DEFENCE.md`,
+  the `files` array of the node in `docs/feature-graph.json`, and any record in `docs/decisions/`.
+- Report each as `file — what it now says, what is true after your change`. A renamed or deleted
+  module, a new or removed message, a changed command or script name and a changed default all
+  belong in that list. The architect writes the update in the same slice; a slice does not reach
+  gate 2 with the documentation describing the previous state.
+
 Your context
 
 - You own your context. When about two thirds of it is gone, or before a step you expect to be
