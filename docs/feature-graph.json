@@ -200,6 +200,11 @@
       "id": "33",
       "title": "fix: cleanup and conventions",
       "branch": "fix/cleanup-and-conventions"
+    },
+    {
+      "id": "34",
+      "title": "chore: workflow ownership and the return-statement rule",
+      "branch": "chore/git-operator-workflows"
     }
   ],
   "nodes": [
@@ -2110,7 +2115,7 @@
       "canon": ["A-13", "Q-4", "Q-5", "S-5.2"],
       "dependsOn": ["F-38"],
       "slice": "33",
-      "status": "review",
+      "status": "done",
       "verify": "The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.",
       "files": [
         "ARCHITECTURE.md",
@@ -2176,6 +2181,36 @@
             "viewer/extensions/scoring-bridge/src/messaging.ts"
           ],
           "external": []
+        }
+      }
+    },
+    {
+      "id": "F-40",
+      "name": "Workflow ownership and the return-statement rule",
+      "description": "Widens one role boundary and closes one style gap. The git operator may write `.github/workflows/*.yml` in either repository, because continuous integration is the automation around git and nobody else was allowed to touch it; every other file stays closed to it. Separately, no function may be created inside a component's `return`: it is declared with a name above it, and the lint rule that covered `on…` props now covers every JSX prop. A list render's `.map` callback is the stated exception.",
+      "canon": ["A-13", "D-2"],
+      "dependsOn": ["F-39"],
+      "slice": "34",
+      "status": "review",
+      "verify": "The git operator definition lists the workflow files as the only thing it may write and its tool list allows writing; CLAUDE.md agrees. `npm run lint` passes with the widened selector, which proves no component creates a function inside a JSX prop.",
+      "files": [
+        ".claude/agents/git-operator.md",
+        ".claude/rules/host-app.md",
+        "CLAUDE.md",
+        "docs/CONVENTIONS.md",
+        "eslint.config.js"
+      ],
+      "imports": {
+        "eslint.config.js": {
+          "internal": [],
+          "external": [
+            "@eslint/js",
+            "eslint-config-prettier",
+            "eslint-plugin-react-hooks",
+            "eslint-plugin-react-refresh",
+            "globals",
+            "typescript-eslint"
+          ]
         }
       }
     }

@@ -16,10 +16,10 @@ const constEnumSelector = 'TSEnumDeclaration[const=true]';
 const inlineStyleObjectSelector =
   "JSXAttribute[name.name='style'] > JSXExpressionContainer > ObjectExpression";
 
-// A function created inside an `on…` prop is a new identity on every render and hides the handler
-// from the component body (CONVENTIONS §6).
+// A function created inside a JSX prop is a new identity on every render and hides it from the
+// component body, where every function a component renders with belongs (CONVENTIONS §6).
 const inlineEventHandlerSelector =
-  "JSXAttribute[name.name=/^on[A-Z]/] > JSXExpressionContainer > :matches(ArrowFunctionExpression, FunctionExpression, CallExpression[callee.property.name='bind'])";
+  "JSXAttribute > JSXExpressionContainer > :matches(ArrowFunctionExpression, FunctionExpression, CallExpression[callee.property.name='bind'])";
 
 export default tseslint.config(
   {
