@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@bdiadiun/scoring-contract": "0.0.1",
+    "@bdiadiun/scoring-orchestrator": "0.0.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

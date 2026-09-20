@@ -3,13 +3,13 @@
 
 import type { Dispatch } from 'react';
 import type { HostCommand, ToolName } from '@bdiadiun/scoring-contract';
-import { DEFAULT_TOOL } from '../config';
 import {
   activateToolCommand,
   deactivateToolCommand,
   focusMeasurementCommand,
   removeMeasurementCommand,
-} from './commands';
+} from '@bdiadiun/scoring-orchestrator';
+import { DEFAULT_TOOL } from '../config';
 import { FormActionType, RowStatus, type FormAction, type FormState } from './rows';
 import { findRow } from '../utils/selectors';
 

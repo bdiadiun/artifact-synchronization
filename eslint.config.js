@@ -26,14 +26,21 @@ export default tseslint.config(
     ignores: ['**/dist/**', '**/node_modules/**', 'viewer/**', 'docs/site/**'],
   },
   {
-    files: ['host-app/src/**/*.{ts,tsx}', 'packages/contract/src/**/*.ts'],
+    files: [
+      'host-app/src/**/*.{ts,tsx}',
+      'packages/contract/src/**/*.ts',
+      'packages/orchestrator/src/**/*.ts',
+    ],
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       parserOptions: {
-        // The contract package builds to `dist`, so its tsconfig excludes tests; they are linted
-        // against the default project instead of being added to the published compilation.
+        // The published packages build to `dist`, so their tsconfigs exclude tests; those are
+        // linted against the default project instead of joining the published compilation.
         projectService: {
-          allowDefaultProject: ['packages/contract/src/__tests__/*.ts'],
+          allowDefaultProject: [
+            'packages/contract/src/__tests__/*.ts',
+            'packages/orchestrator/src/__tests__/*.ts',
+          ],
         },
         tsconfigRootDir: import.meta.dirname,
       },

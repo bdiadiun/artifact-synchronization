@@ -225,6 +225,11 @@
       "id": "38",
       "title": "feat: bridge adapter with a handler registry",
       "branch": "feat/bridge-adapter-registry"
+    },
+    {
+      "id": "39",
+      "title": "feat: the orchestrator package",
+      "branch": "feat/orchestrator-package"
     }
   ],
   "nodes": [
@@ -465,31 +470,17 @@
       "verify": "Clicking \"Activate\" before the iframe is ready queues the command; it is flushed after `VIEWER_READY`; listeners are removed on unmount (React StrictMode double-mount leaves one listener).",
       "files": [
         "docs/decisions/A-9-handshake-and-queue.md",
-        "host-app/src/bridge/__tests__/createBridge.test.ts",
-        "host-app/src/bridge/createBridge.ts",
         "host-app/src/components/BridgeStatus.props.ts",
         "host-app/src/components/BridgeStatus.tsx",
         "host-app/src/hooks/__tests__/useBridge.test.tsx",
-        "host-app/src/hooks/useBridge.ts"
+        "host-app/src/hooks/useBridge.ts",
+        "packages/orchestrator/src/__tests__/createOrchestrator.test.ts",
+        "packages/orchestrator/src/createOrchestrator.ts"
       ],
       "imports": {
-        "host-app/src/bridge/__tests__/createBridge.test.ts": {
-          "internal": ["host-app/src/bridge/createBridge.ts", "packages/contract/src/messages.ts"],
-          "external": ["vitest"]
-        },
-        "host-app/src/bridge/createBridge.ts": {
-          "internal": [
-            "host-app/src/bridge/armedTool.ts",
-            "host-app/src/bridge/commandQueue.ts",
-            "host-app/src/bridge/listeners.ts",
-            "host-app/src/bridge/messageHandler.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
         "host-app/src/components/BridgeStatus.props.ts": {
-          "internal": ["host-app/src/bridge/createBridge.ts"],
-          "external": ["react"]
+          "internal": [],
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/components/BridgeStatus.tsx": {
           "internal": ["host-app/src/components/BridgeStatus.props.ts", "host-app/src/i18n.ts"],
@@ -500,12 +491,25 @@
           "external": ["@testing-library/react", "react", "vitest"]
         },
         "host-app/src/hooks/useBridge.ts": {
+          "internal": ["host-app/src/config.ts", "packages/contract/src/messages.ts"],
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
+        },
+        "packages/orchestrator/src/__tests__/createOrchestrator.test.ts": {
           "internal": [
-            "host-app/src/bridge/createBridge.ts",
-            "host-app/src/config.ts",
-            "packages/contract/src/messages.ts"
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/createOrchestrator.ts"
           ],
-          "external": ["react"]
+          "external": ["vitest"]
+        },
+        "packages/orchestrator/src/createOrchestrator.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/armedTool.ts",
+            "packages/orchestrator/src/commandQueue.ts",
+            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/messageHandler.ts"
+          ],
+          "external": []
         }
       }
     },
@@ -1252,7 +1256,6 @@
         "host-app/src/components/MeasurementRow.props.ts",
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/form/__tests__/storage.test.ts",
-        "host-app/src/form/commands.ts",
         "host-app/src/form/rowActions.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
@@ -1264,6 +1267,7 @@
         "host-app/src/i18n.ts",
         "host-app/src/utils/format.ts",
         "packages/contract/src/messages.ts",
+        "packages/orchestrator/src/commands.ts",
         "scripts/eslint-fork-style.config.js",
         "viewer/extensions/scoring-bridge/src/geometry.ts",
         "viewer/extensions/scoring-bridge/src/restore.ts"
@@ -1297,19 +1301,14 @@
           "internal": ["host-app/src/form/rows.ts", "host-app/src/form/storage.ts"],
           "external": ["vitest"]
         },
-        "host-app/src/form/commands.ts": {
-          "internal": ["packages/contract/src/messages.ts"],
-          "external": []
-        },
         "host-app/src/form/rowActions.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/utils/selectors.ts",
             "packages/contract/src/messages.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/form/rows.ts": {
           "internal": [
@@ -1326,13 +1325,12 @@
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "host-app/src/utils/selectors.ts",
             "packages/contract/src/messages.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/hooks/usePersistRows.ts": {
           "internal": [
@@ -1380,6 +1378,10 @@
         },
         "packages/contract/src/messages.ts": {
           "internal": [],
+          "external": []
+        },
+        "packages/orchestrator/src/commands.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
           "external": []
         },
         "scripts/eslint-fork-style.config.js": {
@@ -1557,7 +1559,6 @@
         "docs/CONVENTIONS.md",
         "eslint.config.js",
         "host-app/src/__tests__/App.test.tsx",
-        "host-app/src/bridge/__tests__/createBridge.test.ts",
         "host-app/src/components/BridgeStatus.props.ts",
         "host-app/src/components/MeasurementRow.props.ts",
         "host-app/src/components/ScoringPanel.props.ts",
@@ -1569,7 +1570,8 @@
         "host-app/src/hooks/__tests__/useBridge.test.tsx",
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
         "host-app/src/utils/__tests__/format.test.ts",
-        "packages/contract/src/__tests__/messages.test.ts"
+        "packages/contract/src/__tests__/messages.test.ts",
+        "packages/orchestrator/src/__tests__/createOrchestrator.test.ts"
       ],
       "imports": {
         "eslint.config.js": {
@@ -1587,13 +1589,9 @@
           "internal": ["host-app/src/App.tsx", "host-app/src/config.ts", "host-app/src/i18n.ts"],
           "external": ["@testing-library/react", "vitest"]
         },
-        "host-app/src/bridge/__tests__/createBridge.test.ts": {
-          "internal": ["host-app/src/bridge/createBridge.ts", "packages/contract/src/messages.ts"],
-          "external": ["vitest"]
-        },
         "host-app/src/components/BridgeStatus.props.ts": {
-          "internal": ["host-app/src/bridge/createBridge.ts"],
-          "external": ["react"]
+          "internal": [],
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/components/MeasurementRow.props.ts": {
           "internal": ["host-app/src/form/rows.ts", "host-app/src/i18n.ts"],
@@ -1652,6 +1650,13 @@
         },
         "packages/contract/src/__tests__/messages.test.ts": {
           "internal": ["packages/contract/src/messages.ts"],
+          "external": ["vitest"]
+        },
+        "packages/orchestrator/src/__tests__/createOrchestrator.test.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/createOrchestrator.ts"
+          ],
           "external": ["vitest"]
         }
       }
@@ -1877,21 +1882,21 @@
       "files": [
         "ARCHITECTURE.md",
         "eslint.config.js",
-        "host-app/src/bridge/commandQueue.ts",
-        "host-app/src/bridge/createBridge.ts",
-        "host-app/src/bridge/listeners.ts",
-        "host-app/src/bridge/messageHandler.ts",
         "host-app/src/components/MeasurementRow.props.ts",
         "host-app/src/components/MeasurementRow.tsx",
-        "host-app/src/form/__tests__/commands.test.ts",
-        "host-app/src/form/commands.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/form/viewerEventHandlers.ts",
         "host-app/src/hooks/useScoringForm.ts",
         "host-app/src/hooks/useViewerEvents.ts",
         "host-app/src/utils/__tests__/selectors.test.ts",
         "host-app/src/utils/format.ts",
-        "host-app/src/utils/selectors.ts"
+        "host-app/src/utils/selectors.ts",
+        "packages/orchestrator/src/__tests__/commands.test.ts",
+        "packages/orchestrator/src/commandQueue.ts",
+        "packages/orchestrator/src/commands.ts",
+        "packages/orchestrator/src/createOrchestrator.ts",
+        "packages/orchestrator/src/listeners.ts",
+        "packages/orchestrator/src/messageHandler.ts"
       ],
       "imports": {
         "eslint.config.js": {
@@ -1904,28 +1909,6 @@
             "globals",
             "typescript-eslint"
           ]
-        },
-        "host-app/src/bridge/commandQueue.ts": {
-          "internal": ["packages/contract/src/messages.ts"],
-          "external": []
-        },
-        "host-app/src/bridge/createBridge.ts": {
-          "internal": [
-            "host-app/src/bridge/armedTool.ts",
-            "host-app/src/bridge/commandQueue.ts",
-            "host-app/src/bridge/listeners.ts",
-            "host-app/src/bridge/messageHandler.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
-        },
-        "host-app/src/bridge/listeners.ts": {
-          "internal": ["host-app/src/bridge/createBridge.ts", "packages/contract/src/messages.ts"],
-          "external": []
-        },
-        "host-app/src/bridge/messageHandler.ts": {
-          "internal": ["host-app/src/bridge/createBridge.ts", "packages/contract/src/messages.ts"],
-          "external": []
         },
         "host-app/src/components/MeasurementRow.props.ts": {
           "internal": ["host-app/src/form/rows.ts", "host-app/src/i18n.ts"],
@@ -1940,14 +1923,6 @@
           ],
           "external": ["react"]
         },
-        "host-app/src/form/__tests__/commands.test.ts": {
-          "internal": ["host-app/src/form/commands.ts", "packages/contract/src/messages.ts"],
-          "external": ["vitest"]
-        },
-        "host-app/src/form/commands.ts": {
-          "internal": ["packages/contract/src/messages.ts"],
-          "external": []
-        },
         "host-app/src/form/rows.ts": {
           "internal": [
             "host-app/src/config.ts",
@@ -1959,13 +1934,12 @@
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/commands.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "host-app/src/utils/selectors.ts",
             "packages/contract/src/messages.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
@@ -1998,6 +1972,45 @@
         "host-app/src/utils/selectors.ts": {
           "internal": ["host-app/src/form/rows.ts"],
           "external": []
+        },
+        "packages/orchestrator/src/__tests__/commands.test.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/commands.ts"
+          ],
+          "external": ["vitest"]
+        },
+        "packages/orchestrator/src/commandQueue.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "packages/orchestrator/src/commands.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "packages/orchestrator/src/createOrchestrator.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/armedTool.ts",
+            "packages/orchestrator/src/commandQueue.ts",
+            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/messageHandler.ts"
+          ],
+          "external": []
+        },
+        "packages/orchestrator/src/listeners.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/createOrchestrator.ts"
+          ],
+          "external": []
+        },
+        "packages/orchestrator/src/messageHandler.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/createOrchestrator.ts"
+          ],
+          "external": []
         }
       }
     },
@@ -2011,7 +2024,7 @@
       "status": "done",
       "verify": "The fork builds from a clean install with no copy of the contract in its tree; the package resolves from the public registry without a token.",
       "files": [
-        ".github/workflows/publish-contract.yml",
+        ".github/workflows/publish-packages.yml",
         "docs/decisions/A-12-npm-workspaces.md",
         "package.json"
       ],
@@ -2139,11 +2152,11 @@
       "files": [
         "ARCHITECTURE.md",
         "host-app/src/App.tsx",
-        "host-app/src/bridge/armedTool.ts",
-        "host-app/src/bridge/createBridge.ts",
         "host-app/src/hooks/usePersistRows.ts",
         "host-app/src/hooks/useRestoredRows.ts",
         "host-app/src/i18n.ts",
+        "packages/orchestrator/src/armedTool.ts",
+        "packages/orchestrator/src/createOrchestrator.ts",
         "viewer/extensions/scoring-bridge/src/commands.ts",
         "viewer/extensions/scoring-bridge/src/removals.ts"
       ],
@@ -2151,20 +2164,6 @@
         "host-app/src/App.tsx": {
           "internal": ["host-app/src/App.css", "host-app/src/pages/ScoringPage.tsx"],
           "external": ["react"]
-        },
-        "host-app/src/bridge/armedTool.ts": {
-          "internal": ["host-app/src/form/commands.ts", "packages/contract/src/messages.ts"],
-          "external": []
-        },
-        "host-app/src/bridge/createBridge.ts": {
-          "internal": [
-            "host-app/src/bridge/armedTool.ts",
-            "host-app/src/bridge/commandQueue.ts",
-            "host-app/src/bridge/listeners.ts",
-            "host-app/src/bridge/messageHandler.ts",
-            "packages/contract/src/messages.ts"
-          ],
-          "external": []
         },
         "host-app/src/hooks/usePersistRows.ts": {
           "internal": [
@@ -2184,6 +2183,23 @@
         },
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "packages/orchestrator/src/armedTool.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/commands.ts"
+          ],
+          "external": []
+        },
+        "packages/orchestrator/src/createOrchestrator.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/armedTool.ts",
+            "packages/orchestrator/src/commandQueue.ts",
+            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/messageHandler.ts"
+          ],
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/commands.ts": {
@@ -2243,7 +2259,7 @@
       "status": "done",
       "verify": "A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.",
       "files": [
-        ".github/workflows/publish-contract.yml",
+        ".github/workflows/publish-packages.yml",
         "docs/decisions/A-15-publish-contract-package.md",
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
@@ -2288,7 +2304,7 @@
       "slice": "36",
       "status": "done",
       "verify": "A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.",
-      "files": [".github/workflows/publish-contract.yml"],
+      "files": [".github/workflows/publish-packages.yml"],
       "imports": {}
     },
     {
@@ -2325,7 +2341,7 @@
       "canon": ["A-16", "C-3.2", "Q-7"],
       "dependsOn": ["F-43"],
       "slice": "38",
-      "status": "review",
+      "status": "done",
       "verify": "Adding a command type to the contract without registering a handler fails the type check, proved by a compiler error rather than by assertion; the viewer builds with the extension and every message on the wire is unchanged.",
       "files": [
         "docs/decisions/A-16-adapter-and-viewer-delivery.md",
@@ -2361,6 +2377,52 @@
           "internal": [
             "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts"
+          ],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-45",
+      "name": "The viewer client becomes the orchestrator package",
+      "description": "Moves the client half of the channel out of the form into the published package `@bdiadiun/scoring-orchestrator`: the handshake and the queue that holds commands until VIEWER_READY, the origin check, the explicit target origin, the listener set, the disarm on teardown and the command builders. It depends on the contract and on nothing else, imports no React and carries no user-visible string. The React binding stays in the form, and a viewer is addressed by configuration, so a second viewer at another version is a configuration change.",
+      "canon": ["A-17", "C-4.1.1", "Q-1", "Q-2", "Q-3", "Q-4"],
+      "dependsOn": ["F-44"],
+      "slice": "39",
+      "status": "review",
+      "verify": "A clean install rebuilds the package before the form imports it; `npm pack --dry-run` lists only built files; the channel's own tests run from the package, including the five that cover disarming on dispose; the form contains no transport code.",
+      "files": [
+        ".github/workflows/publish-packages.yml",
+        "docs/decisions/A-17-orchestrator-package.md",
+        "host-app/src/hooks/useBridge.ts",
+        "packages/orchestrator/package.json",
+        "packages/orchestrator/src/commands.ts",
+        "packages/orchestrator/src/createOrchestrator.ts",
+        "packages/orchestrator/src/index.ts"
+      ],
+      "imports": {
+        "host-app/src/hooks/useBridge.ts": {
+          "internal": ["host-app/src/config.ts", "packages/contract/src/messages.ts"],
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
+        },
+        "packages/orchestrator/src/commands.ts": {
+          "internal": ["packages/contract/src/messages.ts"],
+          "external": []
+        },
+        "packages/orchestrator/src/createOrchestrator.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "packages/orchestrator/src/armedTool.ts",
+            "packages/orchestrator/src/commandQueue.ts",
+            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/messageHandler.ts"
+          ],
+          "external": []
+        },
+        "packages/orchestrator/src/index.ts": {
+          "internal": [
+            "packages/orchestrator/src/commands.ts",
+            "packages/orchestrator/src/createOrchestrator.ts"
           ],
           "external": []
         }

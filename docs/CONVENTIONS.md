@@ -58,17 +58,17 @@ and the linter disagree, fix the linter config in the same PR and say so.
 
 ## 4. Naming
 
-| Thing                                | Style                                                                        | Example                                                                          |
-| ------------------------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                  |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createBridge`, `useScoringForm`                                                 |
-| Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                               |
-| Files: component types and styles    | PascalCase `.props.ts` next to the component                                 | `TotalsFooter.props.ts`                                                          |
-| Files: everything else               | kebab-case or camelCase, one concept per file                                | `create-bridge.ts` / `createBridge.ts` (keep the existing style within a folder) |
-| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)` | `form/__tests__/rows.test.ts`                                                    |
-| Booleans                             | `is`/`has`/`can`/`should` prefix                                             | `isReady`, `hasMetrics`                                                          |
-| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                   | `onRemove` / `handleRemove`                                                      |
-| Interfaces for props                 | `<Component>Props`                                                           | `ScoringPanelProps`                                                              |
+| Thing                                | Style                                                                        | Example                                                                                      |
+| ------------------------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                              |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createOrchestrator`, `useScoringForm`                                                       |
+| Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                                           |
+| Files: component types and styles    | PascalCase `.props.ts` next to the component                                 | `TotalsFooter.props.ts`                                                                      |
+| Files: everything else               | kebab-case or camelCase, one concept per file                                | `create-orchestrator.ts` / `createOrchestrator.ts` (keep the existing style within a folder) |
+| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)` | `form/__tests__/rows.test.ts`                                                                |
+| Booleans                             | `is`/`has`/`can`/`should` prefix                                             | `isReady`, `hasMetrics`                                                                      |
+| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                   | `onRemove` / `handleRemove`                                                                  |
+| Interfaces for props                 | `<Component>Props`                                                           | `ScoringPanelProps`                                                                          |
 
 No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`, `uid`, `url`.
 
@@ -85,7 +85,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - Split by role, not by size: the bridge is messaging, handshake and the measurement stream; a
   hook is user actions or event synchronisation, not both. A factory that does more than three
   things is two factories and a composition root that wires them.
-- A composition root (`createBridge`, `App`, a top-level hook) only creates and connects; it holds
+- A composition root (`createOrchestrator`, `App`, a top-level hook) only creates and connects; it holds
   no branching logic of its own.
 - Repeated lookups become named selectors (`findRow`, `findRowByUid`) instead of inline `find`
   calls scattered through a module.

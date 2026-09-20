@@ -9,10 +9,10 @@ open the OHIF fork at the commit the `viewer` submodule is pinned to
 | Concern                 | Host-app                                                                                                                                                    | Viewer extension                                                                                                                                       |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Origin configured       | [`VIEWER_ORIGIN`](../host-app/src/config.ts#L4)                                                                                                             | [`HOST_ORIGIN`][fork-config]                                                                                                                           |
-| Origin checked          | [`event.origin !== viewerOrigin`](../host-app/src/bridge/createBridge.ts#L74)                                                                               | [`event.origin !== HOST_ORIGIN`][fork-bridge-origin]                                                                                                   |
-| Payload validated       | [`isViewerEvent`](../host-app/src/bridge/createBridge.ts#L83)                                                                                               | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
-| Handshake               | [READY flushes the queue](../host-app/src/bridge/createBridge.ts#L97)                                                                                       | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`postViewerReady`][fork-bridge-ready] → [`window.parent.postMessage`][fork-bridge-post]         |
-| Early commands          | [`queue.push(command)`](../host-app/src/bridge/createBridge.ts#L113), [`flushQueue`](../host-app/src/bridge/createBridge.ts#L54)                            | —                                                                                                                                                      |
+| Origin checked          | [`event.origin !== viewerOrigin`](../packages/orchestrator/src/createOrchestrator.ts#L74)                                                                   | [`event.origin !== HOST_ORIGIN`][fork-bridge-origin]                                                                                                   |
+| Payload validated       | [`isViewerEvent`](../packages/orchestrator/src/createOrchestrator.ts#L83)                                                                                   | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
+| Handshake               | [READY flushes the queue](../packages/orchestrator/src/createOrchestrator.ts#L97)                                                                           | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`postViewerReady`][fork-bridge-ready] → [`window.parent.postMessage`][fork-bridge-post]         |
+| Early commands          | [`queue.push(command)`](../packages/orchestrator/src/createOrchestrator.ts#L113), [`flushQueue`](../packages/orchestrator/src/createOrchestrator.ts#L54)    | —                                                                                                                                                      |
 | Row id / measurement id | [`crypto.randomUUID()` in `addRow`](../host-app/src/form/useScoringForm.ts#L27)                                                                             | [`uidToRowId.set`][fork-bridge-map]                                                                                                                    |
 | Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L7)                                                                                                              | [snapshot `getActivePrimaryMouseButtonTool`][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]        |
 | Measurement delivered   | [`rowId === null` ignored](../host-app/src/form/useScoringForm.ts#L134)                                                                                     | [`MEASUREMENT_ADDED` subscription][fork-bridge-added], [posted][fork-bridge-added-post], [`toMetrics`][fork-metrics], [unit normalisation][fork-units] |
@@ -24,7 +24,7 @@ open the OHIF fork at the commit the `viewer` submodule is pinned to
 | Version overlay (S-5.5) | —                                                                                                                                                           | [`viewportOverlay.bottomRight`][fork-overlay]                                                                                                          |
 | State and totals        | [`RowStatus`](../host-app/src/form/rows.ts#L6), [`FormActionType`](../host-app/src/form/rows.ts#L26), [`computeTotals`](../host-app/src/form/totals.ts#L24) | —                                                                                                                                                      |
 | Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                            | log prefix `[scoring-bridge]` in the viewer console                                                                                                    |
-| Entry point             | [`useBridge`](../host-app/src/bridge/useBridge.ts)                                                                                                          | [`preRegistration`][fork-index]                                                                                                                        |
+| Entry point             | [`useBridge`](../host-app/src/hooks/useBridge.ts)                                                                                                           | [`preRegistration`][fork-index]                                                                                                                        |
 
 [fork-config]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/config.ts#L2
 [fork-index]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/index.tsx#L10
@@ -54,10 +54,10 @@ open the OHIF fork at the commit the `viewer` submodule is pinned to
 ## Questions (canon P-1..P-6)
 
 **P-1. The iframe loads slower than the user clicks.** "Активувати" calls `send`; while `ready` is
-false the command goes to [`queue.push(command)`](../host-app/src/bridge/createBridge.ts#L113) and
+false the command goes to [`queue.push(command)`](../packages/orchestrator/src/createOrchestrator.ts#L113) and
 the status line shows `у черзі: N`. The viewer announces `VIEWER_READY` only after
 [the first viewport joins a tool group][fork-bridge-viewport], because `setToolActive` is a silent
-no-op before that. The host then [flushes the queue in order](../host-app/src/bridge/createBridge.ts#L97).
+no-op before that. The host then [flushes the queue in order](../packages/orchestrator/src/createOrchestrator.ts#L97).
 Demo: stop the viewer, click "Активувати", start the viewer, watch the counter drain.
 
 **P-2. Why `postMessage`.** The two apps have different origins, and `postMessage` is the only
@@ -74,7 +74,7 @@ row before drawing, and OHIF's `_isValidMeasurement` rejects any foreign field, 
 be stored on a measurement ([A-8](decisions/A-8-id-correlation.md)).
 
 **P-4. Where we subscribe in OHIF.** [`measurementService.subscribe(MEASUREMENT_ADDED)`][fork-bridge-added]
-inside `createBridge`, called from [`preRegistration`][fork-index], where OHIF hands an extension its
+inside `createOrchestrator`, called from [`preRegistration`][fork-index], where OHIF hands an extension its
 `servicesManager`. The service merges cornerstone's `ANNOTATION_ADDED` and `ANNOTATION_COMPLETED`
 into one event on completion and returns an unsubscribe handle; raw cornerstone events would fire
 on the first click.
@@ -108,7 +108,7 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 [status line](../host-app/src/components/BridgeStatus.tsx#L6) stays at `очікує VIEWER_READY`, the
 queue count grows with each "Активувати", and the viewer console has no `VIEWER_READY sent`. Walk:
 [`postViewerReady`][fork-bridge-ready] → [VIEWPORT_ADDED subscription][fork-bridge-viewport] → host
-[READY branch](../host-app/src/bridge/createBridge.ts#L88). If `ACTIVATE_TOOL` is disabled instead,
+[READY branch](../packages/orchestrator/src/createOrchestrator.ts#L88). If `ACTIVATE_TOOL` is disabled instead,
 the queue drains but the viewer logs no `armed row` and the tool stays WindowLevel.
 
 ## Rehearsal checklist

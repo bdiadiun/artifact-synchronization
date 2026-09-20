@@ -13,8 +13,12 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/setup-tests.ts'],
-    // The contract package (packages/contract, consumed as @bdiadiun/scoring-contract) lives outside
-    // host-app; its tests are included here explicitly so `npm run test` covers them too.
-    include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/contract/src/**/*.test.ts'],
+    // The published packages (packages/contract, packages/orchestrator) live outside host-app; their
+    // tests are included here explicitly so `npm run test` covers them too.
+    include: [
+      'src/**/*.{test,spec}.{ts,tsx}',
+      '../packages/contract/src/**/*.test.ts',
+      '../packages/orchestrator/src/**/*.test.ts',
+    ],
   },
 });

@@ -10,8 +10,8 @@ import type {
   MeasurementUpdatedEvent,
   RestoreMeasurementRequest,
 } from '@bdiadiun/scoring-contract';
+import { activateToolCommand, restoreMeasurementsCommand } from '@bdiadiun/scoring-orchestrator';
 import { STUDY_INSTANCE_UID } from '../config';
-import { activateToolCommand, restoreMeasurementsCommand } from './commands';
 import { FormActionType, RowStatus, type FormAction, type FormState, type Row } from './rows';
 import { findRow, findRowByUid } from '../utils/selectors';
 import type { ViewerEventHandlers } from '../hooks/useViewerEvents';

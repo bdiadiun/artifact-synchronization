@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react';
-import type { BridgeState } from '../bridge/createBridge';
+import type { OrchestratorState } from '@bdiadiun/scoring-orchestrator';
 
 export interface BridgeStatusProps {
-  state: BridgeState;
+  state: OrchestratorState;
 }
 
 export const styles = {

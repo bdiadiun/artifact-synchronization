@@ -1,43 +1,52 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import type { HostCommand } from '@bdiadiun/scoring-contract';
-import { createBridge, type Bridge, type BridgeState } from '../bridge/createBridge';
+import {
+  createOrchestrator,
+  type Orchestrator,
+  type OrchestratorState,
+} from '@bdiadiun/scoring-orchestrator';
 import { VIEWER_ORIGIN } from '../config';
 
 export interface UseBridgeResult {
   send: (command: HostCommand) => void;
-  state: BridgeState;
+  state: OrchestratorState;
 }
 
-const INITIAL_STATE: BridgeState = { ready: false, queued: 0, lastEvent: null, ignoredOrigins: 0 };
+const INITIAL_STATE: OrchestratorState = {
+  ready: false,
+  queued: 0,
+  lastEvent: null,
+  ignoredOrigins: 0,
+};
 
-// One bridge instance per mount, disposed on unmount; under StrictMode's dev double-mount, the
+// One orchestrator instance per mount, disposed on unmount; under StrictMode's dev double-mount, the
 // first mount's cleanup runs before the second mount attaches, so only one listener is ever live.
 export const useBridge = (iframeRef: RefObject<HTMLIFrameElement | null>): UseBridgeResult => {
-  const [state, setState] = useState<BridgeState>(INITIAL_STATE);
-  const bridgeRef = useRef<Bridge | null>(null);
+  const [state, setState] = useState<OrchestratorState>(INITIAL_STATE);
+  const orchestratorRef = useRef<Orchestrator | null>(null);
 
   useEffect(() => {
-    const bridge = createBridge({
+    const orchestrator = createOrchestrator({
       // Read lazily: the iframe can be briefly null and its window is a live value (P-1).
       getViewerWindow: () => iframeRef.current?.contentWindow ?? null,
       viewerOrigin: VIEWER_ORIGIN,
     });
-    bridgeRef.current = bridge;
-    setState(bridge.getState());
-    const unsubscribe = bridge.subscribe((_event, nextState) => {
+    orchestratorRef.current = orchestrator;
+    setState(orchestrator.getState());
+    const unsubscribe = orchestrator.subscribe((_event, nextState) => {
       setState(nextState);
     });
 
     return () => {
       unsubscribe();
-      bridge.dispose();
-      bridgeRef.current = null;
+      orchestrator.dispose();
+      orchestratorRef.current = null;
     };
     // `iframeRef` and `VIEWER_ORIGIN` are stable, so this effect runs once per mount.
   }, [iframeRef]);
 
   const send = (command: HostCommand): void => {
-    bridgeRef.current?.send(command);
+    orchestratorRef.current?.send(command);
   };
 
   return { send, state };

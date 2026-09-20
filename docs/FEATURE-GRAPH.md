@@ -54,7 +54,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-41 | The contract becomes a published package                                                                                                          | A-15, D-1, Q-7                                                  | F-40             | 35    | done    | A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.                                                                            |
 | F-42 | The first release publishes                                                                                                                       | A-15, Q-7                                                       | F-41             | 36    | done    | A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.                                                                                                                                                                                                                                                 |
 | F-43 | The fork depends on the package, the copy is gone                                                                                                 | A-15, Q-7                                                       | F-42             | 37    | done    | The fork's tree holds no contract file; a clean install fetches the package from the public registry with no token and no registry configuration, and the viewer builds with the extension bundled.                                                                                                                                                                       |
-| F-44 | The bridge is an adapter with a handler registry                                                                                                  | A-16, C-3.2, Q-7                                                | F-43             | 38    | review  | Adding a command type to the contract without registering a handler fails the type check, proved by a compiler error rather than by assertion; the viewer builds with the extension and every message on the wire is unchanged.                                                                                                                                           |
+| F-44 | The bridge is an adapter with a handler registry                                                                                                  | A-16, C-3.2, Q-7                                                | F-43             | 38    | done    | Adding a command type to the contract without registering a handler fails the type check, proved by a compiler error rather than by assertion; the viewer builds with the extension and every message on the wire is unchanged.                                                                                                                                           |
+| F-45 | The viewer client becomes the orchestrator package                                                                                                | A-17, C-4.1.1, Q-1, Q-2, Q-3, Q-4                               | F-44             | 39    | review  | A clean install rebuilds the package before the form imports it; `npm pack --dry-run` lists only built files; the channel's own tests run from the package, including the five that cover disarming on dispose; the form contains no transport code.                                                                                                                      |
 
 ## Coverage of mandatory IDs
 
@@ -64,7 +65,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | C-3.2   | F-05, F-44                                                                                                             |
 | C-3.3   | F-01                                                                                                                   |
 | C-3.4   | F-05, F-09, F-32                                                                                                       |
-| C-4.1.1 | F-04                                                                                                                   |
+| C-4.1.1 | F-04, F-45                                                                                                             |
 | C-4.1.2 | F-04                                                                                                                   |
 | C-4.1.3 | F-02, F-04                                                                                                             |
 | C-4.2.1 | F-01                                                                                                                   |
@@ -81,10 +82,10 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | C-4.4.1 | F-03, F-08                                                                                                             |
 | C-4.4.2 | F-03, F-15, F-16                                                                                                       |
 | C-4.4.3 | F-03                                                                                                                   |
-| Q-1     | F-06                                                                                                                   |
-| Q-2     | F-05, F-06                                                                                                             |
-| Q-3     | F-07, F-08, F-09, F-19                                                                                                 |
-| Q-4     | F-14, F-15, F-19, F-39                                                                                                 |
+| Q-1     | F-06, F-45                                                                                                             |
+| Q-2     | F-05, F-06, F-45                                                                                                       |
+| Q-3     | F-07, F-08, F-09, F-19, F-45                                                                                           |
+| Q-4     | F-14, F-15, F-19, F-39, F-45                                                                                           |
 | Q-5     | F-05, F-06, F-39                                                                                                       |
 | Q-6     | F-09, F-10, F-11                                                                                                       |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44 |
@@ -146,6 +147,7 @@ graph TD
   F42["F-42 The first release publishes"]
   F43["F-43 The fork depends on the package, the copy is gone"]
   F44["F-44 The bridge is an adapter with a handler registry"]
+  F45["F-45 The viewer client becomes the orchestrator package"]
 
   F20 --> F01
   F01 --> F02
@@ -196,6 +198,7 @@ graph TD
   F41 --> F42
   F42 --> F43
   F43 --> F44
+  F44 --> F45
 ```
 
 ## Slice → nodes
@@ -243,6 +246,7 @@ graph TD
 | 36 — fix: publish the first release                          | `fix/publish-first-release`                 | —   | F-42                   |
 | 37 — chore: the fork consumes the published contract         | `chore/fork-consumes-contract`              | —   | F-43                   |
 | 38 — feat: bridge adapter with a handler registry            | `feat/bridge-adapter-registry`              | —   | F-44                   |
+| 39 — feat: the orchestrator package                          | `feat/orchestrator-package`                 | —   | F-45                   |
 
 ## Node details
 
@@ -351,12 +355,12 @@ Canon: C-3.1, P-1, P-9, Q-1, Q-2, Q-5. Depends on: F-02, F-03. Slice 2, status `
 Files:
 
 - `docs/decisions/A-9-handshake-and-queue.md`
-- `host-app/src/bridge/__tests__/createBridge.test.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`; external: `vitest`
-- `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/armedTool.ts`, `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
-- `host-app/src/components/BridgeStatus.props.ts` — internal: `host-app/src/bridge/createBridge.ts`; external: `react`
+- `host-app/src/components/BridgeStatus.props.ts` — external: `@bdiadiun/scoring-orchestrator`, `react`
 - `host-app/src/components/BridgeStatus.tsx` — internal: `host-app/src/components/BridgeStatus.props.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/hooks/__tests__/useBridge.test.tsx` — internal: `host-app/src/hooks/useBridge.ts`; external: `@testing-library/react`, `react`, `vitest`
-- `host-app/src/hooks/useBridge.ts` — internal: `host-app/src/bridge/createBridge.ts`, `host-app/src/config.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/hooks/useBridge.ts` — internal: `host-app/src/config.ts`, `packages/contract/src/messages.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
+- `packages/orchestrator/src/__tests__/createOrchestrator.test.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/createOrchestrator.ts`; external: `vitest`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
 
 ### F-07 Form rows: add, statuses, row IDs
 
@@ -556,11 +560,10 @@ Files:
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/form/__tests__/storage.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `vitest`
-- `host-app/src/form/commands.ts` — internal: `packages/contract/src/messages.ts`
-- `host-app/src/form/rowActions.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/form/rowActions.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/storage.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
 - `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
@@ -568,6 +571,7 @@ Files:
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
 - `packages/contract/src/messages.ts` — no imports
+- `packages/orchestrator/src/commands.ts` — internal: `packages/contract/src/messages.ts`
 - `scripts/eslint-fork-style.config.js` — external: `typescript-eslint`
 - `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
 - `viewer/extensions/scoring-bridge/src/restore.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`; external: `@cornerstonejs/tools`
@@ -675,8 +679,7 @@ Files:
 - `docs/CONVENTIONS.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/__tests__/App.test.tsx` — internal: `host-app/src/App.tsx`, `host-app/src/config.ts`, `host-app/src/i18n.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/bridge/__tests__/createBridge.test.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`; external: `vitest`
-- `host-app/src/components/BridgeStatus.props.ts` — internal: `host-app/src/bridge/createBridge.ts`; external: `react`
+- `host-app/src/components/BridgeStatus.props.ts` — external: `@bdiadiun/scoring-orchestrator`, `react`
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/ScoringPanel.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/form/totals.ts`, `packages/contract/src/messages.ts`; external: `react`
@@ -688,6 +691,7 @@ Files:
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/utils/__tests__/format.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `vitest`
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
+- `packages/orchestrator/src/__tests__/createOrchestrator.test.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/createOrchestrator.ts`; external: `vitest`
 
 ### F-28 Feature graph as JSON
 
@@ -776,21 +780,21 @@ Files:
 
 - `ARCHITECTURE.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
-- `host-app/src/bridge/commandQueue.ts` — internal: `packages/contract/src/messages.ts`
-- `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/armedTool.ts`, `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
-- `host-app/src/bridge/listeners.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`
-- `host-app/src/bridge/messageHandler.ts` — internal: `host-app/src/bridge/createBridge.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/form/__tests__/commands.test.ts` — internal: `host-app/src/form/commands.ts`, `packages/contract/src/messages.ts`; external: `vitest`
-- `host-app/src/form/commands.ts` — internal: `packages/contract/src/messages.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/commands.ts`, `host-app/src/form/rows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`; external: `react`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/hooks/useViewerEvents.ts` — internal: `packages/contract/src/messages.ts`; external: `react`
 - `host-app/src/utils/__tests__/selectors.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/utils/selectors.ts`; external: `vitest`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/utils/selectors.ts` — internal: `host-app/src/form/rows.ts`
+- `packages/orchestrator/src/__tests__/commands.test.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/commands.ts`; external: `vitest`
+- `packages/orchestrator/src/commandQueue.ts` — internal: `packages/contract/src/messages.ts`
+- `packages/orchestrator/src/commands.ts` — internal: `packages/contract/src/messages.ts`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
+- `packages/orchestrator/src/listeners.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/createOrchestrator.ts`
+- `packages/orchestrator/src/messageHandler.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/createOrchestrator.ts`
 
 ### F-34 Contract published as one package
 
@@ -800,7 +804,7 @@ Canon: A-15, Q-7. Depends on: F-33. Slice 27, status `done`.
 
 Files:
 
-- `.github/workflows/publish-contract.yml`
+- `.github/workflows/publish-packages.yml`
 - `docs/decisions/A-12-npm-workspaces.md`
 - `package.json`
 
@@ -883,11 +887,11 @@ Files:
 
 - `ARCHITECTURE.md`
 - `host-app/src/App.tsx` — internal: `host-app/src/App.css`, `host-app/src/pages/ScoringPage.tsx`; external: `react`
-- `host-app/src/bridge/armedTool.ts` — internal: `host-app/src/form/commands.ts`, `packages/contract/src/messages.ts`
-- `host-app/src/bridge/createBridge.ts` — internal: `host-app/src/bridge/armedTool.ts`, `host-app/src/bridge/commandQueue.ts`, `host-app/src/bridge/listeners.ts`, `host-app/src/bridge/messageHandler.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/messages.ts`
+- `packages/orchestrator/src/armedTool.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/commands.ts`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 - `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
 
@@ -913,7 +917,7 @@ Canon: A-15, D-1, Q-7. Depends on: F-40. Slice 35, status `done`.
 
 Files:
 
-- `.github/workflows/publish-contract.yml`
+- `.github/workflows/publish-packages.yml`
 - `docs/decisions/A-15-publish-contract-package.md`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/form/storage.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/messages.ts`
@@ -930,7 +934,7 @@ Canon: A-15, Q-7. Depends on: F-41. Slice 36, status `done`.
 
 Files:
 
-- `.github/workflows/publish-contract.yml`
+- `.github/workflows/publish-packages.yml`
 
 ### F-43 The fork depends on the package, the copy is gone
 
@@ -951,7 +955,7 @@ Files:
 
 Replaces the fixed command dispatcher with a registry: a command type maps to a handler, and a new capability is registered rather than added as a branch. The registration map carries a satisfies clause against the contract's union of command types, so a command added to the contract without a handler fails the type check, which is what the old default branch narrowing to never provided. The registry holds no OHIF import, so it is pure logic. The point is that the fork's diff can now stay frozen while the adapter grows.
 
-Canon: A-16, C-3.2, Q-7. Depends on: F-43. Slice 38, status `review`.
+Canon: A-16, C-3.2, Q-7. Depends on: F-43. Slice 38, status `done`.
 
 Files:
 
@@ -960,3 +964,19 @@ Files:
 - `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 - `viewer/extensions/scoring-bridge/src/registry.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+
+### F-45 The viewer client becomes the orchestrator package
+
+Moves the client half of the channel out of the form into the published package `@bdiadiun/scoring-orchestrator`: the handshake and the queue that holds commands until VIEWER_READY, the origin check, the explicit target origin, the listener set, the disarm on teardown and the command builders. It depends on the contract and on nothing else, imports no React and carries no user-visible string. The React binding stays in the form, and a viewer is addressed by configuration, so a second viewer at another version is a configuration change.
+
+Canon: A-17, C-4.1.1, Q-1, Q-2, Q-3, Q-4. Depends on: F-44. Slice 39, status `review`.
+
+Files:
+
+- `.github/workflows/publish-packages.yml`
+- `docs/decisions/A-17-orchestrator-package.md`
+- `host-app/src/hooks/useBridge.ts` — internal: `host-app/src/config.ts`, `packages/contract/src/messages.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
+- `packages/orchestrator/package.json`
+- `packages/orchestrator/src/commands.ts` — internal: `packages/contract/src/messages.ts`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
+- `packages/orchestrator/src/index.ts` — internal: `packages/orchestrator/src/commands.ts`, `packages/orchestrator/src/createOrchestrator.ts`
