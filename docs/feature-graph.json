@@ -230,6 +230,11 @@
       "id": "39",
       "title": "feat: the orchestrator package",
       "branch": "feat/orchestrator-package"
+    },
+    {
+      "id": "40",
+      "title": "fix: build the packages in order",
+      "branch": "fix/clean-install-build-order"
     }
   ],
   "nodes": [
@@ -2389,7 +2394,7 @@
       "canon": ["A-17", "C-4.1.1", "Q-1", "Q-2", "Q-3", "Q-4"],
       "dependsOn": ["F-44"],
       "slice": "39",
-      "status": "review",
+      "status": "done",
       "verify": "A clean install rebuilds the package before the form imports it; `npm pack --dry-run` lists only built files; the channel's own tests run from the package, including the five that cover disarming on dispose; the form contains no transport code.",
       "files": [
         ".github/workflows/publish-packages.yml",
@@ -2427,6 +2432,23 @@
           "external": []
         }
       }
+    },
+    {
+      "id": "F-46",
+      "name": "A fresh clone installs",
+      "description": "Each package built only itself, so on a machine where the contract's output did not already exist the orchestrator compiled first and failed to find it. The publish workflow failed on exactly that. The packages now form a project-reference chain, so building the orchestrator builds the contract first and the order belongs to the compiler rather than to the package manager.",
+      "canon": ["A-17", "D-1", "D-5"],
+      "dependsOn": ["F-45"],
+      "slice": "40",
+      "status": "review",
+      "verify": "With both build outputs and every node_modules deleted, `npm ci` completes and both packages' `dist` exist afterwards; the two tarballs still contain only the manifest, the README where there is one and the built files.",
+      "files": [
+        "packages/contract/package.json",
+        "packages/contract/tsconfig.json",
+        "packages/orchestrator/package.json",
+        "packages/orchestrator/tsconfig.json"
+      ],
+      "imports": {}
     }
   ]
 }

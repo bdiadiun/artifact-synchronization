@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                  |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Current slice  | 39 `feat: the orchestrator package` (branch `feat/orchestrator-package`, node F-45)                                                                    |
-| Gate           | 2 — the channel became its own published package; awaiting result approval                                                                             |
-| Last merged PR | #44 `feat: bridge adapter with a handler registry`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                                    |
+| Field          | Value                                                                                                                                    |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 40 `fix: build the packages in order` (branch `fix/clean-install-build-order`, node F-46)                                                |
+| Gate           | 2 — a fresh clone installs again; awaiting result approval                                                                               |
+| Last merged PR | #45 `feat: the orchestrator package`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                      |
 
 ## Open decisions (see CANON.md → Decisions)
 

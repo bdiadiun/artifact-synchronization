@@ -5,9 +5,12 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
+    "composite": true,
     "declaration": true,
     "outDir": "dist",
     "rootDir": "src",
+    // Kept out of outDir so the published tarball contains the built files only.
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
     "skipLibCheck": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
