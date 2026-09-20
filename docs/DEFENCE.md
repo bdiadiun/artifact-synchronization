@@ -1,7 +1,7 @@
 # Defence notes
 
 Where to point during the call. Host-app links are relative to this repository; extension links
-open the OHIF fork at the commit the `viewer` submodule is pinned to
+open the OHIF fork at the commit `viewer.json` pins
 (`94108f3dfd`). If a line drifts after a later change, search for the quoted symbol.
 
 ## The protocol in one screen

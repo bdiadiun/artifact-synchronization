@@ -22,10 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # `submodules: true` + `fetch-depth: 1` gives a shallow clone of both the repo and the
-          # viewer submodule (the OHIF fork is large); no separate `git submodule update` step is
-          # needed because checkout's own submodule handling already clones shallowly here.
-          submodules: true
           fetch-depth: 1
 
       - uses: actions/setup-node@v4
@@ -33,9 +29,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      # Only the root workspace (host-app + contract) is installed; the viewer submodule uses its
-      # own yarn toolchain and our checks only read its extension's source files, not its
-      # dependencies (CLAUDE.md §5, docs/CONVENTIONS.md §11).
+      # Only the root workspace (host-app + contract) is installed; the viewer is a separate
+      # checkout with its own yarn toolchain and our checks only read its extension's source
+      # files, not its dependencies (CLAUDE.md §5, docs/CONVENTIONS.md §11).
       - run: npm ci
 
       - name: Format check
@@ -44,9 +40,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Lint fork extension
-        run: npm run lint:fork
-
+      # The fork extension is linted by the fork's own workflow, where its source lives; this
+      # repository no longer checks it out.
       - name: Typecheck
         run: npm run typecheck
 

@@ -20,6 +20,9 @@ const CODE_EXTENSIONS = ['.ts', '.tsx', '.js', '.mjs'];
 const CONTRACT_PACKAGE = '@bdiadiun/scoring-contract';
 const CONTRACT_SOURCE = 'packages/contract/src/messages.ts';
 
+const VIEWER_DIR = 'viewer';
+const VIEWER_HINT = `${VIEWER_DIR}/ is not checked out, run npm run viewer:setup`;
+
 const readText = (relPath) => readFileSync(join(ROOT, relPath), 'utf8');
 
 const isFile = (relPath) => {
@@ -29,6 +32,20 @@ const isFile = (relPath) => {
     return false;
   }
 };
+
+const isDirectory = (relPath) => {
+  try {
+    return statSync(join(ROOT, relPath)).isDirectory();
+  } catch {
+    return false;
+  }
+};
+
+// The OHIF fork is a pinned local checkout (A-18), so its files may legitimately be absent. When
+// they are, paths under viewer/ are taken on trust and the output says how many and why.
+const isViewerCheckedOut = isDirectory(VIEWER_DIR);
+const isSkippedViewerPath = (relPath) =>
+  !isViewerCheckedOut && (relPath === VIEWER_DIR || relPath.startsWith(`${VIEWER_DIR}/`));
 
 const compareText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 const compareIds = (a, b) => a.localeCompare(b, 'en', { numeric: true });
@@ -100,11 +117,12 @@ const scanImports = (relPath) => {
   return { internal: sortedUnique(internal), external: sortedUnique(external) };
 };
 
-const computeImports = (files) =>
+const computeImports = (node) =>
   Object.fromEntries(
-    sortedUnique(files)
-      .filter((file) => isCodeFile(file) && isFile(file))
-      .map((file) => [file, scanImports(file)]),
+    sortedUnique(node.files)
+      .filter((file) => isCodeFile(file) && (isFile(file) || isSkippedViewerPath(file)))
+      .map((file) => [file, isSkippedViewerPath(file) ? node.imports?.[file] : scanImports(file)])
+      .filter(([, imports]) => imports !== undefined),
   );
 
 // Normalisation: stable key order, nodes by numeric id, unordered arrays sorted.
@@ -135,7 +153,7 @@ const normaliseGraph = (graph) => ({
   slices: graph.slices.map(normaliseSlice),
   nodes: [...graph.nodes]
     .sort((a, b) => compareIds(a.id, b.id))
-    .map((node) => normaliseNode(node, computeImports(node.files))),
+    .map((node) => normaliseNode(node, computeImports(node))),
 });
 
 const serialiseGraph = (graph) => `${JSON.stringify(graph, null, 2)}\n`;
@@ -379,10 +397,16 @@ const gatingProblems = (graph) => {
   });
 };
 
+const nodeFiles = (graph) => graph.nodes.flatMap((node) => node.files);
+
 const missingFileProblems = (graph) =>
   graph.nodes.flatMap((node) =>
-    node.files.filter((file) => !isFile(file)).map((file) => `${node.id}: ${file}`),
+    node.files
+      .filter((file) => !isFile(file) && !isSkippedViewerPath(file))
+      .map((file) => `${node.id}: ${file}`),
   );
+
+const skippedLabel = (skipped) => (skipped === 0 ? '' : ` (${skipped} skipped: ${VIEWER_HINT})`);
 
 const plannedWithFilesProblems = (graph) =>
   graph.nodes
@@ -399,7 +423,9 @@ const unknownSliceProblems = (graph) => {
 const unresolvedImportProblems = (normalised) =>
   normalised.nodes.flatMap((node) =>
     Object.entries(node.imports).flatMap(([file, { internal }]) =>
-      internal.filter((target) => !isFile(target)).map((target) => `${file} -> ${target}`),
+      internal
+        .filter((target) => !isFile(target) && !isSkippedViewerPath(target))
+        .map((target) => `${file} -> ${target}`),
     ),
   );
 
@@ -436,7 +462,8 @@ const runCheck = () => {
     record('Status values are recognised', statusProblems(graph));
     record('Dependency gating', gatingProblems(graph));
     record('Slices exist for every node', unknownSliceProblems(graph));
-    record('Files exist', missingFileProblems(graph));
+    const skippedFiles = nodeFiles(graph).filter(isSkippedViewerPath).length;
+    record(`Files exist${skippedLabel(skippedFiles)}`, missingFileProblems(graph));
     record('Planned nodes list no files', plannedWithFilesProblems(graph));
 
     const normalised = normaliseGraph(graph);

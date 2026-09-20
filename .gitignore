@@ -2,6 +2,9 @@ node_modules/
 dist/
 packages/contract/dist/
 
+# The OHIF fork is a pinned local checkout (A-18): npm run viewer:setup
+viewer/
+
 # Personal, machine-specific Claude Code settings and notes
 .claude/settings.local.json
 CLAUDE.local.md

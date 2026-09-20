@@ -1,6 +1,8 @@
 # A-1 — Mono-repo with the OHIF fork as a git submodule
 
-Status: approved 2026-09-16. Canon: D-1, C-4.1.1.
+Status: approved 2026-09-16; the submodule part is superseded by
+[A-18](A-18-viewer-checked-out-not-vendored.md) on 2026-09-20, which makes `viewer/` a pinned
+local checkout instead. The mono-repo itself still holds. Canon: D-1, C-4.1.1.
 
 ## Context
 

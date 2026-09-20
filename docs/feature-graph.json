@@ -235,6 +235,11 @@
       "id": "40",
       "title": "fix: build the packages in order",
       "branch": "fix/clean-install-build-order"
+    },
+    {
+      "id": "41",
+      "title": "chore: the viewer is checked out, not vendored",
+      "branch": "chore/drop-viewer-submodule"
     }
   ],
   "nodes": [
@@ -391,15 +396,21 @@
       "dependsOn": ["F-00"],
       "slice": "2",
       "status": "done",
-      "verify": "Fork added as submodule under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb.",
+      "verify": "Fork added as checkout under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb.",
       "files": [
-        ".gitmodules",
         "docs/decisions/A-1-mono-repo-with-submodule.md",
         "docs/decisions/A-6-ohif-base-version.md",
+        "scripts/viewer.mjs",
+        "viewer.json",
         "viewer/platform/app/package.json",
         "viewer/platform/app/pluginConfig.json"
       ],
-      "imports": {}
+      "imports": {
+        "scripts/viewer.mjs": {
+          "internal": [],
+          "external": ["node:child_process", "node:fs", "node:path", "node:url"]
+        }
+      }
     },
     {
       "id": "F-05",
@@ -1504,13 +1515,13 @@
     {
       "id": "F-24",
       "name": "Continuous integration and fork default branch",
-      "description": "A GitHub Actions workflow runs format check, lint, fork lint, typecheck, tests, host build, graph check, contract check and docs freshness on every PR and push to main. The submodule points at the fork's default branch `scoring`, so a plain clone gets the right code.",
+      "description": "A GitHub Actions workflow runs format check, lint, fork lint, typecheck, tests, host build, graph check, contract check and docs freshness on every PR and push to main. `viewer.json` pins the fork's commit `scoring`, so a plain clone gets the right code.",
       "canon": ["D-3", "D-4", "D-5", "Q-7"],
       "dependsOn": ["F-23"],
       "slice": "14",
       "status": "done",
       "verify": "GitHub Actions runs lint, lint:fork, format:check, typecheck, test, build, check:graph on every PR and push to main; the fork's default branch is `scoring`.",
-      "files": [".github/workflows/ci.yml", ".gitmodules", "package.json"],
+      "files": [".github/workflows/ci.yml", "package.json"],
       "imports": {}
     },
     {
@@ -2440,7 +2451,7 @@
       "canon": ["A-17", "D-1", "D-5"],
       "dependsOn": ["F-45"],
       "slice": "40",
-      "status": "review",
+      "status": "done",
       "verify": "With both build outputs and every node_modules deleted, `npm ci` completes and both packages' `dist` exist afterwards; the two tarballs still contain only the manifest, the README where there is one and the built files.",
       "files": [
         "packages/contract/package.json",
@@ -2449,6 +2460,34 @@
         "packages/orchestrator/tsconfig.json"
       ],
       "imports": {}
+    },
+    {
+      "id": "F-47",
+      "name": "The viewer leaves the repository",
+      "description": "The OHIF fork stops being a submodule. `viewer/` becomes a local checkout that git ignores, cloned at the exact commit pinned in `viewer.json` by `npm run viewer:setup` and started by `npm run viewer:dev`. The fork itself stays on GitHub and remains the answer to the canon's requirement for a fork. Checks that read the fork say plainly when it is not present instead of failing obscurely.",
+      "canon": ["A-18", "C-3.2", "D-1", "D-5"],
+      "dependsOn": ["F-46"],
+      "slice": "41",
+      "status": "review",
+      "verify": "A clone of this repository alone runs the form and the whole check set; the graph check reports how many viewer paths it skipped and why; after `npm run viewer:setup` the clone sits at the pinned commit and those paths are checked for real.",
+      "files": [
+        ".gitignore",
+        "docs/decisions/A-18-viewer-checked-out-not-vendored.md",
+        "package.json",
+        "scripts/graph.mjs",
+        "scripts/viewer.mjs",
+        "viewer.json"
+      ],
+      "imports": {
+        "scripts/graph.mjs": {
+          "internal": [],
+          "external": ["node:child_process", "node:fs", "node:path", "node:url"]
+        },
+        "scripts/viewer.mjs": {
+          "internal": [],
+          "external": ["node:child_process", "node:fs", "node:path", "node:url"]
+        }
+      }
     }
   ]
 }
