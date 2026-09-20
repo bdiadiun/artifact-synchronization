@@ -2,7 +2,7 @@
 
 Where to point during the call. Host-app links are relative to this repository; extension links
 open the OHIF fork at the commit the `viewer` submodule is pinned to
-(`cbe79d8a0a`). If a line drifts after a later change, search for the quoted symbol.
+(`94108f3dfd`). If a line drifts after a later change, search for the quoted symbol.
 
 ## The protocol in one screen
 
@@ -26,30 +26,30 @@ open the OHIF fork at the commit the `viewer` submodule is pinned to
 | Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                            | log prefix `[scoring-bridge]` in the viewer console                                                                                                    |
 | Entry point             | [`useBridge`](../host-app/src/bridge/useBridge.ts)                                                                                                          | [`preRegistration`][fork-index]                                                                                                                        |
 
-[fork-config]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/config.ts#L2
-[fork-index]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/index.tsx#L10
-[fork-bridge-origin]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/messaging.ts#L43
-[fork-bridge-post]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/messaging.ts#L33
-[fork-bridge-ready]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/handshake.ts#L22
-[fork-bridge-viewport]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/handshake.ts#L44
-[fork-bridge-map]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/reportedMeasurements.ts#L32
-[fork-bridge-added]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/measurementStream.ts#L227
-[fork-bridge-added-post]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/measurementStream.ts#L140
-[fork-bridge-throttle]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/reportedMeasurements.ts#L42
-[fork-bridge-interval]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/reportedMeasurements.ts#L7
-[fork-bridge-removed]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/measurementStream.ts#L235
-[fork-commands-guard]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/messaging.ts#L53
-[fork-commands-snapshot]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/commands.ts#L70
-[fork-commands-active]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/commands.ts#L93
-[fork-commands-disarm]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/commands.ts#L109
-[fork-commands-idempotent]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/commands.ts#L159
-[fork-removals-map]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/removals.ts#L24
-[fork-removals-cause]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/removals.ts#L47
-[fork-removals-remove]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/removals.ts#L52
-[fork-focus]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/focus.ts#L39
-[fork-metrics]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/measurements.ts#L150
-[fork-units]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/measurements.ts#L50
-[fork-overlay]: https://github.com/bdiadiun/Viewers/blob/cbe79d8a0a19caf3af492935bc294c412fdd9129/extensions/scoring-bridge/src/getCustomizationModule.tsx#L5
+[fork-config]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/config.ts#L2
+[fork-index]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/index.tsx#L10
+[fork-bridge-origin]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/messaging.ts#L43
+[fork-bridge-post]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/messaging.ts#L33
+[fork-bridge-ready]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/handshake.ts#L22
+[fork-bridge-viewport]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/handshake.ts#L44
+[fork-bridge-map]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/reportedMeasurements.ts#L32
+[fork-bridge-added]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/measurementStream.ts#L227
+[fork-bridge-added-post]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/measurementStream.ts#L140
+[fork-bridge-throttle]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/reportedMeasurements.ts#L42
+[fork-bridge-interval]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/reportedMeasurements.ts#L7
+[fork-bridge-removed]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/measurementStream.ts#L235
+[fork-commands-guard]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/messaging.ts#L53
+[fork-commands-snapshot]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/commands.ts#L70
+[fork-commands-active]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/commands.ts#L93
+[fork-commands-disarm]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/commands.ts#L109
+[fork-commands-idempotent]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/commands.ts
+[fork-removals-map]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/removals.ts#L24
+[fork-removals-cause]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/removals.ts#L47
+[fork-removals-remove]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/removals.ts#L52
+[fork-focus]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/focus.ts#L39
+[fork-metrics]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/measurements.ts#L150
+[fork-units]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/measurements.ts#L50
+[fork-overlay]: https://github.com/bdiadiun/Viewers/blob/94108f3dfdeb2b0a6bba8c1b70018931ef3c4830/extensions/scoring-bridge/src/getCustomizationModule.tsx#L5
 
 ## Questions (canon P-1..P-6)
 

@@ -32,6 +32,10 @@ and the linter disagree, fix the linter config in the same PR and say so.
   in one module) and carries a comment saying so.
 - Exported functions declare their return type explicitly. Internal helpers may infer.
 - Prefer small named helpers over long inline lambdas; a callback longer than ~5 lines gets a name.
+- Exhaustiveness over a discriminated union is never left to discipline. Either a `switch` keeps a
+  `default` branch narrowing to `never`, or a registration map is written with a `satisfies` clause
+  against the union of keys, as the viewer adapter does; both fail the build when a case is added
+  and not handled.
 - A `switch` over an action, message or status type keeps its `default` branch narrowing to `never`,
   so a new case added to the type fails the type check instead of being silently ignored.
 
