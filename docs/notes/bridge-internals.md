@@ -34,8 +34,13 @@ measurement state each live in their own module.
 
 ## Commands
 
-- **`default` branch kept in the command dispatch** (`commands.ts`). It narrows to `never`, so a
-  new host command added to the contract but not handled here fails the type check.
+- **Every command goes through a handler registry** (`registry.ts`, wired in `bridge.ts`). A new
+  capability is a registered handler, not a new branch, so the fork does not change when the
+  adapter grows. The registration map carries a `satisfies` clause against the contract's union of
+  command types, so a command added to the contract without a handler fails the type check; that is
+  what the old `default` branch narrowing to `never` used to provide. An unknown command type
+  arriving at runtime is logged once per type and ignored, because a newer host may know commands
+  this viewer does not.
 - **Removal forgets the uid even when the measurement is already gone** (`removals.ts`). A stale
   `uid → rowId` entry must not outlive the host's state; the second `REMOVE_MEASUREMENT` for the
   same uid is a no-op that still cleans up.

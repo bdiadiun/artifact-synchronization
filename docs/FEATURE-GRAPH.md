@@ -53,48 +53,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-40 | Workflow ownership and the return-statement rule                                                                                                  | A-13, D-2                                                       | F-39             | 34    | done    | The git operator definition lists the workflow files as the only thing it may write and its tool list allows writing; CLAUDE.md agrees. `npm run lint` passes with the widened selector, which proves no component creates a function inside a JSX prop.                                                                                                                  |
 | F-41 | The contract becomes a published package                                                                                                          | A-15, D-1, Q-7                                                  | F-40             | 35    | done    | A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.                                                                            |
 | F-42 | The first release publishes                                                                                                                       | A-15, Q-7                                                       | F-41             | 36    | done    | A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.                                                                                                                                                                                                                                                 |
-| F-43 | The fork depends on the package, the copy is gone                                                                                                 | A-15, Q-7                                                       | F-42             | 37    | review  | The fork's tree holds no contract file; a clean install fetches the package from the public registry with no token and no registry configuration, and the viewer builds with the extension bundled.                                                                                                                                                                       |
+| F-43 | The fork depends on the package, the copy is gone                                                                                                 | A-15, Q-7                                                       | F-42             | 37    | done    | The fork's tree holds no contract file; a clean install fetches the package from the public registry with no token and no registry configuration, and the viewer builds with the extension bundled.                                                                                                                                                                       |
+| F-44 | The bridge is an adapter with a handler registry                                                                                                  | A-16, C-3.2, Q-7                                                | F-43             | 38    | review  | Adding a command type to the contract without registering a handler fails the type check, proved by a compiler error rather than by assertion; the viewer builds with the extension and every message on the wire is unchanged.                                                                                                                                           |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                                                       |
-| ------- | ---------------------------------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                                                       |
-| C-3.2   | F-05                                                                                                             |
-| C-3.3   | F-01                                                                                                             |
-| C-3.4   | F-05, F-09, F-32                                                                                                 |
-| C-4.1.1 | F-04                                                                                                             |
-| C-4.1.2 | F-04                                                                                                             |
-| C-4.1.3 | F-02, F-04                                                                                                       |
-| C-4.2.1 | F-01                                                                                                             |
-| C-4.2.2 | F-02                                                                                                             |
-| C-4.2.3 | F-01                                                                                                             |
-| C-4.3.1 | F-07                                                                                                             |
-| C-4.3.2 | F-07                                                                                                             |
-| C-4.3.3 | F-08                                                                                                             |
-| C-4.3.4 | F-09                                                                                                             |
-| C-4.3.5 | F-09, F-10                                                                                                       |
-| C-4.3.6 | F-09, F-10                                                                                                       |
-| C-4.3.7 | F-07                                                                                                             |
-| C-4.3.8 | F-11                                                                                                             |
-| C-4.4.1 | F-03, F-08                                                                                                       |
-| C-4.4.2 | F-03, F-15, F-16                                                                                                 |
-| C-4.4.3 | F-03                                                                                                             |
-| Q-1     | F-06                                                                                                             |
-| Q-2     | F-05, F-06                                                                                                       |
-| Q-3     | F-07, F-08, F-09, F-19                                                                                           |
-| Q-4     | F-14, F-15, F-19, F-39                                                                                           |
-| Q-5     | F-05, F-06, F-39                                                                                                 |
-| Q-6     | F-09, F-10, F-11                                                                                                 |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43 |
-| D-1     | F-04, F-41                                                                                                       |
-| D-2     | F-00, F-20, F-38, F-40                                                                                           |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                   |
-| D-4     | F-00, F-24                                                                                                       |
-| D-5     | F-12, F-20, F-24, F-25                                                                                           |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                     |
-| D-7     | F-12, F-25                                                                                                       |
-| D-8     | F-13, F-25                                                                                                       |
+| ID      | Covered by                                                                                                             |
+| ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                                             |
+| C-3.2   | F-05, F-44                                                                                                             |
+| C-3.3   | F-01                                                                                                                   |
+| C-3.4   | F-05, F-09, F-32                                                                                                       |
+| C-4.1.1 | F-04                                                                                                                   |
+| C-4.1.2 | F-04                                                                                                                   |
+| C-4.1.3 | F-02, F-04                                                                                                             |
+| C-4.2.1 | F-01                                                                                                                   |
+| C-4.2.2 | F-02                                                                                                                   |
+| C-4.2.3 | F-01                                                                                                                   |
+| C-4.3.1 | F-07                                                                                                                   |
+| C-4.3.2 | F-07                                                                                                                   |
+| C-4.3.3 | F-08                                                                                                                   |
+| C-4.3.4 | F-09                                                                                                                   |
+| C-4.3.5 | F-09, F-10                                                                                                             |
+| C-4.3.6 | F-09, F-10                                                                                                             |
+| C-4.3.7 | F-07                                                                                                                   |
+| C-4.3.8 | F-11                                                                                                                   |
+| C-4.4.1 | F-03, F-08                                                                                                             |
+| C-4.4.2 | F-03, F-15, F-16                                                                                                       |
+| C-4.4.3 | F-03                                                                                                                   |
+| Q-1     | F-06                                                                                                                   |
+| Q-2     | F-05, F-06                                                                                                             |
+| Q-3     | F-07, F-08, F-09, F-19                                                                                                 |
+| Q-4     | F-14, F-15, F-19, F-39                                                                                                 |
+| Q-5     | F-05, F-06, F-39                                                                                                       |
+| Q-6     | F-09, F-10, F-11                                                                                                       |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44 |
+| D-1     | F-04, F-41                                                                                                             |
+| D-2     | F-00, F-20, F-38, F-40                                                                                                 |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                         |
+| D-4     | F-00, F-24                                                                                                             |
+| D-5     | F-12, F-20, F-24, F-25                                                                                                 |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                           |
+| D-7     | F-12, F-25                                                                                                             |
+| D-8     | F-13, F-25                                                                                                             |
 
 ## Diagram
 
@@ -144,6 +145,7 @@ graph TD
   F41["F-41 The contract becomes a published package"]
   F42["F-42 The first release publishes"]
   F43["F-43 The fork depends on the package, the copy is gone"]
+  F44["F-44 The bridge is an adapter with a handler registry"]
 
   F20 --> F01
   F01 --> F02
@@ -193,6 +195,7 @@ graph TD
   F40 --> F41
   F41 --> F42
   F42 --> F43
+  F43 --> F44
 ```
 
 ## Slice → nodes
@@ -239,6 +242,7 @@ graph TD
 | 35 — feat: publish the contract package                      | `feat/publish-contract-package`             | —   | F-41                   |
 | 36 — fix: publish the first release                          | `fix/publish-first-release`                 | —   | F-42                   |
 | 37 — chore: the fork consumes the published contract         | `chore/fork-consumes-contract`              | —   | F-43                   |
+| 38 — feat: bridge adapter with a handler registry            | `feat/bridge-adapter-registry`              | —   | F-44                   |
 
 ## Node details
 
@@ -332,10 +336,11 @@ Files:
 
 - `viewer/extensions/scoring-bridge/babel.config.js` — no imports
 - `viewer/extensions/scoring-bridge/package.json`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
 - `viewer/extensions/scoring-bridge/src/config.ts` — no imports
 - `viewer/extensions/scoring-bridge/src/id.js` — internal: `viewer/extensions/scoring-bridge/package.json`
 - `viewer/extensions/scoring-bridge/src/index.tsx` — internal: `viewer/extensions/scoring-bridge/src/bridge.ts`, `viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx`, `viewer/extensions/scoring-bridge/src/id.js`; external: `@ohif/core`
+- `viewer/extensions/scoring-bridge/src/registry.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 
 ### F-06 Host bridge client: origin check, handshake, early-command queue, cleanup
 
@@ -391,7 +396,7 @@ Files:
 
 - `docs/decisions/A-11-units-and-metrics-payload.md`
 - `docs/decisions/A-8-id-correlation.md`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 - `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 
@@ -460,7 +465,7 @@ Files:
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/messages.ts`
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/messages.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
 - `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 - `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports
 
@@ -480,7 +485,7 @@ Files:
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useViewerEvents.ts`, `packages/contract/src/messages.ts`; external: `react`
 - `packages/contract/src/__tests__/messages.test.ts` — internal: `packages/contract/src/messages.ts`; external: `vitest`
 - `packages/contract/src/messages.ts` — no imports
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 - `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
 
@@ -752,11 +757,12 @@ Files:
 - `ARCHITECTURE.md`
 - `docs/DEFENCE.md`
 - `docs/notes/bridge-internals.md`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
 - `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 - `viewer/extensions/scoring-bridge/src/handshake.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
 - `viewer/extensions/scoring-bridge/src/measurementStream.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/geometry.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
 - `viewer/extensions/scoring-bridge/src/messaging.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `viewer/extensions/scoring-bridge/src/registry.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
 - `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
 - `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports
 
@@ -930,7 +936,7 @@ Files:
 
 Ends the duplication that decision A-12 accepted. The extension takes the contract from `@bdiadiun/scoring-contract`, pinned to an exact version, and its copy of the file, the committed hash, the sync script and both contract checks are deleted. The fork's own workflow now builds the viewer with the extension instead of comparing hashes.
 
-Canon: A-15, Q-7. Depends on: F-42. Slice 37, status `review`.
+Canon: A-15, Q-7. Depends on: F-42. Slice 37, status `done`.
 
 Files:
 
@@ -940,3 +946,17 @@ Files:
 - `docs/decisions/A-15-publish-contract-package.md`
 - `viewer/extensions/scoring-bridge/package.json`
 - `viewer/extensions/scoring-bridge/src/messaging.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+
+### F-44 The bridge is an adapter with a handler registry
+
+Replaces the fixed command dispatcher with a registry: a command type maps to a handler, and a new capability is registered rather than added as a branch. The registration map carries a satisfies clause against the contract's union of command types, so a command added to the contract without a handler fails the type check, which is what the old default branch narrowing to never provided. The registry holds no OHIF import, so it is pure logic. The point is that the fork's diff can now stay frozen while the adapter grows.
+
+Canon: A-16, C-3.2, Q-7. Depends on: F-43. Slice 38, status `review`.
+
+Files:
+
+- `docs/decisions/A-16-adapter-and-viewer-delivery.md`
+- `docs/notes/ohif-packaging.md`
+- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
+- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `viewer/extensions/scoring-bridge/src/registry.ts` — internal: `packages/contract/src/messages.ts`, `viewer/extensions/scoring-bridge/src/config.ts`

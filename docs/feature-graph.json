@@ -220,6 +220,11 @@
       "id": "37",
       "title": "chore: the fork consumes the published contract",
       "branch": "chore/fork-consumes-contract"
+    },
+    {
+      "id": "38",
+      "title": "feat: bridge adapter with a handler registry",
+      "branch": "feat/bridge-adapter-registry"
     }
   ],
   "nodes": [
@@ -401,7 +406,8 @@
         "viewer/extensions/scoring-bridge/src/bridge.ts",
         "viewer/extensions/scoring-bridge/src/config.ts",
         "viewer/extensions/scoring-bridge/src/id.js",
-        "viewer/extensions/scoring-bridge/src/index.tsx"
+        "viewer/extensions/scoring-bridge/src/index.tsx",
+        "viewer/extensions/scoring-bridge/src/registry.ts"
       ],
       "imports": {
         "viewer/extensions/scoring-bridge/babel.config.js": {
@@ -416,6 +422,7 @@
             "viewer/extensions/scoring-bridge/src/handshake.ts",
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/registry.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
             "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
             "viewer/extensions/scoring-bridge/src/restore.ts"
@@ -437,6 +444,13 @@
             "viewer/extensions/scoring-bridge/src/id.js"
           ],
           "external": ["@ohif/core"]
+        },
+        "viewer/extensions/scoring-bridge/src/registry.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
+          ],
+          "external": []
         }
       }
     },
@@ -629,6 +643,7 @@
             "viewer/extensions/scoring-bridge/src/handshake.ts",
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/registry.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
             "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
             "viewer/extensions/scoring-bridge/src/restore.ts"
@@ -861,6 +876,7 @@
             "viewer/extensions/scoring-bridge/src/handshake.ts",
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/registry.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
             "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
             "viewer/extensions/scoring-bridge/src/restore.ts"
@@ -967,6 +983,7 @@
             "viewer/extensions/scoring-bridge/src/handshake.ts",
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/registry.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
             "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
             "viewer/extensions/scoring-bridge/src/restore.ts"
@@ -1772,6 +1789,7 @@
         "viewer/extensions/scoring-bridge/src/handshake.ts",
         "viewer/extensions/scoring-bridge/src/measurementStream.ts",
         "viewer/extensions/scoring-bridge/src/messaging.ts",
+        "viewer/extensions/scoring-bridge/src/registry.ts",
         "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
         "viewer/extensions/scoring-bridge/src/throttle.ts"
       ],
@@ -1784,6 +1802,7 @@
             "viewer/extensions/scoring-bridge/src/handshake.ts",
             "viewer/extensions/scoring-bridge/src/measurementStream.ts",
             "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/registry.ts",
             "viewer/extensions/scoring-bridge/src/removals.ts",
             "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
             "viewer/extensions/scoring-bridge/src/restore.ts"
@@ -1818,6 +1837,13 @@
           "external": []
         },
         "viewer/extensions/scoring-bridge/src/messaging.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/registry.ts": {
           "internal": [
             "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts"
@@ -2272,7 +2298,7 @@
       "canon": ["A-15", "Q-7"],
       "dependsOn": ["F-42"],
       "slice": "37",
-      "status": "review",
+      "status": "done",
       "verify": "The fork's tree holds no contract file; a clean install fetches the package from the public registry with no token and no registry configuration, and the viewer builds with the extension bundled.",
       "files": [
         ".claude/rules/contract.md",
@@ -2284,6 +2310,54 @@
       ],
       "imports": {
         "viewer/extensions/scoring-bridge/src/messaging.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
+          ],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-44",
+      "name": "The bridge is an adapter with a handler registry",
+      "description": "Replaces the fixed command dispatcher with a registry: a command type maps to a handler, and a new capability is registered rather than added as a branch. The registration map carries a satisfies clause against the contract's union of command types, so a command added to the contract without a handler fails the type check, which is what the old default branch narrowing to never provided. The registry holds no OHIF import, so it is pure logic. The point is that the fork's diff can now stay frozen while the adapter grows.",
+      "canon": ["A-16", "C-3.2", "Q-7"],
+      "dependsOn": ["F-43"],
+      "slice": "38",
+      "status": "review",
+      "verify": "Adding a command type to the contract without registering a handler fails the type check, proved by a compiler error rather than by assertion; the viewer builds with the extension and every message on the wire is unchanged.",
+      "files": [
+        "docs/decisions/A-16-adapter-and-viewer-delivery.md",
+        "docs/notes/ohif-packaging.md",
+        "viewer/extensions/scoring-bridge/src/bridge.ts",
+        "viewer/extensions/scoring-bridge/src/commands.ts",
+        "viewer/extensions/scoring-bridge/src/registry.ts"
+      ],
+      "imports": {
+        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+          "internal": [
+            "viewer/extensions/scoring-bridge/src/commands.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts",
+            "viewer/extensions/scoring-bridge/src/focus.ts",
+            "viewer/extensions/scoring-bridge/src/handshake.ts",
+            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
+            "viewer/extensions/scoring-bridge/src/messaging.ts",
+            "viewer/extensions/scoring-bridge/src/registry.ts",
+            "viewer/extensions/scoring-bridge/src/removals.ts",
+            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
+            "viewer/extensions/scoring-bridge/src/restore.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/commands.ts": {
+          "internal": [
+            "packages/contract/src/messages.ts",
+            "viewer/extensions/scoring-bridge/src/config.ts"
+          ],
+          "external": []
+        },
+        "viewer/extensions/scoring-bridge/src/registry.ts": {
           "internal": [
             "packages/contract/src/messages.ts",
             "viewer/extensions/scoring-bridge/src/config.ts"
