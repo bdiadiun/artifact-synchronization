@@ -45,6 +45,10 @@ copies of the same guards.
 
 ## Consequences
 
+- The two packages form a TypeScript project-reference chain: building the orchestrator builds the
+  contract first, so the order belongs to the compiler rather than to whichever workspace the
+  package manager happens to run first. A fresh clone therefore installs, which it did not when
+  each package merely built itself.
 - A change to the channel is published and then consumed, exactly like a contract change.
 - The form's dependency list now names both packages, which is the honest picture of what it is
   built from.

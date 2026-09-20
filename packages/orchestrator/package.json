@@ -24,7 +24,8 @@
     "access": "public"
   },
   "scripts": {
-    "prepare": "tsc -p ."
+    "build": "tsc -b",
+    "prepare": "tsc -b --force"
   },
   "dependencies": {
     "@bdiadiun/scoring-contract": "0.0.1"

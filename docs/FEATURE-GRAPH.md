@@ -55,7 +55,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-42 | The first release publishes                                                                                                                       | A-15, Q-7                                                       | F-41             | 36    | done    | A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.                                                                                                                                                                                                                                                 |
 | F-43 | The fork depends on the package, the copy is gone                                                                                                 | A-15, Q-7                                                       | F-42             | 37    | done    | The fork's tree holds no contract file; a clean install fetches the package from the public registry with no token and no registry configuration, and the viewer builds with the extension bundled.                                                                                                                                                                       |
 | F-44 | The bridge is an adapter with a handler registry                                                                                                  | A-16, C-3.2, Q-7                                                | F-43             | 38    | done    | Adding a command type to the contract without registering a handler fails the type check, proved by a compiler error rather than by assertion; the viewer builds with the extension and every message on the wire is unchanged.                                                                                                                                           |
-| F-45 | The viewer client becomes the orchestrator package                                                                                                | A-17, C-4.1.1, Q-1, Q-2, Q-3, Q-4                               | F-44             | 39    | review  | A clean install rebuilds the package before the form imports it; `npm pack --dry-run` lists only built files; the channel's own tests run from the package, including the five that cover disarming on dispose; the form contains no transport code.                                                                                                                      |
+| F-45 | The viewer client becomes the orchestrator package                                                                                                | A-17, C-4.1.1, Q-1, Q-2, Q-3, Q-4                               | F-44             | 39    | done    | A clean install rebuilds the package before the form imports it; `npm pack --dry-run` lists only built files; the channel's own tests run from the package, including the five that cover disarming on dispose; the form contains no transport code.                                                                                                                      |
+| F-46 | A fresh clone installs                                                                                                                            | A-17, D-1, D-5                                                  | F-45             | 40    | review  | With both build outputs and every node_modules deleted, `npm ci` completes and both packages' `dist` exist afterwards; the two tarballs still contain only the manifest, the README where there is one and the built files.                                                                                                                                               |
 
 ## Coverage of mandatory IDs
 
@@ -89,11 +90,11 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Q-5     | F-05, F-06, F-39                                                                                                       |
 | Q-6     | F-09, F-10, F-11                                                                                                       |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44 |
-| D-1     | F-04, F-41                                                                                                             |
+| D-1     | F-04, F-41, F-46                                                                                                       |
 | D-2     | F-00, F-20, F-38, F-40                                                                                                 |
 | D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                         |
 | D-4     | F-00, F-24                                                                                                             |
-| D-5     | F-12, F-20, F-24, F-25                                                                                                 |
+| D-5     | F-12, F-20, F-24, F-25, F-46                                                                                           |
 | D-6     | F-00, F-12, F-21, F-25, F-28                                                                                           |
 | D-7     | F-12, F-25                                                                                                             |
 | D-8     | F-13, F-25                                                                                                             |
@@ -148,6 +149,7 @@ graph TD
   F43["F-43 The fork depends on the package, the copy is gone"]
   F44["F-44 The bridge is an adapter with a handler registry"]
   F45["F-45 The viewer client becomes the orchestrator package"]
+  F46["F-46 A fresh clone installs"]
 
   F20 --> F01
   F01 --> F02
@@ -199,6 +201,7 @@ graph TD
   F42 --> F43
   F43 --> F44
   F44 --> F45
+  F45 --> F46
 ```
 
 ## Slice → nodes
@@ -247,6 +250,7 @@ graph TD
 | 37 — chore: the fork consumes the published contract         | `chore/fork-consumes-contract`              | —   | F-43                   |
 | 38 — feat: bridge adapter with a handler registry            | `feat/bridge-adapter-registry`              | —   | F-44                   |
 | 39 — feat: the orchestrator package                          | `feat/orchestrator-package`                 | —   | F-45                   |
+| 40 — fix: build the packages in order                        | `fix/clean-install-build-order`             | —   | F-46                   |
 
 ## Node details
 
@@ -969,7 +973,7 @@ Files:
 
 Moves the client half of the channel out of the form into the published package `@bdiadiun/scoring-orchestrator`: the handshake and the queue that holds commands until VIEWER_READY, the origin check, the explicit target origin, the listener set, the disarm on teardown and the command builders. It depends on the contract and on nothing else, imports no React and carries no user-visible string. The React binding stays in the form, and a viewer is addressed by configuration, so a second viewer at another version is a configuration change.
 
-Canon: A-17, C-4.1.1, Q-1, Q-2, Q-3, Q-4. Depends on: F-44. Slice 39, status `review`.
+Canon: A-17, C-4.1.1, Q-1, Q-2, Q-3, Q-4. Depends on: F-44. Slice 39, status `done`.
 
 Files:
 
@@ -980,3 +984,16 @@ Files:
 - `packages/orchestrator/src/commands.ts` — internal: `packages/contract/src/messages.ts`
 - `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/messages.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
 - `packages/orchestrator/src/index.ts` — internal: `packages/orchestrator/src/commands.ts`, `packages/orchestrator/src/createOrchestrator.ts`
+
+### F-46 A fresh clone installs
+
+Each package built only itself, so on a machine where the contract's output did not already exist the orchestrator compiled first and failed to find it. The publish workflow failed on exactly that. The packages now form a project-reference chain, so building the orchestrator builds the contract first and the order belongs to the compiler rather than to the package manager.
+
+Canon: A-17, D-1, D-5. Depends on: F-45. Slice 40, status `review`.
+
+Files:
+
+- `packages/contract/package.json`
+- `packages/contract/tsconfig.json`
+- `packages/orchestrator/package.json`
+- `packages/orchestrator/tsconfig.json`
