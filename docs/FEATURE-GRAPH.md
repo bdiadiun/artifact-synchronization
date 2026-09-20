@@ -14,7 +14,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-01 | Host-app scaffold                                                                                                                                 | A-2, C-3.3, C-4.2.1, C-4.2.3                                    | F-20             | 1     | done    | `npm run dev` in `host-app/` serves on port 5173; `tsc --noEmit` and lint pass with `strict`.                                                                                                                                                                                                                                                                             |
 | F-02 | Page layout: iframe + form panel                                                                                                                  | C-4.1.3, C-4.2.2                                                | F-01             | 1     | done    | Page shows a full-height flexible iframe on the left pointing at `http://localhost:3000/viewer?StudyInstanceUIDs=…` and a form panel on the right.                                                                                                                                                                                                                        |
 | F-03 | Shared message contract                                                                                                                           | C-4.4.1, C-4.4.2, C-4.4.3, P-7, P-8, Q-7                        | F-00             | 2     | done    | Types for the five events with `version: 1`; runtime guard rejects malformed / wrong-version messages; unit tests for serialisation and validation pass (X-4).                                                                                                                                                                                                            |
-| F-04 | OHIF fork wired in                                                                                                                                | A-1, C-4.1.1, C-4.1.2, C-4.1.3, D-1                             | F-00             | 2     | done    | Fork added as submodule under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb.                                                                                                                                                                                                                                      |
+| F-04 | OHIF fork wired in                                                                                                                                | A-1, C-4.1.1, C-4.1.2, C-4.1.3, D-1                             | F-00             | 2     | done    | Fork added as checkout under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb.                                                                                                                                                                                                                                       |
 | F-05 | Viewer bridge extension: `preRegistration`, origin check, `VIEWER_READY`                                                                          | C-3.1, C-3.2, C-3.4, Q-2, Q-5                                   | F-03, F-04       | 2     | done    | Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).                                                                                                                                                                   |
 | F-06 | Host bridge client: origin check, handshake, early-command queue, cleanup                                                                         | C-3.1, P-1, P-9, Q-1, Q-2, Q-5                                  | F-02, F-03       | 2     | done    | Clicking "Activate" before the iframe is ready queues the command; it is flushed after `VIEWER_READY`; listeners are removed on unmount (React StrictMode double-mount leaves one listener).                                                                                                                                                                              |
 | F-07 | Form rows: add, statuses, row IDs                                                                                                                 | C-4.3.1, C-4.3.2, C-4.3.7, Q-3                                  | F-02             | 3     | done    | "Add measurement" creates rows with unique IDs and status `Pending`; any number of rows can be added.                                                                                                                                                                                                                                                                     |
@@ -56,14 +56,15 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-43 | The fork depends on the package, the copy is gone                                                                                                 | A-15, Q-7                                                       | F-42             | 37    | done    | The fork's tree holds no contract file; a clean install fetches the package from the public registry with no token and no registry configuration, and the viewer builds with the extension bundled.                                                                                                                                                                       |
 | F-44 | The bridge is an adapter with a handler registry                                                                                                  | A-16, C-3.2, Q-7                                                | F-43             | 38    | done    | Adding a command type to the contract without registering a handler fails the type check, proved by a compiler error rather than by assertion; the viewer builds with the extension and every message on the wire is unchanged.                                                                                                                                           |
 | F-45 | The viewer client becomes the orchestrator package                                                                                                | A-17, C-4.1.1, Q-1, Q-2, Q-3, Q-4                               | F-44             | 39    | done    | A clean install rebuilds the package before the form imports it; `npm pack --dry-run` lists only built files; the channel's own tests run from the package, including the five that cover disarming on dispose; the form contains no transport code.                                                                                                                      |
-| F-46 | A fresh clone installs                                                                                                                            | A-17, D-1, D-5                                                  | F-45             | 40    | review  | With both build outputs and every node_modules deleted, `npm ci` completes and both packages' `dist` exist afterwards; the two tarballs still contain only the manifest, the README where there is one and the built files.                                                                                                                                               |
+| F-46 | A fresh clone installs                                                                                                                            | A-17, D-1, D-5                                                  | F-45             | 40    | done    | With both build outputs and every node_modules deleted, `npm ci` completes and both packages' `dist` exist afterwards; the two tarballs still contain only the manifest, the README where there is one and the built files.                                                                                                                                               |
+| F-47 | The viewer leaves the repository                                                                                                                  | A-18, C-3.2, D-1, D-5                                           | F-46             | 41    | review  | A clone of this repository alone runs the form and the whole check set; the graph check reports how many viewer paths it skipped and why; after `npm run viewer:setup` the clone sits at the pinned commit and those paths are checked for real.                                                                                                                          |
 
 ## Coverage of mandatory IDs
 
 | ID      | Covered by                                                                                                             |
 | ------- | ---------------------------------------------------------------------------------------------------------------------- |
 | C-3.1   | F-05, F-06                                                                                                             |
-| C-3.2   | F-05, F-44                                                                                                             |
+| C-3.2   | F-05, F-44, F-47                                                                                                       |
 | C-3.3   | F-01                                                                                                                   |
 | C-3.4   | F-05, F-09, F-32                                                                                                       |
 | C-4.1.1 | F-04, F-45                                                                                                             |
@@ -90,11 +91,11 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Q-5     | F-05, F-06, F-39                                                                                                       |
 | Q-6     | F-09, F-10, F-11                                                                                                       |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44 |
-| D-1     | F-04, F-41, F-46                                                                                                       |
+| D-1     | F-04, F-41, F-46, F-47                                                                                                 |
 | D-2     | F-00, F-20, F-38, F-40                                                                                                 |
 | D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                         |
 | D-4     | F-00, F-24                                                                                                             |
-| D-5     | F-12, F-20, F-24, F-25, F-46                                                                                           |
+| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                     |
 | D-6     | F-00, F-12, F-21, F-25, F-28                                                                                           |
 | D-7     | F-12, F-25                                                                                                             |
 | D-8     | F-13, F-25                                                                                                             |
@@ -150,6 +151,7 @@ graph TD
   F44["F-44 The bridge is an adapter with a handler registry"]
   F45["F-45 The viewer client becomes the orchestrator package"]
   F46["F-46 A fresh clone installs"]
+  F47["F-47 The viewer leaves the repository"]
 
   F20 --> F01
   F01 --> F02
@@ -202,6 +204,7 @@ graph TD
   F43 --> F44
   F44 --> F45
   F45 --> F46
+  F46 --> F47
 ```
 
 ## Slice → nodes
@@ -251,6 +254,7 @@ graph TD
 | 38 — feat: bridge adapter with a handler registry            | `feat/bridge-adapter-registry`              | —   | F-44                   |
 | 39 — feat: the orchestrator package                          | `feat/orchestrator-package`                 | —   | F-45                   |
 | 40 — fix: build the packages in order                        | `fix/clean-install-build-order`             | —   | F-46                   |
+| 41 — chore: the viewer is checked out, not vendored          | `chore/drop-viewer-submodule`               | —   | F-47                   |
 
 ## Node details
 
@@ -328,9 +332,10 @@ Canon: A-1, C-4.1.1, C-4.1.2, C-4.1.3, D-1. Depends on: F-00. Slice 2, status `d
 
 Files:
 
-- `.gitmodules`
 - `docs/decisions/A-1-mono-repo-with-submodule.md`
 - `docs/decisions/A-6-ohif-base-version.md`
+- `scripts/viewer.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`
+- `viewer.json`
 - `viewer/platform/app/package.json`
 - `viewer/platform/app/pluginConfig.json`
 
@@ -639,14 +644,13 @@ Files:
 
 ### F-24 Continuous integration and fork default branch
 
-A GitHub Actions workflow runs format check, lint, fork lint, typecheck, tests, host build, graph check, contract check and docs freshness on every PR and push to main. The submodule points at the fork's default branch `scoring`, so a plain clone gets the right code.
+A GitHub Actions workflow runs format check, lint, fork lint, typecheck, tests, host build, graph check, contract check and docs freshness on every PR and push to main. `viewer.json` pins the fork's commit `scoring`, so a plain clone gets the right code.
 
 Canon: D-3, D-4, D-5, Q-7. Depends on: F-23. Slice 14, status `done`.
 
 Files:
 
 - `.github/workflows/ci.yml`
-- `.gitmodules`
 - `package.json`
 
 ### F-25 Final documentation pass: defence pointers after the refactor, AI usage for all slices, README for bonus features, video script
@@ -989,7 +993,7 @@ Files:
 
 Each package built only itself, so on a machine where the contract's output did not already exist the orchestrator compiled first and failed to find it. The publish workflow failed on exactly that. The packages now form a project-reference chain, so building the orchestrator builds the contract first and the order belongs to the compiler rather than to the package manager.
 
-Canon: A-17, D-1, D-5. Depends on: F-45. Slice 40, status `review`.
+Canon: A-17, D-1, D-5. Depends on: F-45. Slice 40, status `done`.
 
 Files:
 
@@ -997,3 +1001,18 @@ Files:
 - `packages/contract/tsconfig.json`
 - `packages/orchestrator/package.json`
 - `packages/orchestrator/tsconfig.json`
+
+### F-47 The viewer leaves the repository
+
+The OHIF fork stops being a submodule. `viewer/` becomes a local checkout that git ignores, cloned at the exact commit pinned in `viewer.json` by `npm run viewer:setup` and started by `npm run viewer:dev`. The fork itself stays on GitHub and remains the answer to the canon's requirement for a fork. Checks that read the fork say plainly when it is not present instead of failing obscurely.
+
+Canon: A-18, C-3.2, D-1, D-5. Depends on: F-46. Slice 41, status `review`.
+
+Files:
+
+- `.gitignore`
+- `docs/decisions/A-18-viewer-checked-out-not-vendored.md`
+- `package.json`
+- `scripts/graph.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`
+- `scripts/viewer.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`
+- `viewer.json`

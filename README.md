@@ -6,42 +6,44 @@ form. They run on separate ports and talk only over `window.postMessage`.
 - Requirements: [docs/CANON.md](docs/CANON.md); work breakdown: [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md).
 - Message contract and decisions: [ARCHITECTURE.md](ARCHITECTURE.md); AI usage: [AI-USAGE.md](AI-USAGE.md); defence notes: [docs/DEFENCE.md](docs/DEFENCE.md).
 - Layout: `host-app/` (React + Vite, port 5173), `packages/contract/` (shared message types),
-  `viewer/` (git submodule → [bdiadiun/Viewers](https://github.com/bdiadiun/Viewers), branch `scoring`,
-  based on OHIF `v3.12.17`, port 3000).
+  `packages/orchestrator/` (the client that talks to a viewer), `viewer/` (a local checkout of
+  [bdiadiun/Viewers](https://github.com/bdiadiun/Viewers), branch `scoring`, based on OHIF
+  `v3.12.17`, port 3000; cloned on demand and not part of this repository, see A-18).
 
 ## Prerequisites
 
 - Node.js 22 (`.nvmrc`; `nvm use` if you use nvm).
-- Git with submodule support. Yarn 1 is provided by corepack (bundled with Node), no global install.
+- Git. Yarn 1 is provided by corepack (bundled with Node), no global install.
 - Ports 3000 (viewer) and 5173 (host app) free. Both are fixed: the apps check each other's origin.
-- Time: the first run takes about 5–10 minutes (submodule clone, `yarn install`, first webpack
+- Time: the first run takes about 5–10 minutes (cloning the viewer, `yarn install`, first webpack
   build); later starts take seconds.
 
 ## Run from a clean machine
 
 ```sh
-git clone --recurse-submodules https://github.com/bdiadiun/artifact-synchronization.git
+git clone https://github.com/bdiadiun/artifact-synchronization.git
 cd artifact-synchronization
+npm ci
 ```
-
-If you already cloned without submodules: `git submodule update --init`.
 
 ### 1. Viewer (port 3000)
 
 ```sh
 corepack enable
-cd viewer
-yarn install            # OHIF monorepo, several minutes on first run
-yarn --cwd platform/app dev
+npm run viewer:setup    # clones the fork at the commit pinned in viewer.json and installs it
+npm run viewer:dev
 ```
+
+`viewer:setup` is needed once. It clones [bdiadiun/Viewers](https://github.com/bdiadiun/Viewers)
+into `viewer/` at the exact commit recorded in `viewer.json`, so the viewer you run is the one this
+repository was tested against. The folder is ignored by git and is not part of this repository.
 
 Wait for "compiled successfully", then check http://localhost:3000/viewer?StudyInstanceUIDs=1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1
 opens a study. Notes:
 
-- Run the dev server from `platform/app` as shown, not `yarn dev` at the viewer root; the root
-  script picks up a `bun.lock` and requires bun.
-- The dev server opens a browser tab at `http://localhost:3000/` (the study list) on every start.
-  Set `OHIF_OPEN=false` to suppress it: `OHIF_OPEN=false yarn --cwd platform/app dev`.
+- `viewer:dev` runs the server from `platform/app` with the browser tab suppressed. Running
+  `yarn dev` at the viewer root instead does not work: that script picks up a `bun.lock` and
+  requires bun.
 - `yarn install` prints many `unmet peer dependency` warnings and two
   `Workspaces can only be enabled in private projects` warnings; the webpack build ends with one
   `InjectManifest ... --watch mode` warning. All of these are expected and harmless.

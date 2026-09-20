@@ -226,7 +226,8 @@ Rules:
 - The extension follows this document. The fork's own ESLint does not run at v3.12.17 (ESLint 9
   with a legacy `.eslintrc.json` and `@typescript-eslint` 5 crashes while loading rules), and we do
   not replace OHIF's tooling. `npm run lint:fork` applies the rules from this document that need no
-  type information (`scripts/eslint-fork-style.config.js`); the fork's Prettier formats the
+  type information (`scripts/eslint-fork-style.config.js`), and refuses to run until the fork is
+  checked out with `npm run viewer:setup` (A-18); the fork's Prettier formats the
   extension. Type-aware rules are checked in review.
 - `AppTypes` and other OHIF globals are used as typed; no `any` for OHIF objects, use the narrowest
   structural type that covers what we read.

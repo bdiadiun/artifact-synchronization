@@ -98,7 +98,7 @@ my-react-app/
 | `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                             |
 
 Outside `host-app`, the repository keeps `packages/contract` (the wire contract), `viewer/` (the OHIF
-fork as a submodule), `scripts/` (checks and generators) and `docs/` (canon, graph, decisions,
+fork, a local checkout pinned by `viewer.json` and ignored by git), `scripts/` (checks and generators) and `docs/` (canon, graph, decisions,
 notes). `ARCHITECTURE.md` maps every concern to the file that owns it.
 
 ## 3. Rules that follow from this
