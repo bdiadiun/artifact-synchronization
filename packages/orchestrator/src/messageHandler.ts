@@ -1,12 +1,13 @@
-// The bridge's `message` listener: origin check, payload guard, viewer-event dispatch (Q-2, A-9).
+// The orchestrator's `message` listener: origin check, payload guard, viewer-event dispatch
+// (Q-2, A-9).
 
 import { isViewerEvent, type ViewerEvent, type ViewerReadyEvent } from '@bdiadiun/scoring-contract';
-import type { BridgeState } from './createBridge';
+import type { OrchestratorState } from './createOrchestrator';
 
 export interface MessageHandlerDeps {
   viewerOrigin: string;
-  getState: () => BridgeState;
-  setState: (patch: Partial<BridgeState>) => void;
+  getState: () => OrchestratorState;
+  setState: (patch: Partial<OrchestratorState>) => void;
   notify: (event: ViewerEvent | null) => void;
   flushQueue: () => void;
 }

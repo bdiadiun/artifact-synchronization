@@ -1,6 +1,6 @@
-// Framework-free postMessage bridge client (A-9, A-10). No React dependency, so it is
-// unit-testable and reused by the `useBridge.ts` hook. This module only wires the queue and the
-// message handler to the listener set; the rules live in those two modules.
+// Framework-free postMessage client for the viewer bridge (A-9, A-10). No framework dependency,
+// so any host can drive a viewer with it. This module only wires the queue and the message handler
+// to the listener set; the rules live in those two modules.
 
 import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
 import { createArmedTool } from './armedTool';
@@ -8,7 +8,7 @@ import { createCommandQueue } from './commandQueue';
 import { createListenerSet } from './listeners';
 import { createMessageHandler } from './messageHandler';
 
-export interface BridgeState {
+export interface OrchestratorState {
   ready: boolean;
   queued: number;
   lastEvent: ViewerEvent | null;
@@ -17,9 +17,9 @@ export interface BridgeState {
 
 // One subscription channel for both events and state-only changes (queue length, origin-ignore
 // count) instead of separate "onEvent"/"onStateChange" APIs; `event` is null for the latter.
-export type BridgeListener = (event: ViewerEvent | null, state: BridgeState) => void;
+export type OrchestratorListener = (event: ViewerEvent | null, state: OrchestratorState) => void;
 
-export interface CreateBridgeOptions {
+export interface CreateOrchestratorOptions {
   // A function, not a value: the iframe element (and its window) can change or be briefly null
   // while React mounts it.
   getViewerWindow: () => Window | null;
@@ -27,21 +27,21 @@ export interface CreateBridgeOptions {
   hostWindow?: Window;
 }
 
-export interface Bridge {
+export interface Orchestrator {
   send: (command: HostCommand) => void;
-  subscribe: (listener: BridgeListener) => () => void;
-  getState: () => BridgeState;
+  subscribe: (listener: OrchestratorListener) => () => void;
+  getState: () => OrchestratorState;
   dispose: () => void;
 }
 
-export const createBridge = (options: CreateBridgeOptions): Bridge => {
+export const createOrchestrator = (options: CreateOrchestratorOptions): Orchestrator => {
   const { getViewerWindow, viewerOrigin, hostWindow = window } = options;
 
-  let state: BridgeState = { ready: false, queued: 0, lastEvent: null, ignoredOrigins: 0 };
+  let state: OrchestratorState = { ready: false, queued: 0, lastEvent: null, ignoredOrigins: 0 };
   const listeners = createListenerSet();
   let disposed = false;
 
-  const setState = (patch: Partial<BridgeState>): void => {
+  const setState = (patch: Partial<OrchestratorState>): void => {
     state = { ...state, ...patch };
   };
 
@@ -105,7 +105,7 @@ export const createBridge = (options: CreateBridgeOptions): Bridge => {
   return {
     send,
     subscribe: listeners.subscribe,
-    getState: (): BridgeState => state,
+    getState: (): OrchestratorState => state,
     dispose,
   };
 };

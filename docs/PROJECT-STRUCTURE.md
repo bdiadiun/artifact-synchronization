@@ -93,7 +93,7 @@ my-react-app/
 | `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                  |
 | `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                |
 | `src/utils/`      | `format` (values, statuses, kinds) and `selectors` (row lookups).                                                               |
-| `src/bridge/`     | The host side of the channel: `createBridge`, `messageHandler`, `commandQueue`, `listeners`.                                    |
+| `src/hooks/`      | Also holds `useBridge`, the React binding to the orchestrator package; the channel itself is not in this app (A-17).            |
 | `src/form/`       | The row model and everything around it: `rows` (reducer), `rowActions`, `commands`, `viewerEventHandlers`, `storage`, `totals`. |
 | `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                             |
 

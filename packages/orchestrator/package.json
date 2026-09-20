@@ -1,0 +1,32 @@
+{
+  "name": "@bdiadiun/scoring-orchestrator",
+  "version": "0.0.1",
+  "description": "framework-free postMessage orchestrator that drives an OHIF viewer bridge from any host application",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bdiadiun/artifact-synchronization.git",
+    "directory": "packages/orchestrator"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepare": "tsc -p ."
+  },
+  "dependencies": {
+    "@bdiadiun/scoring-contract": "0.0.1"
+  }
+}

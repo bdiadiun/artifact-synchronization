@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                     |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 38 `feat: bridge adapter with a handler registry` (branch `feat/bridge-adapter-registry`, node F-44)                                                      |
-| Gate           | 2 — the dispatcher became a registry and the fork's diff is frozen; awaiting result approval                                                              |
-| Last merged PR | #43 `chore: the fork consumes the published contract`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                                       |
+| Field          | Value                                                                                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Current slice  | 39 `feat: the orchestrator package` (branch `feat/orchestrator-package`, node F-45)                                                                    |
+| Gate           | 2 — the channel became its own published package; awaiting result approval                                                                             |
+| Last merged PR | #44 `feat: bridge adapter with a handler registry`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                                    |
 
 ## Open decisions (see CANON.md → Decisions)
 

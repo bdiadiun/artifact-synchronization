@@ -1,8 +1,8 @@
-// Q-5: the bridge sends every command, so it is the one place that knows what the viewer is
+// Q-5: the orchestrator sends every command, so it is the one place that knows what the viewer is
 // still armed with and can cancel it when the host goes away.
 
 import type { HostCommand } from '@bdiadiun/scoring-contract';
-import { deactivateToolCommand } from '../form/commands';
+import { deactivateToolCommand } from './commands';
 
 export interface ArmedTool {
   remember: (command: HostCommand) => void;

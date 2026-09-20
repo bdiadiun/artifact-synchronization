@@ -1,0 +1,104 @@
+name: Publish packages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      # The `prepare` script in each package builds it (tsc), so no separate build step.
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
+
+      - name: Require NPM_TOKEN
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error::NPM_TOKEN secret is not set. Create an npm automation token and add it as the NPM_TOKEN repository secret before this workflow can publish."
+            exit 1
+          fi
+
+      # Published in dependency order: the orchestrator depends on the contract at an exact
+      # version, so a push that changes both must land the contract in the registry first.
+      - name: Publish packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          publish_package() {
+            local dir="$1"
+            local name="$2"
+
+            local published
+            published=$(npm view "$name" version 2>/dev/null || true)
+            local manifest
+            manifest=$(node -p "require('./packages/$dir/package.json').version")
+
+            local next
+            if [ -z "$published" ]; then
+              # Never published before: release the manifest version as is.
+              next="$manifest"
+            else
+              # Already published: bump the patch component past the latest release.
+              next=$(node -p "const [m,n,p]=process.argv[1].split('.').map(Number); \`\${m}.\${n}.\${p+1}\`" "$published")
+            fi
+
+            if [ "$manifest" = "$next" ]; then
+              echo "$name: manifest already at $next; leaving it unchanged."
+            else
+              npm version "$next" --no-git-tag-version --workspace "$name"
+            fi
+
+            local exists
+            exists=$(npm view "$name@$next" version 2>/dev/null || true)
+            if [ "$exists" = "$next" ]; then
+              echo "$name: $next is already published; skipping (content unchanged since the last release)."
+              return 0
+            fi
+
+            npm publish --workspace "$name" --access public
+            echo "$name@$next" >> "$RUNNER_TEMP/published-packages.txt"
+          }
+
+          : > "$RUNNER_TEMP/published-packages.txt"
+          publish_package contract @bdiadiun/scoring-contract
+          publish_package orchestrator @bdiadiun/scoring-orchestrator
+
+      - name: Job summary
+        run: |
+          if [ -s "$RUNNER_TEMP/published-packages.txt" ]; then
+            echo "Published:" >> "$GITHUB_STEP_SUMMARY"
+            while IFS= read -r line; do
+              echo "- \`$line\`" >> "$GITHUB_STEP_SUMMARY"
+            done < "$RUNNER_TEMP/published-packages.txt"
+          else
+            echo "No package version changed; nothing published." >> "$GITHUB_STEP_SUMMARY"
+          fi

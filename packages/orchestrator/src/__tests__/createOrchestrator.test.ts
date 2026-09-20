@@ -4,7 +4,7 @@ import type {
   DeactivateToolCommand,
   ViewerReadyEvent,
 } from '@bdiadiun/scoring-contract';
-import { createBridge, type Bridge } from '../createBridge';
+import { createOrchestrator, type Orchestrator } from '../createOrchestrator';
 
 const VIEWER_ORIGIN = 'http://localhost:3000';
 const FOREIGN_ORIGIN = 'http://localhost:5173';
@@ -36,88 +36,88 @@ const dispatchFromViewer = (data: unknown, origin = VIEWER_ORIGIN): void => {
   window.dispatchEvent(new MessageEvent('message', { data, origin }));
 };
 
-describe('createBridge', () => {
+describe('createOrchestrator', () => {
   let fakeViewerWindow: { postMessage: ReturnType<typeof vi.fn> };
-  let bridge: Bridge;
+  let orchestrator: Orchestrator;
 
   beforeEach(() => {
     fakeViewerWindow = { postMessage: vi.fn() };
-    bridge = createBridge({
+    orchestrator = createOrchestrator({
       getViewerWindow: () => fakeViewerWindow as unknown as Window,
       viewerOrigin: VIEWER_ORIGIN,
     });
   });
 
   afterEach(() => {
-    bridge.dispose();
+    orchestrator.dispose();
   });
 
   it('ignores messages from a foreign origin and counts them', () => {
     dispatchFromViewer(viewerReady, FOREIGN_ORIGIN);
 
-    expect(bridge.getState().ready).toBe(false);
-    expect(bridge.getState().ignoredOrigins).toBe(1);
+    expect(orchestrator.getState().ready).toBe(false);
+    expect(orchestrator.getState().ignoredOrigins).toBe(1);
   });
 
   it('ignores a malformed payload from the correct origin', () => {
     dispatchFromViewer({ version: 1, type: 'NOT_A_REAL_TYPE' });
 
-    expect(bridge.getState().ready).toBe(false);
-    expect(bridge.getState().lastEvent).toBeNull();
+    expect(orchestrator.getState().ready).toBe(false);
+    expect(orchestrator.getState().lastEvent).toBeNull();
   });
 
   it('queues a command sent before READY instead of posting it', () => {
-    bridge.send(activate);
+    orchestrator.send(activate);
 
     expect(fakeViewerWindow.postMessage).not.toHaveBeenCalled();
-    expect(bridge.getState().queued).toBe(1);
+    expect(orchestrator.getState().queued).toBe(1);
   });
 
   it('flushes the queue in FIFO order on READY with the exact targetOrigin', () => {
-    bridge.send(activate);
-    bridge.send(deactivate);
+    orchestrator.send(activate);
+    orchestrator.send(deactivate);
 
     dispatchFromViewer(viewerReady);
 
     expect(fakeViewerWindow.postMessage).toHaveBeenCalledTimes(2);
     expect(fakeViewerWindow.postMessage).toHaveBeenNthCalledWith(1, activate, VIEWER_ORIGIN);
     expect(fakeViewerWindow.postMessage).toHaveBeenNthCalledWith(2, deactivate, VIEWER_ORIGIN);
-    expect(bridge.getState().ready).toBe(true);
-    expect(bridge.getState().queued).toBe(0);
+    expect(orchestrator.getState().ready).toBe(true);
+    expect(orchestrator.getState().queued).toBe(0);
   });
 
   it('sends commands immediately once ready, without queuing', () => {
     dispatchFromViewer(viewerReady);
 
-    bridge.send(activate);
+    orchestrator.send(activate);
 
     expect(fakeViewerWindow.postMessage).toHaveBeenCalledTimes(1);
     expect(fakeViewerWindow.postMessage).toHaveBeenCalledWith(activate, VIEWER_ORIGIN);
-    expect(bridge.getState().queued).toBe(0);
+    expect(orchestrator.getState().queued).toBe(0);
   });
 
   it('re-emits the event and stays functional on a second READY (viewer reload)', () => {
     const events: unknown[] = [];
-    bridge.subscribe((event) => events.push(event));
+    orchestrator.subscribe((event) => events.push(event));
 
     dispatchFromViewer(viewerReady);
     dispatchFromViewer(viewerReady);
 
-    expect(bridge.getState().ready).toBe(true);
+    expect(orchestrator.getState().ready).toBe(true);
     // First READY: one notify. Second READY: ready flips false then true, so two more notifies.
     const readyEvents = events.filter(
       (event) => (event as ViewerReadyEvent | null)?.type === 'VIEWER_READY',
     );
     expect(readyEvents.length).toBe(3);
 
-    bridge.send(activate);
+    orchestrator.send(activate);
     expect(fakeViewerWindow.postMessage).toHaveBeenCalledWith(activate, VIEWER_ORIGIN);
   });
 
   it('dispose removes the listener so a later message is a no-op', () => {
     dispatchFromViewer(viewerReady);
-    const stateAfterReady = bridge.getState();
-    bridge.dispose();
+    const stateAfterReady = orchestrator.getState();
+    orchestrator.dispose();
 
     dispatchFromViewer({
       version: 1,
@@ -129,20 +129,20 @@ describe('createBridge', () => {
 
     // The listener is gone, so the post-dispose message never reaches the handler: `lastEvent`
     // stays exactly what it was right after READY instead of picking up MEASUREMENT_UPDATED.
-    expect(bridge.getState().lastEvent).toBe(stateAfterReady.lastEvent);
-    expect(bridge.getState().ready).toBe(false);
+    expect(orchestrator.getState().lastEvent).toBe(stateAfterReady.lastEvent);
+    expect(orchestrator.getState().ready).toBe(false);
   });
 
   it('dispose is idempotent', () => {
     expect(() => {
-      bridge.dispose();
-      bridge.dispose();
+      orchestrator.dispose();
+      orchestrator.dispose();
     }).not.toThrow();
   });
 
   it('subscribe returns an unsubscribe function that stops further notifications', () => {
     const listener = vi.fn();
-    const unsubscribe = bridge.subscribe(listener);
+    const unsubscribe = orchestrator.subscribe(listener);
 
     dispatchFromViewer(viewerReady);
     expect(listener).toHaveBeenCalled();
@@ -150,13 +150,13 @@ describe('createBridge', () => {
     unsubscribe();
     listener.mockClear();
 
-    bridge.send(activate);
+    orchestrator.send(activate);
     expect(listener).not.toHaveBeenCalled();
   });
 
   it('does not send with targetOrigin "*"', () => {
     dispatchFromViewer(viewerReady);
-    bridge.send(activate);
+    orchestrator.send(activate);
 
     for (const call of fakeViewerWindow.postMessage.mock.calls) {
       expect(call[1]).toBe(VIEWER_ORIGIN);
@@ -166,10 +166,10 @@ describe('createBridge', () => {
 
   it('disarms on dispose: posts one DEACTIVATE_TOOL with an explicit target origin when armed and ready', () => {
     dispatchFromViewer(viewerReady);
-    bridge.send(activate);
+    orchestrator.send(activate);
     fakeViewerWindow.postMessage.mockClear();
 
-    bridge.dispose();
+    orchestrator.dispose();
 
     expect(fakeViewerWindow.postMessage).toHaveBeenCalledTimes(1);
     const [posted, targetOrigin] = fakeViewerWindow.postMessage.mock.calls[0] as [unknown, string];
@@ -179,49 +179,49 @@ describe('createBridge', () => {
   });
 
   it('posts nothing on dispose when the viewer never became ready', () => {
-    bridge.send(activate);
+    orchestrator.send(activate);
     fakeViewerWindow.postMessage.mockClear();
 
-    bridge.dispose();
+    orchestrator.dispose();
 
     expect(fakeViewerWindow.postMessage).not.toHaveBeenCalled();
   });
 
   it('posts nothing on dispose when the armed tool was already deactivated', () => {
     dispatchFromViewer(viewerReady);
-    bridge.send(activate);
-    bridge.send(deactivate);
+    orchestrator.send(activate);
+    orchestrator.send(deactivate);
     fakeViewerWindow.postMessage.mockClear();
 
-    bridge.dispose();
+    orchestrator.dispose();
 
     expect(fakeViewerWindow.postMessage).not.toHaveBeenCalled();
   });
 
   it('posts at most one DEACTIVATE_TOOL when dispose is called twice while armed', () => {
     dispatchFromViewer(viewerReady);
-    bridge.send(activate);
+    orchestrator.send(activate);
     fakeViewerWindow.postMessage.mockClear();
 
-    bridge.dispose();
-    bridge.dispose();
+    orchestrator.dispose();
+    orchestrator.dispose();
 
     expect(fakeViewerWindow.postMessage).toHaveBeenCalledTimes(1);
   });
 
   it('posts nothing and does not throw on dispose when the viewer window no longer exists', () => {
     let viewerWindow: { postMessage: ReturnType<typeof vi.fn> } | null = fakeViewerWindow;
-    const noWindowBridge = createBridge({
+    const noWindowOrchestrator = createOrchestrator({
       getViewerWindow: () => viewerWindow as unknown as Window | null,
       viewerOrigin: VIEWER_ORIGIN,
     });
     window.dispatchEvent(new MessageEvent('message', { data: viewerReady, origin: VIEWER_ORIGIN }));
-    noWindowBridge.send(activate);
+    noWindowOrchestrator.send(activate);
     viewerWindow = null;
     fakeViewerWindow.postMessage.mockClear();
 
     expect(() => {
-      noWindowBridge.dispose();
+      noWindowOrchestrator.dispose();
     }).not.toThrow();
     expect(fakeViewerWindow.postMessage).not.toHaveBeenCalled();
   });
