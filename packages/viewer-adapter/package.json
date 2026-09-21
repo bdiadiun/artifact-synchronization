@@ -29,6 +29,6 @@
     "prepare": "tsc -b --force"
   },
   "dependencies": {
-    "@bdiadiun/ohif-extension-scoring-bridge": "0.0.1"
+    "@bdiadiun/ohif-extension-scoring-bridge": "0.0.2"
   }
 }

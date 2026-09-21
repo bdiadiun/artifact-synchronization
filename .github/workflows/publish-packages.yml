@@ -16,10 +16,6 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Full history: the changed-package check diffs the push event's before/after
-          # commits, and a shallow clone would not contain the before commit.
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -50,96 +46,32 @@ jobs:
 
       # Published in dependency order: the orchestrator depends on the contract at an exact
       # version, so a push that changes both must land the contract in the registry first.
-      # A package is only published when its own files changed in what triggered the run
-      # (docs/CONVENTIONS.md "Publishing"), so a change to one package does not mint an empty
-      # release of the other.
+      # A version lives in the package's own manifest (docs/CONVENTIONS.md "Publishing"); the
+      # workflow publishes exactly that version and skips a package whose version the registry
+      # already has, so a change to one package does not mint a release of the other.
       - name: Publish packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          EVENT_NAME: ${{ github.event_name }}
-          BEFORE_SHA: ${{ github.event.before }}
-          AFTER_SHA: ${{ github.event.after }}
         run: |
-          # Decides whether the package rooted at $1 changed in this run. Echoes the reason for
-          # the decision and returns 0 (changed, publish) or 1 (unchanged, skip). A manual run has
-          # no commit range to compare, and a comparison that cannot be made for any reason
-          # (first push on a ref, a before commit missing from history) also resolves to
-          # "changed": a missed release is worse than a spare one.
-          package_changed() {
-            local path="$1"
-
-            if [ "$EVENT_NAME" != "push" ]; then
-              echo "manual run (workflow_dispatch): no commit range to compare, publishing unconditionally."
-              return 0
-            fi
-
-            if [ -z "$BEFORE_SHA" ] || [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
-              echo "no previous commit on this ref to diff against (first push): publishing rather than guessing."
-              return 0
-            fi
-
-            if ! git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null; then
-              echo "before commit $BEFORE_SHA is not available in this checkout: publishing rather than guessing."
-              return 0
-            fi
-
-            if git diff --name-only "$BEFORE_SHA" "$AFTER_SHA" -- "$path" | grep -q .; then
-              echo "files changed under $path between $BEFORE_SHA and $AFTER_SHA."
-              return 0
-            fi
-
-            echo "no files changed under $path between $BEFORE_SHA and $AFTER_SHA."
-            return 1
-          }
-
           publish_package() {
             local dir="$1"
             local name="$2"
-            local path="packages/$dir"
 
             echo "::group::$name"
 
-            local reason
-            local changed=0
-            reason=$(package_changed "$path") || changed=$?
-            echo "$reason"
-
-            if [ "$changed" -ne 0 ]; then
-              echo "$name: skipped ($reason)" >> "$RUNNER_TEMP/skipped-packages.txt"
-              echo "::endgroup::"
-              return 0
-            fi
-
-            local published
-            published=$(npm view "$name" version 2>/dev/null || true)
             local manifest
             manifest=$(node -p "require('./packages/$dir/package.json').version")
 
-            local next
-            if [ -z "$published" ]; then
-              # Never published before: release the manifest version as is.
-              next="$manifest"
-            else
-              # Already published: bump the patch component past the latest release.
-              next=$(node -p "const [m,n,p]=process.argv[1].split('.').map(Number); \`\${m}.\${n}.\${p+1}\`" "$published")
-            fi
-
-            if [ "$manifest" = "$next" ]; then
-              echo "$name: manifest already at $next; leaving it unchanged."
-            else
-              npm version "$next" --no-git-tag-version --workspace "$name"
-            fi
-
             local exists
-            exists=$(npm view "$name@$next" version 2>/dev/null || true)
-            if [ "$exists" = "$next" ]; then
-              echo "$name: skipped ($next is already published)" >> "$RUNNER_TEMP/skipped-packages.txt"
+            exists=$(npm view "$name@$manifest" version 2>/dev/null || true)
+            if [ "$exists" = "$manifest" ]; then
+              echo "$name: skipped ($manifest is already published)" >> "$RUNNER_TEMP/skipped-packages.txt"
               echo "::endgroup::"
               return 0
             fi
 
             npm publish --workspace "$name" --access public
-            echo "$name@$next" >> "$RUNNER_TEMP/published-packages.txt"
+            echo "$name@$manifest" >> "$RUNNER_TEMP/published-packages.txt"
             echo "::endgroup::"
           }
 

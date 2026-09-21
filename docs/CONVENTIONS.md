@@ -265,6 +265,15 @@ somebody deletes.
 
 ## 11. Publishing
 
+- **A version lives in the manifest, not in the release run.** The slice that changes a package
+  raises that package's version, and the workflow publishes exactly that version and skips when it
+  already exists. A version computed at release time cannot be named by anything that depends on
+  it, which is how an adapter came to pin a version of its own dependency that predated the types
+  it imported.
+- **A workspace link hides version skew, so an internal pin is verified against the registry.** Here
+  a sibling package is symlinked and compiles against the working tree, no matter what version the
+  manifest names. Before pinning, fetch the published tarball of that exact version and check that
+  what the dependent imports is really in it.
 - **The dependency is published before the dependent.** A package pinned at an exact version cannot
   be released in the same step as the thing that pins it.
 - **A new package is added to the publish workflow in the slice that creates it.** The workflow
