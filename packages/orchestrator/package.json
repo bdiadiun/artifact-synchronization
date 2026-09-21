@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/scoring-orchestrator",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "framework-free postMessage orchestrator that drives an OHIF viewer bridge from any host application",
   "license": "MIT",
   "repository": {
@@ -29,7 +29,7 @@
     "prepare": "tsc -b --force"
   },
   "dependencies": {
-    "@bdiadiun/scoring-channel": "0.0.1",
-    "@bdiadiun/scoring-contract": "0.0.8"
+    "@bdiadiun/scoring-channel": "0.0.2",
+    "@bdiadiun/scoring-contract": "0.0.9"
   }
 }

@@ -67,48 +67,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-55 | The viewer extension leaves the fork                                                                                                              | A-20, C-3.2, Q-2, Q-7                                           | F-53             | 49    | done    | The viewer builds with the package resolved through OHIF's plugin imports and the overlay's version substituted; the package's first tests, forty-three of them, cover the origin check, the guard, the registry, the unit tables, the geometry and the throttle; the packages' sources and tests are type-checked by `npm run typecheck` for the first time.             |
 | F-56 | The adapter registers our extensions                                                                                                              | A-20, C-3.2, Q-7                                                | F-55             | 50    | done    | The built viewer names only the adapter in OHIF's generated plugin imports, yet the bridge's code is in the bundle because the adapter pulls it; ten cases cover the order, the awaiting, the isolation of a throwing and a rejecting child, and the report when no manager is handed over.                                                                               |
 | F-57 | The three layers are in place                                                                                                                     | A-18, A-20, C-3.2, Q-7                                          | F-56             | 51    | done    | The fork's diff against the upstream tag is four files and no deletion; its lockfile resolves the adapter, the bridge and the contract as registry tarballs with integrity hashes while its manifests name only the adapter; the viewer builds with our code in the bundle.                                                                                               |
-| F-58 | One channel, with send, on and exchange                                                                                                           | A-21, Q-1, Q-2, Q-3, Q-4, Q-7                                   | F-57             | 52    | review  | A message from another origin and a payload the guard rejects are ignored at both ends, proved by breaking the check and watching those cases fail; an exchange resolves on its own answer, is not confused by another's, rejects on timeout naming the request and the answer it waited for, and leaves nothing behind either way.                                       |
+| F-58 | One channel, with send, on and exchange                                                                                                           | A-21, Q-1, Q-2, Q-3, Q-4, Q-7                                   | F-57             | 52    | done    | A message from another origin and a payload the guard rejects are ignored at both ends, proved by breaking the check and watching those cases fail; an exchange resolves on its own answer, is not confused by another's, rejects on timeout naming the request and the answer it waited for, and leaves nothing behind either way.                                       |
+| F-59 | A published number is never reused                                                                                                                | A-15, A-21, D-1, Q-7                                            | F-58             | 53    | review  | The published tarball of the reused number is shown to lack the table while the new one contains it; every internal pin names a version this slice publishes; the release run refuses to skip a package whose published content differs from what it would publish.                                                                                                       |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                                                                                           |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                                                                                           |
-| C-3.2   | F-05, F-44, F-47, F-55, F-56, F-57                                                                                                                   |
-| C-3.3   | F-01                                                                                                                                                 |
-| C-3.4   | F-05, F-09, F-32                                                                                                                                     |
-| C-4.1.1 | F-04, F-45                                                                                                                                           |
-| C-4.1.2 | F-04                                                                                                                                                 |
-| C-4.1.3 | F-02, F-04, F-52                                                                                                                                     |
-| C-4.2.1 | F-01                                                                                                                                                 |
-| C-4.2.2 | F-02                                                                                                                                                 |
-| C-4.2.3 | F-01                                                                                                                                                 |
-| C-4.3.1 | F-07                                                                                                                                                 |
-| C-4.3.2 | F-07                                                                                                                                                 |
-| C-4.3.3 | F-08                                                                                                                                                 |
-| C-4.3.4 | F-09                                                                                                                                                 |
-| C-4.3.5 | F-09, F-10                                                                                                                                           |
-| C-4.3.6 | F-09, F-10                                                                                                                                           |
-| C-4.3.7 | F-07                                                                                                                                                 |
-| C-4.3.8 | F-11                                                                                                                                                 |
-| C-4.4.1 | F-03, F-08                                                                                                                                           |
-| C-4.4.2 | F-03, F-15, F-16                                                                                                                                     |
-| C-4.4.3 | F-03                                                                                                                                                 |
-| Q-1     | F-06, F-45, F-58                                                                                                                                     |
-| Q-2     | F-05, F-06, F-45, F-55, F-58                                                                                                                         |
-| Q-3     | F-07, F-08, F-09, F-19, F-45, F-58                                                                                                                   |
-| Q-4     | F-14, F-15, F-19, F-39, F-45, F-58                                                                                                                   |
-| Q-5     | F-05, F-06, F-39                                                                                                                                     |
-| Q-6     | F-09, F-10, F-11                                                                                                                                     |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56, F-57, F-58 |
-| D-1     | F-04, F-41, F-46, F-47                                                                                                                               |
-| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                                                       |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                                       |
-| D-4     | F-00, F-24                                                                                                                                           |
-| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                                                   |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                                         |
-| D-7     | F-12, F-25                                                                                                                                           |
-| D-8     | F-13, F-25                                                                                                                                           |
+| ID      | Covered by                                                                                                                                                 |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                                                                                 |
+| C-3.2   | F-05, F-44, F-47, F-55, F-56, F-57                                                                                                                         |
+| C-3.3   | F-01                                                                                                                                                       |
+| C-3.4   | F-05, F-09, F-32                                                                                                                                           |
+| C-4.1.1 | F-04, F-45                                                                                                                                                 |
+| C-4.1.2 | F-04                                                                                                                                                       |
+| C-4.1.3 | F-02, F-04, F-52                                                                                                                                           |
+| C-4.2.1 | F-01                                                                                                                                                       |
+| C-4.2.2 | F-02                                                                                                                                                       |
+| C-4.2.3 | F-01                                                                                                                                                       |
+| C-4.3.1 | F-07                                                                                                                                                       |
+| C-4.3.2 | F-07                                                                                                                                                       |
+| C-4.3.3 | F-08                                                                                                                                                       |
+| C-4.3.4 | F-09                                                                                                                                                       |
+| C-4.3.5 | F-09, F-10                                                                                                                                                 |
+| C-4.3.6 | F-09, F-10                                                                                                                                                 |
+| C-4.3.7 | F-07                                                                                                                                                       |
+| C-4.3.8 | F-11                                                                                                                                                       |
+| C-4.4.1 | F-03, F-08                                                                                                                                                 |
+| C-4.4.2 | F-03, F-15, F-16                                                                                                                                           |
+| C-4.4.3 | F-03                                                                                                                                                       |
+| Q-1     | F-06, F-45, F-58                                                                                                                                           |
+| Q-2     | F-05, F-06, F-45, F-55, F-58                                                                                                                               |
+| Q-3     | F-07, F-08, F-09, F-19, F-45, F-58                                                                                                                         |
+| Q-4     | F-14, F-15, F-19, F-39, F-45, F-58                                                                                                                         |
+| Q-5     | F-05, F-06, F-39                                                                                                                                           |
+| Q-6     | F-09, F-10, F-11                                                                                                                                           |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56, F-57, F-58, F-59 |
+| D-1     | F-04, F-41, F-46, F-47, F-59                                                                                                                               |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                                                             |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                                             |
+| D-4     | F-00, F-24                                                                                                                                                 |
+| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                                                         |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                                               |
+| D-7     | F-12, F-25                                                                                                                                                 |
+| D-8     | F-13, F-25                                                                                                                                                 |
 
 ## Diagram
 
@@ -172,6 +173,7 @@ graph TD
   F56["F-56 The adapter registers our extensions"]
   F57["F-57 The three layers are in place"]
   F58["F-58 One channel, with send, on and exchange"]
+  F59["F-59 A published number is never reused"]
 
   F20 --> F01
   F01 --> F02
@@ -235,6 +237,7 @@ graph TD
   F55 --> F56
   F56 --> F57
   F57 --> F58
+  F58 --> F59
 ```
 
 ## Slice → nodes
@@ -295,6 +298,7 @@ graph TD
 | 50 — feat: the adapter registers our extensions              | `feat/extension-adapter`                    | —   | F-56                   |
 | 51 — chore: the fork registers the adapter                   | `chore/fork-uses-the-adapter`               | —   | F-57                   |
 | 52 — feat: the channel both sides use                        | `feat/channel-exchange`                     | —   | F-58                   |
+| 53 — fix: release the contract that has the table            | `fix/release-the-real-contract`             | —   | F-59                   |
 
 ## Node details
 
@@ -1307,7 +1311,7 @@ Files:
 
 Moves the mechanics both sides repeated into the published package `@bdiadiun/scoring-channel`: the origin check, the contract guard and posting with an explicit target origin. Its surface is generic rather than a method per message, so a payload's type follows from the message type and neither side can drift from the contract. The channel fills in the version and the request id, and `exchange` resolves with the answer correlated by that id or rejects when none arrives, so silence is an error instead of an unbounded wait. The contract gained the table saying which event answers which command. The echo guard changed shape with it: an answer is delivered to the exchange that asked for it and never reaches the general handlers, so the sets of issued request ids the form kept are gone.
 
-Canon: A-21, Q-1, Q-2, Q-3, Q-4, Q-7. Depends on: F-57. Slice 52, status `review`.
+Canon: A-21, Q-1, Q-2, Q-3, Q-4, Q-7. Depends on: F-57. Slice 52, status `done`.
 
 Files:
 
@@ -1319,3 +1323,19 @@ Files:
 - `packages/contract/src/answers.ts` — internal: `packages/contract/src/answers.props.ts`
 - `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/config.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/delivery.ts`, `packages/orchestrator/src/hostChannel.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/orchestratorState.ts`, `packages/orchestrator/src/teardown.ts`, `packages/orchestrator/src/viewerEvents.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`; external: `@bdiadiun/scoring-channel`
+
+### F-59 A published number is never reused
+
+A version number left over from a removed mechanism was reused for different content. The release run saw the number in the registry and skipped it, so three packages shipped pinned to a contract that did not contain the table they import: broken for anyone installing from the registry, invisible here because a workspace link compiles against the working tree. Every package in the chain takes a fresh number and every pin follows, and the run now compares what it would publish against what the registry serves before skipping anything.
+
+Canon: A-15, A-21, D-1, Q-7. Depends on: F-58. Slice 53, status `review`.
+
+Files:
+
+- `.github/workflows/publish-packages.yml`
+- `docs/CONVENTIONS.md`
+- `packages/channel/package.json`
+- `packages/contract/package.json`
+- `packages/orchestrator/package.json`
+- `packages/viewer-adapter/package.json`
+- `packages/viewer-bridge/package.json`

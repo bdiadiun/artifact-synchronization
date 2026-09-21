@@ -48,7 +48,12 @@ jobs:
       # version, so a push that changes both must land the contract in the registry first.
       # A version lives in the package's own manifest (docs/CONVENTIONS.md "Publishing"); the
       # workflow publishes exactly that version and skips a package whose version the registry
-      # already has, so a change to one package does not mint a release of the other.
+      # already has, so a change to one package does not mint a release of the other. A version
+      # is never reused for different content, so a skip is only safe when the registry tarball
+      # is byte-for-byte what we would publish now; the check compares `npm view dist.shasum`,
+      # the sha1 the registry recorded for that version, against the shasum `npm pack` prints for
+      # the tarball we would produce, because both are plain sha1 hex strings a shell can compare
+      # without decoding an SRI string.
       - name: Publish packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -65,7 +70,27 @@ jobs:
             local exists
             exists=$(npm view "$name@$manifest" version 2>/dev/null || true)
             if [ "$exists" = "$manifest" ]; then
-              echo "$name: skipped ($manifest is already published)" >> "$RUNNER_TEMP/skipped-packages.txt"
+              local pack_dir registry_shasum local_shasum
+              pack_dir="$RUNNER_TEMP/pack-$dir"
+              mkdir -p "$pack_dir"
+              registry_shasum=$(npm view "$name@$manifest" dist.shasum 2>/dev/null || true)
+              local_shasum=$(npm pack --workspace "$name" --json --pack-destination "$pack_dir" \
+                | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8'))[0].shasum") || local_shasum=""
+              rm -rf "$pack_dir"
+
+              if [ -z "$registry_shasum" ] || [ -z "$local_shasum" ]; then
+                echo "::error::$name@$manifest: could not compare the published tarball against the current source; refusing to guess."
+                echo "::endgroup::"
+                return 1
+              fi
+
+              if [ "$registry_shasum" != "$local_shasum" ]; then
+                echo "::error::$name@$manifest is already published but its content does not match the current source. A published version cannot be corrected in place; raise the version in packages/$dir/package.json."
+                echo "::endgroup::"
+                return 1
+              fi
+
+              echo "$name: skipped ($manifest is already published, content confirmed to match)" >> "$RUNNER_TEMP/skipped-packages.txt"
               echo "::endgroup::"
               return 0
             fi

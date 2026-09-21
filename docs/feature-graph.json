@@ -290,6 +290,11 @@
       "id": "52",
       "title": "feat: the channel both sides use",
       "branch": "feat/channel-exchange"
+    },
+    {
+      "id": "53",
+      "title": "fix: release the contract that has the table",
+      "branch": "fix/release-the-real-contract"
     }
   ],
   "nodes": [
@@ -3786,7 +3791,7 @@
       "canon": ["A-21", "Q-1", "Q-2", "Q-3", "Q-4", "Q-7"],
       "dependsOn": ["F-57"],
       "slice": "52",
-      "status": "review",
+      "status": "done",
       "verify": "A message from another origin and a payload the guard rejects are ignored at both ends, proved by breaking the check and watching those cases fail; an exchange resolves on its own answer, is not confused by another's, rejects on timeout naming the request and the answer it waited for, and leaves nothing behind either way.",
       "files": [
         "docs/decisions/A-21-channel-and-exchange.md",
@@ -3853,6 +3858,26 @@
           "external": ["@bdiadiun/scoring-channel"]
         }
       }
+    },
+    {
+      "id": "F-59",
+      "name": "A published number is never reused",
+      "description": "A version number left over from a removed mechanism was reused for different content. The release run saw the number in the registry and skipped it, so three packages shipped pinned to a contract that did not contain the table they import: broken for anyone installing from the registry, invisible here because a workspace link compiles against the working tree. Every package in the chain takes a fresh number and every pin follows, and the run now compares what it would publish against what the registry serves before skipping anything.",
+      "canon": ["A-15", "A-21", "D-1", "Q-7"],
+      "dependsOn": ["F-58"],
+      "slice": "53",
+      "status": "review",
+      "verify": "The published tarball of the reused number is shown to lack the table while the new one contains it; every internal pin names a version this slice publishes; the release run refuses to skip a package whose published content differs from what it would publish.",
+      "files": [
+        ".github/workflows/publish-packages.yml",
+        "docs/CONVENTIONS.md",
+        "packages/channel/package.json",
+        "packages/contract/package.json",
+        "packages/orchestrator/package.json",
+        "packages/viewer-adapter/package.json",
+        "packages/viewer-bridge/package.json"
+      ],
+      "imports": {}
     }
   ]
 }
