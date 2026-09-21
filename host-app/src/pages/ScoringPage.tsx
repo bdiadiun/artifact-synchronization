@@ -7,9 +7,10 @@ import { useScoringForm } from '@app/hooks/useScoringForm';
 
 export const ScoringPage = (): JSX.Element => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const { send, state } = useBridge(iframeRef);
+  const { send, exchange, state } = useBridge(iframeRef);
   const { rows, addRow, activate, cancel, remove, focus } = useScoringForm({
     send,
+    exchange,
     lastEvent: state.lastEvent,
   });
 

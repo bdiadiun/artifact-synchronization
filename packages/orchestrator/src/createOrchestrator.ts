@@ -1,12 +1,18 @@
-// Framework-free postMessage client for the viewer bridge (A-9, A-10). No framework dependency,
-// so any host can drive a viewer with it. This module only wires the queue and the message handler
-// to the listener set; the rules live in those two modules.
+// Framework-free postMessage client for the viewer bridge (A-9, A-10). The channel owns the origin
+// check, the guard, the explicit target origin and the request correlation (A-21); this module wires
+// it to the queue, the armed-tool memory and the state store, and holds no rule of its own.
 
-import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
+import { VIEWER_EVENT_TYPES } from '@bdiadiun/scoring-contract';
+import { createPeerPost } from '@bdiadiun/scoring-channel';
 import { createArmedTool } from './armedTool';
 import { createCommandQueue } from './commandQueue';
+import { LOG_PREFIX } from './config';
+import { createCommandDelivery } from './delivery';
+import { createHostChannel } from './hostChannel';
 import { createListenerSet } from './listeners';
-import { createMessageHandler } from './messageHandler';
+import { createStateStore } from './orchestratorState';
+import { createTeardown } from './teardown';
+import { createViewerEventHandler } from './viewerEvents';
 import type {
   CreateOrchestratorOptions,
   Orchestrator,
@@ -15,83 +21,74 @@ import type {
 
 export type {
   CreateOrchestratorOptions,
+  HostChannel,
   Orchestrator,
   OrchestratorListener,
   OrchestratorState,
 } from './createOrchestrator.props';
 
 export const createOrchestrator = (options: CreateOrchestratorOptions): Orchestrator => {
-  const { getViewerWindow, viewerOrigin, hostWindow = window } = options;
+  const { getViewerWindow, viewerOrigin, hostWindow = window, exchangeTimeoutMs } = options;
 
-  let state: OrchestratorState = { ready: false, queued: 0, lastEvent: null, ignoredOrigins: 0 };
   const listeners = createListenerSet();
+  const store = createStateStore(listeners);
   let disposed = false;
-
-  const setState = (patch: Partial<OrchestratorState>): void => {
-    state = { ...state, ...patch };
-  };
-
-  const notify = (event: ViewerEvent | null): void => {
-    listeners.notify(event, state);
-  };
-
-  const queue = createCommandQueue({ getViewerWindow, viewerOrigin });
-  const armedTool = createArmedTool(viewerOrigin);
 
   // Every queue change is published as a state-only notification (`event: null`).
   const publishQueueLength = (): void => {
-    setState({ queued: queue.size() });
-    notify(null);
+    store.patch({ queued: queue.size() });
+    store.notify(null);
   };
 
-  const flushQueue = (): void => {
-    queue.flush();
-    publishQueueLength();
-  };
-
-  const handleMessage = createMessageHandler({
-    viewerOrigin,
-    getState: () => state,
-    setState,
-    notify,
-    flushQueue,
+  const post = createPeerPost({
+    peerOrigin: viewerOrigin,
+    getPeerWindow: getViewerWindow,
+    logPrefix: LOG_PREFIX,
   });
-  hostWindow.addEventListener('message', handleMessage);
+  const queue = createCommandQueue({ post });
+  const armedTool = createArmedTool();
 
-  const send = (command: HostCommand): void => {
-    if (disposed) {
-      return;
-    }
-    armedTool.remember(command);
-    const viewerWindow = getViewerWindow();
-    // Not ready, or the iframe window is momentarily unavailable: queue instead of losing it (Q-1).
-    if (!state.ready || viewerWindow === null) {
-      queue.push(command);
+  const channel = createHostChannel({
+    viewerOrigin,
+    hostWindow,
+    exchangeTimeoutMs,
+    deliver: createCommandDelivery({
+      post,
+      queue,
+      isReady: () => store.get().ready,
+      remember: armedTool.remember,
+      onQueueChange: publishQueueLength,
+    }),
+    onIgnoredOrigin: (): void => {
+      store.patch({ ignoredOrigins: store.get().ignoredOrigins + 1 });
+      store.notify(null);
+    },
+  });
+
+  const handleViewerEvent = createViewerEventHandler({
+    store,
+    flushQueue: (): void => {
+      queue.flush();
       publishQueueLength();
-      return;
-    }
-    // Never '*': targetOrigin is always the configured viewer origin (Q-2).
-    viewerWindow.postMessage(command, viewerOrigin);
-  };
+    },
+  });
+
+  for (const type of VIEWER_EVENT_TYPES) {
+    channel.on(type, handleViewerEvent);
+  }
+
+  const teardown = createTeardown({ store, channel, queue, listeners, armedTool });
 
   const dispose = (): void => {
-    // Idempotent: a second call is a no-op.
-    if (disposed) {
-      return;
-    }
     disposed = true;
-    // Never queued: a viewer that never became ready has nothing armed to cancel.
-    armedTool.disarm(state.ready ? getViewerWindow() : null);
-    hostWindow.removeEventListener('message', handleMessage);
-    queue.clear();
-    listeners.clear();
-    setState({ ready: false, queued: 0 });
+    teardown();
   };
 
   return {
-    send,
+    send: (type, payload) => (disposed ? false : channel.send(type, payload)),
+    exchange: channel.exchange,
     subscribe: listeners.subscribe,
-    getState: (): OrchestratorState => state,
+    getState: (): OrchestratorState => store.get(),
     dispose,
   };
 };

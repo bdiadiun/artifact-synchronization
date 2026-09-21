@@ -1,28 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type {
-  ActivateToolCommand,
-  DeactivateToolCommand,
-  ViewerReadyEvent,
-} from '@bdiadiun/scoring-contract';
+import type { ViewerReadyEvent } from '@bdiadiun/scoring-contract';
 import { createOrchestrator, type Orchestrator } from '../createOrchestrator';
 
 const VIEWER_ORIGIN = 'http://localhost:3000';
 const FOREIGN_ORIGIN = 'http://localhost:5173';
-
-const activate: ActivateToolCommand = {
-  version: 1,
-  type: 'ACTIVATE_TOOL',
-  requestId: 'req-1',
-  rowId: 'row-1',
-  toolName: 'EllipticalROI',
-};
-
-const deactivate: DeactivateToolCommand = {
-  version: 1,
-  type: 'DEACTIVATE_TOOL',
-  requestId: 'req-2',
-  rowId: 'row-1',
-};
 
 const viewerReady: ViewerReadyEvent = {
   version: 1,
@@ -67,21 +48,33 @@ describe('createOrchestrator', () => {
   });
 
   it('queues a command sent before READY instead of posting it', () => {
-    orchestrator.send(activate);
+    const delivered = orchestrator.send('ACTIVATE_TOOL', {
+      rowId: 'row-1',
+      toolName: 'EllipticalROI',
+    });
 
+    expect(delivered).toBe(false);
     expect(fakeViewerWindow.postMessage).not.toHaveBeenCalled();
     expect(orchestrator.getState().queued).toBe(1);
   });
 
   it('flushes the queue in FIFO order on READY with the exact targetOrigin', () => {
-    orchestrator.send(activate);
-    orchestrator.send(deactivate);
+    orchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    orchestrator.send('DEACTIVATE_TOOL', { rowId: 'row-1' });
 
     dispatchFromViewer(viewerReady);
 
     expect(fakeViewerWindow.postMessage).toHaveBeenCalledTimes(2);
-    expect(fakeViewerWindow.postMessage).toHaveBeenNthCalledWith(1, activate, VIEWER_ORIGIN);
-    expect(fakeViewerWindow.postMessage).toHaveBeenNthCalledWith(2, deactivate, VIEWER_ORIGIN);
+    expect(fakeViewerWindow.postMessage).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId: 'row-1' }),
+      VIEWER_ORIGIN,
+    );
+    expect(fakeViewerWindow.postMessage).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ type: 'DEACTIVATE_TOOL', rowId: 'row-1' }),
+      VIEWER_ORIGIN,
+    );
     expect(orchestrator.getState().ready).toBe(true);
     expect(orchestrator.getState().queued).toBe(0);
   });
@@ -89,10 +82,17 @@ describe('createOrchestrator', () => {
   it('sends commands immediately once ready, without queuing', () => {
     dispatchFromViewer(viewerReady);
 
-    orchestrator.send(activate);
+    const delivered = orchestrator.send('ACTIVATE_TOOL', {
+      rowId: 'row-1',
+      toolName: 'EllipticalROI',
+    });
 
+    expect(delivered).toBe(true);
     expect(fakeViewerWindow.postMessage).toHaveBeenCalledTimes(1);
-    expect(fakeViewerWindow.postMessage).toHaveBeenCalledWith(activate, VIEWER_ORIGIN);
+    expect(fakeViewerWindow.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId: 'row-1' }),
+      VIEWER_ORIGIN,
+    );
     expect(orchestrator.getState().queued).toBe(0);
   });
 
@@ -110,8 +110,11 @@ describe('createOrchestrator', () => {
     );
     expect(readyEvents.length).toBe(3);
 
-    orchestrator.send(activate);
-    expect(fakeViewerWindow.postMessage).toHaveBeenCalledWith(activate, VIEWER_ORIGIN);
+    orchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    expect(fakeViewerWindow.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId: 'row-1' }),
+      VIEWER_ORIGIN,
+    );
   });
 
   it('dispose removes the listener so a later message is a no-op', () => {
@@ -150,13 +153,13 @@ describe('createOrchestrator', () => {
     unsubscribe();
     listener.mockClear();
 
-    orchestrator.send(activate);
+    orchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
     expect(listener).not.toHaveBeenCalled();
   });
 
   it('does not send with targetOrigin "*"', () => {
     dispatchFromViewer(viewerReady);
-    orchestrator.send(activate);
+    orchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
 
     for (const call of fakeViewerWindow.postMessage.mock.calls) {
       expect(call[1]).toBe(VIEWER_ORIGIN);
@@ -166,7 +169,7 @@ describe('createOrchestrator', () => {
 
   it('disarms on dispose: posts one DEACTIVATE_TOOL with an explicit target origin when armed and ready', () => {
     dispatchFromViewer(viewerReady);
-    orchestrator.send(activate);
+    orchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
     fakeViewerWindow.postMessage.mockClear();
 
     orchestrator.dispose();
@@ -179,7 +182,7 @@ describe('createOrchestrator', () => {
   });
 
   it('posts nothing on dispose when the viewer never became ready', () => {
-    orchestrator.send(activate);
+    orchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
     fakeViewerWindow.postMessage.mockClear();
 
     orchestrator.dispose();
@@ -189,8 +192,8 @@ describe('createOrchestrator', () => {
 
   it('posts nothing on dispose when the armed tool was already deactivated', () => {
     dispatchFromViewer(viewerReady);
-    orchestrator.send(activate);
-    orchestrator.send(deactivate);
+    orchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    orchestrator.send('DEACTIVATE_TOOL', { rowId: 'row-1' });
     fakeViewerWindow.postMessage.mockClear();
 
     orchestrator.dispose();
@@ -200,7 +203,7 @@ describe('createOrchestrator', () => {
 
   it('posts at most one DEACTIVATE_TOOL when dispose is called twice while armed', () => {
     dispatchFromViewer(viewerReady);
-    orchestrator.send(activate);
+    orchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
     fakeViewerWindow.postMessage.mockClear();
 
     orchestrator.dispose();
@@ -216,7 +219,7 @@ describe('createOrchestrator', () => {
       viewerOrigin: VIEWER_ORIGIN,
     });
     window.dispatchEvent(new MessageEvent('message', { data: viewerReady, origin: VIEWER_ORIGIN }));
-    noWindowOrchestrator.send(activate);
+    noWindowOrchestrator.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
     viewerWindow = null;
     fakeViewerWindow.postMessage.mockClear();
 

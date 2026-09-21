@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useReducer } from 'react';
 import { reducer, type FormState, type Row } from '@app/form/rows';
 import { createRowActions } from '@app/form/rowActions';
 import { createViewerEventHandlers } from '@app/form/viewerEventHandlers';
@@ -15,27 +15,21 @@ const buildInitialState = (rows: Row[]): FormState => ({ rows, armedRowId: null 
 
 export const useScoringForm = ({
   send,
+  exchange,
   lastEvent,
 }: UseScoringFormOptions): UseScoringFormResult => {
   const restoredRows = useRestoredRows();
   const [state, dispatch] = useReducer(reducer, restoredRows, buildInitialState);
-  // requestIds of REMOVE_MEASUREMENT commands issued below; the removal handler drops their echo
-  // (A-10). Held through a `useState` initializer rather than a ref: it is a per-mount identity
-  // that never affects rendering, and a ref may not be handed to a helper during render.
-  const [issuedRemovalRequestIds] = useState<Set<string>>(() => new Set());
-  // A-14: same pattern, for the one RESTORE_MEASUREMENTS request a session can issue.
-  const [issuedRestoreRequestIds] = useState<Set<string>>(() => new Set());
   usePersistRows(state.rows);
 
-  const rowActions = createRowActions({ state, dispatch, send, issuedRemovalRequestIds });
+  const rowActions = createRowActions({ state, dispatch, send, exchange });
 
   const eventHandlers = createViewerEventHandlers({
     state,
     dispatch,
     send,
-    issuedRemovalRequestIds,
+    exchange,
     restoredRows,
-    issuedRestoreRequestIds,
   });
   useViewerEvents(lastEvent, eventHandlers);
 

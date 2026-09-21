@@ -1,10 +1,11 @@
 // Tests the React wiring around the row reducer: when the hook decides to dispatch, not the
-// reducer's outcome (covered in rows.test.ts).
+// reducer's outcome (covered in rows.test.ts). Outgoing traffic goes through the channel's `send`
+// and `exchange` (A-21); a request/answer pair (REMOVE_MEASUREMENT, RESTORE_MEASUREMENTS) is
+// exercised through `exchange`, everything else through `send`.
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import type {
-  HostCommand,
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
   MeasurementsRestoredEvent,
@@ -12,6 +13,7 @@ import type {
   ViewerEvent,
   ViewerReadyEvent,
 } from '@bdiadiun/scoring-contract';
+import type { HostChannel } from '@bdiadiun/scoring-orchestrator';
 import { DEFAULT_TOOL, FALLBACK_STUDY_INSTANCE_UID } from '@app/config';
 import { RowStatus, type Row } from '@app/form/rows';
 import { saveRows } from '@app/form/storage';
@@ -22,8 +24,15 @@ afterEach(() => {
   cleanup();
 });
 
-// Typed mock so `send.mock.calls` narrows to `HostCommand` instead of `any` (no-unsafe-member-access).
-const createSend = (): ReturnType<typeof vi.fn<(command: HostCommand) => void>> => vi.fn();
+// Loosely typed mocks, cast to the channel's generic signature: a test double stands in for
+// whichever `type`/`payload` pair the code under test happens to send.
+const createSend = (): HostChannel['send'] => vi.fn(() => true);
+
+// A pending promise that never settles: the default for a test that never resolves the exchange.
+const neverAnswers = (): Promise<unknown> => new Promise<unknown>(() => undefined);
+
+const createExchange = (impl?: (...args: unknown[]) => Promise<unknown>): HostChannel['exchange'] =>
+  vi.fn(impl ?? neverAnswers) as unknown as HostChannel['exchange'];
 
 const measurementAdded = (
   rowId: string | null,
@@ -86,10 +95,21 @@ const storedRow = (rowId: string, measurementUid: string): Row => ({
   restoreFailureReason: null,
 });
 
+const renderForm = (
+  send: HostChannel['send'],
+  exchange: HostChannel['exchange'],
+  initialLastEvent: ViewerEvent | null = null,
+) =>
+  renderHook(
+    ({ lastEvent }: { lastEvent: ViewerEvent | null }) =>
+      useScoringForm({ send, exchange, lastEvent }),
+    { initialProps: { lastEvent: initialLastEvent } },
+  );
+
 describe('useScoringForm', () => {
   it('activate sends ACTIVATE_TOOL with the row id and the configured default tool', () => {
     const send = createSend();
-    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+    const { result } = renderForm(send, createExchange());
 
     act(() => {
       result.current.addRow();
@@ -101,17 +121,14 @@ describe('useScoringForm', () => {
     });
 
     expect(send).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'ACTIVATE_TOOL',
-        rowId,
-        toolName: DEFAULT_TOOL,
-      }),
+      'ACTIVATE_TOOL',
+      expect.objectContaining({ rowId, toolName: DEFAULT_TOOL }),
     );
   });
 
   it('activate sends the length tool for a row added as a length row', () => {
     const send = createSend();
-    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+    const { result } = renderForm(send, createExchange());
 
     act(() => {
       result.current.addRow('Length');
@@ -123,13 +140,13 @@ describe('useScoringForm', () => {
     });
 
     expect(send).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId, toolName: 'Length' }),
+      'ACTIVATE_TOOL',
+      expect.objectContaining({ rowId, toolName: 'Length' }),
     );
   });
 
   it('addRow with no argument still uses the configured area tool', () => {
-    const send = createSend();
-    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+    const { result } = renderForm(createSend(), createExchange());
 
     act(() => {
       result.current.addRow();
@@ -139,11 +156,7 @@ describe('useScoringForm', () => {
   });
 
   it('a MEASUREMENT_ADDED for the armed row moves it to done with metrics', () => {
-    const send = createSend();
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(createSend(), createExchange());
 
     act(() => {
       result.current.addRow();
@@ -165,12 +178,8 @@ describe('useScoringForm', () => {
   });
 
   it('a MEASUREMENT_ADDED with rowId: null changes nothing', () => {
-    const send = createSend();
     const infoSpy = vi.spyOn(console, 'info').mockImplementation(vi.fn());
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(createSend(), createExchange());
 
     act(() => {
       result.current.addRow();
@@ -194,12 +203,8 @@ describe('useScoringForm', () => {
   });
 
   it('a MEASUREMENT_ADDED for a pending (not armed) row changes nothing', () => {
-    const send = createSend();
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(createSend(), createExchange());
 
     act(() => {
       result.current.addRow();
@@ -221,11 +226,7 @@ describe('useScoringForm', () => {
   });
 
   it('the same event object re-rendered twice is processed once', () => {
-    const send = createSend();
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(createSend(), createExchange());
 
     act(() => {
       result.current.addRow();
@@ -242,9 +243,6 @@ describe('useScoringForm', () => {
     const rowAfterFirst = result.current.rows.find((r) => r.rowId === rowId);
     expect(rowAfterFirst?.status).toBe(RowStatus.Done);
 
-    // Same object reference, e.g. a re-render triggered by unrelated state: must be a no-op,
-    // not a second MEASUREMENT_RECEIVED dispatch (which would be harmless here since the row is
-    // already `done`, but the effect must not even attempt it).
     act(() => {
       rerender({ lastEvent: event });
     });
@@ -253,11 +251,7 @@ describe('useScoringForm', () => {
   });
 
   it('MEASUREMENT_UPDATED for a done row changes the displayed metrics and the totals input', () => {
-    const send = createSend();
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(createSend(), createExchange());
 
     act(() => {
       result.current.addRow();
@@ -285,10 +279,7 @@ describe('useScoringForm', () => {
   it('MEASUREMENT_UPDATED never triggers send (Q-4: no echo loop on the host side)', () => {
     const send = createSend();
     const debugSpy = vi.spyOn(console, 'debug').mockImplementation(vi.fn());
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(send, createExchange());
 
     act(() => {
       result.current.addRow();
@@ -300,15 +291,13 @@ describe('useScoringForm', () => {
     act(() => {
       rerender({ lastEvent: measurementAdded(rowId) });
     });
-    send.mockClear();
+    (send as ReturnType<typeof vi.fn>).mockClear();
 
     act(() => {
       rerender({ lastEvent: measurementUpdated('uid-1') });
     });
     expect(send).not.toHaveBeenCalled();
 
-    // Also verify the "unknown uid" path, expected for measurements drawn without arming: still
-    // no send, and it logs via `console.debug`, not `console.warn`.
     act(() => {
       rerender({ lastEvent: measurementUpdated('ghost-uid') });
     });
@@ -318,12 +307,9 @@ describe('useScoringForm', () => {
     debugSpy.mockRestore();
   });
 
-  it('remove on a done row sends REMOVE_MEASUREMENT and drops the row', () => {
-    const send = createSend();
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+  it('remove on a done row calls exchange with REMOVE_MEASUREMENT and drops the row immediately', () => {
+    const exchange = createExchange();
+    const { result, rerender } = renderForm(createSend(), exchange);
 
     act(() => {
       result.current.addRow();
@@ -341,18 +327,16 @@ describe('useScoringForm', () => {
     });
 
     expect(result.current.rows).toHaveLength(0);
-    expect(send).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'REMOVE_MEASUREMENT', rowId, measurementUid: 'uid-1' }),
+    expect(exchange).toHaveBeenCalledWith(
+      'REMOVE_MEASUREMENT',
+      expect.objectContaining({ rowId, measurementUid: 'uid-1' }),
     );
   });
 
-  it('the echo of our own REMOVE_MEASUREMENT (causedBy matches) is ignored, not reapplied', () => {
-    const send = createSend();
-    const debugSpy = vi.spyOn(console, 'debug').mockImplementation(vi.fn());
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+  it('remove on a done row logs a warning instead of throwing when the exchange never answers', async () => {
+    const exchange = createExchange(() => Promise.reject(new Error('timed out')));
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+    const { result, rerender } = renderForm(createSend(), exchange);
 
     act(() => {
       result.current.addRow();
@@ -365,31 +349,18 @@ describe('useScoringForm', () => {
       rerender({ lastEvent: measurementAdded(rowId) });
     });
 
-    act(() => {
+    await act(async () => {
       result.current.remove(rowId);
-    });
-    const removeCall = send.mock.calls.find((call) => call[0].type === 'REMOVE_MEASUREMENT');
-    const requestId = removeCall?.[0].requestId ?? '';
-    send.mockClear();
-
-    const rowsBefore = result.current.rows;
-    act(() => {
-      rerender({ lastEvent: measurementRemoved('uid-1', { causedBy: requestId }) });
+      await Promise.resolve();
     });
 
-    expect(result.current.rows).toBe(rowsBefore);
-    expect(send).not.toHaveBeenCalled();
-    expect(debugSpy).toHaveBeenCalled();
-
-    debugSpy.mockRestore();
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
   });
 
   it('a viewer-originated MEASUREMENT_REMOVED clears the done row to pending and never calls send', () => {
     const send = createSend();
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(send, createExchange());
 
     act(() => {
       result.current.addRow();
@@ -401,7 +372,7 @@ describe('useScoringForm', () => {
     act(() => {
       rerender({ lastEvent: measurementAdded(rowId) });
     });
-    send.mockClear();
+    (send as ReturnType<typeof vi.fn>).mockClear();
 
     act(() => {
       rerender({ lastEvent: measurementRemoved('uid-1') });
@@ -414,10 +385,7 @@ describe('useScoringForm', () => {
 
   it('focus on a done row sends FOCUS_MEASUREMENT with its measurementUid', () => {
     const send = createSend();
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(send, createExchange());
 
     act(() => {
       result.current.addRow();
@@ -429,20 +397,21 @@ describe('useScoringForm', () => {
     act(() => {
       rerender({ lastEvent: measurementAdded(rowId) });
     });
-    send.mockClear();
+    (send as ReturnType<typeof vi.fn>).mockClear();
 
     act(() => {
       result.current.focus(rowId);
     });
 
     expect(send).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'FOCUS_MEASUREMENT', rowId, measurementUid: 'uid-1' }),
+      'FOCUS_MEASUREMENT',
+      expect.objectContaining({ rowId, measurementUid: 'uid-1' }),
     );
   });
 
   it('focus on a pending row sends nothing', () => {
     const send = createSend();
-    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+    const { result } = renderForm(send, createExchange());
 
     act(() => {
       result.current.addRow();
@@ -458,7 +427,7 @@ describe('useScoringForm', () => {
 
   it('remove on a drawing row sends DEACTIVATE_TOOL then drops the row', () => {
     const send = createSend();
-    const { result } = renderHook(() => useScoringForm({ send, lastEvent: null }));
+    const { result } = renderForm(send, createExchange());
 
     act(() => {
       result.current.addRow();
@@ -467,33 +436,30 @@ describe('useScoringForm', () => {
     act(() => {
       result.current.activate(rowId);
     });
-    send.mockClear();
+    (send as ReturnType<typeof vi.fn>).mockClear();
 
     act(() => {
       result.current.remove(rowId);
     });
 
-    expect(send).toHaveBeenCalledWith(expect.objectContaining({ type: 'DEACTIVATE_TOOL', rowId }));
+    expect(send).toHaveBeenCalledWith('DEACTIVATE_TOOL', expect.objectContaining({ rowId }));
     expect(result.current.rows).toHaveLength(0);
   });
 });
 
 describe('useScoringForm restore (A-14)', () => {
-  it('sends RESTORE_MEASUREMENTS on the first VIEWER_READY when sessionStorage has rows', () => {
+  it('calls exchange with RESTORE_MEASUREMENTS on the first VIEWER_READY when sessionStorage has rows', () => {
     saveRows(FALLBACK_STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1')]);
-    const send = createSend();
-    const { rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const exchange = createExchange();
+    const { rerender } = renderForm(createSend(), exchange);
 
     act(() => {
       rerender({ lastEvent: viewerReady() });
     });
 
-    expect(send).toHaveBeenCalledWith(
+    expect(exchange).toHaveBeenCalledWith(
+      'RESTORE_MEASUREMENTS',
       expect.objectContaining({
-        type: 'RESTORE_MEASUREMENTS',
         studyInstanceUid: FALLBACK_STUDY_INSTANCE_UID,
         measurements: [
           expect.objectContaining({ rowId: 'row-1', measurementUid: 'uid-1' }) as unknown,
@@ -502,45 +468,32 @@ describe('useScoringForm restore (A-14)', () => {
     );
   });
 
-  it('sends nothing when there is no stored state', () => {
-    const send = createSend();
-    const { rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+  it('calls exchange with nothing when there is no stored state', () => {
+    const exchange = createExchange();
+    const { rerender } = renderForm(createSend(), exchange);
 
     act(() => {
       rerender({ lastEvent: viewerReady() });
     });
 
-    expect(send).not.toHaveBeenCalled();
+    expect(exchange).not.toHaveBeenCalled();
   });
 
-  it('MEASUREMENTS_RESTORED marks the failed rows and leaves the restored rows untouched', () => {
+  it('marks the failed rows and leaves the restored rows untouched once the exchange resolves', async () => {
     saveRows(FALLBACK_STUDY_INSTANCE_UID, [
       storedRow('row-1', 'uid-1'),
       storedRow('row-2', 'uid-2'),
     ]);
-    const send = createSend();
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
-
-    act(() => {
-      rerender({ lastEvent: viewerReady() });
+    const answer = measurementsRestored({
+      restored: ['uid-1'],
+      failed: [{ rowId: 'row-2', reason: 'invalid-geometry' }],
     });
-    const restoreCall = send.mock.calls.find((call) => call[0].type === 'RESTORE_MEASUREMENTS');
-    const requestId = restoreCall?.[0].requestId ?? '';
+    const exchange = createExchange(() => Promise.resolve(answer));
+    const { result, rerender } = renderForm(createSend(), exchange);
 
-    act(() => {
-      rerender({
-        lastEvent: measurementsRestored({
-          causedBy: requestId,
-          restored: ['uid-1'],
-          failed: [{ rowId: 'row-2', reason: 'invalid-geometry' }],
-        }),
-      });
+    await act(async () => {
+      rerender({ lastEvent: viewerReady() });
+      await Promise.resolve();
     });
 
     const rowOne = result.current.rows.find((row) => row.rowId === 'row-1');
@@ -550,18 +503,13 @@ describe('useScoringForm restore (A-14)', () => {
       restoreFailureReason: 'invalid-geometry',
       status: RowStatus.Done,
     });
-    // The stored value stays on screen (A-14: no MEASUREMENT_UPDATED will follow a failed restore).
     expect(rowTwo?.metrics).toEqual({ area: { value: 124.5, unit: 'mm2' } });
   });
 
-  it('a MEASUREMENTS_RESTORED with an unmatched causedBy is ignored', () => {
+  it('a MEASUREMENTS_RESTORED reaching lastEvent directly is treated as unmatched and leaves rows untouched', () => {
     saveRows(FALLBACK_STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1')]);
-    const send = createSend();
     const debugSpy = vi.spyOn(console, 'debug').mockImplementation(vi.fn());
-    const { result, rerender } = renderHook(
-      ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
-      { initialProps: { lastEvent: null as ViewerEvent | null } },
-    );
+    const { result, rerender } = renderForm(createSend(), createExchange());
 
     act(() => {
       rerender({ lastEvent: viewerReady() });

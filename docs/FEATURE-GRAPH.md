@@ -66,48 +66,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-53 | A module is addressed by where it lives                                                                                                           | A-13, D-2                                                       | F-52             | 47    | done    | Removing the alias from the TypeScript configuration produces forty-two unresolved imports and removing it from the graph script drops that check from fifteen to twelve, both shown and then restored; the count of resolved internal imports in the graph is unchanged before and after; the test run resolves through the alias, shown by a deliberate miss.           |
 | F-55 | The viewer extension leaves the fork                                                                                                              | A-20, C-3.2, Q-2, Q-7                                           | F-53             | 49    | done    | The viewer builds with the package resolved through OHIF's plugin imports and the overlay's version substituted; the package's first tests, forty-three of them, cover the origin check, the guard, the registry, the unit tables, the geometry and the throttle; the packages' sources and tests are type-checked by `npm run typecheck` for the first time.             |
 | F-56 | The adapter registers our extensions                                                                                                              | A-20, C-3.2, Q-7                                                | F-55             | 50    | done    | The built viewer names only the adapter in OHIF's generated plugin imports, yet the bridge's code is in the bundle because the adapter pulls it; ten cases cover the order, the awaiting, the isolation of a throwing and a rejecting child, and the report when no manager is handed over.                                                                               |
-| F-57 | The three layers are in place                                                                                                                     | A-18, A-20, C-3.2, Q-7                                          | F-56             | 51    | review  | The fork's diff against the upstream tag is four files and no deletion; its lockfile resolves the adapter, the bridge and the contract as registry tarballs with integrity hashes while its manifests name only the adapter; the viewer builds with our code in the bundle.                                                                                               |
+| F-57 | The three layers are in place                                                                                                                     | A-18, A-20, C-3.2, Q-7                                          | F-56             | 51    | done    | The fork's diff against the upstream tag is four files and no deletion; its lockfile resolves the adapter, the bridge and the contract as registry tarballs with integrity hashes while its manifests name only the adapter; the viewer builds with our code in the bundle.                                                                                               |
+| F-58 | One channel, with send, on and exchange                                                                                                           | A-21, Q-1, Q-2, Q-3, Q-4, Q-7                                   | F-57             | 52    | review  | A message from another origin and a payload the guard rejects are ignored at both ends, proved by breaking the check and watching those cases fail; an exchange resolves on its own answer, is not confused by another's, rejects on timeout naming the request and the answer it waited for, and leaves nothing behind either way.                                       |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                                                                                     |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                                                                                     |
-| C-3.2   | F-05, F-44, F-47, F-55, F-56, F-57                                                                                                             |
-| C-3.3   | F-01                                                                                                                                           |
-| C-3.4   | F-05, F-09, F-32                                                                                                                               |
-| C-4.1.1 | F-04, F-45                                                                                                                                     |
-| C-4.1.2 | F-04                                                                                                                                           |
-| C-4.1.3 | F-02, F-04, F-52                                                                                                                               |
-| C-4.2.1 | F-01                                                                                                                                           |
-| C-4.2.2 | F-02                                                                                                                                           |
-| C-4.2.3 | F-01                                                                                                                                           |
-| C-4.3.1 | F-07                                                                                                                                           |
-| C-4.3.2 | F-07                                                                                                                                           |
-| C-4.3.3 | F-08                                                                                                                                           |
-| C-4.3.4 | F-09                                                                                                                                           |
-| C-4.3.5 | F-09, F-10                                                                                                                                     |
-| C-4.3.6 | F-09, F-10                                                                                                                                     |
-| C-4.3.7 | F-07                                                                                                                                           |
-| C-4.3.8 | F-11                                                                                                                                           |
-| C-4.4.1 | F-03, F-08                                                                                                                                     |
-| C-4.4.2 | F-03, F-15, F-16                                                                                                                               |
-| C-4.4.3 | F-03                                                                                                                                           |
-| Q-1     | F-06, F-45                                                                                                                                     |
-| Q-2     | F-05, F-06, F-45, F-55                                                                                                                         |
-| Q-3     | F-07, F-08, F-09, F-19, F-45                                                                                                                   |
-| Q-4     | F-14, F-15, F-19, F-39, F-45                                                                                                                   |
-| Q-5     | F-05, F-06, F-39                                                                                                                               |
-| Q-6     | F-09, F-10, F-11                                                                                                                               |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56, F-57 |
-| D-1     | F-04, F-41, F-46, F-47                                                                                                                         |
-| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                                                 |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                                 |
-| D-4     | F-00, F-24                                                                                                                                     |
-| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                                             |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                                   |
-| D-7     | F-12, F-25                                                                                                                                     |
-| D-8     | F-13, F-25                                                                                                                                     |
+| ID      | Covered by                                                                                                                                           |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                                                                           |
+| C-3.2   | F-05, F-44, F-47, F-55, F-56, F-57                                                                                                                   |
+| C-3.3   | F-01                                                                                                                                                 |
+| C-3.4   | F-05, F-09, F-32                                                                                                                                     |
+| C-4.1.1 | F-04, F-45                                                                                                                                           |
+| C-4.1.2 | F-04                                                                                                                                                 |
+| C-4.1.3 | F-02, F-04, F-52                                                                                                                                     |
+| C-4.2.1 | F-01                                                                                                                                                 |
+| C-4.2.2 | F-02                                                                                                                                                 |
+| C-4.2.3 | F-01                                                                                                                                                 |
+| C-4.3.1 | F-07                                                                                                                                                 |
+| C-4.3.2 | F-07                                                                                                                                                 |
+| C-4.3.3 | F-08                                                                                                                                                 |
+| C-4.3.4 | F-09                                                                                                                                                 |
+| C-4.3.5 | F-09, F-10                                                                                                                                           |
+| C-4.3.6 | F-09, F-10                                                                                                                                           |
+| C-4.3.7 | F-07                                                                                                                                                 |
+| C-4.3.8 | F-11                                                                                                                                                 |
+| C-4.4.1 | F-03, F-08                                                                                                                                           |
+| C-4.4.2 | F-03, F-15, F-16                                                                                                                                     |
+| C-4.4.3 | F-03                                                                                                                                                 |
+| Q-1     | F-06, F-45, F-58                                                                                                                                     |
+| Q-2     | F-05, F-06, F-45, F-55, F-58                                                                                                                         |
+| Q-3     | F-07, F-08, F-09, F-19, F-45, F-58                                                                                                                   |
+| Q-4     | F-14, F-15, F-19, F-39, F-45, F-58                                                                                                                   |
+| Q-5     | F-05, F-06, F-39                                                                                                                                     |
+| Q-6     | F-09, F-10, F-11                                                                                                                                     |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56, F-57, F-58 |
+| D-1     | F-04, F-41, F-46, F-47                                                                                                                               |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                                                       |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                                       |
+| D-4     | F-00, F-24                                                                                                                                           |
+| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                                                   |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                                         |
+| D-7     | F-12, F-25                                                                                                                                           |
+| D-8     | F-13, F-25                                                                                                                                           |
 
 ## Diagram
 
@@ -170,6 +171,7 @@ graph TD
   F55["F-55 The viewer extension leaves the fork"]
   F56["F-56 The adapter registers our extensions"]
   F57["F-57 The three layers are in place"]
+  F58["F-58 One channel, with send, on and exchange"]
 
   F20 --> F01
   F01 --> F02
@@ -232,6 +234,7 @@ graph TD
   F53 --> F55
   F55 --> F56
   F56 --> F57
+  F57 --> F58
 ```
 
 ## Slice → nodes
@@ -291,6 +294,7 @@ graph TD
 | 49 — feat: the viewer extension becomes a package            | `feat/extension-as-package`                 | —   | F-55                   |
 | 50 — feat: the adapter registers our extensions              | `feat/extension-adapter`                    | —   | F-56                   |
 | 51 — chore: the fork registers the adapter                   | `chore/fork-uses-the-adapter`               | —   | F-57                   |
+| 52 — feat: the channel both sides use                        | `feat/channel-exchange`                     | —   | F-58                   |
 
 ## Node details
 
@@ -363,7 +367,7 @@ Files:
 - `packages/contract/src/__tests__/vocabulary.test.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -416,11 +420,11 @@ Files:
 - `host-app/src/components/BridgeStatus.props.ts` — external: `@bdiadiun/scoring-orchestrator`, `react`
 - `host-app/src/components/BridgeStatus.tsx` — internal: `host-app/src/components/BridgeStatus.props.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/hooks/__tests__/useBridge.test.tsx` — internal: `host-app/src/hooks/useBridge.ts`; external: `@testing-library/react`, `react`, `vitest`
-- `host-app/src/hooks/useBridge.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
-- `host-app/src/hooks/useBridge.ts` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useBridge.props.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
+- `host-app/src/hooks/useBridge.props.ts` — external: `@bdiadiun/scoring-orchestrator`
+- `host-app/src/hooks/useBridge.ts` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useBridge.props.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
 - `packages/orchestrator/src/__tests__/createOrchestrator.test.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/createOrchestrator.ts`; external: `vitest`
-- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`
-- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
+- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/config.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/delivery.ts`, `packages/orchestrator/src/hostChannel.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/orchestratorState.ts`, `packages/orchestrator/src/teardown.ts`, `packages/orchestrator/src/viewerEvents.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-07 Form rows: add, statuses, row IDs
 
@@ -435,8 +439,8 @@ Files:
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/rows.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 
 ### F-08 Activate / deactivate tool from a row
@@ -449,7 +453,7 @@ Files:
 
 - `docs/decisions/A-4-cancelled-activation.md`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 - `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
 - `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
@@ -482,8 +486,8 @@ Files:
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/form/rows.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 - `host-app/src/utils/__tests__/format.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `vitest`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
@@ -538,8 +542,8 @@ Files:
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/rows.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 - `packages/viewer-bridge/src/bridge.props.ts` — internal: `packages/viewer-bridge/src/ohif.props.ts`
 - `packages/viewer-bridge/src/bridge.ts` — internal: `packages/viewer-bridge/src/bridge.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/messaging.ts`, `packages/viewer-bridge/src/registry.props.ts`, `packages/viewer-bridge/src/registry.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`
@@ -561,8 +565,8 @@ Files:
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/rows.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 - `packages/contract/src/__tests__/hostCommands.test.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/vocabulary.props.ts`; external: `vitest`
 - `packages/contract/src/__tests__/index.test.ts` — internal: `packages/contract/src/index.ts`; external: `vitest`
@@ -571,7 +575,7 @@ Files:
 - `packages/contract/src/__tests__/vocabulary.test.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -594,8 +598,8 @@ Files:
 
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 - `packages/contract/src/__tests__/hostCommands.test.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/vocabulary.props.ts`; external: `vitest`
 - `packages/contract/src/__tests__/index.test.ts` — internal: `packages/contract/src/index.ts`; external: `vitest`
@@ -604,7 +608,7 @@ Files:
 - `packages/contract/src/__tests__/vocabulary.test.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -635,8 +639,8 @@ Files:
 - `host-app/src/form/__tests__/totals.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/rows.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 
@@ -669,17 +673,17 @@ Files:
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/form/__tests__/storage.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `vitest`
-- `host-app/src/form/rowActions.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `react`
-- `host-app/src/form/rowActions.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
+- `host-app/src/form/rowActions.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
+- `host-app/src/form/rowActions.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/unanswered.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/storage.props.ts` — internal: `host-app/src/form/rows.ts`
 - `host-app/src/form/storage.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/storage.props.ts`, `packages/contract/src/index.ts`
-- `host-app/src/form/viewerEventHandlers.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `react`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.props.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
+- `host-app/src/form/viewerEventHandlers.props.ts` — internal: `host-app/src/form/rows.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/unanswered.ts`, `host-app/src/form/viewerEventHandlers.props.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
 - `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 - `host-app/src/hooks/useViewerEvents.props.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/hooks/useViewerEvents.ts` — internal: `host-app/src/hooks/useViewerEvents.props.ts`, `packages/contract/src/index.ts`; external: `react`
@@ -687,13 +691,12 @@ Files:
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
 - `packages/contract/src/vocabulary.props.ts` — no imports
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
-- `packages/orchestrator/src/commands.ts` — internal: `packages/contract/src/index.ts`
 - `packages/viewer-bridge/src/geometry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
 - `packages/viewer-bridge/src/restore.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/messaging.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`
 - `packages/viewer-bridge/src/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/restore.props.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
@@ -810,7 +813,7 @@ Files:
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/__tests__/totals.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/hooks/__tests__/useBridge.test.tsx` — internal: `host-app/src/hooks/useBridge.ts`; external: `@testing-library/react`, `react`, `vitest`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `@testing-library/react`, `vitest`
 - `host-app/src/utils/__tests__/format.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `vitest`
 - `packages/contract/src/__tests__/hostCommands.test.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/vocabulary.props.ts`; external: `vitest`
 - `packages/contract/src/__tests__/index.test.ts` — internal: `packages/contract/src/index.ts`; external: `vitest`
@@ -896,7 +899,7 @@ Files:
 - `packages/viewer-bridge/src/measurementStream.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/measurements.props.ts`, `packages/viewer-bridge/src/messaging.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`
 - `packages/viewer-bridge/src/measurementStream.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/geometry.ts`, `packages/viewer-bridge/src/measurementStream.props.ts`, `packages/viewer-bridge/src/measurements.props.ts`, `packages/viewer-bridge/src/measurements.ts`, `packages/viewer-bridge/src/ohif.props.ts`
 - `packages/viewer-bridge/src/messaging.props.ts` — internal: `packages/contract/src/index.ts`
-- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`
+- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/registry.props.ts` — internal: `packages/contract/src/index.ts`
 - `packages/viewer-bridge/src/registry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/registry.props.ts`
 - `packages/viewer-bridge/src/reportedMeasurements.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/messaging.props.ts`
@@ -918,25 +921,21 @@ Files:
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/form/rows.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
-- `host-app/src/form/viewerEventHandlers.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `react`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.props.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
-- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `host-app/src/form/viewerEventHandlers.props.ts` — internal: `host-app/src/form/rows.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/unanswered.ts`, `host-app/src/form/viewerEventHandlers.props.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
+- `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
 - `host-app/src/hooks/useViewerEvents.props.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/hooks/useViewerEvents.ts` — internal: `host-app/src/hooks/useViewerEvents.props.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/utils/__tests__/selectors.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/utils/selectors.ts`; external: `vitest`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
 - `host-app/src/utils/selectors.ts` — internal: `host-app/src/form/rows.ts`
-- `packages/orchestrator/src/__tests__/commands.test.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/commands.ts`; external: `vitest`
-- `packages/orchestrator/src/commandQueue.props.ts` — internal: `packages/contract/src/index.ts`
+- `packages/orchestrator/src/commandQueue.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/orchestrator/src/commandQueue.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/commandQueue.props.ts`
-- `packages/orchestrator/src/commands.ts` — internal: `packages/contract/src/index.ts`
-- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`
-- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
+- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/config.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/delivery.ts`, `packages/orchestrator/src/hostChannel.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/orchestratorState.ts`, `packages/orchestrator/src/teardown.ts`, `packages/orchestrator/src/viewerEvents.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/orchestrator/src/listeners.props.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`
 - `packages/orchestrator/src/listeners.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/listeners.props.ts`
-- `packages/orchestrator/src/messageHandler.props.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`
-- `packages/orchestrator/src/messageHandler.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/messageHandler.props.ts`
 
 ### F-34 Contract published as one package
 
@@ -1033,9 +1032,9 @@ Files:
 - `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `packages/orchestrator/src/armedTool.props.ts` — internal: `packages/contract/src/index.ts`
-- `packages/orchestrator/src/armedTool.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.props.ts`, `packages/orchestrator/src/commands.ts`
-- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`
-- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
+- `packages/orchestrator/src/armedTool.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.props.ts`
+- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/config.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/delivery.ts`, `packages/orchestrator/src/hostChannel.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/orchestratorState.ts`, `packages/orchestrator/src/teardown.ts`, `packages/orchestrator/src/viewerEvents.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
 - `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
 - `packages/viewer-bridge/src/removals.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/messaging.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`
@@ -1072,7 +1071,7 @@ Files:
 - `packages/contract/package.json`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -1105,7 +1104,7 @@ Files:
 - `docs/decisions/A-15-publish-contract-package.md`
 - `packages/viewer-bridge/package.json`
 - `packages/viewer-bridge/src/messaging.props.ts` — internal: `packages/contract/src/index.ts`
-- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`
+- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/tsconfig.json`
 
 ### F-44 The bridge is an adapter with a handler registry
@@ -1135,13 +1134,12 @@ Files:
 
 - `.github/workflows/publish-packages.yml`
 - `docs/decisions/A-17-orchestrator-package.md`
-- `host-app/src/hooks/useBridge.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
-- `host-app/src/hooks/useBridge.ts` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useBridge.props.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
+- `host-app/src/hooks/useBridge.props.ts` — external: `@bdiadiun/scoring-orchestrator`
+- `host-app/src/hooks/useBridge.ts` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useBridge.props.ts`; external: `@bdiadiun/scoring-orchestrator`, `react`
 - `packages/orchestrator/package.json`
-- `packages/orchestrator/src/commands.ts` — internal: `packages/contract/src/index.ts`
-- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`
-- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
-- `packages/orchestrator/src/index.ts` — internal: `packages/orchestrator/src/commands.ts`, `packages/orchestrator/src/createOrchestrator.ts`
+- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/config.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/delivery.ts`, `packages/orchestrator/src/hostChannel.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/orchestratorState.ts`, `packages/orchestrator/src/teardown.ts`, `packages/orchestrator/src/viewerEvents.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/orchestrator/src/index.ts` — internal: `packages/orchestrator/src/createOrchestrator.ts`
 
 ### F-46 A fresh clone installs
 
@@ -1182,7 +1180,7 @@ Files:
 - `docs/CONVENTIONS.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/form/rows.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
-- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`
+- `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-49 The contract reads as four small modules
 
@@ -1195,7 +1193,7 @@ Files:
 - `packages/contract/README.md`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -1239,7 +1237,7 @@ Files:
 - `docs/decisions/A-19-study-from-the-page-url.md`
 - `host-app/src/__tests__/config.test.ts` — internal: `host-app/src/config.ts`; external: `vitest`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.props.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/unanswered.ts`, `host-app/src/form/viewerEventHandlers.props.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
 - `host-app/src/hooks/__tests__/studyIsolation.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
@@ -1273,7 +1271,7 @@ Files:
 - `packages/viewer-bridge/package.json`
 - `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
 - `packages/viewer-bridge/src/index.ts` — internal: `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/extension.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`
+- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/ohif.props.ts` — internal: `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/measurements.props.ts`
 - `packages/viewer-bridge/tsconfig.tests.json`
 
@@ -1297,10 +1295,27 @@ Files:
 
 Closes the arrangement A-20 describes. The fork registers one package, the adapter, and names nothing else of ours; the bridge and the contract arrive as its dependencies from the registry. Publishing stopped inventing versions at release time: each package's manifest names its version, the workflow publishes exactly that and skips what is already there. The git operator's boundary now includes the pointer recording which fork commit this repository was tested against, because that line is the written form of a merge it performs.
 
-Canon: A-18, A-20, C-3.2, Q-7. Depends on: F-56. Slice 51, status `review`.
+Canon: A-18, A-20, C-3.2, Q-7. Depends on: F-56. Slice 51, status `done`.
 
 Files:
 
 - `.claude/agents/git-operator.md`
 - `.github/workflows/publish-packages.yml`
 - `viewer.json`
+
+### F-58 One channel, with send, on and exchange
+
+Moves the mechanics both sides repeated into the published package `@bdiadiun/scoring-channel`: the origin check, the contract guard and posting with an explicit target origin. Its surface is generic rather than a method per message, so a payload's type follows from the message type and neither side can drift from the contract. The channel fills in the version and the request id, and `exchange` resolves with the answer correlated by that id or rejects when none arrives, so silence is an error instead of an unbounded wait. The contract gained the table saying which event answers which command. The echo guard changed shape with it: an answer is delivered to the exchange that asked for it and never reaches the general handlers, so the sets of issued request ids the form kept are gone.
+
+Canon: A-21, Q-1, Q-2, Q-3, Q-4, Q-7. Depends on: F-57. Slice 52, status `review`.
+
+Files:
+
+- `docs/decisions/A-21-channel-and-exchange.md`
+- `host-app/src/form/unanswered.ts` — no imports
+- `packages/channel/package.json`
+- `packages/channel/src/createChannel.ts` — internal: `packages/channel/src/buildMessage.props.ts`, `packages/channel/src/buildMessage.ts`, `packages/channel/src/config.ts`, `packages/channel/src/createChannel.props.ts`, `packages/channel/src/exchanges.ts`, `packages/channel/src/incomingMessages.ts`, `packages/channel/src/pendingExchanges.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/incomingMessages.ts` — internal: `packages/channel/src/config.ts`, `packages/channel/src/incomingMessages.props.ts`, `packages/contract/src/index.ts`
+- `packages/contract/src/answers.ts` — internal: `packages/contract/src/answers.props.ts`
+- `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/config.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/delivery.ts`, `packages/orchestrator/src/hostChannel.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/orchestratorState.ts`, `packages/orchestrator/src/teardown.ts`, `packages/orchestrator/src/viewerEvents.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`; external: `@bdiadiun/scoring-channel`

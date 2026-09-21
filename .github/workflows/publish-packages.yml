@@ -78,6 +78,7 @@ jobs:
           : > "$RUNNER_TEMP/published-packages.txt"
           : > "$RUNNER_TEMP/skipped-packages.txt"
           publish_package contract @bdiadiun/scoring-contract
+          publish_package channel @bdiadiun/scoring-channel
           publish_package orchestrator @bdiadiun/scoring-orchestrator
           publish_package viewer-bridge @bdiadiun/ohif-extension-scoring-bridge
           publish_package viewer-adapter @bdiadiun/ohif-extension-scoring-adapter

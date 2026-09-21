@@ -60,13 +60,7 @@ export default tseslint.config(
     ignores: ['**/dist/**', '**/node_modules/**', 'viewer/**', 'docs/site/**'],
   },
   {
-    files: [
-      'host-app/src/**/*.{ts,tsx}',
-      'packages/contract/src/**/*.ts',
-      'packages/orchestrator/src/**/*.ts',
-      'packages/viewer-bridge/src/**/*.ts',
-      'packages/viewer-adapter/src/**/*.ts',
-    ],
+    files: ['host-app/src/**/*.{ts,tsx}', 'packages/*/src/**/*.ts'],
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       parserOptions: {
@@ -150,14 +144,7 @@ export default tseslint.config(
     // The sibling-types rule. Exempted: a `*.props.ts` file, which is where the declarations are
     // supposed to be; the published wire contract, which stays one self-contained file (A-15); and
     // tests, whose fixture types are part of the test, not of the design.
-    files: [
-      'host-app/src/**/*.ts',
-      'host-app/src/**/*.tsx',
-      'packages/contract/src/**/*.ts',
-      'packages/orchestrator/src/**/*.ts',
-      'packages/viewer-bridge/src/**/*.ts',
-      'packages/viewer-adapter/src/**/*.ts',
-    ],
+    files: ['host-app/src/**/*.ts', 'host-app/src/**/*.tsx', 'packages/*/src/**/*.ts'],
     ignores: ['**/*.props.ts', '**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [

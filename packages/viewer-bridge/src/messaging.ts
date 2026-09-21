@@ -1,52 +1,26 @@
+// The viewer end of the channel (A-21): the origin check, the contract guard and the explicit target
+// origin all come from `@bdiadiun/scoring-channel`, so both ends share one implementation of them.
+
 import { isHostCommand } from '@bdiadiun/scoring-contract';
+import { createIncomingMessages, createPeerPost } from '@bdiadiun/scoring-channel';
 
 import { LOG_PREFIX } from './config.js';
 import type { CommandListener, CommandListenerDeps, PostToHost } from './messaging.props.js';
 
-export const createPostToHost =
-  (hostOrigin: string): PostToHost =>
-  (message) => {
-    if (window.parent === window) {
-      console.debug(`${LOG_PREFIX} not embedded in an iframe -> skip ${message.type}`);
-      return false;
-    }
+// The host is the window embedding the viewer; a viewer opened directly has nobody to answer.
+const getHostWindow = (): Window | null => (window.parent === window ? null : window.parent);
 
-    window.parent.postMessage(message, hostOrigin);
-    return true;
-  };
+export const createPostToHost = (hostOrigin: string): PostToHost =>
+  createPeerPost({ peerOrigin: hostOrigin, getPeerWindow: getHostWindow, logPrefix: LOG_PREFIX });
 
+// Every command goes to the registry, which owns the per-type dispatch and its exhaustiveness.
 export const createCommandListener = ({
   hostOrigin,
   onCommand,
-}: CommandListenerDeps): CommandListener => {
-  // Q-2: only the configured host origin may command the viewer. Logged once, so a misconfigured
-  // origin is diagnosable without flooding from browser extensions or HMR clients.
-  let foreignOriginLogged = false;
-
-  const onMessage = (event: MessageEvent): void => {
-    if (event.origin !== hostOrigin) {
-      if (!foreignOriginLogged) {
-        foreignOriginLogged = true;
-        console.debug(
-          `${LOG_PREFIX} ignoring message from foreign origin ${event.origin}; expected ${hostOrigin}`,
-        );
-      }
-      return;
-    }
-
-    if (!isHostCommand(event.data)) {
-      console.warn(`${LOG_PREFIX} ignoring message that is not a valid host command`, event.data);
-      return;
-    }
-
-    onCommand(event.data);
-  };
-
-  window.addEventListener('message', onMessage);
-
-  return {
-    dispose: (): void => {
-      window.removeEventListener('message', onMessage);
-    },
-  };
-};
+}: CommandListenerDeps): CommandListener =>
+  createIncomingMessages({
+    peerOrigin: hostOrigin,
+    isIncoming: isHostCommand,
+    onMessage: onCommand,
+    logPrefix: LOG_PREFIX,
+  });

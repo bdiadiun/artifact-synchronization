@@ -1,0 +1,34 @@
+{
+  "name": "@bdiadiun/scoring-channel",
+  "version": "0.0.1",
+  "description": "typed postMessage channel for the scoring contract: origin-checked delivery, guarded intake and request/answer exchange",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bdiadiun/artifact-synchronization.git",
+    "directory": "packages/channel"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -p tsconfig.tests.json",
+    "prepare": "tsc -b --force"
+  },
+  "dependencies": {
+    "@bdiadiun/scoring-contract": "0.0.8"
+  }
+}
