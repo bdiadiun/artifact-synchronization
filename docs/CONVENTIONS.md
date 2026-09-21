@@ -259,6 +259,9 @@ somebody deletes.
 
 - **The dependency is published before the dependent.** A package pinned at an exact version cannot
   be released in the same step as the thing that pins it.
+- **A new package is added to the publish workflow in the slice that creates it.** The workflow
+  names its packages one by one; a package missing from that list is built, tested and merged while
+  never reaching the registry, and nothing says so until something tries to install it.
 - **Only a package that changed is released.** A run that bumps every package produces empty
   versions and makes the version number stop meaning anything.
 - **The version is never committed back to `main`**, because direct commits there are forbidden; it
