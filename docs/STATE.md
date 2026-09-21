@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                    |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 50 `feat: the adapter registers our extensions` (branch `feat/extension-adapter`, node F-56)                                                             |
-| Gate           | 2 — the fork registers one adapter which registers the rest; awaiting result approval                                                                    |
-| Last merged PR | #57 `chore: pin the fork at the published extension`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                                      |
+| Field          | Value                                                                                                                                                     |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 51 `chore: the fork registers the adapter` (branch `chore/git-operator-owns-the-pin`, node F-57)                                                          |
+| Gate           | 2 — the three layers are in place and published; awaiting result approval                                                                                 |
+| Last merged PR | #61 `chore: pin the fork at the adapter registration`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                                       |
 
 ## Open decisions (see CANON.md → Decisions)
 

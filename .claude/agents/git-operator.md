@@ -36,9 +36,12 @@ final `git submodule status`.
 
 Files you may write
 
-- Continuous-integration workflow files only: `.github/workflows/*.yml` in the main repository and
+- The pointer that records which fork commit this repository was tested against, `viewer.json`. It
+  is the written form of a merge you just performed, so updating it belongs with that merge rather
+  than with the work the merge carried.
+- Continuous-integration workflow files: `.github/workflows/*.yml` in the main repository and
   in the fork. They are the automation around git, which is your subject.
-- Nothing else. No source, no tests, no documentation, no configuration outside those workflows,
+- Nothing else. No source, no tests, no documentation, no configuration outside those two,
   and no editing by the back door either: no shell redirect, no `sed -i`, no `git checkout` of
   someone else's work. Everything you commit apart from a workflow was written by someone else and
   verified by the architect.
