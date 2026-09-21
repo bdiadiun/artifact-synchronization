@@ -7,7 +7,6 @@ Run these from the repository root, in order, and stop at the first failure:
 ```
 npm run format:check
 npm run lint
-npm run lint:fork
 npm run typecheck
 npm run test
 npm run build --workspace host-app

@@ -3,7 +3,7 @@
 Implementation details of the bridge that are deliberate but not visible from the code alone.
 Decisions live in [`docs/decisions/`](../decisions/); OHIF behaviour we rely on is in
 [`ohif-bridge-api.md`](ohif-bridge-api.md). File names below refer to
-`viewer/extensions/scoring-bridge/src/` unless a path is given. Since the bridge was split by role,
+`packages/viewer-bridge/src/` unless a path is given. Since the bridge was split by role,
 `bridge.ts` is the composition root; messaging, handshake, the measurement stream and the reported
 measurement state each live in their own module.
 

@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                  |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 48 `docs: what the tests are for` (branch `docs/tests-as-self-check`, node F-54)                                                       |
-| Gate           | 2 — the delivery document states what the suite is for; awaiting result approval                                                       |
-| Last merged PR | #53 `refactor: the app path alias`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                    |
+| Field          | Value                                                                                                                                               |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 49 `feat: the viewer extension becomes a package` (branch `feat/extension-as-package`, node F-55)                                                   |
+| Gate           | 2 — the fork holds no code of ours; awaiting result approval and the fork's own pull request                                                        |
+| Last merged PR | #52 `feat: the study comes from the form's URL`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                                 |
 
 ## Open decisions (see CANON.md → Decisions)
 

@@ -1,0 +1,40 @@
+{
+  "name": "@bdiadiun/ohif-extension-scoring-bridge",
+  "version": "0.0.1",
+  "description": "OHIF extension acting as a postMessage bridge between the viewer and an embedding scoring form",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bdiadiun/artifact-synchronization.git",
+    "directory": "packages/viewer-bridge"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -p tsconfig.tests.json",
+    "prepare": "tsc -b --force"
+  },
+  "dependencies": {
+    "@bdiadiun/scoring-contract": "0.0.1"
+  },
+  "peerDependencies": {
+    "@cornerstonejs/tools": "^4.15.29"
+  },
+  "devDependencies": {
+    "@cornerstonejs/tools": "4.15.29"
+  }
+}

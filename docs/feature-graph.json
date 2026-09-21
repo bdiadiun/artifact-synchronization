@@ -272,9 +272,9 @@
       "branch": "refactor/app-path-alias"
     },
     {
-      "id": "48",
-      "title": "docs: what the tests are for",
-      "branch": "docs/tests-as-self-check"
+      "id": "49",
+      "title": "feat: the viewer extension becomes a package",
+      "branch": "feat/extension-as-package"
     }
   ],
   "nodes": [
@@ -548,54 +548,68 @@
       "status": "done",
       "verify": "Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).",
       "files": [
-        "viewer/extensions/scoring-bridge/babel.config.js",
-        "viewer/extensions/scoring-bridge/package.json",
-        "viewer/extensions/scoring-bridge/src/bridge.ts",
-        "viewer/extensions/scoring-bridge/src/config.ts",
-        "viewer/extensions/scoring-bridge/src/id.js",
-        "viewer/extensions/scoring-bridge/src/index.tsx",
-        "viewer/extensions/scoring-bridge/src/registry.ts"
+        "packages/viewer-bridge/package.json",
+        "packages/viewer-bridge/src/bridge.props.ts",
+        "packages/viewer-bridge/src/bridge.ts",
+        "packages/viewer-bridge/src/config.ts",
+        "packages/viewer-bridge/src/extension.props.ts",
+        "packages/viewer-bridge/src/extension.ts",
+        "packages/viewer-bridge/src/registry.props.ts",
+        "packages/viewer-bridge/src/registry.ts",
+        "packages/viewer-bridge/tsconfig.json"
       ],
       "imports": {
-        "viewer/extensions/scoring-bridge/babel.config.js": {
-          "internal": [],
+        "packages/viewer-bridge/src/bridge.props.ts": {
+          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+        "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/commands.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/handshake.ts",
-            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/registry.ts",
-            "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
-            "viewer/extensions/scoring-bridge/src/restore.ts"
+            "packages/viewer-bridge/src/bridge.props.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/focus.ts",
+            "packages/viewer-bridge/src/handshake.ts",
+            "packages/viewer-bridge/src/measurementStream.ts",
+            "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/registry.props.ts",
+            "packages/viewer-bridge/src/registry.ts",
+            "packages/viewer-bridge/src/removals.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/config.ts": {
+        "packages/viewer-bridge/src/config.ts": {
           "internal": [],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/id.js": {
-          "internal": ["viewer/extensions/scoring-bridge/package.json"],
+        "packages/viewer-bridge/src/extension.props.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/getCustomizationModule.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/index.tsx": {
+        "packages/viewer-bridge/src/extension.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/bridge.ts",
-            "viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx",
-            "viewer/extensions/scoring-bridge/src/id.js"
+            "packages/viewer-bridge/src/bridge.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/extension.props.ts",
+            "packages/viewer-bridge/src/getCustomizationModule.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
-          "external": ["@ohif/core"]
+          "external": []
         },
-        "viewer/extensions/scoring-bridge/src/registry.ts": {
+        "packages/viewer-bridge/src/registry.props.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/registry.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/registry.props.ts"
           ],
           "external": []
         }
@@ -763,7 +777,8 @@
         "host-app/src/config.ts",
         "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
-        "viewer/extensions/scoring-bridge/src/commands.ts"
+        "packages/viewer-bridge/src/commands.props.ts",
+        "packages/viewer-bridge/src/commands.ts"
       ],
       "imports": {
         "host-app/src/config.ts": {
@@ -786,10 +801,19 @@
           ],
           "external": ["react"]
         },
-        "viewer/extensions/scoring-bridge/src/commands.ts": {
+        "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/commands.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/commands.props.ts",
+            "packages/viewer-bridge/src/config.ts"
           ],
           "external": []
         }
@@ -807,37 +831,60 @@
       "files": [
         "docs/decisions/A-11-units-and-metrics-payload.md",
         "docs/decisions/A-8-id-correlation.md",
-        "viewer/extensions/scoring-bridge/src/bridge.ts",
-        "viewer/extensions/scoring-bridge/src/commands.ts",
-        "viewer/extensions/scoring-bridge/src/measurements.ts"
+        "packages/viewer-bridge/src/bridge.props.ts",
+        "packages/viewer-bridge/src/bridge.ts",
+        "packages/viewer-bridge/src/commands.props.ts",
+        "packages/viewer-bridge/src/commands.ts",
+        "packages/viewer-bridge/src/measurements.props.ts",
+        "packages/viewer-bridge/src/measurements.ts"
       ],
       "imports": {
-        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+        "packages/viewer-bridge/src/bridge.props.ts": {
+          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/commands.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/handshake.ts",
-            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/registry.ts",
-            "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
-            "viewer/extensions/scoring-bridge/src/restore.ts"
+            "packages/viewer-bridge/src/bridge.props.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/focus.ts",
+            "packages/viewer-bridge/src/handshake.ts",
+            "packages/viewer-bridge/src/measurementStream.ts",
+            "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/registry.props.ts",
+            "packages/viewer-bridge/src/registry.ts",
+            "packages/viewer-bridge/src/removals.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/commands.ts": {
+        "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/measurements.ts": {
+        "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.props.ts",
+            "packages/viewer-bridge/src/config.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/measurements.props.ts": {
+          "internal": [],
+          "external": []
+        },
+        "packages/viewer-bridge/src/measurements.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/measurements.props.ts"
           ],
           "external": []
         }
@@ -1027,9 +1074,12 @@
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
         "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
-        "viewer/extensions/scoring-bridge/src/bridge.ts",
-        "viewer/extensions/scoring-bridge/src/measurements.ts",
-        "viewer/extensions/scoring-bridge/src/throttle.ts"
+        "packages/viewer-bridge/src/bridge.props.ts",
+        "packages/viewer-bridge/src/bridge.ts",
+        "packages/viewer-bridge/src/measurements.props.ts",
+        "packages/viewer-bridge/src/measurements.ts",
+        "packages/viewer-bridge/src/throttle.props.ts",
+        "packages/viewer-bridge/src/throttle.ts"
       ],
       "imports": {
         "host-app/src/form/__tests__/rows.test.ts": {
@@ -1076,30 +1126,45 @@
           ],
           "external": ["react"]
         },
-        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+        "packages/viewer-bridge/src/bridge.props.ts": {
+          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/commands.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/handshake.ts",
-            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/registry.ts",
-            "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
-            "viewer/extensions/scoring-bridge/src/restore.ts"
+            "packages/viewer-bridge/src/bridge.props.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/focus.ts",
+            "packages/viewer-bridge/src/handshake.ts",
+            "packages/viewer-bridge/src/measurementStream.ts",
+            "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/registry.props.ts",
+            "packages/viewer-bridge/src/registry.ts",
+            "packages/viewer-bridge/src/removals.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/measurements.ts": {
+        "packages/viewer-bridge/src/measurements.props.ts": {
+          "internal": [],
+          "external": []
+        },
+        "packages/viewer-bridge/src/measurements.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/measurements.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/throttle.ts": {
+        "packages/viewer-bridge/src/throttle.props.ts": {
           "internal": [],
+          "external": []
+        },
+        "packages/viewer-bridge/src/throttle.ts": {
+          "internal": ["packages/viewer-bridge/src/throttle.props.ts"],
           "external": []
         }
       }
@@ -1135,9 +1200,12 @@
         "packages/contract/src/viewerEvents.ts",
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
-        "viewer/extensions/scoring-bridge/src/bridge.ts",
-        "viewer/extensions/scoring-bridge/src/commands.ts",
-        "viewer/extensions/scoring-bridge/src/removals.ts"
+        "packages/viewer-bridge/src/bridge.props.ts",
+        "packages/viewer-bridge/src/bridge.ts",
+        "packages/viewer-bridge/src/commands.props.ts",
+        "packages/viewer-bridge/src/commands.ts",
+        "packages/viewer-bridge/src/removals.props.ts",
+        "packages/viewer-bridge/src/removals.ts"
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.tsx": {
@@ -1285,33 +1353,56 @@
           "internal": ["packages/contract/src/vocabulary.props.ts"],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+        "packages/viewer-bridge/src/bridge.props.ts": {
+          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/commands.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/handshake.ts",
-            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/registry.ts",
-            "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
-            "viewer/extensions/scoring-bridge/src/restore.ts"
+            "packages/viewer-bridge/src/bridge.props.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/focus.ts",
+            "packages/viewer-bridge/src/handshake.ts",
+            "packages/viewer-bridge/src/measurementStream.ts",
+            "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/registry.props.ts",
+            "packages/viewer-bridge/src/registry.ts",
+            "packages/viewer-bridge/src/removals.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/commands.ts": {
+        "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/removals.ts": {
+        "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts"
+            "packages/viewer-bridge/src/commands.props.ts",
+            "packages/viewer-bridge/src/config.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/removals.props.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/messaging.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/removals.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/removals.props.ts"
           ],
           "external": []
         }
@@ -1345,8 +1436,10 @@
         "packages/contract/src/viewerEvents.ts",
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
-        "viewer/extensions/scoring-bridge/src/commands.ts",
-        "viewer/extensions/scoring-bridge/src/focus.ts"
+        "packages/viewer-bridge/src/commands.props.ts",
+        "packages/viewer-bridge/src/commands.ts",
+        "packages/viewer-bridge/src/focus.props.ts",
+        "packages/viewer-bridge/src/focus.ts"
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.tsx": {
@@ -1477,17 +1570,34 @@
           "internal": ["packages/contract/src/vocabulary.props.ts"],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/commands.ts": {
+        "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/focus.ts": {
+        "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.props.ts",
+            "packages/viewer-bridge/src/config.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/focus.props.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/focus.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/focus.props.ts"
           ],
           "external": []
         }
@@ -1633,21 +1743,39 @@
       "status": "done",
       "verify": "Version from `package.json` injected at build time appears on each viewport in a 2×2 grid.",
       "files": [
-        "viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx",
-        "viewer/extensions/scoring-bridge/src/index.tsx"
+        "packages/viewer-bridge/src/extension.props.ts",
+        "packages/viewer-bridge/src/extension.ts",
+        "packages/viewer-bridge/src/getCustomizationModule.props.ts",
+        "packages/viewer-bridge/src/getCustomizationModule.ts"
       ],
       "imports": {
-        "viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx": {
+        "packages/viewer-bridge/src/extension.props.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/getCustomizationModule.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/extension.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/bridge.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/extension.props.ts",
+            "packages/viewer-bridge/src/getCustomizationModule.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/getCustomizationModule.props.ts": {
           "internal": [],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/index.tsx": {
+        "packages/viewer-bridge/src/getCustomizationModule.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/bridge.ts",
-            "viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx",
-            "viewer/extensions/scoring-bridge/src/id.js"
+            "packages/viewer-bridge/src/getCustomizationModule.props.ts",
+            "packages/viewer-bridge/src/viewerVersion.ts"
           ],
-          "external": ["@ohif/core"]
+          "external": []
         }
       }
     },
@@ -1694,9 +1822,10 @@
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
         "packages/orchestrator/src/commands.ts",
-        "scripts/eslint-fork-style.config.js",
-        "viewer/extensions/scoring-bridge/src/geometry.ts",
-        "viewer/extensions/scoring-bridge/src/restore.ts"
+        "packages/viewer-bridge/src/geometry.ts",
+        "packages/viewer-bridge/src/restore.props.ts",
+        "packages/viewer-bridge/src/restore.ts",
+        "scripts/eslint-fork-style.config.js"
       ],
       "imports": {
         "eslint.config.js": {
@@ -1892,26 +2021,35 @@
           "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
-        "scripts/eslint-fork-style.config.js": {
-          "internal": [],
-          "external": ["typescript-eslint"]
-        },
-        "viewer/extensions/scoring-bridge/src/geometry.ts": {
+        "packages/viewer-bridge/src/geometry.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/measurements.ts"
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/measurements.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/restore.ts": {
+        "packages/viewer-bridge/src/restore.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+            "packages/viewer-bridge/src/messaging.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.props.ts"
           ],
-          "external": ["@cornerstonejs/tools"]
+          "external": []
+        },
+        "packages/viewer-bridge/src/restore.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
+            "packages/viewer-bridge/src/restore.props.ts"
+          ],
+          "external": ["@cornerstonejs/core", "@cornerstonejs/tools"]
+        },
+        "scripts/eslint-fork-style.config.js": {
+          "internal": [],
+          "external": ["typescript-eslint"]
         }
       }
     },
@@ -2333,83 +2471,148 @@
         "ARCHITECTURE.md",
         "docs/DEFENCE.md",
         "docs/notes/bridge-internals.md",
-        "viewer/extensions/scoring-bridge/src/bridge.ts",
-        "viewer/extensions/scoring-bridge/src/commands.ts",
-        "viewer/extensions/scoring-bridge/src/handshake.ts",
-        "viewer/extensions/scoring-bridge/src/measurementStream.ts",
-        "viewer/extensions/scoring-bridge/src/messaging.ts",
-        "viewer/extensions/scoring-bridge/src/registry.ts",
-        "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
-        "viewer/extensions/scoring-bridge/src/throttle.ts"
+        "packages/viewer-bridge/src/bridge.props.ts",
+        "packages/viewer-bridge/src/bridge.ts",
+        "packages/viewer-bridge/src/commands.props.ts",
+        "packages/viewer-bridge/src/commands.ts",
+        "packages/viewer-bridge/src/handshake.props.ts",
+        "packages/viewer-bridge/src/handshake.ts",
+        "packages/viewer-bridge/src/measurementStream.props.ts",
+        "packages/viewer-bridge/src/measurementStream.ts",
+        "packages/viewer-bridge/src/messaging.props.ts",
+        "packages/viewer-bridge/src/messaging.ts",
+        "packages/viewer-bridge/src/registry.props.ts",
+        "packages/viewer-bridge/src/registry.ts",
+        "packages/viewer-bridge/src/reportedMeasurements.props.ts",
+        "packages/viewer-bridge/src/reportedMeasurements.ts",
+        "packages/viewer-bridge/src/throttle.props.ts",
+        "packages/viewer-bridge/src/throttle.ts"
       ],
       "imports": {
-        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+        "packages/viewer-bridge/src/bridge.props.ts": {
+          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/commands.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/handshake.ts",
-            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/registry.ts",
-            "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
-            "viewer/extensions/scoring-bridge/src/restore.ts"
+            "packages/viewer-bridge/src/bridge.props.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/focus.ts",
+            "packages/viewer-bridge/src/handshake.ts",
+            "packages/viewer-bridge/src/measurementStream.ts",
+            "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/registry.props.ts",
+            "packages/viewer-bridge/src/registry.ts",
+            "packages/viewer-bridge/src/removals.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/commands.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
-          ],
-          "external": []
-        },
-        "viewer/extensions/scoring-bridge/src/handshake.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts"
-          ],
-          "external": []
-        },
-        "viewer/extensions/scoring-bridge/src/measurementStream.ts": {
+        "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/commands.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/geometry.ts",
-            "viewer/extensions/scoring-bridge/src/measurements.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/messaging.ts": {
+        "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.props.ts",
+            "packages/viewer-bridge/src/config.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/registry.ts": {
+        "packages/viewer-bridge/src/handshake.props.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/messaging.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/handshake.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/handshake.props.ts",
+            "packages/viewer-bridge/src/viewerVersion.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts": {
+        "packages/viewer-bridge/src/measurementStream.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/throttle.ts"
+            "packages/viewer-bridge/src/commands.props.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/measurements.props.ts",
+            "packages/viewer-bridge/src/messaging.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/throttle.ts": {
+        "packages/viewer-bridge/src/measurementStream.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/geometry.ts",
+            "packages/viewer-bridge/src/measurementStream.props.ts",
+            "packages/viewer-bridge/src/measurements.props.ts",
+            "packages/viewer-bridge/src/measurements.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/messaging.props.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/messaging.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/messaging.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/registry.props.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/registry.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/registry.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/reportedMeasurements.props.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/messaging.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/reportedMeasurements.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.props.ts",
+            "packages/viewer-bridge/src/throttle.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/throttle.props.ts": {
           "internal": [],
+          "external": []
+        },
+        "packages/viewer-bridge/src/throttle.ts": {
+          "internal": ["packages/viewer-bridge/src/throttle.props.ts"],
           "external": []
         }
       }
@@ -2756,8 +2959,10 @@
         "packages/orchestrator/src/armedTool.ts",
         "packages/orchestrator/src/createOrchestrator.props.ts",
         "packages/orchestrator/src/createOrchestrator.ts",
-        "viewer/extensions/scoring-bridge/src/commands.ts",
-        "viewer/extensions/scoring-bridge/src/removals.ts"
+        "packages/viewer-bridge/src/commands.props.ts",
+        "packages/viewer-bridge/src/commands.ts",
+        "packages/viewer-bridge/src/removals.props.ts",
+        "packages/viewer-bridge/src/removals.ts"
       ],
       "imports": {
         "host-app/src/App.tsx": {
@@ -2811,18 +3016,35 @@
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/commands.ts": {
+        "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/removals.ts": {
+        "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts"
+            "packages/viewer-bridge/src/commands.props.ts",
+            "packages/viewer-bridge/src/config.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/removals.props.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/messaging.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/removals.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/removals.props.ts"
           ],
           "external": []
         }
@@ -2884,7 +3106,7 @@
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
         "packages/contract/tsconfig.json",
-        "viewer/extensions/scoring-bridge/src/geometry.ts"
+        "packages/viewer-bridge/src/geometry.ts"
       ],
       "imports": {
         "host-app/src/form/rows.props.ts": {
@@ -2964,11 +3186,11 @@
           "internal": ["packages/contract/src/vocabulary.props.ts"],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/geometry.ts": {
+        "packages/viewer-bridge/src/geometry.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/measurements.ts"
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/measurements.props.ts"
           ],
           "external": []
         }
@@ -3000,14 +3222,21 @@
         ".claude/rules/fork.md",
         ".github/workflows/ci.yml",
         "docs/decisions/A-15-publish-contract-package.md",
-        "viewer/extensions/scoring-bridge/package.json",
-        "viewer/extensions/scoring-bridge/src/messaging.ts"
+        "packages/viewer-bridge/package.json",
+        "packages/viewer-bridge/src/messaging.props.ts",
+        "packages/viewer-bridge/src/messaging.ts",
+        "packages/viewer-bridge/tsconfig.json"
       ],
       "imports": {
-        "viewer/extensions/scoring-bridge/src/messaging.ts": {
+        "packages/viewer-bridge/src/messaging.props.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/messaging.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/messaging.props.ts"
           ],
           "external": []
         }
@@ -3025,37 +3254,60 @@
       "files": [
         "docs/decisions/A-16-adapter-and-viewer-delivery.md",
         "docs/notes/ohif-packaging.md",
-        "viewer/extensions/scoring-bridge/src/bridge.ts",
-        "viewer/extensions/scoring-bridge/src/commands.ts",
-        "viewer/extensions/scoring-bridge/src/registry.ts"
+        "packages/viewer-bridge/src/bridge.props.ts",
+        "packages/viewer-bridge/src/bridge.ts",
+        "packages/viewer-bridge/src/commands.props.ts",
+        "packages/viewer-bridge/src/commands.ts",
+        "packages/viewer-bridge/src/registry.props.ts",
+        "packages/viewer-bridge/src/registry.ts"
       ],
       "imports": {
-        "viewer/extensions/scoring-bridge/src/bridge.ts": {
+        "packages/viewer-bridge/src/bridge.props.ts": {
+          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "viewer/extensions/scoring-bridge/src/commands.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts",
-            "viewer/extensions/scoring-bridge/src/focus.ts",
-            "viewer/extensions/scoring-bridge/src/handshake.ts",
-            "viewer/extensions/scoring-bridge/src/measurementStream.ts",
-            "viewer/extensions/scoring-bridge/src/messaging.ts",
-            "viewer/extensions/scoring-bridge/src/registry.ts",
-            "viewer/extensions/scoring-bridge/src/removals.ts",
-            "viewer/extensions/scoring-bridge/src/reportedMeasurements.ts",
-            "viewer/extensions/scoring-bridge/src/restore.ts"
+            "packages/viewer-bridge/src/bridge.props.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/focus.ts",
+            "packages/viewer-bridge/src/handshake.ts",
+            "packages/viewer-bridge/src/measurementStream.ts",
+            "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/registry.props.ts",
+            "packages/viewer-bridge/src/registry.ts",
+            "packages/viewer-bridge/src/removals.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/commands.ts": {
+        "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         },
-        "viewer/extensions/scoring-bridge/src/registry.ts": {
+        "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "viewer/extensions/scoring-bridge/src/config.ts"
+            "packages/viewer-bridge/src/commands.props.ts",
+            "packages/viewer-bridge/src/config.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/registry.props.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/registry.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/registry.props.ts"
           ],
           "external": []
         }
@@ -3407,16 +3659,58 @@
       }
     },
     {
-      "id": "F-54",
-      "name": "The suite is a self-check, and the document says so",
-      "description": "States in the delivery document what the tests in this repository are and are not: no test was typed by the author, and the suite exists to check that generated code does what it was briefed to do. The author's contribution is the checking system rather than the assertions: roles that cannot review their own work, briefs that name what must be proved, and the rule that a claim counts only with an artefact behind it. It belongs there and nowhere else, because the repository forbids mentioning the tooling outside that one file.",
-      "canon": ["D-6", "X-4"],
+      "id": "F-55",
+      "name": "The viewer extension leaves the fork",
+      "description": "Moves the whole viewer-side extension out of the OHIF checkout into the published package `@bdiadiun/ohif-extension-scoring-bridge`. Instead of OHIF's global types, which exist only inside its monorepo, the package declares the fifteen members it actually calls across five services and the commands manager. The host origin it accepts is no longer in its source: it arrives from the deployment's configuration and the bridge refuses to start without one. The fork keeps a registration entry, a dependency line and its workflow, and nothing else of ours.",
+      "canon": ["A-20", "C-3.2", "Q-2", "Q-7"],
       "dependsOn": ["F-53"],
-      "slice": "48",
+      "slice": "49",
       "status": "review",
-      "verify": "The delivery document explains what the suite is for, why the roles are separated, and that a rule counts as covered only when its failure was produced and reverted; no other file in the repository mentions it.",
-      "files": ["AI-USAGE.md"],
-      "imports": {}
+      "verify": "The viewer builds with the package resolved through OHIF's plugin imports and the overlay's version substituted; the package's first tests, forty-three of them, cover the origin check, the guard, the registry, the unit tables, the geometry and the throttle; the packages' sources and tests are type-checked by `npm run typecheck` for the first time.",
+      "files": [
+        "docs/decisions/A-20-three-layers.md",
+        "docs/notes/ohif-extension-composition.md",
+        "packages/contract/tsconfig.tests.json",
+        "packages/orchestrator/tsconfig.tests.json",
+        "packages/viewer-bridge/package.json",
+        "packages/viewer-bridge/src/extension.ts",
+        "packages/viewer-bridge/src/index.ts",
+        "packages/viewer-bridge/src/messaging.ts",
+        "packages/viewer-bridge/src/ohif.props.ts",
+        "packages/viewer-bridge/tsconfig.tests.json"
+      ],
+      "imports": {
+        "packages/viewer-bridge/src/extension.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/bridge.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/extension.props.ts",
+            "packages/viewer-bridge/src/getCustomizationModule.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/index.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/extension.props.ts",
+            "packages/viewer-bridge/src/extension.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/messaging.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/messaging.props.ts"
+          ],
+          "external": []
+        },
+        "packages/viewer-bridge/src/ohif.props.ts": {
+          "internal": ["packages/viewer-bridge/src/measurements.props.ts"],
+          "external": []
+        }
+      }
     }
   ]
 }

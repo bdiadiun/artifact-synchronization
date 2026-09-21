@@ -95,9 +95,20 @@ const scanSpecifiers = (source) => {
   return IMPORT_PATTERNS.flatMap((pattern) => [...code.matchAll(pattern)].map((match) => match[1]));
 };
 
+// A published ESM package imports its own modules with the `.js` specifier webpack's
+// fullySpecified rule demands, while the file beside it is the TypeScript source it compiles from.
+const JS_SUFFIX = '.js';
+const TS_SOURCE_EXTENSIONS = ['.ts', '.tsx'];
+
+const typeScriptSourceCandidates = (base) =>
+  base.endsWith(JS_SUFFIX)
+    ? TS_SOURCE_EXTENSIONS.map((ext) => `${base.slice(0, -JS_SUFFIX.length)}${ext}`)
+    : [];
+
 const resolveModule = (base) => {
   const candidates = [
     base,
+    ...typeScriptSourceCandidates(base),
     ...CODE_EXTENSIONS.map((ext) => `${base}${ext}`),
     ...CODE_EXTENSIONS.map((ext) => `${base}/index${ext}`),
   ];

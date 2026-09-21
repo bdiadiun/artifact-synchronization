@@ -1,6 +1,9 @@
 # A-2 — Fixed ports 5173 (host-app) and 3000 (viewer)
 
-Status: approved 2026-09-16. Canon: C-4.2.3, Q-2.
+Status: approved 2026-09-16; amended 2026-09-21 by
+[A-20](A-20-three-layers.md): the viewer no longer carries the host origin in its own source. It is
+a published package now, so the origin arrives from the deployment's configuration and the bridge
+refuses to start without one rather than accepting any page. Canon: C-4.2.3, Q-2.
 
 ## Context
 

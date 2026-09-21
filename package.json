@@ -20,8 +20,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "npm run typecheck --workspace host-app",
-    "lint:fork": "node scripts/viewer.mjs require && eslint --config scripts/eslint-fork-style.config.js viewer/extensions/scoring-bridge/src",
+    "typecheck": "npm run typecheck --workspaces --if-present",
     "viewer:setup": "node scripts/viewer.mjs setup",
     "viewer:dev": "node scripts/viewer.mjs dev"
   },
