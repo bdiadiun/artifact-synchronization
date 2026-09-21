@@ -3,8 +3,8 @@
 
 import { describe, expect, it, vi } from 'vitest';
 import type { MeasurementRemovedEvent } from '@bdiadiun/scoring-contract';
-import { createViewerEventHandlers, type ViewerEventContext } from '../viewerEventHandlers';
-import { initialFormState } from '../rows';
+import { createViewerEventHandlers, type ViewerEventContext } from '@app/form/viewerEventHandlers';
+import { initialFormState } from '@app/form/rows';
 
 const buildContext = (
   issuedRemovalRequestIds: Set<string>,

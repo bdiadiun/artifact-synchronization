@@ -3,8 +3,8 @@
 // than being dropped or added into a sum it does not belong to.
 
 import type { JSX } from 'react';
-import { formatMetric } from '../utils/format';
-import { t } from '../i18n';
+import { formatMetric } from '@app/utils/format';
+import { t } from '@app/i18n';
 import { styles, type TotalsFooterProps } from './TotalsFooter.props';
 
 export const TotalsFooter = ({

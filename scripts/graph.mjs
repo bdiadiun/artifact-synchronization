@@ -20,6 +20,11 @@ const CODE_EXTENSIONS = ['.ts', '.tsx', '.js', '.mjs'];
 const CONTRACT_PACKAGE = '@bdiadiun/scoring-contract';
 const CONTRACT_SOURCE = 'packages/contract/src/index.ts';
 
+// host-app's own path alias (tsconfig.app.json, vite.config.ts). Without it every `@app/` import
+// would be counted as an external package and silently stop being checked.
+const APP_ALIAS = '@app/';
+const APP_ALIAS_ROOT = 'host-app/src';
+
 const VIEWER_DIR = 'viewer';
 const VIEWER_HINT = `${VIEWER_DIR}/ is not checked out, run npm run viewer:setup`;
 
@@ -90,8 +95,7 @@ const scanSpecifiers = (source) => {
   return IMPORT_PATTERNS.flatMap((pattern) => [...code.matchAll(pattern)].map((match) => match[1]));
 };
 
-const resolveRelative = (fromFile, specifier) => {
-  const base = posix.normalize(posix.join(posix.dirname(fromFile), specifier.split('?')[0]));
+const resolveModule = (base) => {
   const candidates = [
     base,
     ...CODE_EXTENSIONS.map((ext) => `${base}${ext}`),
@@ -99,6 +103,16 @@ const resolveRelative = (fromFile, specifier) => {
   ];
   return candidates.find(isFile) ?? base;
 };
+
+const withoutQuery = (specifier) => specifier.split('?')[0];
+
+const resolveRelative = (fromFile, specifier) =>
+  resolveModule(posix.normalize(posix.join(posix.dirname(fromFile), withoutQuery(specifier))));
+
+const resolveAppAlias = (specifier) =>
+  resolveModule(
+    posix.normalize(posix.join(APP_ALIAS_ROOT, withoutQuery(specifier).slice(APP_ALIAS.length))),
+  );
 
 const packageName = (specifier) => {
   if (specifier.startsWith('node:')) return specifier;
@@ -111,6 +125,7 @@ const scanImports = (relPath) => {
   const external = [];
   for (const specifier of scanSpecifiers(readText(relPath))) {
     if (specifier.startsWith('.')) internal.push(resolveRelative(relPath, specifier));
+    else if (specifier.startsWith(APP_ALIAS)) internal.push(resolveAppAlias(specifier));
     else if (specifier === CONTRACT_PACKAGE) internal.push(CONTRACT_SOURCE);
     else external.push(packageName(specifier));
   }

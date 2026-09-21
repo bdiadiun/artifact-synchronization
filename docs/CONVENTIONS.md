@@ -94,8 +94,16 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   shared state into the module that owns it.
 - Named exports only; no default exports except where a framework requires one (OHIF extension
   entry, Vite config).
-- Import order: node built-ins, external packages, workspace and published packages (`@bdiadiun/scoring-contract`),
-  relative imports; blank line between groups. Use `import type` for type-only imports (lint rule).
+- Import order: node built-ins, external packages, our published packages
+  (`@bdiadiun/scoring-contract`), then `@app/…`, then `./` inside the same folder. The order is the
+  rule; no blank line is required between the groups, and none of this repository has ever had one.
+  Use `import type` for type-only imports (lint rule).
+- In the application, an import that crosses a folder uses the `@app/*` alias, which resolves to
+  `host-app/src/*`; `./` stays inside one folder, where it is the more precise statement. The alias
+  is the application's alone: `packages/*` keep relative imports, because they are published and an
+  alias would resolve here and fail in a consumer's build. Whatever resolves imports for a check,
+  the graph script included, has to learn the alias too, or it stops checking them and still
+  reports success.
 - No barrel `index.ts` re-exports inside the app; import from the module that owns the symbol.
 - Never reach into another package's internals; the contract package is consumed through its
   public entry only.

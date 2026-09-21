@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { studyInstanceUid } from '../config';
-import type { Row } from '../form/rows';
-import { saveRows } from '../form/storage';
+import { studyInstanceUid } from '@app/config';
+import type { Row } from '@app/form/rows';
+import { saveRows } from '@app/form/storage';
 
 // A-14: the form owns the saved state, so every row change is written back, including the ones no
 // user action caused (the reducer applying a restore-failure marker).

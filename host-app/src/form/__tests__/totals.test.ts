@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@bdiadiun/scoring-contract';
-import { RowStatus, type Row } from '../rows';
-import { computeTotals } from '../totals';
+import { RowStatus, type Row } from '@app/form/rows';
+import { computeTotals } from '@app/form/totals';
 
 const row = (overrides: Partial<Row> & { rowId: string }): Row => ({
   status: RowStatus.Pending,

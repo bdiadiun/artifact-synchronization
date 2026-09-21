@@ -9,10 +9,10 @@ import type {
   RestoreMeasurementRequest,
 } from '@bdiadiun/scoring-contract';
 import { activateToolCommand, restoreMeasurementsCommand } from '@bdiadiun/scoring-orchestrator';
-import { studyInstanceUid } from '../config';
+import { studyInstanceUid } from '@app/config';
+import type { ViewerEventHandlers } from '@app/hooks/useViewerEvents';
+import { findRow, findRowByUid } from '@app/utils/selectors';
 import { FormActionType, RowStatus, type Row } from './rows';
-import { findRow, findRowByUid } from '../utils/selectors';
-import type { ViewerEventHandlers } from '../hooks/useViewerEvents';
 import type { ViewerEventContext } from './viewerEventHandlers.props';
 
 export type { ViewerEventContext } from './viewerEventHandlers.props';

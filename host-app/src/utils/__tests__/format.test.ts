@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { formatMetric, formatRowKind, formatRowMetric, formatRowStatus } from '../format';
-import { RowStatus, type Row } from '../../form/rows';
-import { t } from '../../i18n';
+import { formatMetric, formatRowKind, formatRowMetric, formatRowStatus } from '@app/utils/format';
+import { RowStatus, type Row } from '@app/form/rows';
+import { t } from '@app/i18n';
 
 describe('formatMetric', () => {
   it('renders mm2 with the mm² glyph and 1 decimal', () => {

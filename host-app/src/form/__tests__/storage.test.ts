@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { RowStatus, type Row } from '../rows';
-import { loadStoredRows, saveRows } from '../storage';
+import { RowStatus, type Row } from '@app/form/rows';
+import { loadStoredRows, saveRows } from '@app/form/storage';
 
 const STUDY_A = '1.2.3';
 const STUDY_B = '9.9.9';

@@ -1,8 +1,8 @@
 // Pure, side-effect-free reducer; `useScoringForm.ts` wires it to `send`/`lastEvent`.
 
 import { METRIC_KEY_BY_TOOL, type MetricKey, type ToolName } from '@bdiadiun/scoring-contract';
-import { DEFAULT_TOOL } from '../config';
-import { findRow, findRowByUid, hasRow } from '../utils/selectors';
+import { DEFAULT_TOOL } from '@app/config';
+import { findRow, findRowByUid, hasRow } from '@app/utils/selectors';
 import type { ActionOf, FormAction, FormState, Row } from './rows.props';
 
 export type { FormAction, FormState, Row } from './rows.props';

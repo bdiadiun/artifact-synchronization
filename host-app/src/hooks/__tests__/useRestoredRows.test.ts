@@ -3,9 +3,9 @@
 
 import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { RowStatus, type Row } from '../../form/rows';
-import { saveRows } from '../../form/storage';
-import { useRestoredRows } from '../useRestoredRows';
+import { RowStatus, type Row } from '@app/form/rows';
+import { saveRows } from '@app/form/storage';
+import { useRestoredRows } from '@app/hooks/useRestoredRows';
 
 const STUDY_INSTANCE_UID = '1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1';
 

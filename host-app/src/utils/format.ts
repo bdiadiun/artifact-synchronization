@@ -5,8 +5,8 @@ import type {
   RestoreFailureReason,
   Unit,
 } from '@bdiadiun/scoring-contract';
-import { t } from '../i18n';
-import { RowStatus, metricKeyForTool, type Row } from '../form/rows';
+import { t } from '@app/i18n';
+import { RowStatus, metricKeyForTool, type Row } from '@app/form/rows';
 
 const UNIT_LABELS: Record<Unit, string> = {
   mm2: 'mm²',
