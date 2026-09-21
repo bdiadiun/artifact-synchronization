@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                             |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 44 `docs: rules harvested from the fixes` (branch `docs/rules-from-fixes`, node F-50)                                                             |
-| Gate           | 2 — the session's failures are written down as rules; awaiting result approval                                                                    |
-| Last merged PR | #49 `refactor: the contract split by concern`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                               |
+| Field          | Value                                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 45 `fix: publish only the packages that changed` (branch `fix/publish-only-changed`, node F-51)                                                |
+| Gate           | 2 — the publish run stops minting empty versions; awaiting result approval                                                                     |
+| Last merged PR | #50 `docs: rules harvested from the fixes`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                            |
 
 ## Open decisions (see CANON.md → Decisions)
 

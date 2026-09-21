@@ -60,7 +60,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-47 | The viewer leaves the repository                                                                                                                  | A-18, C-3.2, D-1, D-5                                           | F-46             | 41    | done    | A clone of this repository alone runs the form and the whole check set; the graph check reports how many viewer paths it skipped and why; after `npm run viewer:setup` the clone sits at the pinned commit and those paths are checked for real.                                                                                                                          |
 | F-48 | Types live beside every module, not only components                                                                                               | A-13, D-2                                                       | F-47             | 42    | done    | A stray interface in a module that is not a `.props.ts` fails `npm run lint`, proved with a probe file; every public type is still importable from the specifier it was imported from before, and the package's published entry declaration is byte-identical.                                                                                                            |
 | F-49 | The contract reads as four small modules                                                                                                          | A-13, A-15, Q-7                                                 | F-48             | 43    | done    | The entry exports the same thirty-three names with the same declarations as before the split, compared name by name; a test asserts the entry still exports everything the rest of the repository imports and was shown to fail when one export is removed; the suite grew from 166 to 176 cases.                                                                         |
-| F-50 | Every fix leaves a rule behind                                                                                                                    | A-13, D-2                                                       | F-49             | 44    | review  | The conventions carry a verification section and a publishing section; the slice skill requires a cold run before gate 2; the developer, tester and architect files each carry the part of it they act on.                                                                                                                                                                |
+| F-50 | Every fix leaves a rule behind                                                                                                                    | A-13, D-2                                                       | F-49             | 44    | done    | The conventions carry a verification section and a publishing section; the slice skill requires a cold run before gate 2; the developer, tester and architect files each carry the part of it they act on.                                                                                                                                                                |
+| F-51 | Only a changed package is released                                                                                                                | A-15, A-17, D-2                                                 | F-50             | 45    | review  | The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.                                                                                                      |
 
 ## Coverage of mandatory IDs
 
@@ -95,7 +96,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Q-6     | F-09, F-10, F-11                                                                                                             |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49 |
 | D-1     | F-04, F-41, F-46, F-47                                                                                                       |
-| D-2     | F-00, F-20, F-38, F-40, F-48, F-50                                                                                           |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51                                                                                     |
 | D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                               |
 | D-4     | F-00, F-24                                                                                                                   |
 | D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                           |
@@ -158,6 +159,7 @@ graph TD
   F48["F-48 Types live beside every module, not only components"]
   F49["F-49 The contract reads as four small modules"]
   F50["F-50 Every fix leaves a rule behind"]
+  F51["F-51 Only a changed package is released"]
 
   F20 --> F01
   F01 --> F02
@@ -214,6 +216,7 @@ graph TD
   F47 --> F48
   F48 --> F49
   F49 --> F50
+  F50 --> F51
 ```
 
 ## Slice → nodes
@@ -267,6 +270,7 @@ graph TD
 | 42 — refactor: types live beside every module                | `refactor/types-in-props-files`             | —   | F-48                   |
 | 43 — refactor: the contract split by concern                 | `refactor/contract-modules`                 | —   | F-49                   |
 | 44 — docs: rules harvested from the fixes                    | `docs/rules-from-fixes`                     | —   | F-50                   |
+| 45 — fix: publish only the packages that changed             | `fix/publish-only-changed`                  | —   | F-51                   |
 
 ## Node details
 
@@ -1151,7 +1155,7 @@ Files:
 
 Turns this session's failures into written rules and puts each one where the agent that needs it will read it. Verification from a cold state on the Node version in `.nvmrc`, proving a claim with its artefact instead of asserting it, reverting anything that rides along, revisiting a constraint when its cause disappears, publishing only what changed and in dependency order, and two rules about delegation: a brief never asks for what a role forbids, and a refused permission goes to the user rather than to another agent. Each rule keeps the failure that produced it in its text.
 
-Canon: A-13, D-2. Depends on: F-49. Slice 44, status `review`.
+Canon: A-13, D-2. Depends on: F-49. Slice 44, status `done`.
 
 Files:
 
@@ -1161,3 +1165,13 @@ Files:
 - `.claude/rules/contract.md`
 - `.claude/skills/slice/SKILL.md`
 - `docs/CONVENTIONS.md`
+
+### F-51 Only a changed package is released
+
+The publish workflow minted a version for every package on every run: it resolved a patch above the latest release and only skipped when that version already existed, which it never did. One merge that touched the contract alone therefore also released an empty orchestrator. The workflow now decides per package from the files the push actually changed, keeps the dependency order and the existing guard, and says in the job summary what it published and what it skipped, each with its reason. When the comparison cannot be made it publishes, because a missed release costs more than a spare one.
+
+Canon: A-15, A-17, D-2. Depends on: F-50. Slice 45, status `review`.
+
+Files:
+
+- `.github/workflows/publish-packages.yml`
