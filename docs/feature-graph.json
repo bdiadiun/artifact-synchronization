@@ -270,6 +270,11 @@
       "id": "47",
       "title": "refactor: the app path alias",
       "branch": "refactor/app-path-alias"
+    },
+    {
+      "id": "48",
+      "title": "docs: what the tests are for",
+      "branch": "docs/tests-as-self-check"
     }
   ],
   "nodes": [
@@ -3381,7 +3386,7 @@
       "canon": ["A-13", "D-2"],
       "dependsOn": ["F-52"],
       "slice": "47",
-      "status": "review",
+      "status": "done",
       "verify": "Removing the alias from the TypeScript configuration produces forty-two unresolved imports and removing it from the graph script drops that check from fifteen to twelve, both shown and then restored; the count of resolved internal imports in the graph is unchanged before and after; the test run resolves through the alias, shown by a deliberate miss.",
       "files": [
         ".claude/rules/host-app.md",
@@ -3400,6 +3405,18 @@
           "external": ["node:child_process", "node:fs", "node:path", "node:url"]
         }
       }
+    },
+    {
+      "id": "F-54",
+      "name": "The suite is a self-check, and the document says so",
+      "description": "States in the delivery document what the tests in this repository are and are not: no test was typed by the author, and the suite exists to check that generated code does what it was briefed to do. The author's contribution is the checking system rather than the assertions: roles that cannot review their own work, briefs that name what must be proved, and the rule that a claim counts only with an artefact behind it. It belongs there and nowhere else, because the repository forbids mentioning the tooling outside that one file.",
+      "canon": ["D-6", "X-4"],
+      "dependsOn": ["F-53"],
+      "slice": "48",
+      "status": "review",
+      "verify": "The delivery document explains what the suite is for, why the roles are separated, and that a rule counts as covered only when its failure was produced and reverted; no other file in the repository mentions it.",
+      "files": ["AI-USAGE.md"],
+      "imports": {}
     }
   ]
 }

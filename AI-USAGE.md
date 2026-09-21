@@ -73,6 +73,30 @@ did, what was kept, what was rewritten, and how the author stays able to defend 
   passing on a warm local install (npm had hoisted test libraries away from the types they need).
   The dependency layout was fixed and the rule added to the conventions.
 
+## What the tests are for
+
+The test suite in this repository is not a person's hand-written safety net for their own code. No
+test here was typed by the author. The code is generated, and the tests exist to answer one
+question about it: does the generated code do what it was briefed to do.
+
+That difference shapes how they are written and where they sit.
+
+- The author's contribution is the checking system, not the assertions: roles that cannot review
+  their own work, a brief that states what must be proved, and a rule that a claim counts only when
+  an artefact backs it. The agent that writes application code is forbidden to touch a test, and
+  the agent that writes tests is forbidden to touch application code, so a failing test is never
+  quietly adjusted by whoever caused it to fail.
+- A test is expected to fail on purpose at least once. Coverage of a rule counts when the rule was
+  broken deliberately, the failure was seen, and the break was reverted; several rules in this
+  repository are recorded exactly that way, and one place where that proof could not be produced is
+  named as a gap rather than glossed over.
+- The suite is deliberately narrow, as the assignment asks: the sum logic, the message guards, the
+  channel's handshake and cleanup, and the rules that protect a URL or an origin. It is not an
+  attempt at broad coverage, which would measure the generator rather than the behaviour.
+
+The author reads the diffs, runs the verification, and decides the gates. The tests are the part of
+that process which does not depend on anybody reading carefully on a given day.
+
 ## What the author verifies by hand
 
 - Every PR description's "How it was verified" section corresponds to commands and browser checks
