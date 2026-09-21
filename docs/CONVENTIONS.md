@@ -248,6 +248,11 @@ somebody deletes.
   check: for a while the packages' tests were neither type-checked nor linted with types, and
   nothing said so. Each package therefore carries a second TypeScript project that includes its
   tests, and the lint configuration points at it.
+- **Under `set -e`, a non-zero status that means something is captured, not assumed.** A workflow
+  step runs with `bash -e`, so `value=$(fn)` aborts the whole script when `fn` returns non-zero as a
+  normal signal, and the line that reads `$?` never runs. Write `value=$(fn) || status=$?`. This
+  shipped: the publish run died the first time a package legitimately had nothing to release, and
+  the packages after it were never considered.
 - **A list of packages is a trap; use a pattern.** Wherever tooling enumerates the packages, a new
   one is forgotten and nothing fails: three times in a row a package was merged with tests no
   command collected. Where the tool allows a glob, it gets one.

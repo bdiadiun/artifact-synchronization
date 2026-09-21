@@ -100,8 +100,8 @@ jobs:
             echo "::group::$name"
 
             local reason
-            reason=$(package_changed "$path")
-            local changed=$?
+            local changed=0
+            reason=$(package_changed "$path") || changed=$?
             echo "$reason"
 
             if [ "$changed" -ne 0 ]; then
