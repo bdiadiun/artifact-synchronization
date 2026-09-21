@@ -2,7 +2,17 @@
 
 import type { BridgeMessage } from '@bdiadiun/scoring-contract';
 import { DEFAULT_LOG_PREFIX } from './config.js';
-import type { PeerPost, PeerPostOptions } from './peerPost.props.js';
+
+export interface PeerPostOptions {
+  peerOrigin: string;
+  // A function, not a value: the other window can be replaced or briefly absent (an iframe that
+  // is still mounting, a page that is not framed at all).
+  getPeerWindow: () => Window | null;
+  logPrefix?: string;
+}
+
+// False means "not delivered": there was no peer window to post to.
+export type PeerPost = (message: BridgeMessage) => boolean;
 
 export const createPeerPost = ({
   peerOrigin,

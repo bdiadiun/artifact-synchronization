@@ -58,17 +58,17 @@ and the linter disagree, fix the linter config in the same PR and say so.
 
 ## 4. Naming
 
-| Thing                                | Style                                                                        | Example                                                                                      |
-| ------------------------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                              |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createOrchestrator`, `useScoringForm`                                                       |
-| Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                                           |
-| Files: types and styles              | `.props.ts` next to the file that uses them, any module, not only components | `TotalsFooter.props.ts`, `rows.props.ts`                                                     |
-| Files: everything else               | kebab-case or camelCase, one concept per file                                | `create-orchestrator.ts` / `createOrchestrator.ts` (keep the existing style within a folder) |
-| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)` | `form/__tests__/rows.test.ts`                                                                |
-| Booleans                             | `is`/`has`/`can`/`should` prefix                                             | `isReady`, `hasMetrics`                                                                      |
-| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                   | `onRemove` / `handleRemove`                                                                  |
-| Interfaces for props                 | `<Component>Props`                                                           | `ScoringPanelProps`                                                                          |
+| Thing                                | Style                                                                           | Example                                                                                      |
+| ------------------------------------ | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Types, interfaces, enums, components | PascalCase                                                                      | `MeasurementRow`, `BridgeState`                                                              |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                               | `createOrchestrator`, `useScoringForm`                                                       |
+| Files: components                    | PascalCase `.tsx`                                                               | `TotalsFooter.tsx`                                                                           |
+| Files: types and styles              | `.props.ts` next to a component always, next to another module when it earns it | `TotalsFooter.props.ts`, `rows.props.ts`                                                     |
+| Files: everything else               | kebab-case or camelCase, one concept per file                                   | `create-orchestrator.ts` / `createOrchestrator.ts` (keep the existing style within a folder) |
+| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)`    | `form/__tests__/rows.test.ts`                                                                |
+| Booleans                             | `is`/`has`/`can`/`should` prefix                                                | `isReady`, `hasMetrics`                                                                      |
+| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                      | `onRemove` / `handleRemove`                                                                  |
+| Interfaces for props                 | `<Component>Props`                                                              | `ScoringPanelProps`                                                                          |
 
 No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`, `uid`, `url`.
 
@@ -119,8 +119,12 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   warning). Helpers used inside an effect live inside it or are stable (`useCallback`, module scope).
 - No context providers until two unrelated subtrees need the same state; prop drilling two levels
   is fine.
-- **Every `.ts` and `.tsx` file** has a sibling `{Name}.props.ts` holding its `interface` and `type`
-  declarations and its `styles` object; the file itself keeps only code. For a component that means
+- **A component always has a sibling `{Name}.props.ts`** holding its props, its other types and its
+  `styles`; the `.tsx` keeps only rendering. **Another module has one when it earns it**: when the
+  declarations run past about twenty lines, or when another module imports them, so the type has a
+  stable home. A module with one or two types nobody else uses keeps them beside the code; the rule
+  existed to keep files readable, and splitting a thirty-line module in two serves nothing but the
+  rule itself. For a component that means
   the props interface and the styles; for a module it means the shapes its functions take and
   return. The suffix is `.props.ts` everywhere, deliberately: one name, one lint rule, no argument
   about which file a declaration belongs in. An `enum` is a value rather than a type and stays with

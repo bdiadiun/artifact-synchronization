@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/scoring-channel",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "typed postMessage channel for the scoring contract: origin-checked delivery, guarded intake and request/answer exchange",
   "license": "MIT",
   "repository": {

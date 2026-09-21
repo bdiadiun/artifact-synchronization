@@ -21,8 +21,8 @@ const inlineStyleObjectSelector =
 const inlineEventHandlerSelector =
   "JSXAttribute > JSXExpressionContainer > :matches(ArrowFunctionExpression, FunctionExpression, CallExpression[callee.property.name='bind'])";
 
-// Every module keeps its types next to it, not in it (CONVENTIONS §6): the `{Name}.props.ts` file
-// holds the interfaces, type aliases and styles, and `{Name}.ts(x)` imports them back.
+// A component keeps its types next to it, not in it (CONVENTIONS §6): the `{Name}.props.ts` file
+// holds the interfaces, type aliases and styles, and `{Name}.tsx` imports them back.
 const typeDeclarationSelector = ':matches(TSInterfaceDeclaration, TSTypeAliasDeclaration)';
 
 const enumRestrictions = [
@@ -141,10 +141,10 @@ export default tseslint.config(
     },
   },
   {
-    // The sibling-types rule. Exempted: a `*.props.ts` file, which is where the declarations are
-    // supposed to be; the published wire contract, which stays one self-contained file (A-15); and
-    // tests, whose fixture types are part of the test, not of the design.
-    files: ['host-app/src/**/*.ts', 'host-app/src/**/*.tsx', 'packages/*/src/**/*.ts'],
+    // The sibling-types rule, which CONVENTIONS §6 asks for on components only: a `.tsx` keeps
+    // rendering and its declarations live in `{Name}.props.ts`. Another module earns that file by
+    // size or by being imported, which no selector can tell, so it is left to review.
+    files: ['host-app/src/**/*.tsx'],
     ignores: ['**/*.props.ts', '**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [

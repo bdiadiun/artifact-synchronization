@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 54 `docs: start the viewer the way it works` (branch `docs/start-the-viewer-correctly`, node F-60)                                                   |
-| Gate           | 2 — the browser scenario passed on the released packages; the instructions now name the working command                                              |
-| Last merged PR | #65 `chore: pin the fork at the channel release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                                  |
+| Field          | Value                                                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 55 `refactor: fewer files, one teardown` (branch `refactor/fewer-files`, node F-61)                                                               |
+| Gate           | 2 — 121 files became 91 and the two teardowns became one; awaiting result approval                                                                |
+| Last merged PR | #66 `docs: start the viewer the way it works`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                               |
 
 ## Open decisions (see CANON.md → Decisions)
 

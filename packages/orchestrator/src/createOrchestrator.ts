@@ -4,15 +4,11 @@
 
 import { VIEWER_EVENT_TYPES } from '@bdiadiun/scoring-contract';
 import { createPeerPost } from '@bdiadiun/scoring-channel';
-import { createArmedTool } from './armedTool';
-import { createCommandQueue } from './commandQueue';
 import { LOG_PREFIX } from './config';
-import { createCommandDelivery } from './delivery';
-import { createHostChannel } from './hostChannel';
-import { createListenerSet } from './listeners';
-import { createStateStore } from './orchestratorState';
+import { createHostChannel, createViewerEventHandler } from './incomingEvents';
+import { createListenerSet, createStateStore } from './orchestratorState';
+import { createArmedTool, createCommandDelivery, createCommandQueue } from './outgoingCommands';
 import { createTeardown } from './teardown';
-import { createViewerEventHandler } from './viewerEvents';
 import type {
   CreateOrchestratorOptions,
   Orchestrator,

@@ -3,7 +3,18 @@
 
 import { CONTRACT_VERSION, HOST_COMMAND_TYPES } from '@bdiadiun/scoring-contract';
 import type { BridgeMessage } from '@bdiadiun/scoring-contract';
-import type { PayloadOf } from './buildMessage.props.js';
+
+export type MessageOfType<TMessage extends BridgeMessage, TType extends TMessage['type']> = Extract<
+  TMessage,
+  { type: TType }
+>;
+
+// What a call site still has to supply: everything but `version`, `type` and the request id the
+// channel issues.
+export type PayloadOf<TMessage extends BridgeMessage, TType extends TMessage['type']> = Omit<
+  MessageOfType<TMessage, TType>,
+  'version' | 'type' | 'requestId'
+>;
 
 // Every host command carries a request id and no viewer event does, so the direction decides it.
 export const needsRequestId = (type: string): boolean =>

@@ -3,7 +3,20 @@
 
 import type { BridgeMessage } from '@bdiadiun/scoring-contract';
 import { DEFAULT_LOG_PREFIX } from './config.js';
-import type { IncomingMessages, IncomingMessagesOptions } from './incomingMessages.props.js';
+
+export interface IncomingMessagesOptions<TIncoming extends BridgeMessage> {
+  peerOrigin: string;
+  isIncoming: (value: unknown) => value is TIncoming;
+  onMessage: (message: TIncoming) => void;
+  localWindow?: Window;
+  logPrefix?: string;
+  // Called for every message refused on its origin, so an end can count or surface them.
+  onIgnoredOrigin?: (origin: string) => void;
+}
+
+export interface IncomingMessages {
+  dispose: () => void;
+}
 
 export const createIncomingMessages = <TIncoming extends BridgeMessage>({
   peerOrigin,

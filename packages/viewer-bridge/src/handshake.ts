@@ -2,7 +2,18 @@ import type { ViewerReadyEvent } from '@bdiadiun/scoring-contract';
 
 import { LOG_PREFIX } from './config.js';
 import { readViewerVersion } from './viewerVersion.js';
-import type { Handshake, HandshakeDeps } from './handshake.props.js';
+import type { OhifServicesManager } from './ohif.props.js';
+import type { PostToHost } from './messaging.props.js';
+
+export interface HandshakeDeps {
+  servicesManager: OhifServicesManager;
+  hostOrigin: string;
+  post: PostToHost;
+}
+
+export interface Handshake {
+  dispose: () => void;
+}
 
 const VIEWER_VERSION = readViewerVersion() ?? 'unknown';
 

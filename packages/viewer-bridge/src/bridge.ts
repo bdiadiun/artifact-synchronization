@@ -1,3 +1,4 @@
+import { createDisposerSet } from '@bdiadiun/scoring-channel';
 import { LOG_PREFIX } from './config.js';
 import { createToolCommands, DisarmReason } from './commands.js';
 import { createRemovalCommands } from './removals.js';
@@ -9,7 +10,20 @@ import { createCommandRegistry, toCommandHandlerEntries } from './registry.js';
 import type { CommandHandlers } from './registry.props.js';
 import { createMeasurementStream } from './measurementStream.js';
 import { createReportedMeasurements } from './reportedMeasurements.js';
-import type { Bridge, BridgeDeps, Unsubscribe } from './bridge.props.js';
+import type { OhifCommandsManager, OhifServicesManager } from './ohif.props.js';
+
+export type Unsubscribe = () => void;
+
+export interface BridgeDeps {
+  servicesManager: OhifServicesManager;
+  commandsManager: OhifCommandsManager;
+  hostOrigin: string;
+}
+
+export interface Bridge {
+  dispose: Unsubscribe;
+  getArmedRowId: () => string | null;
+}
 
 export const createBridge = ({
   servicesManager,
@@ -58,29 +72,22 @@ export const createBridge = ({
   const listener = createCommandListener({ hostOrigin, onCommand: registry.dispatch });
   const handshake = createHandshake({ servicesManager, hostOrigin, post: postToHost });
 
-  const disposers: Unsubscribe[] = [
-    reported.dispose,
-    removals.dispose,
-    restore.dispose,
-    stream.dispose,
-    listener.dispose,
-    handshake.dispose,
-  ];
+  const disposers = createDisposerSet({ logPrefix: LOG_PREFIX });
+
+  // The doctor's tool is restored before the subscriptions go away, and every subscription is
+  // released in the reverse of the order it was taken out in.
+  disposers.add(() => {
+    toolCommands.disarm(DisarmReason.BridgeDispose);
+  });
+  disposers.add(handshake.dispose);
+  disposers.add(listener.dispose);
+  disposers.add(stream.dispose);
+  disposers.add(restore.dispose);
+  disposers.add(removals.dispose);
+  disposers.add(reported.dispose);
 
   return {
     getArmedRowId: toolCommands.getArmedRowId,
-    dispose: (): void => {
-      // The doctor's tool is restored before the subscriptions go away.
-      toolCommands.disarm(DisarmReason.BridgeDispose);
-
-      while (disposers.length > 0) {
-        const disposer = disposers.pop();
-        try {
-          disposer?.();
-        } catch (error) {
-          console.warn(`${LOG_PREFIX} disposer failed`, error);
-        }
-      }
-    },
+    dispose: disposers.dispose,
   };
 };
