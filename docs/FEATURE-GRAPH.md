@@ -63,7 +63,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-50 | Every fix leaves a rule behind                                                                                                                    | A-13, D-2                                                       | F-49             | 44    | done    | The conventions carry a verification section and a publishing section; the slice skill requires a cold run before gate 2; the developer, tester and architect files each carry the part of it they act on.                                                                                                                                                                |
 | F-51 | Only a changed package is released                                                                                                                | A-15, A-17, D-2                                                 | F-50             | 45    | done    | The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.                                                                                                      |
 | F-52 | The study comes from the form's own URL                                                                                                           | A-19, C-4.1.3, S-5.6                                            | F-51             | 46    | done    | A valid parameter reaches the viewer URL encoded; seven malformed shapes each fall back and warn once; the resolved value is the same for every consumer within a page load; rows stored under one study are not returned under another.                                                                                                                                  |
-| F-53 | A module is addressed by where it lives                                                                                                           | A-13, D-2                                                       | F-52             | 47    | review  | Removing the alias from the TypeScript configuration produces forty-two unresolved imports and removing it from the graph script drops that check from fifteen to twelve, both shown and then restored; the count of resolved internal imports in the graph is unchanged before and after; the test run resolves through the alias, shown by a deliberate miss.           |
+| F-53 | A module is addressed by where it lives                                                                                                           | A-13, D-2                                                       | F-52             | 47    | done    | Removing the alias from the TypeScript configuration produces forty-two unresolved imports and removing it from the graph script drops that check from fifteen to twelve, both shown and then restored; the count of resolved internal imports in the graph is unchanged before and after; the test run resolves through the alias, shown by a deliberate miss.           |
+| F-54 | The suite is a self-check, and the document says so                                                                                               | D-6, X-4                                                        | F-53             | 48    | review  | The delivery document explains what the suite is for, why the roles are separated, and that a rule counts as covered only when its failure was produced and reverted; no other file in the repository mentions it.                                                                                                                                                        |
 
 ## Coverage of mandatory IDs
 
@@ -102,7 +103,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                               |
 | D-4     | F-00, F-24                                                                                                                   |
 | D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                           |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                 |
+| D-6     | F-00, F-12, F-21, F-25, F-28, F-54                                                                                           |
 | D-7     | F-12, F-25                                                                                                                   |
 | D-8     | F-13, F-25                                                                                                                   |
 
@@ -164,6 +165,7 @@ graph TD
   F51["F-51 Only a changed package is released"]
   F52["F-52 The study comes from the form's own URL"]
   F53["F-53 A module is addressed by where it lives"]
+  F54["F-54 The suite is a self-check, and the document says so"]
 
   F20 --> F01
   F01 --> F02
@@ -223,6 +225,7 @@ graph TD
   F50 --> F51
   F51 --> F52
   F52 --> F53
+  F53 --> F54
 ```
 
 ## Slice → nodes
@@ -279,6 +282,7 @@ graph TD
 | 45 — fix: publish only the packages that changed             | `fix/publish-only-changed`                  | —   | F-51                   |
 | 46 — feat: the study comes from the form's URL               | `feat/study-from-url`                       | —   | F-52                   |
 | 47 — refactor: the app path alias                            | `refactor/app-path-alias`                   | —   | F-53                   |
+| 48 — docs: what the tests are for                            | `docs/tests-as-self-check`                  | —   | F-54                   |
 
 ## Node details
 
@@ -1204,7 +1208,7 @@ Files:
 
 Adds the `@app/*` alias for `host-app/src/*` and rewrites every import in the application and its tests that crosses a folder, leaving `./` where it is the more precise statement. The published packages deliberately keep relative imports: an alias inside them would resolve here and fail in a consumer's build. The graph script learned the alias too, because a resolver that does not know it stops checking those imports and still reports success.
 
-Canon: A-13, D-2. Depends on: F-52. Slice 47, status `review`.
+Canon: A-13, D-2. Depends on: F-52. Slice 47, status `done`.
 
 Files:
 
@@ -1213,3 +1217,13 @@ Files:
 - `host-app/tsconfig.app.json`
 - `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
 - `scripts/graph.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`
+
+### F-54 The suite is a self-check, and the document says so
+
+States in the delivery document what the tests in this repository are and are not: no test was typed by the author, and the suite exists to check that generated code does what it was briefed to do. The author's contribution is the checking system rather than the assertions: roles that cannot review their own work, briefs that name what must be proved, and the rule that a claim counts only with an artefact behind it. It belongs there and nowhere else, because the repository forbids mentioning the tooling outside that one file.
+
+Canon: D-6, X-4. Depends on: F-53. Slice 48, status `review`.
+
+Files:
+
+- `AI-USAGE.md`
