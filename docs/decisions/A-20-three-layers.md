@@ -28,10 +28,9 @@ Three layers, each changing for its own reason.
 - **The adapter** is a published package, registered once by that entry. In `preRegistration` it
   registers our extensions through the extension manager, so the children are in place before the
   application finishes starting, in a deterministic order.
-- **The extensions** are published packages the adapter depends on. The first of them exists:
-  `@bdiadiun/ohif-extension-scoring-bridge`, which the fork registers directly until the adapter
-  layer is built. Adding or changing one is a
-  change to the adapter and its dependencies. No fork involved.
+- **The extensions** are published packages the adapter depends on. The first of them is
+  `@bdiadiun/ohif-extension-scoring-bridge`. Adding or changing one is a change to the adapter and
+  its dependencies. No fork involved.
 
 Two rules come with it:
 

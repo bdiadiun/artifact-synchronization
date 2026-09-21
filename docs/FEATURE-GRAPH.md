@@ -64,48 +64,49 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-51 | Only a changed package is released                                                                                                                | A-15, A-17, D-2                                                 | F-50             | 45    | done    | The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.                                                                                                      |
 | F-52 | The study comes from the form's own URL                                                                                                           | A-19, C-4.1.3, S-5.6                                            | F-51             | 46    | done    | A valid parameter reaches the viewer URL encoded; seven malformed shapes each fall back and warn once; the resolved value is the same for every consumer within a page load; rows stored under one study are not returned under another.                                                                                                                                  |
 | F-53 | A module is addressed by where it lives                                                                                                           | A-13, D-2                                                       | F-52             | 47    | done    | Removing the alias from the TypeScript configuration produces forty-two unresolved imports and removing it from the graph script drops that check from fifteen to twelve, both shown and then restored; the count of resolved internal imports in the graph is unchanged before and after; the test run resolves through the alias, shown by a deliberate miss.           |
-| F-55 | The viewer extension leaves the fork                                                                                                              | A-20, C-3.2, Q-2, Q-7                                           | F-53             | 49    | review  | The viewer builds with the package resolved through OHIF's plugin imports and the overlay's version substituted; the package's first tests, forty-three of them, cover the origin check, the guard, the registry, the unit tables, the geometry and the throttle; the packages' sources and tests are type-checked by `npm run typecheck` for the first time.             |
+| F-55 | The viewer extension leaves the fork                                                                                                              | A-20, C-3.2, Q-2, Q-7                                           | F-53             | 49    | done    | The viewer builds with the package resolved through OHIF's plugin imports and the overlay's version substituted; the package's first tests, forty-three of them, cover the origin check, the guard, the registry, the unit tables, the geometry and the throttle; the packages' sources and tests are type-checked by `npm run typecheck` for the first time.             |
+| F-56 | The adapter registers our extensions                                                                                                              | A-20, C-3.2, Q-7                                                | F-55             | 50    | review  | The built viewer names only the adapter in OHIF's generated plugin imports, yet the bridge's code is in the bundle because the adapter pulls it; ten cases cover the order, the awaiting, the isolation of a throwing and a rejecting child, and the report when no manager is handed over.                                                                               |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                                                                         |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                                                                         |
-| C-3.2   | F-05, F-44, F-47, F-55                                                                                                             |
-| C-3.3   | F-01                                                                                                                               |
-| C-3.4   | F-05, F-09, F-32                                                                                                                   |
-| C-4.1.1 | F-04, F-45                                                                                                                         |
-| C-4.1.2 | F-04                                                                                                                               |
-| C-4.1.3 | F-02, F-04, F-52                                                                                                                   |
-| C-4.2.1 | F-01                                                                                                                               |
-| C-4.2.2 | F-02                                                                                                                               |
-| C-4.2.3 | F-01                                                                                                                               |
-| C-4.3.1 | F-07                                                                                                                               |
-| C-4.3.2 | F-07                                                                                                                               |
-| C-4.3.3 | F-08                                                                                                                               |
-| C-4.3.4 | F-09                                                                                                                               |
-| C-4.3.5 | F-09, F-10                                                                                                                         |
-| C-4.3.6 | F-09, F-10                                                                                                                         |
-| C-4.3.7 | F-07                                                                                                                               |
-| C-4.3.8 | F-11                                                                                                                               |
-| C-4.4.1 | F-03, F-08                                                                                                                         |
-| C-4.4.2 | F-03, F-15, F-16                                                                                                                   |
-| C-4.4.3 | F-03                                                                                                                               |
-| Q-1     | F-06, F-45                                                                                                                         |
-| Q-2     | F-05, F-06, F-45, F-55                                                                                                             |
-| Q-3     | F-07, F-08, F-09, F-19, F-45                                                                                                       |
-| Q-4     | F-14, F-15, F-19, F-39, F-45                                                                                                       |
-| Q-5     | F-05, F-06, F-39                                                                                                                   |
-| Q-6     | F-09, F-10, F-11                                                                                                                   |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55 |
-| D-1     | F-04, F-41, F-46, F-47                                                                                                             |
-| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                                     |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                     |
-| D-4     | F-00, F-24                                                                                                                         |
-| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                                 |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                       |
-| D-7     | F-12, F-25                                                                                                                         |
-| D-8     | F-13, F-25                                                                                                                         |
+| ID      | Covered by                                                                                                                               |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                                                               |
+| C-3.2   | F-05, F-44, F-47, F-55, F-56                                                                                                             |
+| C-3.3   | F-01                                                                                                                                     |
+| C-3.4   | F-05, F-09, F-32                                                                                                                         |
+| C-4.1.1 | F-04, F-45                                                                                                                               |
+| C-4.1.2 | F-04                                                                                                                                     |
+| C-4.1.3 | F-02, F-04, F-52                                                                                                                         |
+| C-4.2.1 | F-01                                                                                                                                     |
+| C-4.2.2 | F-02                                                                                                                                     |
+| C-4.2.3 | F-01                                                                                                                                     |
+| C-4.3.1 | F-07                                                                                                                                     |
+| C-4.3.2 | F-07                                                                                                                                     |
+| C-4.3.3 | F-08                                                                                                                                     |
+| C-4.3.4 | F-09                                                                                                                                     |
+| C-4.3.5 | F-09, F-10                                                                                                                               |
+| C-4.3.6 | F-09, F-10                                                                                                                               |
+| C-4.3.7 | F-07                                                                                                                                     |
+| C-4.3.8 | F-11                                                                                                                                     |
+| C-4.4.1 | F-03, F-08                                                                                                                               |
+| C-4.4.2 | F-03, F-15, F-16                                                                                                                         |
+| C-4.4.3 | F-03                                                                                                                                     |
+| Q-1     | F-06, F-45                                                                                                                               |
+| Q-2     | F-05, F-06, F-45, F-55                                                                                                                   |
+| Q-3     | F-07, F-08, F-09, F-19, F-45                                                                                                             |
+| Q-4     | F-14, F-15, F-19, F-39, F-45                                                                                                             |
+| Q-5     | F-05, F-06, F-39                                                                                                                         |
+| Q-6     | F-09, F-10, F-11                                                                                                                         |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56 |
+| D-1     | F-04, F-41, F-46, F-47                                                                                                                   |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                                           |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                           |
+| D-4     | F-00, F-24                                                                                                                               |
+| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                                       |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                             |
+| D-7     | F-12, F-25                                                                                                                               |
+| D-8     | F-13, F-25                                                                                                                               |
 
 ## Diagram
 
@@ -166,6 +167,7 @@ graph TD
   F52["F-52 The study comes from the form's own URL"]
   F53["F-53 A module is addressed by where it lives"]
   F55["F-55 The viewer extension leaves the fork"]
+  F56["F-56 The adapter registers our extensions"]
 
   F20 --> F01
   F01 --> F02
@@ -226,6 +228,7 @@ graph TD
   F51 --> F52
   F52 --> F53
   F53 --> F55
+  F55 --> F56
 ```
 
 ## Slice → nodes
@@ -283,6 +286,7 @@ graph TD
 | 46 — feat: the study comes from the form's URL               | `feat/study-from-url`                       | —   | F-52                   |
 | 47 — refactor: the app path alias                            | `refactor/app-path-alias`                   | —   | F-53                   |
 | 49 — feat: the viewer extension becomes a package            | `feat/extension-as-package`                 | —   | F-55                   |
+| 50 — feat: the adapter registers our extensions              | `feat/extension-adapter`                    | —   | F-56                   |
 
 ## Node details
 
@@ -1254,7 +1258,7 @@ Files:
 
 Moves the whole viewer-side extension out of the OHIF checkout into the published package `@bdiadiun/ohif-extension-scoring-bridge`. Instead of OHIF's global types, which exist only inside its monorepo, the package declares the fifteen members it actually calls across five services and the commands manager. The host origin it accepts is no longer in its source: it arrives from the deployment's configuration and the bridge refuses to start without one. The fork keeps a registration entry, a dependency line and its workflow, and nothing else of ours.
 
-Canon: A-20, C-3.2, Q-2, Q-7. Depends on: F-53. Slice 49, status `review`.
+Canon: A-20, C-3.2, Q-2, Q-7. Depends on: F-53. Slice 49, status `done`.
 
 Files:
 
@@ -1266,5 +1270,21 @@ Files:
 - `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
 - `packages/viewer-bridge/src/index.ts` — internal: `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/extension.ts`, `packages/viewer-bridge/src/ohif.props.ts`
 - `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`
-- `packages/viewer-bridge/src/ohif.props.ts` — internal: `packages/viewer-bridge/src/measurements.props.ts`
+- `packages/viewer-bridge/src/ohif.props.ts` — internal: `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/measurements.props.ts`
 - `packages/viewer-bridge/tsconfig.tests.json`
+
+### F-56 The adapter registers our extensions
+
+Builds the middle layer: one adapter extension that the fork registers, which registers our own extensions through the extension manager it is handed. The fork's entry never changes again; adding a capability is a change to the adapter and its dependencies. A child that fails to register is reported by name and the rest still register, so one broken capability cannot take the others down. The adapter carries no OHIF logic: it wires and nothing else.
+
+Canon: A-20, C-3.2, Q-7. Depends on: F-55. Slice 50, status `review`.
+
+Files:
+
+- `.github/workflows/publish-packages.yml`
+- `docs/decisions/A-20-three-layers.md`
+- `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
+- `packages/viewer-adapter/package.json`
+- `packages/viewer-adapter/src/children.ts` — internal: `packages/viewer-adapter/src/children.props.ts`, `packages/viewer-adapter/src/extension.props.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`
+- `packages/viewer-adapter/src/extension.ts` — internal: `packages/viewer-adapter/src/children.ts`, `packages/viewer-adapter/src/config.ts`, `packages/viewer-adapter/src/extension.props.ts`, `packages/viewer-adapter/src/registerChildren.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`
+- `packages/viewer-adapter/src/registerChildren.ts` — internal: `packages/viewer-adapter/src/config.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`

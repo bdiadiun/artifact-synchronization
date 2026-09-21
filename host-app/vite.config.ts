@@ -22,13 +22,9 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/setup-tests.ts'],
-    // The published packages live outside host-app; their tests are included here explicitly so
-    // `npm run test` covers them too.
-    include: [
-      'src/**/*.{test,spec}.{ts,tsx}',
-      '../packages/contract/src/**/*.test.ts',
-      '../packages/orchestrator/src/**/*.test.ts',
-      '../packages/viewer-bridge/src/**/*.test.ts',
-    ],
+    // The published packages live outside host-app, so their tests are collected here as well.
+    // The pattern covers every package rather than naming them: a package left off a list is
+    // merged with tests nobody runs, and three packages in a row were.
+    include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/*/src/**/*.test.ts'],
   },
 });

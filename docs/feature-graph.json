@@ -275,6 +275,11 @@
       "id": "49",
       "title": "feat: the viewer extension becomes a package",
       "branch": "feat/extension-as-package"
+    },
+    {
+      "id": "50",
+      "title": "feat: the adapter registers our extensions",
+      "branch": "feat/extension-adapter"
     }
   ],
   "nodes": [
@@ -3665,7 +3670,7 @@
       "canon": ["A-20", "C-3.2", "Q-2", "Q-7"],
       "dependsOn": ["F-53"],
       "slice": "49",
-      "status": "review",
+      "status": "done",
       "verify": "The viewer builds with the package resolved through OHIF's plugin imports and the overlay's version substituted; the package's first tests, forty-three of them, cover the origin check, the guard, the registry, the unit tables, the geometry and the throttle; the packages' sources and tests are type-checked by `npm run typecheck` for the first time.",
       "files": [
         "docs/decisions/A-20-three-layers.md",
@@ -3707,8 +3712,56 @@
           "external": []
         },
         "packages/viewer-bridge/src/ohif.props.ts": {
-          "internal": ["packages/viewer-bridge/src/measurements.props.ts"],
+          "internal": [
+            "packages/viewer-bridge/src/extension.props.ts",
+            "packages/viewer-bridge/src/measurements.props.ts"
+          ],
           "external": []
+        }
+      }
+    },
+    {
+      "id": "F-56",
+      "name": "The adapter registers our extensions",
+      "description": "Builds the middle layer: one adapter extension that the fork registers, which registers our own extensions through the extension manager it is handed. The fork's entry never changes again; adding a capability is a change to the adapter and its dependencies. A child that fails to register is reported by name and the rest still register, so one broken capability cannot take the others down. The adapter carries no OHIF logic: it wires and nothing else.",
+      "canon": ["A-20", "C-3.2", "Q-7"],
+      "dependsOn": ["F-55"],
+      "slice": "50",
+      "status": "review",
+      "verify": "The built viewer names only the adapter in OHIF's generated plugin imports, yet the bridge's code is in the bundle because the adapter pulls it; ten cases cover the order, the awaiting, the isolation of a throwing and a rejecting child, and the report when no manager is handed over.",
+      "files": [
+        ".github/workflows/publish-packages.yml",
+        "docs/decisions/A-20-three-layers.md",
+        "host-app/vite.config.ts",
+        "packages/viewer-adapter/package.json",
+        "packages/viewer-adapter/src/children.ts",
+        "packages/viewer-adapter/src/extension.ts",
+        "packages/viewer-adapter/src/registerChildren.ts"
+      ],
+      "imports": {
+        "host-app/vite.config.ts": {
+          "internal": [],
+          "external": ["@vitejs/plugin-react", "node:url", "vite"]
+        },
+        "packages/viewer-adapter/src/children.ts": {
+          "internal": [
+            "packages/viewer-adapter/src/children.props.ts",
+            "packages/viewer-adapter/src/extension.props.ts"
+          ],
+          "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
+        },
+        "packages/viewer-adapter/src/extension.ts": {
+          "internal": [
+            "packages/viewer-adapter/src/children.ts",
+            "packages/viewer-adapter/src/config.ts",
+            "packages/viewer-adapter/src/extension.props.ts",
+            "packages/viewer-adapter/src/registerChildren.ts"
+          ],
+          "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
+        },
+        "packages/viewer-adapter/src/registerChildren.ts": {
+          "internal": ["packages/viewer-adapter/src/config.ts"],
+          "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
         }
       }
     }

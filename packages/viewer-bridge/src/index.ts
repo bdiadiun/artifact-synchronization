@@ -5,7 +5,15 @@
 import { createScoringBridgeExtension } from './extension.js';
 
 export { createScoringBridgeExtension, SCORING_BRIDGE_EXTENSION_ID } from './extension.js';
-export type { OhifExtension, ScoringBridgeExtensionOptions } from './extension.props.js';
-export type { ScoringBridgeAppConfig } from './ohif.props.js';
+export type {
+  OhifAsyncExtension,
+  OhifExtension,
+  ScoringBridgeExtensionOptions,
+} from './extension.props.js';
+export type {
+  OhifExtensionManager,
+  OhifExtensionParams,
+  ScoringBridgeAppConfig,
+} from './ohif.props.js';
 
 export default createScoringBridgeExtension();

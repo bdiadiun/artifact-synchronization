@@ -248,6 +248,9 @@ somebody deletes.
   check: for a while the packages' tests were neither type-checked nor linted with types, and
   nothing said so. Each package therefore carries a second TypeScript project that includes its
   tests, and the lint configuration points at it.
+- **A list of packages is a trap; use a pattern.** Wherever tooling enumerates the packages, a new
+  one is forgotten and nothing fails: three times in a row a package was merged with tests no
+  command collected. Where the tool allows a glob, it gets one.
 - **A test that no command runs does not exist.** New tests are added to what `npm run test`
   actually collects, and the case count is reported before and after, so the increase is visible
   rather than assumed.
@@ -280,9 +283,10 @@ somebody deletes.
 
 ## 13. The OHIF fork
 
-- No code of ours lives there. The viewer-side extension is the package
-  `@bdiadiun/ohif-extension-scoring-bridge`; the fork carries its registration entry in
-  `platform/app/pluginConfig.json`, the matching dependency, and its workflow (A-20).
+- No code of ours lives there. The fork registers one package, the adapter
+  `@bdiadiun/ohif-extension-scoring-adapter`, which registers our extensions itself; the bridge
+  arrives as its dependency. The fork carries that entry, the matching dependency and its workflow,
+  and nothing else (A-20). Adding a capability is a change to the adapter, not to the fork.
 - We never describe OHIF's types, we describe the members we call, in the package's own
   `ohif.props.ts`. No `any` for an OHIF object: the narrowest structural type that covers what we
   actually use. Because that model replaces the compiler's knowledge of OHIF, a drift from the real

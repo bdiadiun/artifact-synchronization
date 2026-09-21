@@ -65,6 +65,7 @@ export default tseslint.config(
       'packages/contract/src/**/*.ts',
       'packages/orchestrator/src/**/*.ts',
       'packages/viewer-bridge/src/**/*.ts',
+      'packages/viewer-adapter/src/**/*.ts',
     ],
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
@@ -155,6 +156,7 @@ export default tseslint.config(
       'packages/contract/src/**/*.ts',
       'packages/orchestrator/src/**/*.ts',
       'packages/viewer-bridge/src/**/*.ts',
+      'packages/viewer-adapter/src/**/*.ts',
     ],
     ignores: ['**/*.props.ts', '**/__tests__/**'],
     rules: {

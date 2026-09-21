@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                               |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 49 `feat: the viewer extension becomes a package` (branch `feat/extension-as-package`, node F-55)                                                   |
-| Gate           | 2 — the fork holds no code of ours; awaiting result approval and the fork's own pull request                                                        |
-| Last merged PR | #52 `feat: the study comes from the form's URL`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                                 |
+| Field          | Value                                                                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 50 `feat: the adapter registers our extensions` (branch `feat/extension-adapter`, node F-56)                                                             |
+| Gate           | 2 — the fork registers one adapter which registers the rest; awaiting result approval                                                                    |
+| Last merged PR | #57 `chore: pin the fork at the published extension`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                                      |
 
 ## Open decisions (see CANON.md → Decisions)
 
