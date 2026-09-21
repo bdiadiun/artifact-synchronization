@@ -8,8 +8,9 @@ paths:
   the registration entry in `platform/app/pluginConfig.json`, the dependency line in
   `platform/app/package.json`, and `.github/workflows/scoring-bridge.yml`. Anything else needs a
   decision record first. Do not rework OHIF's own UI (canon X-5).
-- The viewer-side code is the package `@bdiadiun/ohif-extension-scoring-bridge`, which depends on
-  the contract. To take a change, publish it from the host repository first, then raise the pin
+- The fork registers one package of ours, the adapter
+  `@bdiadiun/ohif-extension-scoring-adapter`, which registers the rest itself. The bridge and the
+  contract arrive as its dependencies. Adding an extension changes the adapter, never this entry. To take a change, publish it from the host repository first, then raise the pin
   here. The host origin the viewer accepts is not in the fork's source: it arrives through
   `window.config.scoringBridge.hostOrigin`, and the bridge refuses to start without one rather than
   accepting any page.

@@ -3,6 +3,7 @@
 // every member below is one this bridge actually calls; a service is optional because
 // `servicesManager.services` is a registry and an unregistered service is simply absent.
 
+import type { OhifExtension as OhifExtensionLike } from './extension.props.js';
 import type { OhifMeasurementLike } from './measurements.props.js';
 
 export interface OhifSubscription {
@@ -96,8 +97,17 @@ export interface ScoringBridgeAppConfig {
   };
 }
 
+// The manager itself is among the pre-registration arguments and its registerExtension is public
+// and re-entrant (ExtensionManager.ts:251-286), which is how the adapter registers our extensions.
+// Declared here, in the one file that describes the OHIF surface we call, rather than a second time
+// in the adapter package. The extension shape is the adapter's children, hence the forward type.
+export interface OhifExtensionManager {
+  registerExtension: (extension: OhifExtensionLike) => Promise<void>;
+}
+
 export interface OhifExtensionParams {
   servicesManager: OhifServicesManager;
   commandsManager: OhifCommandsManager;
+  extensionManager?: OhifExtensionManager;
   appConfig?: ScoringBridgeAppConfig;
 }

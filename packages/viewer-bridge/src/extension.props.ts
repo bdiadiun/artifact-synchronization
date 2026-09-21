@@ -6,7 +6,16 @@ import type { CustomizationModuleEntry } from './getCustomizationModule.props.js
 export interface OhifExtension {
   id: string;
   preRegistration: (params: OhifExtensionParams) => void;
-  getCustomizationModule: () => CustomizationModuleEntry[];
+  // Read only when the extension declares one (ExtensionManager.ts:297-341), which an extension
+  // that contributes no module does not.
+  getCustomizationModule?: () => CustomizationModuleEntry[];
+}
+
+// The manager awaits the hook (ExtensionManager.ts:277), so an extension whose pre-registration is
+// asynchronous is registered before the application finishes starting. Declared here beside the
+// synchronous shape so the extension contract stays in one file.
+export interface OhifAsyncExtension extends Omit<OhifExtension, 'preRegistration'> {
+  preRegistration: (params: OhifExtensionParams) => Promise<void>;
 }
 
 export interface ScoringBridgeExtensionOptions {

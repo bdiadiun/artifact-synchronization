@@ -1,0 +1,34 @@
+{
+  "name": "@bdiadiun/ohif-extension-scoring-adapter",
+  "version": "0.0.1",
+  "description": "OHIF extension that registers our viewer extensions, so the viewer fork carries one entry that never changes",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bdiadiun/artifact-synchronization.git",
+    "directory": "packages/viewer-adapter"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -p tsconfig.tests.json",
+    "prepare": "tsc -b --force"
+  },
+  "dependencies": {
+    "@bdiadiun/ohif-extension-scoring-bridge": "0.0.1"
+  }
+}
