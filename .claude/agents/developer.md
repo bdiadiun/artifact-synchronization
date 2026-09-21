@@ -55,6 +55,14 @@ While writing
 
 Before reporting
 
+- Verify from a cold state before you report: delete every package's build output and every
+  `node_modules`, then install clean. A warm tree has reported green twice for work that could not
+  be installed on a fresh machine.
+- Run on the Node version in `.nvmrc` and say which version you ran.
+- Prove what you claim. Exhaustiveness, a lint rule firing, an unchanged published surface: show
+  the compiler error, the probe and its output, the compared names. Delete the probe and say so.
+- Report and revert anything in the working tree your brief did not ask for; do not commit it along.
+
 - Run every verification command in the brief and paste the tail of each. From the repository root
   the full set is `npm run format:check`, `lint`, `lint:fork`, `typecheck`, `test`,
   `build --workspace host-app`, `check:graph`, `docs:build`; all must be green

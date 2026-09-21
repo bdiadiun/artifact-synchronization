@@ -213,7 +213,42 @@ Rules:
 - Reference equality (`toBe`) is used to assert "nothing changed" in reducers.
 - A bug fix comes with the test that would have caught it.
 
-## 10. Git and review
+## 10. Verification
+
+Every rule here was written after something in this repository broke in exactly the way it
+describes. The cause is kept in the text, because a rule whose reason is forgotten is the first one
+somebody deletes.
+
+- **Green on a warm tree is not green.** Before a slice is presented, the verification runs from a
+  cold state: every package's build output and every `node_modules` deleted, then a clean install.
+  Two slices passed locally and failed on a fresh machine, once because test tooling sat where only
+  one workspace could see it, once because the packages built in whatever order the package manager
+  chose.
+- **Run on the version in `.nvmrc`, and say which version ran.** A suite that dies inside jsdom on a
+  different Node version has told you nothing about the change.
+- **Prove, do not assert.** A claim that a type check is exhaustive, that a lint rule fires, or that
+  a published surface is unchanged is shown with its artefact: the compiler error, a probe file and
+  its output, the compared list of exported names. The probe is deleted afterwards and the deletion
+  is stated.
+- **Nothing rides along.** A change in the working tree that the brief did not ask for is reported
+  and reverted, not committed with the slice.
+- **A rule lives only as long as its reason.** When the cause of a constraint disappears, the
+  constraint is revisited in the slice that removes the cause. The contract stayed one 345-line file
+  for three slices after the copy that required it was gone.
+- **Every fix leaves a rule behind.** The slice that fixes something also writes the general rule
+  here or in the matching file under `.claude/`, naming the failure in one clause. A fix that leaves
+  no rule behind gets made again.
+
+## 11. Publishing
+
+- **The dependency is published before the dependent.** A package pinned at an exact version cannot
+  be released in the same step as the thing that pins it.
+- **Only a package that changed is released.** A run that bumps every package produces empty
+  versions and makes the version number stop meaning anything.
+- **The version is never committed back to `main`**, because direct commits there are forbidden; it
+  is derived in the workflow and used for the publish only.
+
+## 12. Git and review
 
 - Conventional Commits, English, no trailers, no AI mentions (CLAUDE.md §4).
 - Generated files are never edited by hand and are committed with their source in the same commit:
@@ -224,7 +259,7 @@ Rules:
   all pass before gate 2. A PR that changes docs also runs
   `npm run docs:build` and commits the result.
 
-## 11. The OHIF fork
+## 13. The OHIF fork
 
 - Only `extensions/scoring-bridge/` and the one registration line in `pluginConfig.json` change.
 - The extension follows this document. The fork's own ESLint does not run at v3.12.17 (ESLint 9

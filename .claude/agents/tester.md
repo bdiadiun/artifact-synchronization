@@ -31,6 +31,13 @@ Ground rules
   scenario.
 - English only; no AI mentions; no git commands.
 
+Verification
+
+- Verify from a cold state before you report, on the Node version in `.nvmrc`, and say which
+  version you ran.
+- A test that proves a rule must be shown to fail when the rule is broken: break it once, show the
+  failure, restore it and say you did.
+
 Report in at most 40 lines: tests added (file, count, what each covers), test run tails, any
 failing behaviour with reproduction, and gaps you noticed but did not cover (with the canon ID).
 

@@ -59,7 +59,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-46 | A fresh clone installs                                                                                                                            | A-17, D-1, D-5                                                  | F-45             | 40    | done    | With both build outputs and every node_modules deleted, `npm ci` completes and both packages' `dist` exist afterwards; the two tarballs still contain only the manifest, the README where there is one and the built files.                                                                                                                                               |
 | F-47 | The viewer leaves the repository                                                                                                                  | A-18, C-3.2, D-1, D-5                                           | F-46             | 41    | done    | A clone of this repository alone runs the form and the whole check set; the graph check reports how many viewer paths it skipped and why; after `npm run viewer:setup` the clone sits at the pinned commit and those paths are checked for real.                                                                                                                          |
 | F-48 | Types live beside every module, not only components                                                                                               | A-13, D-2                                                       | F-47             | 42    | done    | A stray interface in a module that is not a `.props.ts` fails `npm run lint`, proved with a probe file; every public type is still importable from the specifier it was imported from before, and the package's published entry declaration is byte-identical.                                                                                                            |
-| F-49 | The contract reads as four small modules                                                                                                          | A-13, A-15, Q-7                                                 | F-48             | 43    | review  | The entry exports the same thirty-three names with the same declarations as before the split, compared name by name; a test asserts the entry still exports everything the rest of the repository imports and was shown to fail when one export is removed; the suite grew from 166 to 176 cases.                                                                         |
+| F-49 | The contract reads as four small modules                                                                                                          | A-13, A-15, Q-7                                                 | F-48             | 43    | done    | The entry exports the same thirty-three names with the same declarations as before the split, compared name by name; a test asserts the entry still exports everything the rest of the repository imports and was shown to fail when one export is removed; the suite grew from 166 to 176 cases.                                                                         |
+| F-50 | Every fix leaves a rule behind                                                                                                                    | A-13, D-2                                                       | F-49             | 44    | review  | The conventions carry a verification section and a publishing section; the slice skill requires a cold run before gate 2; the developer, tester and architect files each carry the part of it they act on.                                                                                                                                                                |
 
 ## Coverage of mandatory IDs
 
@@ -94,7 +95,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Q-6     | F-09, F-10, F-11                                                                                                             |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49 |
 | D-1     | F-04, F-41, F-46, F-47                                                                                                       |
-| D-2     | F-00, F-20, F-38, F-40, F-48                                                                                                 |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50                                                                                           |
 | D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                               |
 | D-4     | F-00, F-24                                                                                                                   |
 | D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                           |
@@ -156,6 +157,7 @@ graph TD
   F47["F-47 The viewer leaves the repository"]
   F48["F-48 Types live beside every module, not only components"]
   F49["F-49 The contract reads as four small modules"]
+  F50["F-50 Every fix leaves a rule behind"]
 
   F20 --> F01
   F01 --> F02
@@ -211,6 +213,7 @@ graph TD
   F46 --> F47
   F47 --> F48
   F48 --> F49
+  F49 --> F50
 ```
 
 ## Slice → nodes
@@ -263,6 +266,7 @@ graph TD
 | 41 — chore: the viewer is checked out, not vendored          | `chore/drop-viewer-submodule`               | —   | F-47                   |
 | 42 — refactor: types live beside every module                | `refactor/types-in-props-files`             | —   | F-48                   |
 | 43 — refactor: the contract split by concern                 | `refactor/contract-modules`                 | —   | F-49                   |
+| 44 — docs: rules harvested from the fixes                    | `docs/rules-from-fixes`                     | —   | F-50                   |
 
 ## Node details
 
@@ -1128,7 +1132,7 @@ Files:
 
 Splits a 345-line file into vocabulary, host commands, viewer events and the primitive guards both are built from, behind one entry. The constraint that kept it in one piece, a byte-identical copy inside the fork, disappeared when the fork began consuming the published package, and the file stayed whole only out of habit. Types moved into sibling files like everywhere else, and the geometry shape moved into the vocabulary so both message families depend only downward.
 
-Canon: A-13, A-15, Q-7. Depends on: F-48. Slice 43, status `review`.
+Canon: A-13, A-15, Q-7. Depends on: F-48. Slice 43, status `done`.
 
 Files:
 
@@ -1142,3 +1146,18 @@ Files:
 - `packages/contract/src/vocabulary.props.ts` — no imports
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `scripts/graph.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`
+
+### F-50 Every fix leaves a rule behind
+
+Turns this session's failures into written rules and puts each one where the agent that needs it will read it. Verification from a cold state on the Node version in `.nvmrc`, proving a claim with its artefact instead of asserting it, reverting anything that rides along, revisiting a constraint when its cause disappears, publishing only what changed and in dependency order, and two rules about delegation: a brief never asks for what a role forbids, and a refused permission goes to the user rather than to another agent. Each rule keeps the failure that produced it in its text.
+
+Canon: A-13, D-2. Depends on: F-49. Slice 44, status `review`.
+
+Files:
+
+- `.claude/agents/architect.md`
+- `.claude/agents/developer.md`
+- `.claude/agents/tester.md`
+- `.claude/rules/contract.md`
+- `.claude/skills/slice/SKILL.md`
+- `docs/CONVENTIONS.md`
