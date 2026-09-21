@@ -1,39 +1,16 @@
 // Pure, side-effect-free reducer; `useScoringForm.ts` wires it to `send`/`lastEvent`.
 
-import {
-  METRIC_KEY_BY_TOOL,
-  type MeasurementGeometry,
-  type MetricKey,
-  type Metrics,
-  type RestoreFailureReason,
-  type ToolName,
-} from '@bdiadiun/scoring-contract';
+import { METRIC_KEY_BY_TOOL, type MetricKey, type ToolName } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL } from '../config';
 import { findRow, findRowByUid, hasRow } from '../utils/selectors';
+import type { ActionOf, FormAction, FormState, Row } from './rows.props';
+
+export type { FormAction, FormState, Row } from './rows.props';
 
 export enum RowStatus {
   Pending = 'pending',
   Drawing = 'drawing',
   Done = 'done',
-}
-
-export interface Row {
-  rowId: string;
-  status: RowStatus;
-  toolName: ToolName;
-  metrics: Metrics | null;
-  measurementUid: string | null;
-  // A-14: kept so a restored row can be re-sent to the viewer; null until a measurement arrives.
-  geometry: MeasurementGeometry | null;
-  // A-14: null unless a RESTORE_MEASUREMENTS reply named this row as failed; the reason drives the
-  // marker `MeasurementRow` shows next to a value that has no annotation behind it.
-  restoreFailureReason: RestoreFailureReason | null;
-}
-
-export interface FormState {
-  rows: Row[];
-  // At most one row is `drawing` at a time (A-4); this mirrors that row's id, or null.
-  armedRowId: string | null;
 }
 
 // S-5.4: the metric a row's tool produces; the table itself belongs to the wire contract.
@@ -52,24 +29,6 @@ export enum FormActionType {
   // A-14: a row named in a MEASUREMENTS_RESTORED reply's `failed` list.
   RestoreFailed = 'RESTORE_FAILED',
 }
-
-export type FormAction =
-  | { type: FormActionType.AddRow; rowId: string; toolName?: ToolName }
-  | { type: FormActionType.ArmRow; rowId: string }
-  | { type: FormActionType.DisarmRow; rowId: string }
-  | {
-      type: FormActionType.MeasurementReceived;
-      rowId: string;
-      measurementUid: string;
-      metrics: Metrics;
-      geometry: MeasurementGeometry | null;
-    }
-  | { type: FormActionType.MeasurementUpdated; measurementUid: string; metrics: Metrics }
-  | { type: FormActionType.RemoveRow; rowId: string }
-  | { type: FormActionType.MeasurementCleared; rowId: string }
-  | { type: FormActionType.RestoreFailed; rowId: string; reason: RestoreFailureReason };
-
-type ActionOf<T extends FormActionType> = Extract<FormAction, { type: T }>;
 
 export const initialFormState: FormState = { rows: [], armedRowId: null };
 

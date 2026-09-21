@@ -63,7 +63,7 @@ and the linter disagree, fix the linter config in the same PR and say so.
 | Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                              |
 | Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createOrchestrator`, `useScoringForm`                                                       |
 | Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                                           |
-| Files: component types and styles    | PascalCase `.props.ts` next to the component                                 | `TotalsFooter.props.ts`                                                                      |
+| Files: types and styles              | `.props.ts` next to the file that uses them, any module, not only components | `TotalsFooter.props.ts`, `rows.props.ts`                                                     |
 | Files: everything else               | kebab-case or camelCase, one concept per file                                | `create-orchestrator.ts` / `createOrchestrator.ts` (keep the existing style within a folder) |
 | Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)` | `form/__tests__/rows.test.ts`                                                                |
 | Booleans                             | `is`/`has`/`can`/`should` prefix                                             | `isReady`, `hasMetrics`                                                                      |
@@ -111,9 +111,13 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   warning). Helpers used inside an effect live inside it or are stable (`useCallback`, module scope).
 - No context providers until two unrelated subtrees need the same state; prop drilling two levels
   is fine.
-- Every component `{Name}.tsx` has a sibling `{Name}.props.ts` that holds everything that is not
-  rendering: the props interface, other types and interfaces the component uses, and its style
-  objects. The `.tsx` file keeps only the component and its local logic.
+- **Every `.ts` and `.tsx` file** has a sibling `{Name}.props.ts` holding its `interface` and `type`
+  declarations and its `styles` object; the file itself keeps only code. For a component that means
+  the props interface and the styles; for a module it means the shapes its functions take and
+  return. The suffix is `.props.ts` everywhere, deliberately: one name, one lint rule, no argument
+  about which file a declaration belongs in. An `enum` is a value rather than a type and stays with
+  its code. Two files are exempt: `packages/contract/src/messages.ts`, which must stay one
+  self-contained file with no imports because it is the published wire contract, and test files.
 
   ```ts
   // MeasurementRow.props.ts
@@ -144,8 +148,8 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - No inline style object literals in JSX (`style={{ … }}`); reference `styles.<key>` from the
   `.props.ts` file (lint rule). A style that depends on state is a small function in the same file,
   e.g. `rowStyle(focusable)` returning `styles.row` merged with `styles.rowClickable`. A component without props or styles does not need the file.
-- Types shared by several components live with the module that owns them (e.g. `Row` in
-  `form/rows.ts`), not in a component's `.props.ts`.
+- Types shared by several modules live with the module that owns them, in that module's
+  `.props.ts` (e.g. `Row` in `form/rows.props.ts`), and are imported from there rather than copied.
 - No function is created inside the `return` statement. Every function a component renders with is
   declared in the component body with a name, above the `return`, and the returned JSX mentions it
   by that name. The one exception is the callback of a list render, `rows.map(...)`, because

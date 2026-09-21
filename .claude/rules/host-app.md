@@ -4,8 +4,9 @@ paths:
 ---
 
 - Arrow functions with explicit return types on exports; string enums for application state.
-- A component `{Name}.tsx` holds only rendering; its props, local types and `styles` live in the
-  sibling `{Name}.props.ts`. No inline `style={{ … }}`, no function created inside an `on…` prop, and no
+- Every `.ts` and `.tsx` file keeps its `interface` and `type` declarations and its `styles` object
+  in a sibling `{Name}.props.ts`, components and plain modules alike (lint rule). Enums stay with
+  their code; the published contract file is exempt. No inline `style={{ … }}`, no function created inside an `on…` prop, and no
   function created anywhere in the `return` statement: it is declared with a name above it. A list
   render's `.map` callback is the only exception.
 - User-visible strings come from `src/i18n.ts` as `t.<key>` (Ukrainian, decision A-7).

@@ -1,9 +1,7 @@
 // What each viewer event does to the form. Pure wiring around `dispatch`/`send`: the row state
 // itself stays in the reducer, `useViewerEvents` decides *when* these run.
 
-import type { Dispatch } from 'react';
 import type {
-  HostCommand,
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
   MeasurementsRestoredEvent,
@@ -12,23 +10,12 @@ import type {
 } from '@bdiadiun/scoring-contract';
 import { activateToolCommand, restoreMeasurementsCommand } from '@bdiadiun/scoring-orchestrator';
 import { STUDY_INSTANCE_UID } from '../config';
-import { FormActionType, RowStatus, type FormAction, type FormState, type Row } from './rows';
+import { FormActionType, RowStatus, type Row } from './rows';
 import { findRow, findRowByUid } from '../utils/selectors';
 import type { ViewerEventHandlers } from '../hooks/useViewerEvents';
+import type { ViewerEventContext } from './viewerEventHandlers.props';
 
-export interface ViewerEventContext {
-  state: FormState;
-  dispatch: Dispatch<FormAction>;
-  send: (command: HostCommand) => void;
-  // requestIds of the REMOVE_MEASUREMENT commands `useScoringForm` issued (A-10 echo guard); this
-  // module only consumes them.
-  issuedRemovalRequestIds: Set<string>;
-  // Rows loaded from sessionStorage at mount (A-14); fixed for the session, independent of `state`.
-  restoredRows: readonly Row[];
-  // requestIds of the RESTORE_MEASUREMENTS commands issued below, matched against
-  // MEASUREMENTS_RESTORED the same way `issuedRemovalRequestIds` matches REMOVE_MEASUREMENT.
-  issuedRestoreRequestIds: Set<string>;
-}
+export type { ViewerEventContext } from './viewerEventHandlers.props';
 
 // Only a row with both a stored uid and its geometry can be re-added in the viewer (A-14); a row
 // restored without geometry (older/corrupt storage) is silently left out rather than sent broken.

@@ -3,11 +3,9 @@
 
 import type { HostCommand } from '@bdiadiun/scoring-contract';
 import { deactivateToolCommand } from './commands';
+import type { ArmedTool } from './armedTool.props';
 
-export interface ArmedTool {
-  remember: (command: HostCommand) => void;
-  disarm: (viewerWindow: Window | null) => void;
-}
+export type { ArmedTool } from './armedTool.props';
 
 export const createArmedTool = (viewerOrigin: string): ArmedTool => {
   let armedRowId: string | null = null;
