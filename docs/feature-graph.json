@@ -255,6 +255,11 @@
       "id": "44",
       "title": "docs: rules harvested from the fixes",
       "branch": "docs/rules-from-fixes"
+    },
+    {
+      "id": "45",
+      "title": "fix: publish only the packages that changed",
+      "branch": "fix/publish-only-changed"
     }
   ],
   "nodes": [
@@ -3271,7 +3276,7 @@
       "canon": ["A-13", "D-2"],
       "dependsOn": ["F-49"],
       "slice": "44",
-      "status": "review",
+      "status": "done",
       "verify": "The conventions carry a verification section and a publishing section; the slice skill requires a cold run before gate 2; the developer, tester and architect files each carry the part of it they act on.",
       "files": [
         ".claude/agents/architect.md",
@@ -3281,6 +3286,18 @@
         ".claude/skills/slice/SKILL.md",
         "docs/CONVENTIONS.md"
       ],
+      "imports": {}
+    },
+    {
+      "id": "F-51",
+      "name": "Only a changed package is released",
+      "description": "The publish workflow minted a version for every package on every run: it resolved a patch above the latest release and only skipped when that version already existed, which it never did. One merge that touched the contract alone therefore also released an empty orchestrator. The workflow now decides per package from the files the push actually changed, keeps the dependency order and the existing guard, and says in the job summary what it published and what it skipped, each with its reason. When the comparison cannot be made it publishes, because a missed release costs more than a spare one.",
+      "canon": ["A-15", "A-17", "D-2"],
+      "dependsOn": ["F-50"],
+      "slice": "45",
+      "status": "review",
+      "verify": "The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.",
+      "files": [".github/workflows/publish-packages.yml"],
       "imports": {}
     }
   ]
