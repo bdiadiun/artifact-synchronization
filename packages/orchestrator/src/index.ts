@@ -4,14 +4,8 @@
 export { createOrchestrator } from './createOrchestrator';
 export type {
   CreateOrchestratorOptions,
+  HostChannel,
   Orchestrator,
   OrchestratorListener,
   OrchestratorState,
 } from './createOrchestrator';
-export {
-  activateToolCommand,
-  deactivateToolCommand,
-  focusMeasurementCommand,
-  removeMeasurementCommand,
-  restoreMeasurementsCommand,
-} from './commands';

@@ -1,8 +1,10 @@
-import type { HostCommand, ToolName, ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { ToolName, ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { HostChannel } from '@bdiadiun/scoring-orchestrator';
 import type { Row } from '@app/form/rows';
 
 export interface UseScoringFormOptions {
-  send: (command: HostCommand) => void;
+  send: HostChannel['send'];
+  exchange: HostChannel['exchange'];
   lastEvent: ViewerEvent | null;
 }
 

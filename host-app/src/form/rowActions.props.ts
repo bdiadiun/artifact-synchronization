@@ -1,14 +1,13 @@
 import type { Dispatch } from 'react';
-import type { HostCommand, ToolName } from '@bdiadiun/scoring-contract';
+import type { ToolName } from '@bdiadiun/scoring-contract';
+import type { HostChannel } from '@bdiadiun/scoring-orchestrator';
 import type { FormAction, FormState } from './rows';
 
 export interface RowActionsContext {
   state: FormState;
   dispatch: Dispatch<FormAction>;
-  send: (command: HostCommand) => void;
-  // requestIds of REMOVE_MEASUREMENT commands issued here; the incoming handler drops their echo
-  // (A-10). Owned by the caller so both halves of the form share the same set.
-  issuedRemovalRequestIds: Set<string>;
+  send: HostChannel['send'];
+  exchange: HostChannel['exchange'];
 }
 
 export interface RowActions {

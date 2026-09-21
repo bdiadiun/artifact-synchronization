@@ -1,4 +1,8 @@
 import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { Channel } from '@bdiadiun/scoring-channel';
+
+// The host end of the channel: viewer events come in, host commands go out.
+export type HostChannel = Channel<ViewerEvent, HostCommand>;
 
 export interface OrchestratorState {
   ready: boolean;
@@ -17,10 +21,12 @@ export interface CreateOrchestratorOptions {
   getViewerWindow: () => Window | null;
   viewerOrigin: string;
   hostWindow?: Window;
+  exchangeTimeoutMs?: number;
 }
 
 export interface Orchestrator {
-  send: (command: HostCommand) => void;
+  send: HostChannel['send'];
+  exchange: HostChannel['exchange'];
   subscribe: (listener: OrchestratorListener) => () => void;
   getState: () => OrchestratorState;
   dispose: () => void;

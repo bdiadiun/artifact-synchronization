@@ -8,11 +8,11 @@ import type {
   MeasurementUpdatedEvent,
   RestoreMeasurementRequest,
 } from '@bdiadiun/scoring-contract';
-import { activateToolCommand, restoreMeasurementsCommand } from '@bdiadiun/scoring-orchestrator';
 import { studyInstanceUid } from '@app/config';
 import type { ViewerEventHandlers } from '@app/hooks/useViewerEvents';
 import { findRow, findRowByUid } from '@app/utils/selectors';
 import { FormActionType, RowStatus, type Row } from './rows';
+import { warnUnanswered } from './unanswered';
 import type { ViewerEventContext } from './viewerEventHandlers.props';
 
 export type { ViewerEventContext } from './viewerEventHandlers.props';
@@ -32,14 +32,32 @@ const restorableMeasurements = (rows: readonly Row[]): RestoreMeasurementRequest
       geometry: row.geometry,
     }));
 
+// A-14: a row the viewer refused is marked from the answer to our own request, which the exchange
+// hands back here; no reply of anyone else's can reach this code.
+const dispatchRestoreFailures = (
+  context: ViewerEventContext,
+  answer: MeasurementsRestoredEvent,
+): void => {
+  for (const failure of answer.failed) {
+    context.dispatch({
+      type: FormActionType.RestoreFailed,
+      rowId: failure.rowId,
+      reason: failure.reason,
+    });
+  }
+};
+
 const sendRestoreIfNeeded = (context: ViewerEventContext): void => {
   const measurements = restorableMeasurements(context.restoredRows);
   if (measurements.length === 0) {
     return;
   }
-  const requestId = crypto.randomUUID();
-  context.issuedRestoreRequestIds.add(requestId);
-  context.send(restoreMeasurementsCommand(requestId, studyInstanceUid(), measurements));
+  void context
+    .exchange('RESTORE_MEASUREMENTS', { studyInstanceUid: studyInstanceUid(), measurements })
+    .then((answer) => {
+      dispatchRestoreFailures(context, answer);
+    })
+    .catch(warnUnanswered);
 };
 
 // A viewer reload forgot any flushed command, so an armed row is re-sent; on the first READY an
@@ -58,7 +76,7 @@ const handleViewerReady = (context: ViewerEventContext, isReload: boolean): void
   if (armedRow === undefined) {
     return;
   }
-  context.send(activateToolCommand(crypto.randomUUID(), armedRow.rowId, armedRow.toolName));
+  context.send('ACTIVATE_TOOL', { rowId: armedRow.rowId, toolName: armedRow.toolName });
 };
 
 const handleMeasurementAdded = (
@@ -112,14 +130,8 @@ const handleMeasurementRemoved = (
   context: ViewerEventContext,
   event: MeasurementRemovedEvent,
 ): void => {
-  // A `causedBy` matching a requestId we issued is the echo of our own REMOVE_MEASUREMENT (the row
-  // is already gone); ignore and forget it (A-10).
-  const { issuedRemovalRequestIds } = context;
-  if (event.causedBy !== undefined && issuedRemovalRequestIds.has(event.causedBy)) {
-    issuedRemovalRequestIds.delete(event.causedBy);
-    console.debug('[form] ignoring our own REMOVE_MEASUREMENT echo', event.measurementUid);
-    return;
-  }
+  // The echo of our own REMOVE_MEASUREMENT never arrives here: it answers the exchange that asked
+  // for it (A-10, A-21). What reaches this handler was deleted in the viewer.
   const row = findRowByUid(context.state.rows, event.measurementUid);
   if (row?.status !== RowStatus.Done) {
     console.debug('[form] removal for a measurement not tracked by any row', event.measurementUid);
@@ -128,25 +140,10 @@ const handleMeasurementRemoved = (
   context.dispatch({ type: FormActionType.MeasurementCleared, rowId: row.rowId });
 };
 
-// A-14: matched against the requestId `sendRestoreIfNeeded` recorded, the same way a
-// REMOVE_MEASUREMENT echo is matched. An unmatched reply (foreign or duplicate) is ignored.
-const handleMeasurementsRestored = (
-  context: ViewerEventContext,
-  event: MeasurementsRestoredEvent,
-): void => {
-  const { issuedRestoreRequestIds } = context;
-  if (event.causedBy === undefined || !issuedRestoreRequestIds.has(event.causedBy)) {
-    console.debug('[form] ignoring unmatched MEASUREMENTS_RESTORED', event.causedBy);
-    return;
-  }
-  issuedRestoreRequestIds.delete(event.causedBy);
-  for (const failure of event.failed) {
-    context.dispatch({
-      type: FormActionType.RestoreFailed,
-      rowId: failure.rowId,
-      reason: failure.reason,
-    });
-  }
+// The answer to our own RESTORE_MEASUREMENTS is consumed by the exchange, so anything arriving as an
+// event is a duplicate or a reply to a request this session never made (A-21).
+const handleMeasurementsRestored = (event: MeasurementsRestoredEvent): void => {
+  console.debug('[form] ignoring unmatched MEASUREMENTS_RESTORED', event.causedBy);
 };
 
 export const createViewerEventHandlers = (context: ViewerEventContext): ViewerEventHandlers => ({
@@ -163,6 +160,6 @@ export const createViewerEventHandlers = (context: ViewerEventContext): ViewerEv
     handleMeasurementRemoved(context, event);
   },
   onMeasurementsRestored: (event: MeasurementsRestoredEvent): void => {
-    handleMeasurementsRestored(context, event);
+    handleMeasurementsRestored(event);
   },
 });

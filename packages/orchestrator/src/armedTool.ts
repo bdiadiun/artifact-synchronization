@@ -2,12 +2,11 @@
 // still armed with and can cancel it when the host goes away.
 
 import type { HostCommand } from '@bdiadiun/scoring-contract';
-import { deactivateToolCommand } from './commands';
-import type { ArmedTool } from './armedTool.props';
+import type { ArmedTool, SendDeactivate } from './armedTool.props';
 
-export type { ArmedTool } from './armedTool.props';
+export type { ArmedTool, SendDeactivate } from './armedTool.props';
 
-export const createArmedTool = (viewerOrigin: string): ArmedTool => {
+export const createArmedTool = (): ArmedTool => {
   let armedRowId: string | null = null;
 
   return {
@@ -21,15 +20,11 @@ export const createArmedTool = (viewerOrigin: string): ArmedTool => {
       }
     },
 
-    disarm: (viewerWindow: Window | null): void => {
-      if (armedRowId === null || viewerWindow === null) {
+    disarm: (sendDeactivate: SendDeactivate): void => {
+      if (armedRowId === null) {
         return;
       }
-      // Never '*': targetOrigin is always the configured viewer origin (Q-2).
-      viewerWindow.postMessage(
-        deactivateToolCommand(crypto.randomUUID(), armedRowId),
-        viewerOrigin,
-      );
+      sendDeactivate(armedRowId);
       armedRowId = null;
     },
   };

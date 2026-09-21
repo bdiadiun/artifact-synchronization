@@ -2,15 +2,10 @@
 // viewerEventHandlers.ts, which does the same job for the incoming half of the form.
 
 import type { ToolName } from '@bdiadiun/scoring-contract';
-import {
-  activateToolCommand,
-  deactivateToolCommand,
-  focusMeasurementCommand,
-  removeMeasurementCommand,
-} from '@bdiadiun/scoring-orchestrator';
 import { DEFAULT_TOOL } from '@app/config';
 import { findRow } from '@app/utils/selectors';
 import { FormActionType, RowStatus } from './rows';
+import { warnUnanswered } from './unanswered';
 import type { RowActions, RowActionsContext } from './rowActions.props';
 
 export type { RowActions, RowActionsContext } from './rowActions.props';
@@ -25,16 +20,16 @@ const activate = (context: RowActionsContext, rowId: string): void => {
   context.dispatch({ type: FormActionType.ArmRow, rowId });
   // Only one row can be armed at a time (A-4): deactivate the previous one first.
   if (previousArmedRowId !== null && previousArmedRowId !== rowId) {
-    context.send(deactivateToolCommand(crypto.randomUUID(), previousArmedRowId));
+    context.send('DEACTIVATE_TOOL', { rowId: previousArmedRowId });
   }
   if (targetRow !== undefined) {
-    context.send(activateToolCommand(crypto.randomUUID(), rowId, targetRow.toolName));
+    context.send('ACTIVATE_TOOL', { rowId, toolName: targetRow.toolName });
   }
 };
 
 const cancel = (context: RowActionsContext, rowId: string): void => {
   context.dispatch({ type: FormActionType.DisarmRow, rowId });
-  context.send(deactivateToolCommand(crypto.randomUUID(), rowId));
+  context.send('DEACTIVATE_TOOL', { rowId });
 };
 
 // Behaviour depends on row status: `done` removes the real annotation in the viewer; `drawing`
@@ -48,15 +43,16 @@ const remove = (context: RowActionsContext, rowId: string): void => {
     if (row.measurementUid === null) {
       return;
     }
-    const requestId = crypto.randomUUID();
-    // A-10: record the requestId so the REMOVE_MEASUREMENT echo is recognised and ignored.
-    context.issuedRemovalRequestIds.add(requestId);
     context.dispatch({ type: FormActionType.RemoveRow, rowId });
-    context.send(removeMeasurementCommand(requestId, rowId, row.measurementUid));
+    // A-21: MEASUREMENT_REMOVED answers this request and is consumed by the exchange, so our own
+    // echo never reaches the incoming handlers (A-10) and silence is reported instead of ignored.
+    void context
+      .exchange('REMOVE_MEASUREMENT', { rowId, measurementUid: row.measurementUid })
+      .catch(warnUnanswered);
     return;
   }
   if (row.status === RowStatus.Drawing) {
-    context.send(deactivateToolCommand(crypto.randomUUID(), rowId));
+    context.send('DEACTIVATE_TOOL', { rowId });
   }
   context.dispatch({ type: FormActionType.RemoveRow, rowId });
 };
@@ -67,7 +63,7 @@ const focus = (context: RowActionsContext, rowId: string): void => {
   if (row?.status !== RowStatus.Done || row.measurementUid === null) {
     return;
   }
-  context.send(focusMeasurementCommand(crypto.randomUUID(), rowId, row.measurementUid));
+  context.send('FOCUS_MEASUREMENT', { rowId, measurementUid: row.measurementUid });
 };
 
 export const createRowActions = (context: RowActionsContext): RowActions => ({

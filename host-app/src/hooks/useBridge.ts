@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
-import type { HostCommand } from '@bdiadiun/scoring-contract';
 import {
   createOrchestrator,
+  type HostChannel,
   type Orchestrator,
   type OrchestratorState,
 } from '@bdiadiun/scoring-orchestrator';
@@ -43,9 +43,16 @@ export const useBridge = (iframeRef: RefObject<HTMLIFrameElement | null>): UseBr
     // `iframeRef` and `VIEWER_ORIGIN` are stable, so this effect runs once per mount.
   }, [iframeRef]);
 
-  const send = (command: HostCommand): void => {
-    orchestratorRef.current?.send(command);
+  const send: HostChannel['send'] = (type, payload) =>
+    orchestratorRef.current?.send(type, payload) ?? false;
+
+  const exchange: HostChannel['exchange'] = (type, payload) => {
+    const orchestrator = orchestratorRef.current;
+    if (orchestrator === null) {
+      return Promise.reject(new Error(`[form] ${type} was not sent: the bridge is not mounted`));
+    }
+    return orchestrator.exchange(type, payload);
   };
 
-  return { send, state };
+  return { send, exchange, state };
 };

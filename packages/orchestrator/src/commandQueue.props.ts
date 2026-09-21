@@ -1,8 +1,8 @@
 import type { HostCommand } from '@bdiadiun/scoring-contract';
+import type { PeerPost } from '@bdiadiun/scoring-channel';
 
 export interface CommandQueueOptions {
-  getViewerWindow: () => Window | null;
-  viewerOrigin: string;
+  post: PeerPost;
 }
 
 export interface CommandQueue {

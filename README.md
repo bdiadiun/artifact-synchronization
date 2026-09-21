@@ -5,8 +5,11 @@ form. They run on separate ports and talk only over `window.postMessage`.
 
 - Requirements: [docs/CANON.md](docs/CANON.md); work breakdown: [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md).
 - Message contract and decisions: [ARCHITECTURE.md](ARCHITECTURE.md); AI usage: [AI-USAGE.md](AI-USAGE.md); defence notes: [docs/DEFENCE.md](docs/DEFENCE.md).
-- Layout: `host-app/` (React + Vite, port 5173), `packages/contract/` (shared message types),
-  `packages/orchestrator/` (the client that talks to a viewer), `viewer/` (a local checkout of
+- Layout: `host-app/` (React + Vite, port 5173) and five published packages: `packages/contract/`
+  (the message types), `packages/channel/` (the origin check, the guard and the request-and-answer
+  exchange both sides use), `packages/orchestrator/` (the client that talks to a viewer),
+  `packages/viewer-bridge/` and `packages/viewer-adapter/` (the OHIF extension and the adapter that
+  registers it); `viewer/` (a local checkout of
   [bdiadiun/Viewers](https://github.com/bdiadiun/Viewers), branch `scoring`, based on OHIF
   `v3.12.17`, port 3000; cloned on demand and not part of this repository, see A-18).
 
@@ -51,7 +54,7 @@ opens a study. Notes:
 ### 2. Host app (port 5173), in a second terminal
 
 ```sh
-npm install             # installs host-app and packages/contract (npm workspaces)
+npm install             # installs host-app and every package (npm workspaces)
 npm run dev --workspace host-app
 ```
 
