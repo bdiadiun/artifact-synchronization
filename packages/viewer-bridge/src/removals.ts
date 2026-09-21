@@ -13,7 +13,6 @@ export interface RemovalCommandsDeps {
 export interface RemovalCommands {
   handleRemove: (command: RemoveMeasurementCommand) => void;
   takeCause: (uid: string) => string | undefined;
-  dispose: () => void;
 }
 
 // P-6 / A-10, the echo-loop point: causedBy lets the host recognise its own echo, and
@@ -45,8 +44,8 @@ export const createRemovalCommands = ({
         `${LOG_PREFIX} REMOVE_MEASUREMENT ${requestId}: measurement ${measurementUid} (row ${rowId}) is already gone; answering without removing`,
       );
       forget(measurementUid);
-      // Answered anyway: the host drops the requestId only on the matching event, so silence here
-      // would leak it for the life of the page.
+      // Answered anyway, so the host's exchange settles at once instead of waiting for its
+      // timeout.
       const event: MeasurementRemovedEvent = {
         version: 1,
         type: 'MEASUREMENT_REMOVED',
@@ -81,9 +80,6 @@ export const createRemovalCommands = ({
       const requestId = pendingRemovals.get(uid);
       pendingRemovals.delete(uid);
       return requestId;
-    },
-    dispose: (): void => {
-      pendingRemovals.clear();
     },
   };
 };

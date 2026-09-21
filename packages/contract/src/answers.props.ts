@@ -14,13 +14,3 @@ export type AnswerTypeByCommand = AnswerTable<{
 export type AnsweredCommandType = keyof AnswerTypeByCommand;
 
 export type AnswerTypeOf<TType extends AnsweredCommandType> = AnswerTypeByCommand[TType];
-
-export type AnsweredCommand<TType extends AnsweredCommandType> = Extract<
-  HostCommand,
-  { type: TType }
->;
-
-export type AnswerOf<TType extends AnsweredCommandType> = Extract<
-  ViewerEvent,
-  { type: AnswerTypeOf<TType> }
->;

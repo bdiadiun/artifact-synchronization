@@ -107,6 +107,15 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - No barrel `index.ts` re-exports inside the app; import from the module that owns the symbol.
 - Never reach into another package's internals; the contract package is consumed through its
   public entry only.
+- **A shape is declared once, by the package that owns the idea.** Before writing an interface, a
+  guard or a constant, search the packages for one that already says it: `Disposable` and
+  `MessageOfType` belong to the channel, the primitive guards (`isOneOf`, `isFiniteNumber`,
+  `isMetrics`) and every vocabulary table to the contract, the initial orchestrator state to the
+  orchestrator. The application extends or picks from those (`extends RowActions`,
+  `Pick<Orchestrator, 'send' | 'exchange'>`) instead of listing the members again.
+- **No code for a caller that does not exist.** A default every caller overrides, an export only a
+  test imports, a counter nothing displays and a branch a guard upstream makes unreachable are
+  removed, not kept "for later"; a one-line function that only renames an expression is inlined.
 
 ## 6. React
 

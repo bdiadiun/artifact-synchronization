@@ -33,11 +33,14 @@ describe('createOrchestrator', () => {
     orchestrator.dispose();
   });
 
-  it('ignores messages from a foreign origin and counts them', () => {
+  it('ignores messages from a foreign origin', () => {
+    const listener = vi.fn();
+    orchestrator.subscribe(listener);
+
     dispatchFromViewer(viewerReady, FOREIGN_ORIGIN);
 
     expect(orchestrator.getState().ready).toBe(false);
-    expect(orchestrator.getState().ignoredOrigins).toBe(1);
+    expect(listener).not.toHaveBeenCalledWith(viewerReady, expect.anything());
   });
 
   it('ignores a malformed payload from the correct origin', () => {

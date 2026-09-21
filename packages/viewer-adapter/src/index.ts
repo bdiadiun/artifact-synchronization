@@ -5,8 +5,6 @@
 import { createScoringAdapterExtension } from './extension.js';
 
 export { createScoringAdapterExtension, SCORING_ADAPTER_EXTENSION_ID } from './extension.js';
-export { createChildren } from './children.js';
 export type { ScoringAdapterExtensionOptions } from './extension.js';
-export type { AdapterChildren } from './children.js';
 
 export default createScoringAdapterExtension();

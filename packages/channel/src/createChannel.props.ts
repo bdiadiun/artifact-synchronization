@@ -1,5 +1,6 @@
 import type { AnsweredCommandType, AnswerTypeOf, BridgeMessage } from '@bdiadiun/scoring-contract';
 import type { MessageOfType, PayloadOf } from './buildMessage.js';
+import type { Disposable } from './disposers.js';
 
 export type AnswerMessage<
   TIncoming extends BridgeMessage,
@@ -16,10 +17,12 @@ export interface ChannelOptions<TIncoming extends BridgeMessage, TOutgoing exten
   logPrefix?: string;
   exchangeTimeoutMs?: number;
   newRequestId?: () => string;
-  onIgnoredOrigin?: (origin: string) => void;
 }
 
-export interface Channel<TIncoming extends BridgeMessage, TOutgoing extends BridgeMessage> {
+export interface Channel<
+  TIncoming extends BridgeMessage,
+  TOutgoing extends BridgeMessage,
+> extends Disposable {
   send: <TType extends TOutgoing['type']>(
     type: TType,
     payload: PayloadOf<TOutgoing, TType>,
@@ -32,7 +35,6 @@ export interface Channel<TIncoming extends BridgeMessage, TOutgoing extends Brid
     type: TType,
     payload: PayloadOf<TOutgoing, TType>,
   ) => Promise<AnswerMessage<TIncoming, TType>>;
-  dispose: () => void;
 }
 
 // A stored handler accepts only the type it was registered under; `never` keeps the store

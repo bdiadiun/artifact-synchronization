@@ -1,12 +1,7 @@
 import type { JSX, KeyboardEvent, MouseEvent } from 'react';
 import { RowStatus } from '@app/form/rows';
 import { t } from '@app/i18n';
-import {
-  formatRestoreFailureReason,
-  formatRowKind,
-  formatRowMetric,
-  formatRowStatus,
-} from '@app/utils/format';
+import { formatRowKind, formatRowMetric, formatRowStatus } from '@app/utils/format';
 import { rowInteraction, rowStyle, styles, type MeasurementRowProps } from './MeasurementRow.props';
 
 // stopPropagation keeps a button click from also triggering the row's focus click. Module scope:
@@ -59,10 +54,7 @@ export const MeasurementRow = ({
       <span style={styles.status}>{formatRowStatus(row.status)}</span>
       {metricLabel !== null && <span>{metricLabel}</span>}
       {row.restoreFailureReason !== null && (
-        <span
-          style={styles.restoreFailed}
-          title={formatRestoreFailureReason(row.restoreFailureReason)}
-        >
+        <span style={styles.restoreFailed} title={t.restoreFailureReason[row.restoreFailureReason]}>
           {t.restoreFailed}
         </span>
       )}

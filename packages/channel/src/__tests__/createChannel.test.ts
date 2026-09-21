@@ -12,8 +12,8 @@ afterEach(() => {
 });
 
 describe('origin (Q-2)', () => {
-  it('ignores a message from any origin other than the configured peer, on the host end', () => {
-    const { channel, localWindow, ignoredOrigins } = createHostChannelFixture();
+  it('reaches no handler for a message from any origin other than the configured peer, on the host end', () => {
+    const { channel, localWindow } = createHostChannelFixture();
     const onReady = vi.fn();
     channel.on('VIEWER_READY', onReady);
 
@@ -24,11 +24,49 @@ describe('origin (Q-2)', () => {
     );
 
     expect(onReady).not.toHaveBeenCalled();
-    expect(ignoredOrigins).toEqual(['http://evil.example']);
+  });
+
+  it('reaches the handler for a message from the configured peer origin, on the host end', () => {
+    const { channel, localWindow } = createHostChannelFixture();
+    const onReady = vi.fn();
+    channel.on('VIEWER_READY', onReady);
+
+    dispatchMessage(
+      localWindow,
+      { version: 1, type: 'VIEWER_READY', viewerVersion: '1.0.0' },
+      VIEWER_ORIGIN,
+    );
+
+    expect(onReady).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not settle a pending exchange with a message from a foreign origin', async () => {
+    const { channel, localWindow, delivered } = createHostChannelFixture({
+      exchangeTimeoutMs: 1000,
+    });
+    const answer = channel.exchange('REMOVE_MEASUREMENT', {
+      rowId: 'row-1',
+      measurementUid: 'uid-1',
+    });
+    const requestId = delivered[0].requestId;
+    answer.catch(() => undefined);
+
+    dispatchMessage(
+      localWindow,
+      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1', causedBy: requestId },
+      'http://evil.example',
+    );
+    dispatchMessage(
+      localWindow,
+      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1', causedBy: requestId },
+      VIEWER_ORIGIN,
+    );
+
+    await expect(answer).resolves.toMatchObject({ causedBy: requestId });
   });
 
   it('ignores a message from any origin other than the configured peer, on the viewer end', () => {
-    const { channel, localWindow, ignoredOrigins } = createViewerChannelFixture();
+    const { channel, localWindow } = createViewerChannelFixture();
     const onActivate = vi.fn();
     channel.on('ACTIVATE_TOOL', onActivate);
 
@@ -39,31 +77,42 @@ describe('origin (Q-2)', () => {
     );
 
     expect(onActivate).not.toHaveBeenCalled();
-    expect(ignoredOrigins).toEqual(['http://evil.example']);
+  });
+
+  it('reaches the handler for a message from the configured peer origin, on the viewer end', () => {
+    const { channel, localWindow } = createViewerChannelFixture();
+    const onActivate = vi.fn();
+    channel.on('ACTIVATE_TOOL', onActivate);
+
+    dispatchMessage(
+      localWindow,
+      { version: 1, type: 'ACTIVATE_TOOL', requestId: 'req-1', rowId: 'row-1', toolName: 'Length' },
+      HOST_ORIGIN,
+    );
+
+    expect(onActivate).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('the contract guard', () => {
   it('ignores a payload the guard rejects from the correct origin, on the host end', () => {
-    const { channel, localWindow, ignoredOrigins } = createHostChannelFixture();
+    const { channel, localWindow } = createHostChannelFixture();
     const onReady = vi.fn();
     channel.on('VIEWER_READY', onReady);
 
     dispatchMessage(localWindow, { version: 1, type: 'NOT_A_REAL_EVENT' }, VIEWER_ORIGIN);
 
     expect(onReady).not.toHaveBeenCalled();
-    expect(ignoredOrigins).toEqual([]);
   });
 
   it('ignores a payload the guard rejects from the correct origin, on the viewer end', () => {
-    const { channel, localWindow, ignoredOrigins } = createViewerChannelFixture();
+    const { channel, localWindow } = createViewerChannelFixture();
     const onActivate = vi.fn();
     channel.on('ACTIVATE_TOOL', onActivate);
 
     dispatchMessage(localWindow, { version: 1, type: 'ACTIVATE_TOOL' }, HOST_ORIGIN);
 
     expect(onActivate).not.toHaveBeenCalled();
-    expect(ignoredOrigins).toEqual([]);
   });
 });
 

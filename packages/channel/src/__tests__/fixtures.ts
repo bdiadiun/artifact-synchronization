@@ -23,8 +23,6 @@ export interface HostChannelFixture {
   deliver: (message: HostCommand) => boolean;
   delivered: HostCommand[];
   localWindow: Window;
-  onIgnoredOrigin: (origin: string) => void;
-  ignoredOrigins: string[];
 }
 
 // The host end: sends `HostCommand`s, receives `ViewerEvent`s.
@@ -32,15 +30,11 @@ export const createHostChannelFixture = (
   overrides: Partial<{ exchangeTimeoutMs: number; deliverResult: boolean }> = {},
 ): HostChannelFixture => {
   const delivered: HostCommand[] = [];
-  const ignoredOrigins: string[] = [];
   const localWindow = createFakeWindow();
 
   const deliver = (message: HostCommand): boolean => {
     delivered.push(message);
     return overrides.deliverResult ?? true;
-  };
-  const onIgnoredOrigin = (origin: string): void => {
-    ignoredOrigins.push(origin);
   };
 
   const channel = createChannel<ViewerEvent, HostCommand>({
@@ -49,24 +43,21 @@ export const createHostChannelFixture = (
     deliver,
     localWindow,
     exchangeTimeoutMs: overrides.exchangeTimeoutMs,
-    onIgnoredOrigin,
   });
 
-  return { channel, deliver, delivered, localWindow, onIgnoredOrigin, ignoredOrigins };
+  return { channel, deliver, delivered, localWindow };
 };
 
 export interface ViewerChannelFixture {
   channel: Channel<HostCommand, ViewerEvent>;
   delivered: ViewerEvent[];
   localWindow: Window;
-  ignoredOrigins: string[];
 }
 
 // The viewer end: sends `ViewerEvent`s, receives `HostCommand`s. Proves the same mechanics work in
 // the opposite direction, with the opposite guard.
 export const createViewerChannelFixture = (): ViewerChannelFixture => {
   const delivered: ViewerEvent[] = [];
-  const ignoredOrigins: string[] = [];
   const localWindow = createFakeWindow();
 
   const channel = createChannel<HostCommand, ViewerEvent>({
@@ -77,10 +68,7 @@ export const createViewerChannelFixture = (): ViewerChannelFixture => {
       return true;
     },
     localWindow,
-    onIgnoredOrigin: (origin: string): void => {
-      ignoredOrigins.push(origin);
-    },
   });
 
-  return { channel, delivered, localWindow, ignoredOrigins };
+  return { channel, delivered, localWindow };
 };

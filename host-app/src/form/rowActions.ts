@@ -1,20 +1,12 @@
 // What each user-triggered row action does to state, dispatch and the outgoing bridge. Mirrors
 // viewerEventHandlers.ts, which does the same job for the incoming half of the form.
 
-import type { Dispatch } from 'react';
 import type { ToolName } from '@bdiadiun/scoring-contract';
-import type { HostChannel } from '@bdiadiun/scoring-orchestrator';
 import { DEFAULT_TOOL } from '@app/config';
 import { findRow } from '@app/utils/selectors';
-import { FormActionType, RowStatus, type FormAction, type FormState } from './rows';
+import { FormActionType, RowStatus } from './rows';
+import type { FormContext } from './rows.props';
 import { warnUnanswered } from './unanswered';
-
-export interface RowActionsContext {
-  state: FormState;
-  dispatch: Dispatch<FormAction>;
-  send: HostChannel['send'];
-  exchange: HostChannel['exchange'];
-}
 
 export interface RowActions {
   addRow: (toolName?: ToolName) => void;
@@ -24,11 +16,11 @@ export interface RowActions {
   focus: (rowId: string) => void;
 }
 
-const addRow = (context: RowActionsContext, toolName: ToolName = DEFAULT_TOOL): void => {
+const addRow = (context: FormContext, toolName: ToolName = DEFAULT_TOOL): void => {
   context.dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID(), toolName });
 };
 
-const activate = (context: RowActionsContext, rowId: string): void => {
+const activate = (context: FormContext, rowId: string): void => {
   const previousArmedRowId = context.state.armedRowId;
   const targetRow = findRow(context.state.rows, rowId);
   context.dispatch({ type: FormActionType.ArmRow, rowId });
@@ -41,14 +33,14 @@ const activate = (context: RowActionsContext, rowId: string): void => {
   }
 };
 
-const cancel = (context: RowActionsContext, rowId: string): void => {
+const cancel = (context: FormContext, rowId: string): void => {
   context.dispatch({ type: FormActionType.DisarmRow, rowId });
   context.send('DEACTIVATE_TOOL', { rowId });
 };
 
 // Behaviour depends on row status: `done` removes the real annotation in the viewer; `drawing`
 // is cancelled first (nothing drawn yet); `pending` just drops the row.
-const remove = (context: RowActionsContext, rowId: string): void => {
+const remove = (context: FormContext, rowId: string): void => {
   const row = findRow(context.state.rows, rowId);
   if (row === undefined) {
     return;
@@ -72,7 +64,7 @@ const remove = (context: RowActionsContext, rowId: string): void => {
 };
 
 // Only a `done` row has a real annotation to scroll/highlight to; no reply expected.
-const focus = (context: RowActionsContext, rowId: string): void => {
+const focus = (context: FormContext, rowId: string): void => {
   const row = findRow(context.state.rows, rowId);
   if (row?.status !== RowStatus.Done || row.measurementUid === null) {
     return;
@@ -80,7 +72,7 @@ const focus = (context: RowActionsContext, rowId: string): void => {
   context.send('FOCUS_MEASUREMENT', { rowId, measurementUid: row.measurementUid });
 };
 
-export const createRowActions = (context: RowActionsContext): RowActions => ({
+export const createRowActions = (context: FormContext): RowActions => ({
   addRow: (toolName?: ToolName): void => {
     addRow(context, toolName);
   },

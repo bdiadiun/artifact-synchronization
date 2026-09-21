@@ -5,12 +5,17 @@ import { DEFAULT_LOG_PREFIX } from './config.js';
 
 export type Disposer = () => void;
 
-export interface DisposerSet {
+// What anything holding a listener, a timer or a subscription offers its owner (Q-5); declared
+// once here and extended by both ends.
+export interface Disposable {
+  dispose: () => void;
+}
+
+export interface DisposerSet extends Disposable {
   // Release order is registration order, so the caller states its unmount order by adding in it.
   // Added after the release, a disposer is released at once rather than kept for a call that
   // will never come (Q-5).
   add: (disposer: Disposer) => void;
-  dispose: () => void;
 }
 
 export interface DisposerSetOptions {

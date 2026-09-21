@@ -2,6 +2,7 @@
 // from `@bdiadiun/scoring-orchestrator` and never reach into a module of their own choosing.
 
 export { createOrchestrator } from './createOrchestrator';
+export { INITIAL_ORCHESTRATOR_STATE } from './orchestratorState';
 export type {
   CreateOrchestratorOptions,
   HostChannel,

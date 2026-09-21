@@ -59,9 +59,6 @@ export const isHostCommand = (value: unknown): value is HostCommand => {
   if (!isRecord(value) || !hasVersion1(value)) {
     return false;
   }
-  if (!(HOST_COMMAND_TYPES as readonly string[]).includes(value.type as string)) {
-    return false;
-  }
   return (
     isActivateToolCommand(value) ||
     isDeactivateToolCommand(value) ||

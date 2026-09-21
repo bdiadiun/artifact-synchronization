@@ -55,10 +55,6 @@ export const createOrchestrator = (options: CreateOrchestratorOptions): Orchestr
       remember: armedTool.remember,
       onQueueChange: publishQueueLength,
     }),
-    onIgnoredOrigin: (): void => {
-      store.patch({ ignoredOrigins: store.get().ignoredOrigins + 1 });
-      store.notify(null);
-    },
   });
 
   const handleViewerEvent = createViewerEventHandler({

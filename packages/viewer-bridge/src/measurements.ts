@@ -1,4 +1,9 @@
-import type { Metrics, Unit } from '@bdiadiun/scoring-contract';
+import {
+  isFiniteNumber,
+  type MetricKey,
+  type Metrics,
+  type Unit,
+} from '@bdiadiun/scoring-contract';
 
 import { LOG_PREFIX } from './config.js';
 import type { MetricsOptions, OhifMeasurementLike, StatsEntry } from './measurements.props.js';
@@ -55,9 +60,6 @@ const normaliseUnit = (
   return unit;
 };
 
-const isFiniteNumber = (value: unknown): value is number =>
-  typeof value === 'number' && Number.isFinite(value);
-
 const findStatsEntry = (measurement: OhifMeasurementLike, key: string): StatsEntry | null => {
   const data = measurement.data;
 
@@ -81,22 +83,34 @@ const findStatsEntry = (measurement: OhifMeasurementLike, key: string): StatsEnt
   return null;
 };
 
-const toAreaMetrics = (measurement: OhifMeasurementLike, quiet?: boolean): Metrics | null => {
-  const stats = findStatsEntry(measurement, 'area');
+// The stats field naming the unit and the table of spellings, per metric key.
+const METRIC_SPECS = {
+  area: { unitField: 'areaUnit', units: AREA_UNITS },
+  // No `'mm'` default as in OHIF's Length.ts:118: mm on an uncalibrated image would break Q-6.
+  length: { unitField: 'unit', units: LENGTH_UNITS },
+} satisfies Record<MetricKey, { unitField: string; units: Record<string, Unit | undefined> }>;
+
+const readMetrics = (
+  measurement: OhifMeasurementLike,
+  key: MetricKey,
+  quiet?: boolean,
+): Metrics | null => {
+  const { unitField, units } = METRIC_SPECS[key];
+  const stats = findStatsEntry(measurement, key);
 
   if (!stats) {
     note(
       quiet,
-      `${LOG_PREFIX} no area in measurement.data for ${measurement.uid ?? '(no uid)'}`,
+      `${LOG_PREFIX} no ${key} in measurement.data for ${measurement.uid ?? '(no uid)'}`,
       measurement.data,
     );
     return null;
   }
 
   const unit = normaliseUnit(
-    stats.areaUnit,
-    AREA_UNITS,
-    `area of ${measurement.uid ?? '(no uid)'}`,
+    stats[unitField],
+    units,
+    `${key} of ${measurement.uid ?? '(no uid)'}`,
     quiet,
   );
 
@@ -104,36 +118,9 @@ const toAreaMetrics = (measurement: OhifMeasurementLike, quiet?: boolean): Metri
     return null;
   }
 
-  // The assertion here and in toLengthMetrics is safe: findStatsEntry only returns an entry whose
-  // value already passed isFiniteNumber.
-  return { area: { value: stats.area as number, unit } };
-};
-
-// No `'mm'` default as in OHIF's Length.ts:118: mm on an uncalibrated image would break Q-6.
-const toLengthMetrics = (measurement: OhifMeasurementLike, quiet?: boolean): Metrics | null => {
-  const stats = findStatsEntry(measurement, 'length');
-
-  if (!stats) {
-    note(
-      quiet,
-      `${LOG_PREFIX} no length in measurement.data for ${measurement.uid ?? '(no uid)'}`,
-      measurement.data,
-    );
-    return null;
-  }
-
-  const unit = normaliseUnit(
-    stats.unit,
-    LENGTH_UNITS,
-    `length of ${measurement.uid ?? '(no uid)'}`,
-    quiet,
-  );
-
-  if (!unit) {
-    return null;
-  }
-
-  return { length: { value: stats.length as number, unit } };
+  // The assertion is safe: findStatsEntry only returns an entry whose value already passed
+  // isFiniteNumber.
+  return { [key]: { value: stats[key] as number, unit } };
 };
 
 export const toMetrics = (
@@ -143,9 +130,9 @@ export const toMetrics = (
   switch (measurement.toolName) {
     case 'EllipticalROI':
     case 'RectangleROI':
-      return toAreaMetrics(measurement, quiet);
+      return readMetrics(measurement, 'area', quiet);
     case 'Length':
-      return toLengthMetrics(measurement, quiet);
+      return readMetrics(measurement, 'length', quiet);
     case undefined:
     default:
       note(quiet, `${LOG_PREFIX} no metric mapping for tool "${measurement.toolName ?? '(none)'}"`);

@@ -1,4 +1,5 @@
 import type { ViewerReadyEvent } from '@bdiadiun/scoring-contract';
+import type { Disposable } from '@bdiadiun/scoring-channel';
 
 import { LOG_PREFIX } from './config.js';
 import { readViewerVersion } from './viewerVersion.js';
@@ -11,9 +12,7 @@ export interface HandshakeDeps {
   post: PostToHost;
 }
 
-export interface Handshake {
-  dispose: () => void;
-}
+export type Handshake = Disposable;
 
 const VIEWER_VERSION = readViewerVersion() ?? 'unknown';
 

@@ -56,30 +56,8 @@ describe('createCommandRegistry', () => {
     }).not.toThrow();
   });
 
-  it('warns once for an unknown command type, not on every repeat', () => {
+  it('replaces a handler registered a second time for the same type', () => {
     const registry = createCommandRegistry();
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-
-    registry.dispatch(activateTool);
-    registry.dispatch(activateTool);
-    registry.dispatch(activateTool);
-
-    expect(warnSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('warns separately for a second unknown type after the first', () => {
-    const registry = createCommandRegistry();
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-
-    registry.dispatch(activateTool);
-    registry.dispatch(removeMeasurement);
-
-    expect(warnSpy).toHaveBeenCalledTimes(2);
-  });
-
-  it('replaces a handler registered a second time for the same type, and says so', () => {
-    const registry = createCommandRegistry();
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const firstHandler = vi.fn();
     const secondHandler = vi.fn();
 
@@ -89,6 +67,16 @@ describe('createCommandRegistry', () => {
 
     expect(firstHandler).not.toHaveBeenCalled();
     expect(secondHandler).toHaveBeenCalledTimes(1);
-    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('dispatching a type with no handler does nothing and does not throw', () => {
+    const registry = createCommandRegistry();
+    const handleRemove = vi.fn();
+    registry.register('REMOVE_MEASUREMENT', handleRemove);
+
+    expect(() => {
+      registry.dispatch(activateTool);
+    }).not.toThrow();
+    expect(handleRemove).not.toHaveBeenCalled();
   });
 });

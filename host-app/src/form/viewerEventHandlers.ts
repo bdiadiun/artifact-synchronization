@@ -1,7 +1,6 @@
 // What each viewer event does to the form. Pure wiring around `dispatch`/`send`: the row state
 // itself stays in the reducer, `useViewerEvents` decides *when* these run.
 
-import type { Dispatch } from 'react';
 import type {
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
@@ -9,18 +8,14 @@ import type {
   MeasurementUpdatedEvent,
   RestoreMeasurementRequest,
 } from '@bdiadiun/scoring-contract';
-import type { HostChannel } from '@bdiadiun/scoring-orchestrator';
 import { studyInstanceUid } from '@app/config';
 import type { ViewerEventHandlers } from '@app/hooks/useViewerEvents';
 import { findRow, findRowByUid } from '@app/utils/selectors';
-import { FormActionType, RowStatus, type FormAction, type FormState, type Row } from './rows';
+import { FormActionType, RowStatus, type Row } from './rows';
+import type { FormContext } from './rows.props';
 import { warnUnanswered } from './unanswered';
 
-export interface ViewerEventContext {
-  state: FormState;
-  dispatch: Dispatch<FormAction>;
-  send: HostChannel['send'];
-  exchange: HostChannel['exchange'];
+export interface ViewerEventContext extends FormContext {
   // Rows loaded from sessionStorage at mount (A-14); fixed for the session, independent of `state`.
   restoredRows: readonly Row[];
 }

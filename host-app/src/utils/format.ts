@@ -1,12 +1,12 @@
-import type {
-  Metric,
-  MetricKey,
-  Metrics,
-  RestoreFailureReason,
-  Unit,
+import {
+  METRIC_KEY_BY_TOOL,
+  type Metric,
+  type MetricKey,
+  type Metrics,
+  type Unit,
 } from '@bdiadiun/scoring-contract';
 import { t } from '@app/i18n';
-import { RowStatus, metricKeyForTool, type Row } from '@app/form/rows';
+import { RowStatus, type Row } from '@app/form/rows';
 
 const UNIT_LABELS: Record<Unit, string> = {
   mm2: 'mm²',
@@ -31,11 +31,7 @@ export const formatMetric = (metric: Metric): string =>
 
 export const formatRowStatus = (status: RowStatus): string => STATUS_LABELS[status];
 
-// A-14: tooltip text for the restoreFailed marker; t.restoreFailureReason is the single lookup.
-export const formatRestoreFailureReason = (reason: RestoreFailureReason): string =>
-  t.restoreFailureReason[reason];
-
-export const formatRowKind = (row: Row): string => KIND_LABELS[metricKeyForTool(row.toolName)];
+export const formatRowKind = (row: Row): string => KIND_LABELS[METRIC_KEY_BY_TOOL[row.toolName]];
 
 // S-5.4: shows the metric matching the row's own tool. If that key is absent, the first metric in
 // the payload is shown with its key (P-8), so a metric type added later is visible instead of
@@ -46,7 +42,7 @@ export const formatRowMetric = (row: Row): string | null => {
   }
   // `Metrics` is `Record<string, Metric>`, so TS treats every key as present while at runtime only
   // the metrics the viewer sent exist; `Partial` keeps the check below honest.
-  const own = (row.metrics as Partial<Metrics>)[metricKeyForTool(row.toolName)];
+  const own = (row.metrics as Partial<Metrics>)[METRIC_KEY_BY_TOOL[row.toolName]];
   if (own !== undefined) {
     return formatMetric(own);
   }

@@ -264,7 +264,9 @@ describe('useScoringForm', () => {
       rerender({ lastEvent: measurementAdded(rowId) });
     });
 
-    expect(computeTotals(result.current.rows)).toEqual([{ unit: 'mm2', value: 124.5, count: 1 }]);
+    expect(computeTotals(result.current.rows, 'area')).toEqual([
+      { unit: 'mm2', value: 124.5, count: 1 },
+    ]);
 
     const updated = measurementUpdated('uid-1', { metrics: { area: { value: 200, unit: 'mm2' } } });
     act(() => {
@@ -273,7 +275,9 @@ describe('useScoringForm', () => {
 
     const row = result.current.rows.find((r) => r.rowId === rowId);
     expect(row?.metrics).toEqual(updated.metrics);
-    expect(computeTotals(result.current.rows)).toEqual([{ unit: 'mm2', value: 200, count: 1 }]);
+    expect(computeTotals(result.current.rows, 'area')).toEqual([
+      { unit: 'mm2', value: 200, count: 1 },
+    ]);
   });
 
   it('MEASUREMENT_UPDATED never triggers send (Q-4: no echo loop on the host side)', () => {

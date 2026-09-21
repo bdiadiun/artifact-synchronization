@@ -16,7 +16,6 @@ export interface HostChannelDeps {
   hostWindow: Window;
   exchangeTimeoutMs?: number;
   deliver: CommandDelivery;
-  onIgnoredOrigin: (origin: string) => void;
 }
 
 export interface ViewerEventDeps {
@@ -31,7 +30,6 @@ export const createHostChannel = ({
   hostWindow,
   exchangeTimeoutMs,
   deliver,
-  onIgnoredOrigin,
 }: HostChannelDeps): HostChannel =>
   createChannel<ViewerEvent, HostCommand>({
     peerOrigin: viewerOrigin,
@@ -40,7 +38,6 @@ export const createHostChannel = ({
     localWindow: hostWindow,
     logPrefix: LOG_PREFIX,
     exchangeTimeoutMs,
-    onIgnoredOrigin,
   });
 
 export const createViewerEventHandler = ({

@@ -1,8 +1,6 @@
 // Pure, side-effect-free reducer; `useScoringForm.ts` wires it to `send`/`lastEvent`.
 
-import { METRIC_KEY_BY_TOOL, type MetricKey, type ToolName } from '@bdiadiun/scoring-contract';
-import { DEFAULT_TOOL } from '@app/config';
-import { findRow, findRowByUid, hasRow } from '@app/utils/selectors';
+import { findRow, findRowByUid } from '@app/utils/selectors';
 import type { ActionOf, FormAction, FormState, Row } from './rows.props';
 
 export type { FormAction, FormState, Row } from './rows.props';
@@ -12,9 +10,6 @@ export enum RowStatus {
   Drawing = 'drawing',
   Done = 'done',
 }
-
-// S-5.4: the metric a row's tool produces; the table itself belongs to the wire contract.
-export const metricKeyForTool = (toolName: ToolName): MetricKey => METRIC_KEY_BY_TOOL[toolName];
 
 export enum FormActionType {
   AddRow = 'ADD_ROW',
@@ -42,7 +37,7 @@ const addRow = (state: FormState, action: ActionOf<FormActionType.AddRow>): Form
   const newRow: Row = {
     rowId: action.rowId,
     status: RowStatus.Pending,
-    toolName: action.toolName ?? DEFAULT_TOOL,
+    toolName: action.toolName,
     metrics: null,
     measurementUid: null,
     geometry: null,
@@ -52,7 +47,7 @@ const addRow = (state: FormState, action: ActionOf<FormActionType.AddRow>): Form
 };
 
 const armRow = (state: FormState, action: ActionOf<FormActionType.ArmRow>): FormState => {
-  if (!hasRow(state.rows, action.rowId)) {
+  if (findRow(state.rows, action.rowId) === undefined) {
     return state;
   }
   const rows = state.rows.map((row) => {
@@ -110,7 +105,7 @@ const updateMeasurement = (
 };
 
 const removeRow = (state: FormState, action: ActionOf<FormActionType.RemoveRow>): FormState => {
-  if (!hasRow(state.rows, action.rowId)) {
+  if (findRow(state.rows, action.rowId) === undefined) {
     return state;
   }
   return {
