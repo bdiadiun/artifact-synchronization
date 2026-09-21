@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                             |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 55 `refactor: fewer files, one teardown` (branch `refactor/fewer-files`, node F-61)                                                               |
-| Gate           | 2 — 121 files became 91 and the two teardowns became one; awaiting result approval                                                                |
-| Last merged PR | #66 `docs: start the viewer the way it works`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                               |
+| Field          | Value                                                                                                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 56 `refactor: remove dead code` (branch `refactor/remove-dead-code`, node F-62)                                                                                            |
+| Gate           | 2 — unused code removed and repeated declarations written once; awaiting result approval                                                                                   |
+| Last merged PR | #67 `refactor: fewer files, one teardown`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                              |
+| Next slice     | 57 `refactor: one dispatch path` (the bridge on `createChannel`, the form subscribed to events directly, the orchestrator folded), then 58 `refactor: drop viewer-adapter` |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -42,6 +42,8 @@ not a log. Update it in every PR (same commit as the work it describes).
 - A warm `node_modules` hid a broken dependency layout: after `npm ci`, Vitest could not find jsdom and ESLint could not resolve React types for Testing Library. Shared test tooling and React types now live in the root `package.json` (CONVENTIONS §1). Always verify with `npm ci` before gate 2.
 
 ## Follow-ups (out of current scope)
+
+- The fork has an uncommitted local branch `chore/take-the-adapter-release` (adapter pin 0.0.3 → 0.0.4, lock follows); it waits for approval and will be superseded by the pin that follows slice 56's release.
 
 - Optional, not scheduled: unit tests for the extension's `throttle.ts` and `toMetrics`; bonus S-5.4 Length (F-17); bonus S-5.6 state restore (F-19).
 

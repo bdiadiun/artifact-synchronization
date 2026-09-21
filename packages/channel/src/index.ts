@@ -9,5 +9,4 @@ export type { PeerPost, PeerPostOptions } from './peerPost.js';
 export { createIncomingMessages } from './incomingMessages.js';
 export type { IncomingMessages, IncomingMessagesOptions } from './incomingMessages.js';
 export { createDisposerSet } from './disposers.js';
-export type { Disposer, DisposerSet, DisposerSetOptions } from './disposers.js';
-export { DEFAULT_EXCHANGE_TIMEOUT_MS } from './config.js';
+export type { Disposable, Disposer, DisposerSet, DisposerSetOptions } from './disposers.js';

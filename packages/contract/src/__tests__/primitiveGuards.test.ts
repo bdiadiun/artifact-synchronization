@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { isMeasurementGeometry, isNonEmptyString, isRecord, isToolName } from '../primitiveGuards';
+import {
+  isFiniteNumber,
+  isMeasurementGeometry,
+  isNonEmptyString,
+  isOneOf,
+  isRecord,
+  isToolName,
+} from '../primitiveGuards';
 import type { MeasurementGeometry } from '../index';
 
 const geometry: MeasurementGeometry = {
@@ -36,6 +43,40 @@ describe('isNonEmptyString', () => {
 
   it('rejects a non-string value', () => {
     expect(isNonEmptyString(42)).toBe(false);
+  });
+});
+
+describe('isFiniteNumber', () => {
+  it('accepts a finite number', () => {
+    expect(isFiniteNumber(124.5)).toBe(true);
+  });
+
+  it('rejects NaN', () => {
+    expect(isFiniteNumber(NaN)).toBe(false);
+  });
+
+  it('rejects Infinity', () => {
+    expect(isFiniteNumber(Infinity)).toBe(false);
+  });
+
+  it('rejects a numeric string', () => {
+    expect(isFiniteNumber('42')).toBe(false);
+  });
+});
+
+describe('isOneOf', () => {
+  const isColor = isOneOf(['red', 'green', 'blue'] as const);
+
+  it('accepts a member of the given values', () => {
+    expect(isColor('green')).toBe(true);
+  });
+
+  it('rejects a string that is not a member', () => {
+    expect(isColor('purple')).toBe(false);
+  });
+
+  it('rejects a non-string value', () => {
+    expect(isColor(42)).toBe(false);
   });
 });
 

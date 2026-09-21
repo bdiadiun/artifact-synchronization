@@ -1,14 +1,9 @@
 import type { CSSProperties } from 'react';
-import type { ToolName } from '@bdiadiun/scoring-contract';
 import type { Row } from '@app/form/rows';
+import type { RowActions } from '@app/form/rowActions';
 
-export interface ScoringPanelProps {
+export interface ScoringPanelProps extends RowActions {
   rows: Row[];
-  addRow: (toolName?: ToolName) => void;
-  activate: (rowId: string) => void;
-  cancel: (rowId: string) => void;
-  remove: (rowId: string) => void;
-  focus: (rowId: string) => void;
 }
 
 export const styles = {

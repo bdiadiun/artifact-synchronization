@@ -3,6 +3,7 @@
 
 import type { BridgeMessage } from '@bdiadiun/scoring-contract';
 import { DEFAULT_LOG_PREFIX } from './config.js';
+import type { Disposable } from './disposers.js';
 
 export interface IncomingMessagesOptions<TIncoming extends BridgeMessage> {
   peerOrigin: string;
@@ -10,13 +11,9 @@ export interface IncomingMessagesOptions<TIncoming extends BridgeMessage> {
   onMessage: (message: TIncoming) => void;
   localWindow?: Window;
   logPrefix?: string;
-  // Called for every message refused on its origin, so an end can count or surface them.
-  onIgnoredOrigin?: (origin: string) => void;
 }
 
-export interface IncomingMessages {
-  dispose: () => void;
-}
+export type IncomingMessages = Disposable;
 
 export const createIncomingMessages = <TIncoming extends BridgeMessage>({
   peerOrigin,
@@ -24,7 +21,6 @@ export const createIncomingMessages = <TIncoming extends BridgeMessage>({
   onMessage,
   localWindow = window,
   logPrefix = DEFAULT_LOG_PREFIX,
-  onIgnoredOrigin,
 }: IncomingMessagesOptions<TIncoming>): IncomingMessages => {
   // Logged once per foreign origin: a misconfigured origin stays diagnosable without flooding the
   // console with browser extensions and dev-server clients.
@@ -35,7 +31,6 @@ export const createIncomingMessages = <TIncoming extends BridgeMessage>({
       loggedOrigins.add(origin);
       console.debug(`${logPrefix} ignoring message from foreign origin ${origin}`);
     }
-    onIgnoredOrigin?.(origin);
   };
 
   const handleMessage = (event: MessageEvent): void => {

@@ -142,7 +142,6 @@ export const createToolCommands = ({
   return {
     handleActivateTool,
     handleDeactivateTool,
-    getArmedRowId: () => armedRow.get()?.rowId ?? null,
     getArmed: armedRow.get,
     disarm: armedRow.disarm,
   };

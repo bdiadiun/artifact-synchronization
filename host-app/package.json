@@ -12,8 +12,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
-    "@bdiadiun/scoring-contract": "0.0.9",
-    "@bdiadiun/scoring-orchestrator": "0.0.9",
+    "@bdiadiun/scoring-contract": "0.0.10",
+    "@bdiadiun/scoring-orchestrator": "0.0.10",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

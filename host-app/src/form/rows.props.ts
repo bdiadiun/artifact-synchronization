@@ -1,9 +1,11 @@
+import type { Dispatch } from 'react';
 import type {
   MeasurementGeometry,
   Metrics,
   RestoreFailureReason,
   ToolName,
 } from '@bdiadiun/scoring-contract';
+import type { Orchestrator } from '@bdiadiun/scoring-orchestrator';
 // The two enums stay in `rows.ts`: an enum is a value, and these are imported here in type
 // position only, so nothing is required at runtime in either direction.
 import type { FormActionType, RowStatus } from './rows';
@@ -28,7 +30,7 @@ export interface FormState {
 }
 
 export type FormAction =
-  | { type: FormActionType.AddRow; rowId: string; toolName?: ToolName }
+  | { type: FormActionType.AddRow; rowId: string; toolName: ToolName }
   | { type: FormActionType.ArmRow; rowId: string }
   | { type: FormActionType.DisarmRow; rowId: string }
   | {
@@ -44,3 +46,10 @@ export type FormAction =
   | { type: FormActionType.RestoreFailed; rowId: string; reason: RestoreFailureReason };
 
 export type ActionOf<T extends FormActionType> = Extract<FormAction, { type: T }>;
+
+// What a row action and a viewer-event handler are both given: the state they read, the dispatch
+// they change it with and the two ways to reach the viewer.
+export interface FormContext extends Pick<Orchestrator, 'send' | 'exchange'> {
+  state: FormState;
+  dispatch: Dispatch<FormAction>;
+}

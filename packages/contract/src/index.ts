@@ -12,15 +12,17 @@ export type {
 } from './vocabulary.props';
 
 export { ANSWER_TYPE_BY_COMMAND } from './answers';
-export type {
-  AnsweredCommand,
-  AnsweredCommandType,
-  AnswerOf,
-  AnswerTypeByCommand,
-  AnswerTypeOf,
-} from './answers.props';
+export type { AnsweredCommandType, AnswerTypeByCommand, AnswerTypeOf } from './answers.props';
 
-export { isMeasurementGeometry, isNonEmptyString, isRecord, isToolName } from './primitiveGuards';
+export {
+  isFiniteNumber,
+  isMeasurementGeometry,
+  isMetrics,
+  isNonEmptyString,
+  isOneOf,
+  isRecord,
+  isToolName,
+} from './primitiveGuards';
 
 export { HOST_COMMAND_TYPES, isHostCommand } from './hostCommands';
 export type {

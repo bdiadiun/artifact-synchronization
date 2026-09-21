@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { RowStatus, type Row } from '@app/form/rows';
-import { findRow, findRowByUid, hasRow } from '@app/utils/selectors';
+import { findRow, findRowByUid } from '@app/utils/selectors';
 
 const row = (rowId: string, measurementUid: string | null): Row => ({
   rowId,
@@ -35,15 +35,5 @@ describe('findRowByUid', () => {
 
   it('never matches a row without a measurement', () => {
     expect(findRowByUid(rows, 'uid-9')).toBeUndefined();
-  });
-});
-
-describe('hasRow', () => {
-  it('is true for a known row id', () => {
-    expect(hasRow(rows, 'row-1')).toBe(true);
-  });
-
-  it('is false for an unknown row id', () => {
-    expect(hasRow(rows, 'row-9')).toBe(false);
   });
 });

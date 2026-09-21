@@ -8,8 +8,6 @@ export const DEFAULT_TOOL: ToolName = 'EllipticalROI';
 
 export const LENGTH_TOOL: ToolName = 'Length';
 
-export const HOST_ORIGIN = 'http://localhost:5173';
-
 // Used whenever the form's own URL names no study, or names one that is not a valid UID.
 export const FALLBACK_STUDY_INSTANCE_UID = '1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1';
 

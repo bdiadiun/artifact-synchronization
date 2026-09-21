@@ -1,6 +1,6 @@
 // Per-unit sums for the form footer (A-11). mm² and px² are never added together.
 
-import type { Metrics, Unit } from '@bdiadiun/scoring-contract';
+import type { MetricKey, Metrics, Unit } from '@bdiadiun/scoring-contract';
 import { RowStatus, type Row } from './rows';
 
 export interface Total {
@@ -21,7 +21,7 @@ const compareUnits = (a: Unit, b: Unit): number => {
   return a.localeCompare(b);
 };
 
-export const computeTotals = (rows: readonly Row[], metric: keyof Metrics = 'area'): Total[] => {
+export const computeTotals = (rows: readonly Row[], metric: MetricKey): Total[] => {
   const groups = new Map<Unit, { value: number; count: number }>();
 
   for (const row of rows) {

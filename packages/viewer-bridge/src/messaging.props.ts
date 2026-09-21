@@ -1,18 +1,5 @@
-import type {
-  HostCommand,
-  MeasurementAddedEvent,
-  MeasurementRemovedEvent,
-  MeasurementUpdatedEvent,
-  MeasurementsRestoredEvent,
-  ViewerReadyEvent,
-} from '@bdiadiun/scoring-contract';
-
-export type ViewerEvent =
-  | ViewerReadyEvent
-  | MeasurementAddedEvent
-  | MeasurementUpdatedEvent
-  | MeasurementRemovedEvent
-  | MeasurementsRestoredEvent;
+import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { Disposable } from '@bdiadiun/scoring-channel';
 
 export type PostToHost = (message: ViewerEvent) => boolean;
 
@@ -21,6 +8,4 @@ export interface CommandListenerDeps {
   onCommand: (command: HostCommand) => void;
 }
 
-export interface CommandListener {
-  dispose: () => void;
-}
+export type CommandListener = Disposable;

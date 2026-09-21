@@ -1,4 +1,5 @@
 import type { Metrics } from '@bdiadiun/scoring-contract';
+import type { Disposable } from '@bdiadiun/scoring-channel';
 import type { OhifMeasurementService, OhifServicesManager } from './ohif.props.js';
 import type { ArmedState } from './commands.props.js';
 import type { DisarmReason } from './commands.js';
@@ -15,13 +16,10 @@ export interface MeasurementStreamDeps {
   takeCause: (uid: string) => string | undefined;
 }
 
-export interface MeasurementStream {
-  dispose: () => void;
-}
+export type MeasurementStream = Disposable;
 
-export interface AddedCorrection {
+export interface AddedCorrection extends Disposable {
   schedule: (uid: string) => void;
-  dispose: () => void;
 }
 
 export interface AddedCorrectionDeps {

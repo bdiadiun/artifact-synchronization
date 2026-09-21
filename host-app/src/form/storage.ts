@@ -4,7 +4,9 @@
 
 import {
   isMeasurementGeometry,
+  isMetrics,
   isNonEmptyString,
+  isOneOf,
   isRecord,
   isToolName,
   type MeasurementGeometry,
@@ -25,21 +27,10 @@ const storageKey = (studyInstanceUid: string): string => `scoring-form:rows:${st
 
 const ROW_STATUSES: readonly RowStatus[] = Object.values(RowStatus);
 
-const isRowStatus = (value: unknown): value is RowStatus =>
-  typeof value === 'string' && (ROW_STATUSES as readonly string[]).includes(value);
+const isRowStatus = isOneOf(ROW_STATUSES);
 
-const isStoredMetrics = (value: unknown): value is Metrics | null => {
-  if (value === null) {
-    return true;
-  }
-  return (
-    isRecord(value) &&
-    Object.values(value).every(
-      (metric) =>
-        isRecord(metric) && typeof metric.value === 'number' && typeof metric.unit === 'string',
-    )
-  );
-};
+const isStoredMetrics = (value: unknown): value is Metrics | null =>
+  value === null || isMetrics(value);
 
 const isStoredGeometry = (value: unknown): value is MeasurementGeometry | null =>
   value === null || isMeasurementGeometry(value);

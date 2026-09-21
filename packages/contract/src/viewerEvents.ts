@@ -3,6 +3,7 @@ import {
   isMeasurementGeometry,
   isMetrics,
   isNonEmptyString,
+  isOneOf,
   isOptionalString,
   isRecord,
 } from './primitiveGuards';
@@ -23,8 +24,7 @@ const RESTORE_FAILURE_REASON_VALUES: readonly RestoreFailureReason[] = [
   'viewer-error',
 ];
 
-const isRestoreFailureReason = (value: unknown): value is RestoreFailureReason =>
-  typeof value === 'string' && (RESTORE_FAILURE_REASON_VALUES as readonly string[]).includes(value);
+const isRestoreFailureReason = isOneOf(RESTORE_FAILURE_REASON_VALUES);
 
 const isRestoreFailure = (value: unknown): boolean =>
   isRecord(value) && isNonEmptyString(value.rowId) && isRestoreFailureReason(value.reason);
@@ -69,9 +69,6 @@ const isMeasurementsRestoredEvent = (value: Record<string, unknown>): boolean =>
 
 export const isViewerEvent = (value: unknown): value is ViewerEvent => {
   if (!isRecord(value) || !hasVersion1(value)) {
-    return false;
-  }
-  if (!(VIEWER_EVENT_TYPES as readonly string[]).includes(value.type as string)) {
     return false;
   }
   return (

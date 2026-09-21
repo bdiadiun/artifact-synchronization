@@ -7,11 +7,7 @@ import { formatMetric } from '@app/utils/format';
 import { t } from '@app/i18n';
 import { styles, type TotalsFooterProps } from './TotalsFooter.props';
 
-export const TotalsFooter = ({
-  totals,
-  label = t.total,
-  primaryUnit = 'mm2',
-}: TotalsFooterProps): JSX.Element => {
+export const TotalsFooter = ({ totals, label, primaryUnit }: TotalsFooterProps): JSX.Element => {
   if (totals.length === 0) {
     return (
       <div>

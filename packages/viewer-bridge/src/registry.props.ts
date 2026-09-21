@@ -1,10 +1,11 @@
 import type { HostCommand } from '@bdiadiun/scoring-contract';
+import type { MessageOfType } from '@bdiadiun/scoring-channel';
 
 export type CommandType = HostCommand['type'];
 
-export type CommandOfType<TType extends CommandType> = Extract<HostCommand, { type: TType }>;
-
-export type CommandHandler<TType extends CommandType> = (command: CommandOfType<TType>) => void;
+export type CommandHandler<TType extends CommandType> = (
+  command: MessageOfType<HostCommand, TType>,
+) => void;
 
 // A handler per command type; used with `satisfies` so a new type in the contract fails the
 // type check until a handler exists for it.

@@ -18,11 +18,10 @@ export interface StateStore {
   notify: (event: ViewerEvent | null) => void;
 }
 
-const INITIAL_STATE: OrchestratorState = {
+export const INITIAL_ORCHESTRATOR_STATE: OrchestratorState = {
   ready: false,
   queued: 0,
   lastEvent: null,
-  ignoredOrigins: 0,
 };
 
 export const createListenerSet = (): ListenerSet => {
@@ -47,7 +46,7 @@ export const createListenerSet = (): ListenerSet => {
 };
 
 export const createStateStore = (listeners: ListenerSet): StateStore => {
-  let state: OrchestratorState = INITIAL_STATE;
+  let state: OrchestratorState = INITIAL_ORCHESTRATOR_STATE;
 
   return {
     get: (): OrchestratorState => state,

@@ -2,13 +2,14 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createTeardown } from '../teardown';
 import type { TeardownDeps } from '../teardown';
+import { INITIAL_ORCHESTRATOR_STATE } from '../orchestratorState';
 import type { ListenerSet, StateStore } from '../orchestratorState';
 import type { HostChannel } from '../createOrchestrator.props';
 import type { ArmedTool, CommandQueue } from '../outgoingCommands.props';
 
 const createDeps = (order: string[]): TeardownDeps => {
   const store = {
-    get: vi.fn(() => ({ ready: true, queued: 0, lastEvent: null, ignoredOrigins: 0 })),
+    get: vi.fn(() => ({ ...INITIAL_ORCHESTRATOR_STATE, ready: true })),
     patch: vi.fn(),
     notify: vi.fn(),
   } as unknown as StateStore;
@@ -47,12 +48,7 @@ describe('createTeardown', () => {
   it('skips cancelling the armed tool when the viewer never became ready', () => {
     const order: string[] = [];
     const deps = createDeps(order);
-    (deps.store.get as ReturnType<typeof vi.fn>).mockReturnValue({
-      ready: false,
-      queued: 0,
-      lastEvent: null,
-      ignoredOrigins: 0,
-    });
+    (deps.store.get as ReturnType<typeof vi.fn>).mockReturnValue(INITIAL_ORCHESTRATOR_STATE);
 
     createTeardown(deps)();
 

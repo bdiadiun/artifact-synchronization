@@ -1,6 +1,5 @@
 import type { HostCommand } from '@bdiadiun/scoring-contract';
 
-import { LOG_PREFIX } from './config.js';
 import type {
   CommandHandler,
   CommandHandlerEntry,
@@ -17,27 +16,18 @@ export const toCommandHandlerEntries = (handlers: CommandHandlers): CommandHandl
 
 export const createCommandRegistry = (): CommandRegistry => {
   const handlers = new Map<CommandType, StoredHandler>();
-  const unknownTypesLogged = new Set<string>();
 
   return {
     register: <TType extends CommandType>(type: TType, handler: CommandHandler<TType>): void => {
-      if (handlers.has(type)) {
-        console.warn(`${LOG_PREFIX} handler for ${type} replaced by a later registration`);
-      }
-
       handlers.set(type, handler);
     },
 
     dispatch: (command: HostCommand): void => {
       const handler = handlers.get(command.type) as CommandHandler<CommandType> | undefined;
 
+      // Unreachable: `isHostCommand` rejects an unknown type before dispatch and the `satisfies
+      // CommandHandlers` clause guarantees a handler per type; this only narrows away `get`.
       if (!handler) {
-        // A newer host may send a command this viewer does not know yet; logged once per type so
-        // it stays diagnosable without flooding the console.
-        if (!unknownTypesLogged.has(command.type)) {
-          unknownTypesLogged.add(command.type);
-          console.warn(`${LOG_PREFIX} no handler registered for host command ${command.type}`);
-        }
         return;
       }
 

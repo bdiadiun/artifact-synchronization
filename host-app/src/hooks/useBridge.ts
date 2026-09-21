@@ -1,29 +1,20 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import {
   createOrchestrator,
-  type HostChannel,
+  INITIAL_ORCHESTRATOR_STATE,
   type Orchestrator,
   type OrchestratorState,
 } from '@bdiadiun/scoring-orchestrator';
 import { VIEWER_ORIGIN } from '@app/config';
 
-export interface UseBridgeResult {
-  send: HostChannel['send'];
-  exchange: HostChannel['exchange'];
+export interface UseBridgeResult extends Pick<Orchestrator, 'send' | 'exchange'> {
   state: OrchestratorState;
 }
-
-const INITIAL_STATE: OrchestratorState = {
-  ready: false,
-  queued: 0,
-  lastEvent: null,
-  ignoredOrigins: 0,
-};
 
 // One orchestrator instance per mount, disposed on unmount; under StrictMode's dev double-mount, the
 // first mount's cleanup runs before the second mount attaches, so only one listener is ever live.
 export const useBridge = (iframeRef: RefObject<HTMLIFrameElement | null>): UseBridgeResult => {
-  const [state, setState] = useState<OrchestratorState>(INITIAL_STATE);
+  const [state, setState] = useState<OrchestratorState>(INITIAL_ORCHESTRATOR_STATE);
   const orchestratorRef = useRef<Orchestrator | null>(null);
 
   useEffect(() => {
@@ -46,10 +37,10 @@ export const useBridge = (iframeRef: RefObject<HTMLIFrameElement | null>): UseBr
     // `iframeRef` and `VIEWER_ORIGIN` are stable, so this effect runs once per mount.
   }, [iframeRef]);
 
-  const send: HostChannel['send'] = (type, payload) =>
+  const send: UseBridgeResult['send'] = (type, payload) =>
     orchestratorRef.current?.send(type, payload) ?? false;
 
-  const exchange: HostChannel['exchange'] = (type, payload) => {
+  const exchange: UseBridgeResult['exchange'] = (type, payload) => {
     const orchestrator = orchestratorRef.current;
     if (orchestrator === null) {
       return Promise.reject(new Error(`[form] ${type} was not sent: the bridge is not mounted`));

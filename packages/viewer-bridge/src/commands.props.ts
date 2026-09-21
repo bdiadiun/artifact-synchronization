@@ -16,7 +16,6 @@ export interface ToolCommandsDeps {
 export interface ToolCommands {
   handleActivateTool: (command: ActivateToolCommand) => void;
   handleDeactivateTool: (command: DeactivateToolCommand) => void;
-  getArmedRowId: () => string | null;
   getArmed: () => ArmedState | null;
   disarm: (reason: DisarmReason, detail?: string) => void;
 }
