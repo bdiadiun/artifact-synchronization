@@ -161,7 +161,7 @@ export default tseslint.config(
       'packages/contract/src/**/*.ts',
       'packages/orchestrator/src/**/*.ts',
     ],
-    ignores: ['**/*.props.ts', '**/__tests__/**', 'packages/contract/src/messages.ts'],
+    ignores: ['**/*.props.ts', '**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -169,15 +169,6 @@ export default tseslint.config(
         ...jsxRestrictions,
         siblingTypesRestriction,
       ],
-    },
-  },
-  {
-    // The wire contract is deliberately one self-contained file with no imports: it is published
-    // as a package and consumed through a single entry (A-14, A-15). Splitting it to satisfy a
-    // line count would trade a real property for a number.
-    files: ['packages/contract/src/messages.ts'],
-    rules: {
-      'max-lines': 'off',
     },
   },
   {

@@ -3,9 +3,10 @@ paths:
   - packages/contract/**
 ---
 
-- This is the wire contract between two separately deployed apps. It stays one self-contained file
-  with no imports and no runtime dependencies, because it is published as a package and consumed by
-  both sides.
+- This is the wire contract between two separately deployed apps. It has no runtime dependency on
+  anything: only its own modules. It is split by concern behind one entry, `src/index.ts`, and the
+  entry is the public surface. A name that leaves the entry is a breaking change for three
+  consumers, so removing or renaming one needs a decision record.
 - Message `type` values are string literals, never enums, and every message carries `version: 1`.
 - Adding a message type or an optional field is additive and keeps version 1; changing an existing
   shape is a breaking change and needs a decision record.

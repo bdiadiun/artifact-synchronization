@@ -98,7 +98,7 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 **P-8. One more field through the whole chain (e.g. mean intensity).**
 
 1. Extension: in [`toMetrics`][fork-metrics] add `mean: { value: stats.mean, unit: … }`; if a new
-   unit is needed, extend `Unit` in [`packages/contract/src/messages.ts`](../packages/contract/src/messages.ts)
+   unit is needed, extend `Unit` in [`packages/contract/src/vocabulary.props.ts`](../packages/contract/src/vocabulary.props.ts)
    then publish the package and raise its pinned version in the extension.
 2. Host: `MeasurementRow` already renders the first non-area metric; to show both, map over the
    metrics object.

@@ -18,7 +18,9 @@ host-app  http://localhost:5173                   viewer  http://localhost:3000 
 
 ## Message contract (version 1)
 
-Source of truth: [`packages/contract/src/messages.ts`](packages/contract/src/messages.ts).
+Source of truth: the published package `@bdiadiun/scoring-contract`, whose entry is
+[`packages/contract/src/index.ts`](packages/contract/src/index.ts); the vocabulary, the host
+commands, the viewer events and the primitive guards each have their own module behind it.
 Every message carries `version: 1`; receivers reject other versions and unknown types with a
 runtime guard (`isHostCommand`, `isViewerEvent`). Unknown extra fields are ignored so a `version`
 bump is needed only for breaking changes. Adding a message type (as the deletion bonus did) is
