@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { STUDY_INSTANCE_UID } from '../config';
+import { studyInstanceUid } from '../config';
 import type { Row } from '../form/rows';
 import { saveRows } from '../form/storage';
 
@@ -7,6 +7,6 @@ import { saveRows } from '../form/storage';
 // user action caused (the reducer applying a restore-failure marker).
 export const usePersistRows = (rows: readonly Row[]): void => {
   useEffect(() => {
-    saveRows(STUDY_INSTANCE_UID, rows);
+    saveRows(studyInstanceUid(), rows);
   }, [rows]);
 };

@@ -9,7 +9,7 @@ import type {
   RestoreMeasurementRequest,
 } from '@bdiadiun/scoring-contract';
 import { activateToolCommand, restoreMeasurementsCommand } from '@bdiadiun/scoring-orchestrator';
-import { STUDY_INSTANCE_UID } from '../config';
+import { studyInstanceUid } from '../config';
 import { FormActionType, RowStatus, type Row } from './rows';
 import { findRow, findRowByUid } from '../utils/selectors';
 import type { ViewerEventHandlers } from '../hooks/useViewerEvents';
@@ -39,7 +39,7 @@ const sendRestoreIfNeeded = (context: ViewerEventContext): void => {
   }
   const requestId = crypto.randomUUID();
   context.issuedRestoreRequestIds.add(requestId);
-  context.send(restoreMeasurementsCommand(requestId, STUDY_INSTANCE_UID, measurements));
+  context.send(restoreMeasurementsCommand(requestId, studyInstanceUid(), measurements));
 };
 
 // A viewer reload forgot any flushed command, so an armed row is re-sent; on the first READY an

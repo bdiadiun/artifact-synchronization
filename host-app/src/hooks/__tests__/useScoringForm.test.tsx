@@ -12,7 +12,7 @@ import type {
   ViewerEvent,
   ViewerReadyEvent,
 } from '@bdiadiun/scoring-contract';
-import { DEFAULT_TOOL, STUDY_INSTANCE_UID } from '../../config';
+import { DEFAULT_TOOL, FALLBACK_STUDY_INSTANCE_UID } from '../../config';
 import { RowStatus, type Row } from '../../form/rows';
 import { saveRows } from '../../form/storage';
 import { computeTotals } from '../../form/totals';
@@ -480,7 +480,7 @@ describe('useScoringForm', () => {
 
 describe('useScoringForm restore (A-14)', () => {
   it('sends RESTORE_MEASUREMENTS on the first VIEWER_READY when sessionStorage has rows', () => {
-    saveRows(STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1')]);
+    saveRows(FALLBACK_STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1')]);
     const send = createSend();
     const { rerender } = renderHook(
       ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
@@ -494,7 +494,7 @@ describe('useScoringForm restore (A-14)', () => {
     expect(send).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'RESTORE_MEASUREMENTS',
-        studyInstanceUid: STUDY_INSTANCE_UID,
+        studyInstanceUid: FALLBACK_STUDY_INSTANCE_UID,
         measurements: [
           expect.objectContaining({ rowId: 'row-1', measurementUid: 'uid-1' }) as unknown,
         ],
@@ -517,7 +517,10 @@ describe('useScoringForm restore (A-14)', () => {
   });
 
   it('MEASUREMENTS_RESTORED marks the failed rows and leaves the restored rows untouched', () => {
-    saveRows(STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1'), storedRow('row-2', 'uid-2')]);
+    saveRows(FALLBACK_STUDY_INSTANCE_UID, [
+      storedRow('row-1', 'uid-1'),
+      storedRow('row-2', 'uid-2'),
+    ]);
     const send = createSend();
     const { result, rerender } = renderHook(
       ({ lastEvent }: { lastEvent: ViewerEvent | null }) => useScoringForm({ send, lastEvent }),
@@ -552,7 +555,7 @@ describe('useScoringForm restore (A-14)', () => {
   });
 
   it('a MEASUREMENTS_RESTORED with an unmatched causedBy is ignored', () => {
-    saveRows(STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1')]);
+    saveRows(FALLBACK_STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1')]);
     const send = createSend();
     const debugSpy = vi.spyOn(console, 'debug').mockImplementation(vi.fn());
     const { result, rerender } = renderHook(
