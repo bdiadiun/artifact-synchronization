@@ -2,18 +2,9 @@
 // order.
 
 import type { HostCommand } from '@bdiadiun/scoring-contract';
+import type { CommandQueue, CommandQueueOptions } from './commandQueue.props';
 
-export interface CommandQueueOptions {
-  getViewerWindow: () => Window | null;
-  viewerOrigin: string;
-}
-
-export interface CommandQueue {
-  push: (command: HostCommand) => void;
-  flush: () => void;
-  clear: () => void;
-  size: () => number;
-}
+export type { CommandQueue, CommandQueueOptions } from './commandQueue.props';
 
 export const createCommandQueue = ({
   getViewerWindow,

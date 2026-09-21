@@ -6,11 +6,9 @@ import {
   type OrchestratorState,
 } from '@bdiadiun/scoring-orchestrator';
 import { VIEWER_ORIGIN } from '../config';
+import type { UseBridgeResult } from './useBridge.props';
 
-export interface UseBridgeResult {
-  send: (command: HostCommand) => void;
-  state: OrchestratorState;
-}
+export type { UseBridgeResult } from './useBridge.props';
 
 const INITIAL_STATE: OrchestratorState = {
   ready: false,

@@ -1,8 +1,7 @@
 // What each user-triggered row action does to state, dispatch and the outgoing bridge. Mirrors
 // viewerEventHandlers.ts, which does the same job for the incoming half of the form.
 
-import type { Dispatch } from 'react';
-import type { HostCommand, ToolName } from '@bdiadiun/scoring-contract';
+import type { ToolName } from '@bdiadiun/scoring-contract';
 import {
   activateToolCommand,
   deactivateToolCommand,
@@ -10,25 +9,11 @@ import {
   removeMeasurementCommand,
 } from '@bdiadiun/scoring-orchestrator';
 import { DEFAULT_TOOL } from '../config';
-import { FormActionType, RowStatus, type FormAction, type FormState } from './rows';
+import { FormActionType, RowStatus } from './rows';
 import { findRow } from '../utils/selectors';
+import type { RowActions, RowActionsContext } from './rowActions.props';
 
-export interface RowActionsContext {
-  state: FormState;
-  dispatch: Dispatch<FormAction>;
-  send: (command: HostCommand) => void;
-  // requestIds of REMOVE_MEASUREMENT commands issued here; the incoming handler drops their echo
-  // (A-10). Owned by the caller so both halves of the form share the same set.
-  issuedRemovalRequestIds: Set<string>;
-}
-
-export interface RowActions {
-  addRow: (toolName?: ToolName) => void;
-  activate: (rowId: string) => void;
-  cancel: (rowId: string) => void;
-  remove: (rowId: string) => void;
-  focus: (rowId: string) => void;
-}
+export type { RowActions, RowActionsContext } from './rowActions.props';
 
 const addRow = (context: RowActionsContext, toolName: ToolName = DEFAULT_TOOL): void => {
   context.dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID(), toolName });

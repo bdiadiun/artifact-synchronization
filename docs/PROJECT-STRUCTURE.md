@@ -84,18 +84,18 @@ my-react-app/
   message channel and the row model. Splitting those across `utils/` would hide the two concepts the
   whole assignment is about, so they stay as feature folders.
 
-| Folder            | What is in it here                                                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `src/assets/`     | Not created yet: the form uses native elements and no imagery (canon X-3).                                                      |
-| `src/components/` | `ViewerFrame`, `ScoringPanel`, `MeasurementRow`, `TotalsFooter`, `BridgeStatus`, each with its `.props.ts`.                     |
-| `src/pages/`      | `ScoringPage` — the single page: the viewer iframe on the left, the form panel on the right.                                    |
-| `src/hooks/`      | `useBridge`, `useScoringForm`, `useViewerEvents`, `usePersistedRows`.                                                           |
-| `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                  |
-| `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                |
-| `src/utils/`      | `format` (values, statuses, kinds) and `selectors` (row lookups).                                                               |
-| `src/hooks/`      | Also holds `useBridge`, the React binding to the orchestrator package; the channel itself is not in this app (A-17).            |
-| `src/form/`       | The row model and everything around it: `rows` (reducer), `rowActions`, `commands`, `viewerEventHandlers`, `storage`, `totals`. |
-| `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                             |
+| Folder            | What is in it here                                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/assets/`     | Not created yet: the form uses native elements and no imagery (canon X-3).                                                                  |
+| `src/components/` | `ViewerFrame`, `ScoringPanel`, `MeasurementRow`, `TotalsFooter`, `BridgeStatus`, each with its `.props.ts`, like every other module (A-13). |
+| `src/pages/`      | `ScoringPage` — the single page: the viewer iframe on the left, the form panel on the right.                                                |
+| `src/hooks/`      | `useBridge`, `useScoringForm`, `useViewerEvents`, `usePersistedRows`.                                                                       |
+| `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                              |
+| `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                            |
+| `src/utils/`      | `format` (values, statuses, kinds) and `selectors` (row lookups).                                                                           |
+| `src/hooks/`      | Also holds `useBridge`, the React binding to the orchestrator package; the channel itself is not in this app (A-17).                        |
+| `src/form/`       | The row model and everything around it: `rows` (reducer), `rowActions`, `commands`, `viewerEventHandlers`, `storage`, `totals`.             |
+| `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                                         |
 
 Outside `host-app`, the repository keeps `packages/contract` (the wire contract), `viewer/` (the OHIF
 fork, a local checkout pinned by `viewer.json` and ignored by git), `scripts/` (checks and generators) and `docs/` (canon, graph, decisions,

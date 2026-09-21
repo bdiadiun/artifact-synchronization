@@ -1,29 +1,17 @@
 import { useReducer, useState } from 'react';
-import type { HostCommand, ToolName, ViewerEvent } from '@bdiadiun/scoring-contract';
 import { reducer, type FormState, type Row } from '../form/rows';
 import { createRowActions } from '../form/rowActions';
 import { usePersistRows } from './usePersistRows';
 import { useRestoredRows } from './useRestoredRows';
 import { useViewerEvents } from './useViewerEvents';
 import { createViewerEventHandlers } from '../form/viewerEventHandlers';
+import type { UseScoringFormOptions, UseScoringFormResult } from './useScoringForm.props';
+
+export type { UseScoringFormOptions, UseScoringFormResult } from './useScoringForm.props';
 
 // A-14: reducer stays pure, so restore reads sessionStorage once here, before the first render,
 // and seeds the reducer's initial state instead of dispatching an action.
 const buildInitialState = (rows: Row[]): FormState => ({ rows, armedRowId: null });
-
-export interface UseScoringFormOptions {
-  send: (command: HostCommand) => void;
-  lastEvent: ViewerEvent | null;
-}
-
-export interface UseScoringFormResult {
-  rows: Row[];
-  addRow: (toolName?: ToolName) => void;
-  activate: (rowId: string) => void;
-  cancel: (rowId: string) => void;
-  remove: (rowId: string) => void;
-  focus: (rowId: string) => void;
-}
 
 export const useScoringForm = ({
   send,

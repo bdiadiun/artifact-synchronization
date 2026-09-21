@@ -2,13 +2,10 @@
 // wires; adding or removing a listener never touches orchestrator state.
 
 import type { ViewerEvent } from '@bdiadiun/scoring-contract';
-import type { OrchestratorListener, OrchestratorState } from './createOrchestrator';
+import type { OrchestratorListener, OrchestratorState } from './createOrchestrator.props';
+import type { ListenerSet } from './listeners.props';
 
-export interface ListenerSet {
-  subscribe: (listener: OrchestratorListener) => () => void;
-  notify: (event: ViewerEvent | null, state: OrchestratorState) => void;
-  clear: () => void;
-}
+export type { ListenerSet } from './listeners.props';
 
 export const createListenerSet = (): ListenerSet => {
   const listeners = new Set<OrchestratorListener>();

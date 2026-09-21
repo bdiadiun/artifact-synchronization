@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                      |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Current slice  | 41 `chore: the viewer is checked out, not vendored` (branch `chore/drop-viewer-submodule`, node F-47)                                      |
-| Gate           | 2 — the fork left the repository and is cloned on demand at a pinned commit; awaiting result approval                                      |
-| Last merged PR | #46 `fix: build the packages in order`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                        |
+| Field          | Value                                                                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 42 `refactor: types live beside every module` (branch `refactor/types-in-props-files`, node F-48)                                                        |
+| Gate           | 2 — the sibling-file rule now covers every module and is enforced by lint; awaiting result approval                                                      |
+| Last merged PR | #47 `chore: the viewer is checked out, not vendored`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                                      |
 
 ## Open decisions (see CANON.md → Decisions)
 

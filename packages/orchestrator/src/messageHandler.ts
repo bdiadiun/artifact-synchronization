@@ -1,16 +1,10 @@
 // The orchestrator's `message` listener: origin check, payload guard, viewer-event dispatch
 // (Q-2, A-9).
 
-import { isViewerEvent, type ViewerEvent, type ViewerReadyEvent } from '@bdiadiun/scoring-contract';
-import type { OrchestratorState } from './createOrchestrator';
+import { isViewerEvent, type ViewerReadyEvent } from '@bdiadiun/scoring-contract';
+import type { MessageHandlerDeps } from './messageHandler.props';
 
-export interface MessageHandlerDeps {
-  viewerOrigin: string;
-  getState: () => OrchestratorState;
-  setState: (patch: Partial<OrchestratorState>) => void;
-  notify: (event: ViewerEvent | null) => void;
-  flushQueue: () => void;
-}
+export type { MessageHandlerDeps } from './messageHandler.props';
 
 export const createMessageHandler = (deps: MessageHandlerDeps): ((event: MessageEvent) => void) => {
   // Logged once per foreign origin, not once per message.
