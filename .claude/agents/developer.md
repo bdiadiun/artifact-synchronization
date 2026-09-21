@@ -71,7 +71,7 @@ Before reporting
   after, and report both numbers instead of claiming an improvement.
 - Do not run git in the main repository. The OHIF fork holds no code of ours any more (A-20); touch
   it only when a brief names the registration entry, the dependency line or its workflow.
-- Start the viewer dev server only as `OHIF_OPEN=false yarn --cwd platform/app dev`; stop every
+- Start the viewer dev server only as `npm run viewer:dev` from the repository root; stop every
   server you started.
 
 Report in at most 40 lines: files changed, what each does in one line, verification output tails,

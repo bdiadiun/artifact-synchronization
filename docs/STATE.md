@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                      |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Current slice  | 53 `fix: release the contract that has the table` (branch `fix/release-the-real-contract`, node F-59)                                      |
-| Gate           | 2 — fresh numbers for the whole chain and a guard against skipping a mismatched release; awaiting result approval                          |
-| Last merged PR | #63 `feat: the channel both sides use`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                        |
+| Field          | Value                                                                                                                                                |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 54 `docs: start the viewer the way it works` (branch `docs/start-the-viewer-correctly`, node F-60)                                                   |
+| Gate           | 2 — the browser scenario passed on the released packages; the instructions now name the working command                                              |
+| Last merged PR | #65 `chore: pin the fork at the channel release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                                  |
 
 ## Open decisions (see CANON.md → Decisions)
 

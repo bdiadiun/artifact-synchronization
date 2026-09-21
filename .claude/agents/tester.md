@@ -18,7 +18,7 @@ Ground rules
 - Test names read as behaviour; arrange / act / assert; assert on state or on `vi.fn()` calls;
   `toBe` for "nothing changed" in reducers.
 - End-to-end checks use Playwright from the session scratchpad with both dev servers
-  (`OHIF_OPEN=false yarn --cwd platform/app dev` in `viewer/`, `npm run dev --workspace host-app`);
+  (`npm run viewer:dev` and `npm run dev --workspace host-app`, both from the repository root);
   read values from the page and from `window.services` inside the viewer iframe; take a screenshot;
   stop every server you started.
 - Test names describe behaviour, so tests need almost no comments (`docs/CONVENTIONS.md` §8).

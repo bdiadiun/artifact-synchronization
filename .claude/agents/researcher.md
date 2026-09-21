@@ -15,7 +15,7 @@ Ground rules
   session scratchpad); never modify the source you read.
 - Every claim carries a `path:line` citation and the minimal quote needed. When a question needs a
   runtime check (an event firing order, a unit string), say so and, if the brief allows, verify it
-  with the dev server and Playwright (`OHIF_OPEN=false yarn --cwd platform/app dev`).
+  with the dev server and Playwright (`npm run viewer:dev` from the repository root).
 - Write the note to the path the brief names, under 200 lines, English, no AI mentions, one
   heading per question, a closing "Design implications" list.
 - No git commands in the main repository.

@@ -295,6 +295,11 @@
       "id": "53",
       "title": "fix: release the contract that has the table",
       "branch": "fix/release-the-real-contract"
+    },
+    {
+      "id": "54",
+      "title": "docs: start the viewer the way it works",
+      "branch": "docs/start-the-viewer-correctly"
     }
   ],
   "nodes": [
@@ -3866,7 +3871,7 @@
       "canon": ["A-15", "A-21", "D-1", "Q-7"],
       "dependsOn": ["F-58"],
       "slice": "53",
-      "status": "review",
+      "status": "done",
       "verify": "The published tarball of the reused number is shown to lack the table while the new one contains it; every internal pin names a version this slice publishes; the release run refuses to skip a package whose published content differs from what it would publish.",
       "files": [
         ".github/workflows/publish-packages.yml",
@@ -3876,6 +3881,26 @@
         "packages/orchestrator/package.json",
         "packages/viewer-adapter/package.json",
         "packages/viewer-bridge/package.json"
+      ],
+      "imports": {}
+    },
+    {
+      "id": "F-60",
+      "name": "The instructions name the command that works",
+      "description": "A browser run of the whole scenario passed on the released packages and found a trap in our own instructions: four agent files, the fork rule and the end-to-end command still told the reader to start the viewer with the raw command from before it needed configuration. Started that way it comes up with no host origin, refuses to bridge and never shakes hands, which reads as a broken application rather than a wrong command. All of them now name the script that writes the configuration.",
+      "canon": ["D-2", "D-5", "Q-1"],
+      "dependsOn": ["F-59"],
+      "slice": "54",
+      "status": "review",
+      "verify": "No instruction in the repository names the raw viewer command any more; the browser scenario was walked end to end against the published packages and passed at every step, with values read from the page and from the viewer's own services.",
+      "files": [
+        ".claude/agents/architect.md",
+        ".claude/agents/developer.md",
+        ".claude/agents/researcher.md",
+        ".claude/agents/tester.md",
+        ".claude/commands/e2e.md",
+        ".claude/rules/fork.md",
+        "docs/CONVENTIONS.md"
       ],
       "imports": {}
     }

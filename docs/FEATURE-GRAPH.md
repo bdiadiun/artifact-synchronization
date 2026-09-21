@@ -68,7 +68,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-56 | The adapter registers our extensions                                                                                                              | A-20, C-3.2, Q-7                                                | F-55             | 50    | done    | The built viewer names only the adapter in OHIF's generated plugin imports, yet the bridge's code is in the bundle because the adapter pulls it; ten cases cover the order, the awaiting, the isolation of a throwing and a rejecting child, and the report when no manager is handed over.                                                                               |
 | F-57 | The three layers are in place                                                                                                                     | A-18, A-20, C-3.2, Q-7                                          | F-56             | 51    | done    | The fork's diff against the upstream tag is four files and no deletion; its lockfile resolves the adapter, the bridge and the contract as registry tarballs with integrity hashes while its manifests name only the adapter; the viewer builds with our code in the bundle.                                                                                               |
 | F-58 | One channel, with send, on and exchange                                                                                                           | A-21, Q-1, Q-2, Q-3, Q-4, Q-7                                   | F-57             | 52    | done    | A message from another origin and a payload the guard rejects are ignored at both ends, proved by breaking the check and watching those cases fail; an exchange resolves on its own answer, is not confused by another's, rejects on timeout naming the request and the answer it waited for, and leaves nothing behind either way.                                       |
-| F-59 | A published number is never reused                                                                                                                | A-15, A-21, D-1, Q-7                                            | F-58             | 53    | review  | The published tarball of the reused number is shown to lack the table while the new one contains it; every internal pin names a version this slice publishes; the release run refuses to skip a package whose published content differs from what it would publish.                                                                                                       |
+| F-59 | A published number is never reused                                                                                                                | A-15, A-21, D-1, Q-7                                            | F-58             | 53    | done    | The published tarball of the reused number is shown to lack the table while the new one contains it; every internal pin names a version this slice publishes; the release run refuses to skip a package whose published content differs from what it would publish.                                                                                                       |
+| F-60 | The instructions name the command that works                                                                                                      | D-2, D-5, Q-1                                                   | F-59             | 54    | review  | No instruction in the repository names the raw viewer command any more; the browser scenario was walked end to end against the published packages and passed at every step, with values read from the page and from the viewer's own services.                                                                                                                            |
 
 ## Coverage of mandatory IDs
 
@@ -95,7 +96,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | C-4.4.1 | F-03, F-08                                                                                                                                                 |
 | C-4.4.2 | F-03, F-15, F-16                                                                                                                                           |
 | C-4.4.3 | F-03                                                                                                                                                       |
-| Q-1     | F-06, F-45, F-58                                                                                                                                           |
+| Q-1     | F-06, F-45, F-58, F-60                                                                                                                                     |
 | Q-2     | F-05, F-06, F-45, F-55, F-58                                                                                                                               |
 | Q-3     | F-07, F-08, F-09, F-19, F-45, F-58                                                                                                                         |
 | Q-4     | F-14, F-15, F-19, F-39, F-45, F-58                                                                                                                         |
@@ -103,10 +104,10 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Q-6     | F-09, F-10, F-11                                                                                                                                           |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56, F-57, F-58, F-59 |
 | D-1     | F-04, F-41, F-46, F-47, F-59                                                                                                                               |
-| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                                                             |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53, F-60                                                                                                       |
 | D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                                             |
 | D-4     | F-00, F-24                                                                                                                                                 |
-| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                                                         |
+| D-5     | F-12, F-20, F-24, F-25, F-46, F-47, F-60                                                                                                                   |
 | D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                                               |
 | D-7     | F-12, F-25                                                                                                                                                 |
 | D-8     | F-13, F-25                                                                                                                                                 |
@@ -174,6 +175,7 @@ graph TD
   F57["F-57 The three layers are in place"]
   F58["F-58 One channel, with send, on and exchange"]
   F59["F-59 A published number is never reused"]
+  F60["F-60 The instructions name the command that works"]
 
   F20 --> F01
   F01 --> F02
@@ -238,6 +240,7 @@ graph TD
   F56 --> F57
   F57 --> F58
   F58 --> F59
+  F59 --> F60
 ```
 
 ## Slice → nodes
@@ -299,6 +302,7 @@ graph TD
 | 51 — chore: the fork registers the adapter                   | `chore/fork-uses-the-adapter`               | —   | F-57                   |
 | 52 — feat: the channel both sides use                        | `feat/channel-exchange`                     | —   | F-58                   |
 | 53 — fix: release the contract that has the table            | `fix/release-the-real-contract`             | —   | F-59                   |
+| 54 — docs: start the viewer the way it works                 | `docs/start-the-viewer-correctly`           | —   | F-60                   |
 
 ## Node details
 
@@ -1328,7 +1332,7 @@ Files:
 
 A version number left over from a removed mechanism was reused for different content. The release run saw the number in the registry and skipped it, so three packages shipped pinned to a contract that did not contain the table they import: broken for anyone installing from the registry, invisible here because a workspace link compiles against the working tree. Every package in the chain takes a fresh number and every pin follows, and the run now compares what it would publish against what the registry serves before skipping anything.
 
-Canon: A-15, A-21, D-1, Q-7. Depends on: F-58. Slice 53, status `review`.
+Canon: A-15, A-21, D-1, Q-7. Depends on: F-58. Slice 53, status `done`.
 
 Files:
 
@@ -1339,3 +1343,19 @@ Files:
 - `packages/orchestrator/package.json`
 - `packages/viewer-adapter/package.json`
 - `packages/viewer-bridge/package.json`
+
+### F-60 The instructions name the command that works
+
+A browser run of the whole scenario passed on the released packages and found a trap in our own instructions: four agent files, the fork rule and the end-to-end command still told the reader to start the viewer with the raw command from before it needed configuration. Started that way it comes up with no host origin, refuses to bridge and never shakes hands, which reads as a broken application rather than a wrong command. All of them now name the script that writes the configuration.
+
+Canon: D-2, D-5, Q-1. Depends on: F-59. Slice 54, status `review`.
+
+Files:
+
+- `.claude/agents/architect.md`
+- `.claude/agents/developer.md`
+- `.claude/agents/researcher.md`
+- `.claude/agents/tester.md`
+- `.claude/commands/e2e.md`
+- `.claude/rules/fork.md`
+- `docs/CONVENTIONS.md`

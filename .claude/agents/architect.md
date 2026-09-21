@@ -33,7 +33,7 @@ Responsibilities
 Rules
 
 - Chat replies to the user in Ukrainian; every file in English.
-- Start the viewer dev server only as `OHIF_OPEN=false yarn --cwd platform/app dev`.
+- Start the viewer dev server only as `npm run viewer:dev` from the repository root.
 
 Files you may write
 

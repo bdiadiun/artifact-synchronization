@@ -6,7 +6,7 @@ Start the viewer and the host app, run the scenario named in $ARGUMENTS (default
 scenario), then stop every server you started.
 
 ```
-cd viewer && OHIF_OPEN=false yarn --cwd platform/app dev   # terminal 1, wait for "compiled successfully"
+cd viewer && npm run viewer:dev   # terminal 1, wait for "compiled successfully"
 npm run dev --workspace host-app                            # terminal 2
 ```
 

@@ -256,6 +256,11 @@ somebody deletes.
 - **A list of packages is a trap; use a pattern.** Wherever tooling enumerates the packages, a new
   one is forgotten and nothing fails: three times in a row a package was merged with tests no
   command collected. Where the tool allows a glob, it gets one.
+- **An instruction that names a command must name the one that works.** Ours told the agents to
+  start the viewer the way it was started before it needed configuration; that way it comes up with
+  no host origin, refuses to bridge and never shakes hands, and the run looks like a broken
+  application rather than a wrong command. When a script replaces a raw command, every instruction
+  that quoted the raw one changes in the same slice.
 - **A test that no command runs does not exist.** New tests are added to what `npm run test`
   actually collects, and the case count is reported before and after, so the increase is visible
   rather than assumed.
