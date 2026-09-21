@@ -48,9 +48,16 @@ to this gate.
 ## Gate 2 — the result
 
 Run the verification yourself before showing it: `/verify`, plus a browser scenario (`/e2e`) when
-the slice touches the bridge. Then present the diff summary, the verification output, the review
+the slice touches the bridge. Run it from a cold state at least once, with the packages' build
+output and `node_modules` deleted, on the Node version in `.nvmrc`: a warm tree has twice reported
+green for a slice that could not be installed on a fresh machine. Revert anything in the working
+tree that the slice did not ask for rather than committing it along. Then present the diff summary, the verification output, the review
 notes on what the agents produced, and a draft pull request description in the four-section
 template from `CLAUDE.md`. Wait for approval before any commit, push, pull request or merge.
+
+Before you present it, ask what general rule this slice's fixes imply, and write that rule into
+`docs/CONVENTIONS.md` or the matching file under `.claude/` in the same slice. A fix that leaves no
+rule behind gets made again.
 
 ## After the merge
 

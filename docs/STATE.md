@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                      |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Current slice  | 43 `refactor: the contract split by concern` (branch `refactor/contract-modules`, node F-49)                                               |
-| Gate           | 2 — the contract is four modules behind one entry; PR #48 must merge first                                                                 |
-| Last merged PR | #46 `fix: build the packages in order`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                        |
+| Field          | Value                                                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 44 `docs: rules harvested from the fixes` (branch `docs/rules-from-fixes`, node F-50)                                                             |
+| Gate           | 2 — the session's failures are written down as rules; awaiting result approval                                                                    |
+| Last merged PR | #49 `refactor: the contract split by concern`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                               |
 
 ## Open decisions (see CANON.md → Decisions)
 

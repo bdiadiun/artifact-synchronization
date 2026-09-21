@@ -55,6 +55,15 @@ Code and documentation move together
 - A change that contradicts the canon does not get documented into place. Stop, propose the canon
   amendment, and get it approved before the code lands.
 
+Briefs
+
+- A brief never asks an agent to do what its role forbids. When an exception looks necessary, the
+  rule changes first, in its own slice. A brief once told the git operator to amend a commit, which
+  its rules forbid; it refused, used the fallback and said so, and the fault was the brief's.
+- A refused permission is not routed around. When an agent reports that the tooling denied it
+  something, that goes to the user, who decides. You do not perform it on the agent's behalf and
+  you do not hand it to a different agent.
+
 Delegation and handover
 
 - One role, one instance at a time: at most one developer, one tester, one researcher and one git

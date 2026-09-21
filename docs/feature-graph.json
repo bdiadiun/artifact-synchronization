@@ -250,6 +250,11 @@
       "id": "43",
       "title": "refactor: the contract split by concern",
       "branch": "refactor/contract-modules"
+    },
+    {
+      "id": "44",
+      "title": "docs: rules harvested from the fixes",
+      "branch": "docs/rules-from-fixes"
     }
   ],
   "nodes": [
@@ -3186,7 +3191,7 @@
       "canon": ["A-13", "A-15", "Q-7"],
       "dependsOn": ["F-48"],
       "slice": "43",
-      "status": "review",
+      "status": "done",
       "verify": "The entry exports the same thirty-three names with the same declarations as before the split, compared name by name; a test asserts the entry still exports everything the rest of the repository imports and was shown to fail when one export is removed; the suite grew from 166 to 176 cases.",
       "files": [
         "packages/contract/README.md",
@@ -3258,6 +3263,25 @@
           "external": ["node:child_process", "node:fs", "node:path", "node:url"]
         }
       }
+    },
+    {
+      "id": "F-50",
+      "name": "Every fix leaves a rule behind",
+      "description": "Turns this session's failures into written rules and puts each one where the agent that needs it will read it. Verification from a cold state on the Node version in `.nvmrc`, proving a claim with its artefact instead of asserting it, reverting anything that rides along, revisiting a constraint when its cause disappears, publishing only what changed and in dependency order, and two rules about delegation: a brief never asks for what a role forbids, and a refused permission goes to the user rather than to another agent. Each rule keeps the failure that produced it in its text.",
+      "canon": ["A-13", "D-2"],
+      "dependsOn": ["F-49"],
+      "slice": "44",
+      "status": "review",
+      "verify": "The conventions carry a verification section and a publishing section; the slice skill requires a cold run before gate 2; the developer, tester and architect files each carry the part of it they act on.",
+      "files": [
+        ".claude/agents/architect.md",
+        ".claude/agents/developer.md",
+        ".claude/agents/tester.md",
+        ".claude/rules/contract.md",
+        ".claude/skills/slice/SKILL.md",
+        "docs/CONVENTIONS.md"
+      ],
+      "imports": {}
     }
   ]
 }
