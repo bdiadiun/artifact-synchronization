@@ -18,7 +18,7 @@ const CANON_MD = 'docs/CANON.md';
 const STATUSES = ['planned', 'approved', 'in-progress', 'review', 'done'];
 const CODE_EXTENSIONS = ['.ts', '.tsx', '.js', '.mjs'];
 const CONTRACT_PACKAGE = '@bdiadiun/scoring-contract';
-const CONTRACT_SOURCE = 'packages/contract/src/messages.ts';
+const CONTRACT_SOURCE = 'packages/contract/src/index.ts';
 
 const VIEWER_DIR = 'viewer';
 const VIEWER_HINT = `${VIEWER_DIR}/ is not checked out, run npm run viewer:setup`;

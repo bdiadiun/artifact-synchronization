@@ -2,8 +2,19 @@
 
 Single source of truth for the host-app <-> viewer `postMessage` contract (canon Q-7).
 
-`src/messages.ts` is TypeScript source consumed directly by Vite/Vitest/tsc — built to `dist` by the package's own `prepare` script.
-The same file must be copied byte-for-byte into
-`viewer/extensions/scoring-bridge/src/contract/messages.ts`, because the viewer is a git
-submodule that must stay self-contained and cannot import outside itself. Run
-It is published to npm; both the host app and the viewer extension depend on it at an exact version.
+Published to npm; the form, the orchestrator package and the viewer extension all depend on it at
+an exact version. There is no copy of it anywhere: the extension consumed a byte-identical copy
+until decision A-15 replaced that with this package.
+
+The source is split by concern behind one entry, `src/index.ts`:
+
+| Module            | Holds                                                                 |
+| ----------------- | --------------------------------------------------------------------- |
+| `vocabulary`      | the version constant, units, tool names, metric keys and the geometry |
+| `hostCommands`    | the commands the form sends, and the guard that validates one         |
+| `viewerEvents`    | the events the viewer sends, and the guard that validates one         |
+| `primitiveGuards` | the shared checks both guards are built from                          |
+
+Types live in a sibling `.props.ts` next to the module that owns them, as everywhere else in this
+repository. `dist` is built by the package's own `prepare` script, and a merge into `main` that
+changes the package publishes a patch release.

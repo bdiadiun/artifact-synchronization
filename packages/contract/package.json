@@ -9,12 +9,12 @@
     "directory": "packages/contract"
   },
   "type": "module",
-  "main": "./dist/messages.js",
-  "types": "./dist/messages.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/messages.d.ts",
-      "default": "./dist/messages.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "files": [
