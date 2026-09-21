@@ -1,10 +1,19 @@
 /// <reference types="vitest/config" />
+import { fileURLToPath } from 'node:url';
+
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // Mirrors the `@app/*` paths entry in tsconfig.app.json; both the dev server, the build and the
+  // Vitest run resolve through this one alias.
+  resolve: {
+    alias: {
+      '@app': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
   server: {
     // Fixed, non-negotiable port so origin checks on both sides stay valid (decision A-2).
     port: 5173,

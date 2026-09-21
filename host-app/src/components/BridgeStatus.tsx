@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { t } from '../i18n';
+import { t } from '@app/i18n';
 import { styles, type BridgeStatusProps } from './BridgeStatus.props';
 
 // Dev diagnostic surface for the bridge handshake and queue (P-9), not a product feature.

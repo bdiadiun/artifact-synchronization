@@ -1,9 +1,9 @@
 import { useRef, type JSX } from 'react';
-import { BridgeStatus } from '../components/BridgeStatus';
-import { ScoringPanel } from '../components/ScoringPanel';
-import { ViewerFrame } from '../components/ViewerFrame';
-import { useBridge } from '../hooks/useBridge';
-import { useScoringForm } from '../hooks/useScoringForm';
+import { BridgeStatus } from '@app/components/BridgeStatus';
+import { ScoringPanel } from '@app/components/ScoringPanel';
+import { ViewerFrame } from '@app/components/ViewerFrame';
+import { useBridge } from '@app/hooks/useBridge';
+import { useScoringForm } from '@app/hooks/useScoringForm';
 
 export const ScoringPage = (): JSX.Element => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);

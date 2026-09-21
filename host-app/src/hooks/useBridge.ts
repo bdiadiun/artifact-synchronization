@@ -5,7 +5,7 @@ import {
   type Orchestrator,
   type OrchestratorState,
 } from '@bdiadiun/scoring-orchestrator';
-import { VIEWER_ORIGIN } from '../config';
+import { VIEWER_ORIGIN } from '@app/config';
 import type { UseBridgeResult } from './useBridge.props';
 
 export type { UseBridgeResult } from './useBridge.props';

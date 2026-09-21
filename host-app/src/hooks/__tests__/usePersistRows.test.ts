@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { RowStatus, type Row } from '../../form/rows';
-import { loadStoredRows } from '../../form/storage';
-import { usePersistRows } from '../usePersistRows';
+import { RowStatus, type Row } from '@app/form/rows';
+import { loadStoredRows } from '@app/form/storage';
+import { usePersistRows } from '@app/hooks/usePersistRows';
 
 const STUDY_INSTANCE_UID = '1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1';
 

@@ -1,5 +1,5 @@
 import type { HostCommand, ToolName, ViewerEvent } from '@bdiadiun/scoring-contract';
-import type { Row } from '../form/rows';
+import type { Row } from '@app/form/rows';
 
 export interface UseScoringFormOptions {
   send: (command: HostCommand) => void;

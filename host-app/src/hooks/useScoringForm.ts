@@ -1,10 +1,10 @@
 import { useReducer, useState } from 'react';
-import { reducer, type FormState, type Row } from '../form/rows';
-import { createRowActions } from '../form/rowActions';
+import { reducer, type FormState, type Row } from '@app/form/rows';
+import { createRowActions } from '@app/form/rowActions';
+import { createViewerEventHandlers } from '@app/form/viewerEventHandlers';
 import { usePersistRows } from './usePersistRows';
 import { useRestoredRows } from './useRestoredRows';
 import { useViewerEvents } from './useViewerEvents';
-import { createViewerEventHandlers } from '../form/viewerEventHandlers';
 import type { UseScoringFormOptions, UseScoringFormResult } from './useScoringForm.props';
 
 export type { UseScoringFormOptions, UseScoringFormResult } from './useScoringForm.props';

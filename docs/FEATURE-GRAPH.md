@@ -62,7 +62,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-49 | The contract reads as four small modules                                                                                                          | A-13, A-15, Q-7                                                 | F-48             | 43    | done    | The entry exports the same thirty-three names with the same declarations as before the split, compared name by name; a test asserts the entry still exports everything the rest of the repository imports and was shown to fail when one export is removed; the suite grew from 166 to 176 cases.                                                                         |
 | F-50 | Every fix leaves a rule behind                                                                                                                    | A-13, D-2                                                       | F-49             | 44    | done    | The conventions carry a verification section and a publishing section; the slice skill requires a cold run before gate 2; the developer, tester and architect files each carry the part of it they act on.                                                                                                                                                                |
 | F-51 | Only a changed package is released                                                                                                                | A-15, A-17, D-2                                                 | F-50             | 45    | done    | The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.                                                                                                      |
-| F-52 | The study comes from the form's own URL                                                                                                           | A-19, C-4.1.3, S-5.6                                            | F-51             | 46    | review  | A valid parameter reaches the viewer URL encoded; seven malformed shapes each fall back and warn once; the resolved value is the same for every consumer within a page load; rows stored under one study are not returned under another.                                                                                                                                  |
+| F-52 | The study comes from the form's own URL                                                                                                           | A-19, C-4.1.3, S-5.6                                            | F-51             | 46    | done    | A valid parameter reaches the viewer URL encoded; seven malformed shapes each fall back and warn once; the resolved value is the same for every consumer within a page load; rows stored under one study are not returned under another.                                                                                                                                  |
+| F-53 | A module is addressed by where it lives                                                                                                           | A-13, D-2                                                       | F-52             | 47    | review  | Removing the alias from the TypeScript configuration produces forty-two unresolved imports and removing it from the graph script drops that check from fifteen to twelve, both shown and then restored; the count of resolved internal imports in the graph is unchanged before and after; the test run resolves through the alias, shown by a deliberate miss.           |
 
 ## Coverage of mandatory IDs
 
@@ -97,7 +98,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | Q-6     | F-09, F-10, F-11                                                                                                             |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49 |
 | D-1     | F-04, F-41, F-46, F-47                                                                                                       |
-| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51                                                                                     |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                               |
 | D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                               |
 | D-4     | F-00, F-24                                                                                                                   |
 | D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                           |
@@ -162,6 +163,7 @@ graph TD
   F50["F-50 Every fix leaves a rule behind"]
   F51["F-51 Only a changed package is released"]
   F52["F-52 The study comes from the form's own URL"]
+  F53["F-53 A module is addressed by where it lives"]
 
   F20 --> F01
   F01 --> F02
@@ -220,6 +222,7 @@ graph TD
   F49 --> F50
   F50 --> F51
   F51 --> F52
+  F52 --> F53
 ```
 
 ## Slice → nodes
@@ -275,6 +278,7 @@ graph TD
 | 44 — docs: rules harvested from the fixes                    | `docs/rules-from-fixes`                     | —   | F-50                   |
 | 45 — fix: publish only the packages that changed             | `fix/publish-only-changed`                  | —   | F-51                   |
 | 46 — feat: the study comes from the form's URL               | `feat/study-from-url`                       | —   | F-52                   |
+| 47 — refactor: the app path alias                            | `refactor/app-path-alias`                   | —   | F-53                   |
 
 ## Node details
 
@@ -311,7 +315,7 @@ Files:
 - `host-app/tsconfig.app.json`
 - `host-app/tsconfig.json`
 - `host-app/tsconfig.node.json`
-- `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `vite`
+- `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
 
 ### F-02 Page layout: iframe + form panel
 
@@ -1184,7 +1188,7 @@ Files:
 
 An addition of our own, not a requirement: the form reads a `study` parameter from its own page URL and uses it for the viewer link, the storage key and the restore request, falling back to the previous constant. The value is the one piece of outside input the form puts into a URL, so it gets both defences: it is accepted only if it reads as a DICOM identifier, and it is encoded on the way into the iframe source. Two tabs on different studies now keep separate rows, which is what the per-study storage key always claimed.
 
-Canon: A-19, C-4.1.3, S-5.6. Depends on: F-51. Slice 46, status `review`.
+Canon: A-19, C-4.1.3, S-5.6. Depends on: F-51. Slice 46, status `done`.
 
 Files:
 
@@ -1195,3 +1199,17 @@ Files:
 - `host-app/src/hooks/__tests__/studyIsolation.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
+
+### F-53 A module is addressed by where it lives
+
+Adds the `@app/*` alias for `host-app/src/*` and rewrites every import in the application and its tests that crosses a folder, leaving `./` where it is the more precise statement. The published packages deliberately keep relative imports: an alias inside them would resolve here and fail in a consumer's build. The graph script learned the alias too, because a resolver that does not know it stops checking those imports and still reports success.
+
+Canon: A-13, D-2. Depends on: F-52. Slice 47, status `review`.
+
+Files:
+
+- `.claude/rules/host-app.md`
+- `docs/CONVENTIONS.md`
+- `host-app/tsconfig.app.json`
+- `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
+- `scripts/graph.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`

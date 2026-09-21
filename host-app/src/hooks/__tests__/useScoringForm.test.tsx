@@ -12,11 +12,11 @@ import type {
   ViewerEvent,
   ViewerReadyEvent,
 } from '@bdiadiun/scoring-contract';
-import { DEFAULT_TOOL, FALLBACK_STUDY_INSTANCE_UID } from '../../config';
-import { RowStatus, type Row } from '../../form/rows';
-import { saveRows } from '../../form/storage';
-import { computeTotals } from '../../form/totals';
-import { useScoringForm } from '../useScoringForm';
+import { DEFAULT_TOOL, FALLBACK_STUDY_INSTANCE_UID } from '@app/config';
+import { RowStatus, type Row } from '@app/form/rows';
+import { saveRows } from '@app/form/storage';
+import { computeTotals } from '@app/form/totals';
+import { useScoringForm } from '@app/hooks/useScoringForm';
 
 afterEach(() => {
   cleanup();

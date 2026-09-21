@@ -1,12 +1,12 @@
 import type { JSX, KeyboardEvent, MouseEvent } from 'react';
-import { RowStatus } from '../form/rows';
-import { t } from '../i18n';
+import { RowStatus } from '@app/form/rows';
+import { t } from '@app/i18n';
 import {
   formatRestoreFailureReason,
   formatRowKind,
   formatRowMetric,
   formatRowStatus,
-} from '../utils/format';
+} from '@app/utils/format';
 import { rowInteraction, rowStyle, styles, type MeasurementRowProps } from './MeasurementRow.props';
 
 // stopPropagation keeps a button click from also triggering the row's focus click. Module scope:

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type * as ConfigModule from '../config';
+import type * as ConfigModule from '@app/config';
 
 const VIEWER_URL_PREFIX = 'http://localhost:3000/viewer?StudyInstanceUIDs=';
 
@@ -15,7 +15,7 @@ const setStudyParam = (value: string | null): void => {
 // resolved before: reset modules, set the URL, then import fresh.
 const loadConfig = async (): Promise<typeof ConfigModule> => {
   vi.resetModules();
-  return import('../config');
+  return import('@app/config');
 };
 
 afterEach(() => {

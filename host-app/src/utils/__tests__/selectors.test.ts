@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { RowStatus, type Row } from '../../form/rows';
-import { findRow, findRowByUid, hasRow } from '../selectors';
+import { RowStatus, type Row } from '@app/form/rows';
+import { findRow, findRowByUid, hasRow } from '@app/utils/selectors';
 
 const row = (rowId: string, measurementUid: string | null): Row => ({
   rowId,

@@ -1,9 +1,9 @@
 import { useMemo, type JSX } from 'react';
-import { DEFAULT_TOOL, LENGTH_TOOL } from '../config';
-import { t } from '../i18n';
+import { DEFAULT_TOOL, LENGTH_TOOL } from '@app/config';
+import { t } from '@app/i18n';
+import { computeTotals } from '@app/form/totals';
 import { MeasurementRow } from './MeasurementRow';
 import { TotalsFooter } from './TotalsFooter';
-import { computeTotals } from '../form/totals';
 import { styles, type ScoringPanelProps } from './ScoringPanel.props';
 
 export const ScoringPanel = ({

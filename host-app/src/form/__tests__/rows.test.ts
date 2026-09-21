@@ -7,7 +7,7 @@ import {
   metricKeyForTool,
   reducer,
   type FormState,
-} from '../rows';
+} from '@app/form/rows';
 
 const metrics: Metrics = { area: { value: 124.5, unit: 'mm2' } };
 

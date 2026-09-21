@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
-import type { Row } from '../form/rows';
-import { t } from '../i18n';
+import type { Row } from '@app/form/rows';
+import { t } from '@app/i18n';
 
 export interface MeasurementRowProps {
   row: Row;

@@ -8,9 +8,9 @@ import {
   focusMeasurementCommand,
   removeMeasurementCommand,
 } from '@bdiadiun/scoring-orchestrator';
-import { DEFAULT_TOOL } from '../config';
+import { DEFAULT_TOOL } from '@app/config';
+import { findRow } from '@app/utils/selectors';
 import { FormActionType, RowStatus } from './rows';
-import { findRow } from '../utils/selectors';
 import type { RowActions, RowActionsContext } from './rowActions.props';
 
 export type { RowActions, RowActionsContext } from './rowActions.props';

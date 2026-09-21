@@ -1,6 +1,6 @@
 import { forwardRef, type JSX } from 'react';
-import { t } from '../i18n';
-import { viewerUrl } from '../config';
+import { t } from '@app/i18n';
+import { viewerUrl } from '@app/config';
 import { styles } from './ViewerFrame.props';
 
 // No `sandbox` attribute: the viewer needs its own scripts and must be able to postMessage out.

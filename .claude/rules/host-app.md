@@ -10,6 +10,10 @@ paths:
   function created anywhere in the `return` statement: it is declared with a name above it. A list
   render's `.map` callback is the only exception.
 - User-visible strings come from `src/i18n.ts` as `t.<key>` (Ukrainian, decision A-7).
+- Imports that cross a folder use the `@app/*` alias, which resolves to `host-app/src/*`; inside one
+  folder `./` stays, being the more precise statement. The alias belongs to this application only:
+  `packages/*` keep relative imports, because they are published and an alias would resolve here and
+  break in a consumer's build.
 - Tests live in a `__tests__/` folder next to the code they test.
 - Folder layout follows `docs/PROJECT-STRUCTURE.md`. A folder the layout names but the repository
   does not have yet (`assets/`, `context/`, `redux/`) is created only when its first file arrives,

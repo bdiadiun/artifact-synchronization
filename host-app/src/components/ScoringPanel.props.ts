@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { ToolName } from '@bdiadiun/scoring-contract';
-import type { Row } from '../form/rows';
+import type { Row } from '@app/form/rows';
 
 export interface ScoringPanelProps {
   rows: Row[];
