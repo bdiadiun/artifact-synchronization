@@ -260,6 +260,11 @@
       "id": "45",
       "title": "fix: publish only the packages that changed",
       "branch": "fix/publish-only-changed"
+    },
+    {
+      "id": "46",
+      "title": "feat: the study comes from the form's URL",
+      "branch": "feat/study-from-url"
     }
   ],
   "nodes": [
@@ -3295,10 +3300,74 @@
       "canon": ["A-15", "A-17", "D-2"],
       "dependsOn": ["F-50"],
       "slice": "45",
-      "status": "review",
+      "status": "done",
       "verify": "The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.",
       "files": [".github/workflows/publish-packages.yml"],
       "imports": {}
+    },
+    {
+      "id": "F-52",
+      "name": "The study comes from the form's own URL",
+      "description": "An addition of our own, not a requirement: the form reads a `study` parameter from its own page URL and uses it for the viewer link, the storage key and the restore request, falling back to the previous constant. The value is the one piece of outside input the form puts into a URL, so it gets both defences: it is accepted only if it reads as a DICOM identifier, and it is encoded on the way into the iframe source. Two tabs on different studies now keep separate rows, which is what the per-study storage key always claimed.",
+      "canon": ["A-19", "C-4.1.3", "S-5.6"],
+      "dependsOn": ["F-51"],
+      "slice": "46",
+      "status": "review",
+      "verify": "A valid parameter reaches the viewer URL encoded; seven malformed shapes each fall back and warn once; the resolved value is the same for every consumer within a page load; rows stored under one study are not returned under another.",
+      "files": [
+        "docs/decisions/A-19-study-from-the-page-url.md",
+        "host-app/src/__tests__/config.test.ts",
+        "host-app/src/config.ts",
+        "host-app/src/form/viewerEventHandlers.ts",
+        "host-app/src/hooks/__tests__/studyIsolation.test.ts",
+        "host-app/src/hooks/usePersistRows.ts",
+        "host-app/src/hooks/useRestoredRows.ts"
+      ],
+      "imports": {
+        "host-app/src/__tests__/config.test.ts": {
+          "internal": ["host-app/src/config.ts"],
+          "external": ["vitest"]
+        },
+        "host-app/src/config.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": []
+        },
+        "host-app/src/form/viewerEventHandlers.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/viewerEventHandlers.props.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
+            "host-app/src/utils/selectors.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": ["@bdiadiun/scoring-orchestrator"]
+        },
+        "host-app/src/hooks/__tests__/studyIsolation.test.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/hooks/usePersistRows.ts",
+            "host-app/src/hooks/useRestoredRows.ts"
+          ],
+          "external": ["@testing-library/react", "vitest"]
+        },
+        "host-app/src/hooks/usePersistRows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/hooks/useRestoredRows.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts"
+          ],
+          "external": ["react"]
+        }
+      }
     }
   ]
 }

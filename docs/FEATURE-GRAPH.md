@@ -61,7 +61,8 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-48 | Types live beside every module, not only components                                                                                               | A-13, D-2                                                       | F-47             | 42    | done    | A stray interface in a module that is not a `.props.ts` fails `npm run lint`, proved with a probe file; every public type is still importable from the specifier it was imported from before, and the package's published entry declaration is byte-identical.                                                                                                            |
 | F-49 | The contract reads as four small modules                                                                                                          | A-13, A-15, Q-7                                                 | F-48             | 43    | done    | The entry exports the same thirty-three names with the same declarations as before the split, compared name by name; a test asserts the entry still exports everything the rest of the repository imports and was shown to fail when one export is removed; the suite grew from 166 to 176 cases.                                                                         |
 | F-50 | Every fix leaves a rule behind                                                                                                                    | A-13, D-2                                                       | F-49             | 44    | done    | The conventions carry a verification section and a publishing section; the slice skill requires a cold run before gate 2; the developer, tester and architect files each carry the part of it they act on.                                                                                                                                                                |
-| F-51 | Only a changed package is released                                                                                                                | A-15, A-17, D-2                                                 | F-50             | 45    | review  | The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.                                                                                                      |
+| F-51 | Only a changed package is released                                                                                                                | A-15, A-17, D-2                                                 | F-50             | 45    | done    | The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.                                                                                                      |
+| F-52 | The study comes from the form's own URL                                                                                                           | A-19, C-4.1.3, S-5.6                                            | F-51             | 46    | review  | A valid parameter reaches the viewer URL encoded; seven malformed shapes each fall back and warn once; the resolved value is the same for every consumer within a page load; rows stored under one study are not returned under another.                                                                                                                                  |
 
 ## Coverage of mandatory IDs
 
@@ -73,7 +74,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | C-3.4   | F-05, F-09, F-32                                                                                                             |
 | C-4.1.1 | F-04, F-45                                                                                                                   |
 | C-4.1.2 | F-04                                                                                                                         |
-| C-4.1.3 | F-02, F-04                                                                                                                   |
+| C-4.1.3 | F-02, F-04, F-52                                                                                                             |
 | C-4.2.1 | F-01                                                                                                                         |
 | C-4.2.2 | F-02                                                                                                                         |
 | C-4.2.3 | F-01                                                                                                                         |
@@ -160,6 +161,7 @@ graph TD
   F49["F-49 The contract reads as four small modules"]
   F50["F-50 Every fix leaves a rule behind"]
   F51["F-51 Only a changed package is released"]
+  F52["F-52 The study comes from the form's own URL"]
 
   F20 --> F01
   F01 --> F02
@@ -217,6 +219,7 @@ graph TD
   F48 --> F49
   F49 --> F50
   F50 --> F51
+  F51 --> F52
 ```
 
 ## Slice → nodes
@@ -271,6 +274,7 @@ graph TD
 | 43 — refactor: the contract split by concern                 | `refactor/contract-modules`                 | —   | F-49                   |
 | 44 — docs: rules harvested from the fixes                    | `docs/rules-from-fixes`                     | —   | F-50                   |
 | 45 — fix: publish only the packages that changed             | `fix/publish-only-changed`                  | —   | F-51                   |
+| 46 — feat: the study comes from the form's URL               | `feat/study-from-url`                       | —   | F-52                   |
 
 ## Node details
 
@@ -1170,8 +1174,24 @@ Files:
 
 The publish workflow minted a version for every package on every run: it resolved a patch above the latest release and only skipped when that version already existed, which it never did. One merge that touched the contract alone therefore also released an empty orchestrator. The workflow now decides per package from the files the push actually changed, keeps the dependency order and the existing guard, and says in the job summary what it published and what it skipped, each with its reason. When the comparison cannot be made it publishes, because a missed release costs more than a spare one.
 
-Canon: A-15, A-17, D-2. Depends on: F-50. Slice 45, status `review`.
+Canon: A-15, A-17, D-2. Depends on: F-50. Slice 45, status `done`.
 
 Files:
 
 - `.github/workflows/publish-packages.yml`
+
+### F-52 The study comes from the form's own URL
+
+An addition of our own, not a requirement: the form reads a `study` parameter from its own page URL and uses it for the viewer link, the storage key and the restore request, falling back to the previous constant. The value is the one piece of outside input the form puts into a URL, so it gets both defences: it is accepted only if it reads as a DICOM identifier, and it is encoded on the way into the iframe source. Two tabs on different studies now keep separate rows, which is what the per-study storage key always claimed.
+
+Canon: A-19, C-4.1.3, S-5.6. Depends on: F-51. Slice 46, status `review`.
+
+Files:
+
+- `docs/decisions/A-19-study-from-the-page-url.md`
+- `host-app/src/__tests__/config.test.ts` — internal: `host-app/src/config.ts`; external: `vitest`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.props.ts`, `host-app/src/hooks/useViewerEvents.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-orchestrator`
+- `host-app/src/hooks/__tests__/studyIsolation.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
+- `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`

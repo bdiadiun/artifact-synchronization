@@ -55,7 +55,9 @@ npm install             # installs host-app and packages/contract (npm workspace
 npm run dev --workspace host-app
 ```
 
-Open http://localhost:5173. The left pane embeds the viewer; the status line in the right panel
+Open http://localhost:5173. To work on another study, add its identifier to the form's own URL,
+`http://localhost:5173/?study=<StudyInstanceUID>`; anything that is not a DICOM identifier is
+refused and the default study is used (A-19). The left pane embeds the viewer; the status line in the right panel
 turns to "готовий" once the viewer has sent `VIEWER_READY`.
 
 ### 3. Use it

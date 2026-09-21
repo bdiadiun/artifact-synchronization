@@ -10,7 +10,41 @@ export const LENGTH_TOOL: ToolName = 'Length';
 
 export const HOST_ORIGIN = 'http://localhost:5173';
 
-export const STUDY_INSTANCE_UID = '1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1';
+// Used whenever the form's own URL names no study, or names one that is not a valid UID.
+export const FALLBACK_STUDY_INSTANCE_UID = '1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1';
+
+// The query parameter of the form's own page that selects the study to open.
+const STUDY_PARAM = 'study';
+
+// DICOM UID grammar: dot-separated numeric components, at most 64 characters (PS3.5 §9.1).
+const UID_PATTERN = /^\d+(?:\.\d+)*$/;
+const UID_MAX_LENGTH = 64;
+
+const isStudyInstanceUid = (value: string): boolean =>
+  value.length <= UID_MAX_LENGTH && UID_PATTERN.test(value);
+
+// The study ends up inside the viewer iframe `src`, so anything but a UID is rejected rather than
+// escaped: a free-form value could append its own query parameters or repoint the path.
+const readStudyFromLocation = (): string => {
+  const requested = new URLSearchParams(window.location.search).get(STUDY_PARAM);
+  if (requested === null) {
+    return FALLBACK_STUDY_INSTANCE_UID;
+  }
+  if (!isStudyInstanceUid(requested)) {
+    console.warn(`[config] ignoring invalid "${STUDY_PARAM}" query parameter`, requested);
+    return FALLBACK_STUDY_INSTANCE_UID;
+  }
+  return requested;
+};
+
+// Resolved once per page load and cached, so the viewer URL, the storage key and the restore
+// command cannot disagree about which study the session belongs to.
+let resolvedStudyInstanceUid: string | null = null;
+
+export const studyInstanceUid = (): string => {
+  resolvedStudyInstanceUid ??= readStudyFromLocation();
+  return resolvedStudyInstanceUid;
+};
 
 export const viewerUrl = (): string =>
-  `${VIEWER_ORIGIN}/viewer?StudyInstanceUIDs=${STUDY_INSTANCE_UID}`;
+  `${VIEWER_ORIGIN}/viewer?StudyInstanceUIDs=${encodeURIComponent(studyInstanceUid())}`;
