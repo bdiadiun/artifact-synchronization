@@ -280,6 +280,11 @@
       "id": "50",
       "title": "feat: the adapter registers our extensions",
       "branch": "feat/extension-adapter"
+    },
+    {
+      "id": "51",
+      "title": "chore: the fork registers the adapter",
+      "branch": "chore/fork-uses-the-adapter"
     }
   ],
   "nodes": [
@@ -3727,7 +3732,7 @@
       "canon": ["A-20", "C-3.2", "Q-7"],
       "dependsOn": ["F-55"],
       "slice": "50",
-      "status": "review",
+      "status": "done",
       "verify": "The built viewer names only the adapter in OHIF's generated plugin imports, yet the bridge's code is in the bundle because the adapter pulls it; ten cases cover the order, the awaiting, the isolation of a throwing and a rejecting child, and the report when no manager is handed over.",
       "files": [
         ".github/workflows/publish-packages.yml",
@@ -3764,6 +3769,22 @@
           "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
         }
       }
+    },
+    {
+      "id": "F-57",
+      "name": "The three layers are in place",
+      "description": "Closes the arrangement A-20 describes. The fork registers one package, the adapter, and names nothing else of ours; the bridge and the contract arrive as its dependencies from the registry. Publishing stopped inventing versions at release time: each package's manifest names its version, the workflow publishes exactly that and skips what is already there. The git operator's boundary now includes the pointer recording which fork commit this repository was tested against, because that line is the written form of a merge it performs.",
+      "canon": ["A-18", "A-20", "C-3.2", "Q-7"],
+      "dependsOn": ["F-56"],
+      "slice": "51",
+      "status": "review",
+      "verify": "The fork's diff against the upstream tag is four files and no deletion; its lockfile resolves the adapter, the bridge and the contract as registry tarballs with integrity hashes while its manifests name only the adapter; the viewer builds with our code in the bundle.",
+      "files": [
+        ".claude/agents/git-operator.md",
+        ".github/workflows/publish-packages.yml",
+        "viewer.json"
+      ],
+      "imports": {}
     }
   ]
 }
