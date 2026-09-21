@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                           |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 52 `feat: the channel both sides use` (branch `feat/channel-exchange`, node F-58)                                                               |
-| Gate           | 2 — the origin check, the guard and the exchange live in one package; awaiting result approval                                                  |
-| Last merged PR | #62 `chore: the fork registers the adapter`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | none planned; only the video (F-13, author) is left                                                                                             |
+| Field          | Value                                                                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Current slice  | 53 `fix: release the contract that has the table` (branch `fix/release-the-real-contract`, node F-59)                                      |
+| Gate           | 2 — fresh numbers for the whole chain and a guard against skipping a mismatched release; awaiting result approval                          |
+| Last merged PR | #63 `feat: the channel both sides use`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | none planned; only the video (F-13, author) is left                                                                                        |
 
 ## Open decisions (see CANON.md → Decisions)
 

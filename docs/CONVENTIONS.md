@@ -265,6 +265,12 @@ somebody deletes.
 
 ## 11. Publishing
 
+- **A published version is that content for ever, so a number is never reused.** Skipping a release
+  because the version already exists is right only when what is there is what we would publish. A
+  number left over from an earlier mechanism was reused for different content: the release was
+  skipped, and three packages shipped pinned to a contract that did not contain what they imported.
+  Before skipping, the run compares what it would publish against what the registry serves, and
+  fails loudly when they differ.
 - **A version lives in the manifest, not in the release run.** The slice that changes a package
   raises that package's version, and the workflow publishes exactly that version and skips when it
   already exists. A version computed at release time cannot be named by anything that depends on

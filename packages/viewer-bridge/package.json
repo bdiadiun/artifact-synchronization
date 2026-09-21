@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/ohif-extension-scoring-bridge",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "OHIF extension acting as a postMessage bridge between the viewer and an embedding scoring form",
   "license": "MIT",
   "repository": {
@@ -29,8 +29,8 @@
     "prepare": "tsc -b --force"
   },
   "dependencies": {
-    "@bdiadiun/scoring-channel": "0.0.1",
-    "@bdiadiun/scoring-contract": "0.0.8"
+    "@bdiadiun/scoring-channel": "0.0.2",
+    "@bdiadiun/scoring-contract": "0.0.9"
   },
   "peerDependencies": {
     "@cornerstonejs/tools": "^4.15.29"
