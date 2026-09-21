@@ -4,8 +4,9 @@ paths:
 ---
 
 - Arrow functions with explicit return types on exports; string enums for application state.
-- Every `.ts` and `.tsx` file keeps its `interface` and `type` declarations and its `styles` object
-  in a sibling `{Name}.props.ts`, components and plain modules alike (lint rule). Enums stay with
+- A component keeps its props, its types and its `styles` in a sibling `{Name}.props.ts`. Another
+  module does the same only when the declarations run past about twenty lines or another module
+  imports them; one or two private types stay beside the code. Enums stay with
   their code; the published contract file is exempt. No inline `style={{ … }}`, no function created inside an `on…` prop, and no
   function created anywhere in the `return` statement: it is declared with a name above it. A list
   render's `.map` callback is the only exception.

@@ -3,7 +3,7 @@
 
 import type { BridgeMessage } from '@bdiadiun/scoring-contract';
 import { buildMessage, needsRequestId } from './buildMessage.js';
-import type { MessageOfType, PayloadOf } from './buildMessage.props.js';
+import type { MessageOfType, PayloadOf } from './buildMessage.js';
 import { DEFAULT_EXCHANGE_TIMEOUT_MS } from './config.js';
 import { createExchange } from './exchanges.js';
 import { createIncomingMessages } from './incomingMessages.js';

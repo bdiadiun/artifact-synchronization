@@ -4,9 +4,16 @@
 import { ANSWER_TYPE_BY_COMMAND } from '@bdiadiun/scoring-contract';
 import type { AnsweredCommandType, BridgeMessage } from '@bdiadiun/scoring-contract';
 import { buildMessage } from './buildMessage.js';
-import type { PayloadOf } from './buildMessage.props.js';
+import type { PayloadOf } from './buildMessage.js';
 import type { AnswerMessage, Channel } from './createChannel.props.js';
-import type { ExchangeDeps } from './exchanges.props.js';
+
+import type { PendingExchanges } from './pendingExchanges.js';
+export interface ExchangeDeps<TIncoming extends BridgeMessage, TOutgoing extends BridgeMessage> {
+  pending: PendingExchanges<TIncoming>;
+  deliver: (message: TOutgoing) => boolean;
+  newRequestId: () => string;
+  timeoutMs: number;
+}
 
 export const createExchange =
   <TIncoming extends BridgeMessage, TOutgoing extends BridgeMessage>({

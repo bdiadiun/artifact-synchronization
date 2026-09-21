@@ -5,7 +5,12 @@ import type {
 import { createChildren } from './children.js';
 import { LOG_PREFIX } from './config.js';
 import { registerChildren } from './registerChildren.js';
-import type { ScoringAdapterExtensionOptions } from './extension.props.js';
+
+export interface ScoringAdapterExtensionOptions {
+  // Forwarded to the bridge child; without it the bridge reads
+  // window.config.scoringBridge.hostOrigin itself.
+  hostOrigin?: string;
+}
 
 // Every OHIF extension registers under its package name; the id is written out rather than read
 // from package.json, which a published bundle does not ship next to its modules.

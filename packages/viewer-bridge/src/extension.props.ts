@@ -1,5 +1,5 @@
 import type { OhifExtensionParams } from './ohif.props.js';
-import type { CustomizationModuleEntry } from './getCustomizationModule.props.js';
+import type { CustomizationModuleEntry } from './getCustomizationModule.js';
 
 // The three members ExtensionManager reads from this extension: the id it registers modules under
 // (ExtensionManager.ts:260-273), the pre-registration hook and one module getter.

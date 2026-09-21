@@ -1,14 +1,28 @@
 // What each user-triggered row action does to state, dispatch and the outgoing bridge. Mirrors
 // viewerEventHandlers.ts, which does the same job for the incoming half of the form.
 
+import type { Dispatch } from 'react';
 import type { ToolName } from '@bdiadiun/scoring-contract';
+import type { HostChannel } from '@bdiadiun/scoring-orchestrator';
 import { DEFAULT_TOOL } from '@app/config';
 import { findRow } from '@app/utils/selectors';
-import { FormActionType, RowStatus } from './rows';
+import { FormActionType, RowStatus, type FormAction, type FormState } from './rows';
 import { warnUnanswered } from './unanswered';
-import type { RowActions, RowActionsContext } from './rowActions.props';
 
-export type { RowActions, RowActionsContext } from './rowActions.props';
+export interface RowActionsContext {
+  state: FormState;
+  dispatch: Dispatch<FormAction>;
+  send: HostChannel['send'];
+  exchange: HostChannel['exchange'];
+}
+
+export interface RowActions {
+  addRow: (toolName?: ToolName) => void;
+  activate: (rowId: string) => void;
+  cancel: (rowId: string) => void;
+  remove: (rowId: string) => void;
+  focus: (rowId: string) => void;
+}
 
 const addRow = (context: RowActionsContext, toolName: ToolName = DEFAULT_TOOL): void => {
   context.dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID(), toolName });

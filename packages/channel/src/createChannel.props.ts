@@ -1,5 +1,5 @@
 import type { AnsweredCommandType, AnswerTypeOf, BridgeMessage } from '@bdiadiun/scoring-contract';
-import type { MessageOfType, PayloadOf } from './buildMessage.props.js';
+import type { MessageOfType, PayloadOf } from './buildMessage.js';
 
 export type AnswerMessage<
   TIncoming extends BridgeMessage,

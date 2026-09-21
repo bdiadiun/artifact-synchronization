@@ -1,8 +1,16 @@
 import { readViewerVersion } from './viewerVersion.js';
-import type {
-  CustomizationModuleEntry,
-  OverlayItemCustomization,
-} from './getCustomizationModule.props.js';
+
+export interface OverlayItemCustomization {
+  id: string;
+  inheritsFrom: string;
+  title: string;
+  contentF: () => string | null;
+}
+
+export interface CustomizationModuleEntry {
+  name: string;
+  value: Record<string, { $push: OverlayItemCustomization[] }>;
+}
 
 const VERSION_NUMBER = readViewerVersion() ?? '';
 

@@ -2,9 +2,12 @@
 
 import type { Metrics, Unit } from '@bdiadiun/scoring-contract';
 import { RowStatus, type Row } from './rows';
-import type { Total } from './totals.props';
 
-export type { Total } from './totals.props';
+export interface Total {
+  unit: Unit;
+  value: number;
+  count: number;
+}
 
 // mm2 first (clinically meaningful when spacing is present), then px2, then anything else alphabetically.
 const UNIT_ORDER: readonly Unit[] = ['mm2', 'px2'];

@@ -1,7 +1,20 @@
 import type { MeasurementRemovedEvent, RemoveMeasurementCommand } from '@bdiadiun/scoring-contract';
 
 import { LOG_PREFIX } from './config.js';
-import type { RemovalCommands, RemovalCommandsDeps } from './removals.props.js';
+import type { OhifServicesManager } from './ohif.props.js';
+import type { PostToHost } from './messaging.props.js';
+
+export interface RemovalCommandsDeps {
+  servicesManager: OhifServicesManager;
+  post: PostToHost;
+  forget: (uid: string) => void;
+}
+
+export interface RemovalCommands {
+  handleRemove: (command: RemoveMeasurementCommand) => void;
+  takeCause: (uid: string) => string | undefined;
+  dispose: () => void;
+}
 
 // P-6 / A-10, the echo-loop point: causedBy lets the host recognise its own echo, and
 // idempotency (unknown uid -> no remove() call) ends a loop even for a host that ignores it.

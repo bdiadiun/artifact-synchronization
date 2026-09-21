@@ -300,6 +300,11 @@
       "id": "54",
       "title": "docs: start the viewer the way it works",
       "branch": "docs/start-the-viewer-correctly"
+    },
+    {
+      "id": "55",
+      "title": "refactor: fewer files, one teardown",
+      "branch": "refactor/fewer-files"
     }
   ],
   "nodes": [
@@ -576,7 +581,6 @@
       "verify": "Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).",
       "files": [
         "packages/viewer-bridge/package.json",
-        "packages/viewer-bridge/src/bridge.props.ts",
         "packages/viewer-bridge/src/bridge.ts",
         "packages/viewer-bridge/src/config.ts",
         "packages/viewer-bridge/src/extension.props.ts",
@@ -586,26 +590,22 @@
         "packages/viewer-bridge/tsconfig.json"
       ],
       "imports": {
-        "packages/viewer-bridge/src/bridge.props.ts": {
-          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
-          "external": []
-        },
         "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.props.ts",
             "packages/viewer-bridge/src/commands.ts",
             "packages/viewer-bridge/src/config.ts",
             "packages/viewer-bridge/src/focus.ts",
             "packages/viewer-bridge/src/handshake.ts",
             "packages/viewer-bridge/src/measurementStream.ts",
             "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
             "packages/viewer-bridge/src/registry.props.ts",
             "packages/viewer-bridge/src/registry.ts",
             "packages/viewer-bridge/src/removals.ts",
             "packages/viewer-bridge/src/reportedMeasurements.ts",
             "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/config.ts": {
           "internal": [],
@@ -613,7 +613,7 @@
         },
         "packages/viewer-bridge/src/extension.props.ts": {
           "internal": [
-            "packages/viewer-bridge/src/getCustomizationModule.props.ts",
+            "packages/viewer-bridge/src/getCustomizationModule.ts",
             "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
@@ -656,7 +656,6 @@
         "host-app/src/components/BridgeStatus.props.ts",
         "host-app/src/components/BridgeStatus.tsx",
         "host-app/src/hooks/__tests__/useBridge.test.tsx",
-        "host-app/src/hooks/useBridge.props.ts",
         "host-app/src/hooks/useBridge.ts",
         "packages/orchestrator/src/__tests__/createOrchestrator.test.ts",
         "packages/orchestrator/src/createOrchestrator.props.ts",
@@ -675,12 +674,8 @@
           "internal": ["host-app/src/hooks/useBridge.ts"],
           "external": ["@testing-library/react", "react", "vitest"]
         },
-        "host-app/src/hooks/useBridge.props.ts": {
-          "internal": [],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useBridge.ts": {
-          "internal": ["host-app/src/config.ts", "host-app/src/hooks/useBridge.props.ts"],
+          "internal": ["host-app/src/config.ts"],
           "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "packages/orchestrator/src/__tests__/createOrchestrator.test.ts": {
@@ -697,16 +692,12 @@
         "packages/orchestrator/src/createOrchestrator.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/orchestrator/src/armedTool.ts",
-            "packages/orchestrator/src/commandQueue.ts",
             "packages/orchestrator/src/config.ts",
             "packages/orchestrator/src/createOrchestrator.props.ts",
-            "packages/orchestrator/src/delivery.ts",
-            "packages/orchestrator/src/hostChannel.ts",
-            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/incomingEvents.ts",
             "packages/orchestrator/src/orchestratorState.ts",
-            "packages/orchestrator/src/teardown.ts",
-            "packages/orchestrator/src/viewerEvents.ts"
+            "packages/orchestrator/src/outgoingCommands.ts",
+            "packages/orchestrator/src/teardown.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
         }
@@ -728,7 +719,6 @@
         "host-app/src/form/rows.props.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts"
       ],
       "imports": {
@@ -773,10 +763,6 @@
           ],
           "external": ["@bdiadiun/scoring-orchestrator", "@testing-library/react", "vitest"]
         },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
@@ -784,10 +770,10 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/index.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         }
       }
     },
@@ -803,7 +789,6 @@
       "files": [
         "docs/decisions/A-4-cancelled-activation.md",
         "host-app/src/config.ts",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
         "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts"
@@ -813,10 +798,6 @@
           "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
@@ -824,10 +805,10 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/index.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
@@ -859,7 +840,6 @@
       "files": [
         "docs/decisions/A-11-units-and-metrics-payload.md",
         "docs/decisions/A-8-id-correlation.md",
-        "packages/viewer-bridge/src/bridge.props.ts",
         "packages/viewer-bridge/src/bridge.ts",
         "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts",
@@ -867,26 +847,22 @@
         "packages/viewer-bridge/src/measurements.ts"
       ],
       "imports": {
-        "packages/viewer-bridge/src/bridge.props.ts": {
-          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
-          "external": []
-        },
         "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.props.ts",
             "packages/viewer-bridge/src/commands.ts",
             "packages/viewer-bridge/src/config.ts",
             "packages/viewer-bridge/src/focus.ts",
             "packages/viewer-bridge/src/handshake.ts",
             "packages/viewer-bridge/src/measurementStream.ts",
             "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
             "packages/viewer-bridge/src/registry.props.ts",
             "packages/viewer-bridge/src/registry.ts",
             "packages/viewer-bridge/src/removals.ts",
             "packages/viewer-bridge/src/reportedMeasurements.ts",
             "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
@@ -932,7 +908,6 @@
         "host-app/src/form/rows.props.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
         "host-app/src/utils/__tests__/format.test.ts",
         "host-app/src/utils/format.ts"
@@ -971,10 +946,6 @@
           ],
           "external": ["@bdiadiun/scoring-orchestrator", "@testing-library/react", "vitest"]
         },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
@@ -982,10 +953,10 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/index.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/utils/__tests__/format.test.ts": {
           "internal": [
@@ -1019,7 +990,6 @@
         "host-app/src/components/TotalsFooter.tsx",
         "host-app/src/components/__tests__/ScoringPanel.test.tsx",
         "host-app/src/form/__tests__/totals.test.ts",
-        "host-app/src/form/totals.props.ts",
         "host-app/src/form/totals.ts"
       ],
       "imports": {
@@ -1047,16 +1017,8 @@
           ],
           "external": ["vitest"]
         },
-        "host-app/src/form/totals.props.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": []
-        },
         "host-app/src/form/totals.ts": {
-          "internal": [
-            "host-app/src/form/rows.ts",
-            "host-app/src/form/totals.props.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
           "external": []
         }
       }
@@ -1100,13 +1062,10 @@
         "host-app/src/form/rows.props.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
-        "packages/viewer-bridge/src/bridge.props.ts",
         "packages/viewer-bridge/src/bridge.ts",
         "packages/viewer-bridge/src/measurements.props.ts",
         "packages/viewer-bridge/src/measurements.ts",
-        "packages/viewer-bridge/src/throttle.props.ts",
         "packages/viewer-bridge/src/throttle.ts"
       ],
       "imports": {
@@ -1138,10 +1097,6 @@
           ],
           "external": ["@bdiadiun/scoring-orchestrator", "@testing-library/react", "vitest"]
         },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
@@ -1149,31 +1104,27 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/index.ts"
           ],
-          "external": ["react"]
-        },
-        "packages/viewer-bridge/src/bridge.props.ts": {
-          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
-          "external": []
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.props.ts",
             "packages/viewer-bridge/src/commands.ts",
             "packages/viewer-bridge/src/config.ts",
             "packages/viewer-bridge/src/focus.ts",
             "packages/viewer-bridge/src/handshake.ts",
             "packages/viewer-bridge/src/measurementStream.ts",
             "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
             "packages/viewer-bridge/src/registry.props.ts",
             "packages/viewer-bridge/src/registry.ts",
             "packages/viewer-bridge/src/removals.ts",
             "packages/viewer-bridge/src/reportedMeasurements.ts",
             "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/measurements.props.ts": {
           "internal": [],
@@ -1187,12 +1138,8 @@
           ],
           "external": []
         },
-        "packages/viewer-bridge/src/throttle.props.ts": {
-          "internal": [],
-          "external": []
-        },
         "packages/viewer-bridge/src/throttle.ts": {
-          "internal": ["packages/viewer-bridge/src/throttle.props.ts"],
+          "internal": [],
           "external": []
         }
       }
@@ -1213,7 +1160,6 @@
         "host-app/src/form/rows.props.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
         "packages/contract/src/__tests__/hostCommands.test.ts",
         "packages/contract/src/__tests__/index.test.ts",
@@ -1228,11 +1174,9 @@
         "packages/contract/src/viewerEvents.ts",
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
-        "packages/viewer-bridge/src/bridge.props.ts",
         "packages/viewer-bridge/src/bridge.ts",
         "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/removals.props.ts",
         "packages/viewer-bridge/src/removals.ts"
       ],
       "imports": {
@@ -1277,10 +1221,6 @@
           ],
           "external": ["@bdiadiun/scoring-orchestrator", "@testing-library/react", "vitest"]
         },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
@@ -1288,10 +1228,10 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/index.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "packages/contract/src/__tests__/hostCommands.test.ts": {
           "internal": [
@@ -1383,26 +1323,22 @@
           "internal": ["packages/contract/src/vocabulary.props.ts"],
           "external": []
         },
-        "packages/viewer-bridge/src/bridge.props.ts": {
-          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
-          "external": []
-        },
         "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.props.ts",
             "packages/viewer-bridge/src/commands.ts",
             "packages/viewer-bridge/src/config.ts",
             "packages/viewer-bridge/src/focus.ts",
             "packages/viewer-bridge/src/handshake.ts",
             "packages/viewer-bridge/src/measurementStream.ts",
             "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
             "packages/viewer-bridge/src/registry.props.ts",
             "packages/viewer-bridge/src/registry.ts",
             "packages/viewer-bridge/src/removals.ts",
             "packages/viewer-bridge/src/reportedMeasurements.ts",
             "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
@@ -1420,19 +1356,12 @@
           ],
           "external": []
         },
-        "packages/viewer-bridge/src/removals.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/messaging.props.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/removals.ts": {
           "internal": [
             "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/removals.props.ts"
+            "packages/viewer-bridge/src/messaging.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         }
@@ -1451,7 +1380,6 @@
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/components/__tests__/ScoringPanel.test.tsx",
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
         "packages/contract/src/__tests__/hostCommands.test.ts",
         "packages/contract/src/__tests__/index.test.ts",
@@ -1468,7 +1396,6 @@
         "packages/contract/src/vocabulary.ts",
         "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/focus.props.ts",
         "packages/viewer-bridge/src/focus.ts"
       ],
       "imports": {
@@ -1496,10 +1423,6 @@
           ],
           "external": ["@bdiadiun/scoring-orchestrator", "@testing-library/react", "vitest"]
         },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
@@ -1507,10 +1430,10 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/index.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "packages/contract/src/__tests__/hostCommands.test.ts": {
           "internal": [
@@ -1618,18 +1541,11 @@
           ],
           "external": []
         },
-        "packages/viewer-bridge/src/focus.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/focus.ts": {
           "internal": [
             "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.props.ts"
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         }
@@ -1658,7 +1574,6 @@
         "host-app/src/form/rows.props.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
         "host-app/src/i18n.ts"
       ],
@@ -1743,10 +1658,6 @@
           ],
           "external": ["@bdiadiun/scoring-orchestrator", "@testing-library/react", "vitest"]
         },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
@@ -1754,10 +1665,10 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
+            "host-app/src/hooks/useViewerEvents.ts",
+            "packages/contract/src/index.ts"
           ],
-          "external": ["react"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/index.ts"],
@@ -1777,13 +1688,12 @@
       "files": [
         "packages/viewer-bridge/src/extension.props.ts",
         "packages/viewer-bridge/src/extension.ts",
-        "packages/viewer-bridge/src/getCustomizationModule.props.ts",
         "packages/viewer-bridge/src/getCustomizationModule.ts"
       ],
       "imports": {
         "packages/viewer-bridge/src/extension.props.ts": {
           "internal": [
-            "packages/viewer-bridge/src/getCustomizationModule.props.ts",
+            "packages/viewer-bridge/src/getCustomizationModule.ts",
             "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
@@ -1798,15 +1708,8 @@
           ],
           "external": []
         },
-        "packages/viewer-bridge/src/getCustomizationModule.props.ts": {
-          "internal": [],
-          "external": []
-        },
         "packages/viewer-bridge/src/getCustomizationModule.ts": {
-          "internal": [
-            "packages/viewer-bridge/src/getCustomizationModule.props.ts",
-            "packages/viewer-bridge/src/viewerVersion.ts"
-          ],
+          "internal": ["packages/viewer-bridge/src/viewerVersion.ts"],
           "external": []
         }
       }
@@ -1829,19 +1732,14 @@
         "host-app/src/components/MeasurementRow.props.ts",
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/form/__tests__/storage.test.ts",
-        "host-app/src/form/rowActions.props.ts",
         "host-app/src/form/rowActions.ts",
         "host-app/src/form/rows.props.ts",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/storage.props.ts",
         "host-app/src/form/storage.ts",
-        "host-app/src/form/viewerEventHandlers.props.ts",
         "host-app/src/form/viewerEventHandlers.ts",
         "host-app/src/hooks/usePersistRows.ts",
         "host-app/src/hooks/useRestoredRows.ts",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
-        "host-app/src/hooks/useViewerEvents.props.ts",
         "host-app/src/hooks/useViewerEvents.ts",
         "host-app/src/i18n.ts",
         "host-app/src/utils/format.ts",
@@ -1887,20 +1785,15 @@
           "internal": ["host-app/src/form/rows.ts", "host-app/src/form/storage.ts"],
           "external": ["vitest"]
         },
-        "host-app/src/form/rowActions.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator", "react"]
-        },
         "host-app/src/form/rowActions.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/rowActions.props.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/unanswered.ts",
             "host-app/src/utils/selectors.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/form/rows.props.ts": {
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
@@ -1915,33 +1808,20 @@
           ],
           "external": []
         },
-        "host-app/src/form/storage.props.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": []
-        },
         "host-app/src/form/storage.ts": {
-          "internal": [
-            "host-app/src/form/rows.ts",
-            "host-app/src/form/storage.props.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
           "external": []
-        },
-        "host-app/src/form/viewerEventHandlers.props.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/unanswered.ts",
-            "host-app/src/form/viewerEventHandlers.props.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "host-app/src/utils/selectors.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/hooks/usePersistRows.ts": {
           "internal": [
@@ -1959,10 +1839,6 @@
           ],
           "external": ["react"]
         },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/form/rowActions.ts",
@@ -1970,20 +1846,13 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
-          ],
-          "external": ["react"]
-        },
-        "host-app/src/hooks/useViewerEvents.props.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": []
-        },
-        "host-app/src/hooks/useViewerEvents.ts": {
-          "internal": [
-            "host-app/src/hooks/useViewerEvents.props.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/index.ts"
           ],
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
+        },
+        "host-app/src/hooks/useViewerEvents.ts": {
+          "internal": ["packages/contract/src/index.ts"],
           "external": ["react"]
         },
         "host-app/src/i18n.ts": {
@@ -2502,11 +2371,9 @@
         "ARCHITECTURE.md",
         "docs/DEFENCE.md",
         "docs/notes/bridge-internals.md",
-        "packages/viewer-bridge/src/bridge.props.ts",
         "packages/viewer-bridge/src/bridge.ts",
         "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/handshake.props.ts",
         "packages/viewer-bridge/src/handshake.ts",
         "packages/viewer-bridge/src/measurementStream.props.ts",
         "packages/viewer-bridge/src/measurementStream.ts",
@@ -2516,30 +2383,25 @@
         "packages/viewer-bridge/src/registry.ts",
         "packages/viewer-bridge/src/reportedMeasurements.props.ts",
         "packages/viewer-bridge/src/reportedMeasurements.ts",
-        "packages/viewer-bridge/src/throttle.props.ts",
         "packages/viewer-bridge/src/throttle.ts"
       ],
       "imports": {
-        "packages/viewer-bridge/src/bridge.props.ts": {
-          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
-          "external": []
-        },
         "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.props.ts",
             "packages/viewer-bridge/src/commands.ts",
             "packages/viewer-bridge/src/config.ts",
             "packages/viewer-bridge/src/focus.ts",
             "packages/viewer-bridge/src/handshake.ts",
             "packages/viewer-bridge/src/measurementStream.ts",
             "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
             "packages/viewer-bridge/src/registry.props.ts",
             "packages/viewer-bridge/src/registry.ts",
             "packages/viewer-bridge/src/removals.ts",
             "packages/viewer-bridge/src/reportedMeasurements.ts",
             "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
@@ -2557,18 +2419,12 @@
           ],
           "external": []
         },
-        "packages/viewer-bridge/src/handshake.props.ts": {
-          "internal": [
-            "packages/viewer-bridge/src/messaging.props.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/handshake.ts": {
           "internal": [
             "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/handshake.props.ts",
+            "packages/viewer-bridge/src/messaging.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
             "packages/viewer-bridge/src/viewerVersion.ts"
           ],
           "external": []
@@ -2638,12 +2494,8 @@
           ],
           "external": []
         },
-        "packages/viewer-bridge/src/throttle.props.ts": {
-          "internal": [],
-          "external": []
-        },
         "packages/viewer-bridge/src/throttle.ts": {
-          "internal": ["packages/viewer-bridge/src/throttle.props.ts"],
+          "internal": [],
           "external": []
         }
       }
@@ -2664,21 +2516,14 @@
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/form/rows.props.ts",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/viewerEventHandlers.props.ts",
         "host-app/src/form/viewerEventHandlers.ts",
-        "host-app/src/hooks/useScoringForm.props.ts",
         "host-app/src/hooks/useScoringForm.ts",
-        "host-app/src/hooks/useViewerEvents.props.ts",
         "host-app/src/hooks/useViewerEvents.ts",
         "host-app/src/utils/__tests__/selectors.test.ts",
         "host-app/src/utils/format.ts",
         "host-app/src/utils/selectors.ts",
-        "packages/orchestrator/src/commandQueue.props.ts",
-        "packages/orchestrator/src/commandQueue.ts",
         "packages/orchestrator/src/createOrchestrator.props.ts",
-        "packages/orchestrator/src/createOrchestrator.ts",
-        "packages/orchestrator/src/listeners.props.ts",
-        "packages/orchestrator/src/listeners.ts"
+        "packages/orchestrator/src/createOrchestrator.ts"
       ],
       "imports": {
         "eslint.config.js": {
@@ -2718,25 +2563,16 @@
           ],
           "external": []
         },
-        "host-app/src/form/viewerEventHandlers.props.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator", "react"]
-        },
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/unanswered.ts",
-            "host-app/src/form/viewerEventHandlers.props.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "host-app/src/utils/selectors.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": []
-        },
-        "host-app/src/hooks/useScoringForm.props.ts": {
-          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-orchestrator"]
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
@@ -2745,20 +2581,13 @@
             "host-app/src/form/viewerEventHandlers.ts",
             "host-app/src/hooks/usePersistRows.ts",
             "host-app/src/hooks/useRestoredRows.ts",
-            "host-app/src/hooks/useScoringForm.props.ts",
-            "host-app/src/hooks/useViewerEvents.ts"
-          ],
-          "external": ["react"]
-        },
-        "host-app/src/hooks/useViewerEvents.props.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": []
-        },
-        "host-app/src/hooks/useViewerEvents.ts": {
-          "internal": [
-            "host-app/src/hooks/useViewerEvents.props.ts",
+            "host-app/src/hooks/useViewerEvents.ts",
             "packages/contract/src/index.ts"
           ],
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
+        },
+        "host-app/src/hooks/useViewerEvents.ts": {
+          "internal": ["packages/contract/src/index.ts"],
           "external": ["react"]
         },
         "host-app/src/utils/__tests__/selectors.test.ts": {
@@ -2777,17 +2606,6 @@
           "internal": ["host-app/src/form/rows.ts"],
           "external": []
         },
-        "packages/orchestrator/src/commandQueue.props.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/orchestrator/src/commandQueue.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/orchestrator/src/commandQueue.props.ts"
-          ],
-          "external": []
-        },
         "packages/orchestrator/src/createOrchestrator.props.ts": {
           "internal": ["packages/contract/src/index.ts"],
           "external": ["@bdiadiun/scoring-channel"]
@@ -2795,33 +2613,14 @@
         "packages/orchestrator/src/createOrchestrator.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/orchestrator/src/armedTool.ts",
-            "packages/orchestrator/src/commandQueue.ts",
             "packages/orchestrator/src/config.ts",
             "packages/orchestrator/src/createOrchestrator.props.ts",
-            "packages/orchestrator/src/delivery.ts",
-            "packages/orchestrator/src/hostChannel.ts",
-            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/incomingEvents.ts",
             "packages/orchestrator/src/orchestratorState.ts",
-            "packages/orchestrator/src/teardown.ts",
-            "packages/orchestrator/src/viewerEvents.ts"
+            "packages/orchestrator/src/outgoingCommands.ts",
+            "packages/orchestrator/src/teardown.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/orchestrator/src/listeners.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/orchestrator/src/createOrchestrator.props.ts"
-          ],
-          "external": []
-        },
-        "packages/orchestrator/src/listeners.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/orchestrator/src/createOrchestrator.props.ts",
-            "packages/orchestrator/src/listeners.props.ts"
-          ],
-          "external": []
         }
       }
     },
@@ -2966,13 +2765,10 @@
         "host-app/src/hooks/usePersistRows.ts",
         "host-app/src/hooks/useRestoredRows.ts",
         "host-app/src/i18n.ts",
-        "packages/orchestrator/src/armedTool.props.ts",
-        "packages/orchestrator/src/armedTool.ts",
         "packages/orchestrator/src/createOrchestrator.props.ts",
         "packages/orchestrator/src/createOrchestrator.ts",
         "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/removals.props.ts",
         "packages/viewer-bridge/src/removals.ts"
       ],
       "imports": {
@@ -3000,17 +2796,6 @@
           "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
-        "packages/orchestrator/src/armedTool.props.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": []
-        },
-        "packages/orchestrator/src/armedTool.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/orchestrator/src/armedTool.props.ts"
-          ],
-          "external": []
-        },
         "packages/orchestrator/src/createOrchestrator.props.ts": {
           "internal": ["packages/contract/src/index.ts"],
           "external": ["@bdiadiun/scoring-channel"]
@@ -3018,16 +2803,12 @@
         "packages/orchestrator/src/createOrchestrator.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/orchestrator/src/armedTool.ts",
-            "packages/orchestrator/src/commandQueue.ts",
             "packages/orchestrator/src/config.ts",
             "packages/orchestrator/src/createOrchestrator.props.ts",
-            "packages/orchestrator/src/delivery.ts",
-            "packages/orchestrator/src/hostChannel.ts",
-            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/incomingEvents.ts",
             "packages/orchestrator/src/orchestratorState.ts",
-            "packages/orchestrator/src/teardown.ts",
-            "packages/orchestrator/src/viewerEvents.ts"
+            "packages/orchestrator/src/outgoingCommands.ts",
+            "packages/orchestrator/src/teardown.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
         },
@@ -3047,19 +2828,12 @@
           ],
           "external": []
         },
-        "packages/viewer-bridge/src/removals.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/messaging.props.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/removals.ts": {
           "internal": [
             "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/removals.props.ts"
+            "packages/viewer-bridge/src/messaging.props.ts",
+            "packages/viewer-bridge/src/ohif.props.ts"
           ],
           "external": []
         }
@@ -3109,7 +2883,6 @@
         "docs/decisions/A-15-publish-contract-package.md",
         "host-app/src/form/rows.props.ts",
         "host-app/src/form/rows.ts",
-        "host-app/src/form/storage.props.ts",
         "host-app/src/form/storage.ts",
         "packages/contract/package.json",
         "packages/contract/src/hostCommands.props.ts",
@@ -3137,16 +2910,8 @@
           ],
           "external": []
         },
-        "host-app/src/form/storage.props.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": []
-        },
         "host-app/src/form/storage.ts": {
-          "internal": [
-            "host-app/src/form/rows.ts",
-            "host-app/src/form/storage.props.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/hostCommands.props.ts": {
@@ -3271,7 +3036,6 @@
       "files": [
         "docs/decisions/A-16-adapter-and-viewer-delivery.md",
         "docs/notes/ohif-packaging.md",
-        "packages/viewer-bridge/src/bridge.props.ts",
         "packages/viewer-bridge/src/bridge.ts",
         "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts",
@@ -3279,26 +3043,22 @@
         "packages/viewer-bridge/src/registry.ts"
       ],
       "imports": {
-        "packages/viewer-bridge/src/bridge.props.ts": {
-          "internal": ["packages/viewer-bridge/src/ohif.props.ts"],
-          "external": []
-        },
         "packages/viewer-bridge/src/bridge.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.props.ts",
             "packages/viewer-bridge/src/commands.ts",
             "packages/viewer-bridge/src/config.ts",
             "packages/viewer-bridge/src/focus.ts",
             "packages/viewer-bridge/src/handshake.ts",
             "packages/viewer-bridge/src/measurementStream.ts",
             "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
             "packages/viewer-bridge/src/registry.props.ts",
             "packages/viewer-bridge/src/registry.ts",
             "packages/viewer-bridge/src/removals.ts",
             "packages/viewer-bridge/src/reportedMeasurements.ts",
             "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/commands.props.ts": {
           "internal": [
@@ -3342,7 +3102,6 @@
       "files": [
         ".github/workflows/publish-packages.yml",
         "docs/decisions/A-17-orchestrator-package.md",
-        "host-app/src/hooks/useBridge.props.ts",
         "host-app/src/hooks/useBridge.ts",
         "packages/orchestrator/package.json",
         "packages/orchestrator/src/createOrchestrator.props.ts",
@@ -3350,12 +3109,8 @@
         "packages/orchestrator/src/index.ts"
       ],
       "imports": {
-        "host-app/src/hooks/useBridge.props.ts": {
-          "internal": [],
-          "external": ["@bdiadiun/scoring-orchestrator"]
-        },
         "host-app/src/hooks/useBridge.ts": {
-          "internal": ["host-app/src/config.ts", "host-app/src/hooks/useBridge.props.ts"],
+          "internal": ["host-app/src/config.ts"],
           "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "packages/orchestrator/src/createOrchestrator.props.ts": {
@@ -3365,16 +3120,12 @@
         "packages/orchestrator/src/createOrchestrator.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/orchestrator/src/armedTool.ts",
-            "packages/orchestrator/src/commandQueue.ts",
             "packages/orchestrator/src/config.ts",
             "packages/orchestrator/src/createOrchestrator.props.ts",
-            "packages/orchestrator/src/delivery.ts",
-            "packages/orchestrator/src/hostChannel.ts",
-            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/incomingEvents.ts",
             "packages/orchestrator/src/orchestratorState.ts",
-            "packages/orchestrator/src/teardown.ts",
-            "packages/orchestrator/src/viewerEvents.ts"
+            "packages/orchestrator/src/outgoingCommands.ts",
+            "packages/orchestrator/src/teardown.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
         },
@@ -3611,12 +3362,11 @@
             "host-app/src/config.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/unanswered.ts",
-            "host-app/src/form/viewerEventHandlers.props.ts",
             "host-app/src/hooks/useViewerEvents.ts",
             "host-app/src/utils/selectors.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-orchestrator", "react"]
         },
         "host-app/src/hooks/__tests__/studyIsolation.test.ts": {
           "internal": [
@@ -3752,17 +3502,13 @@
           "external": ["@vitejs/plugin-react", "node:url", "vite"]
         },
         "packages/viewer-adapter/src/children.ts": {
-          "internal": [
-            "packages/viewer-adapter/src/children.props.ts",
-            "packages/viewer-adapter/src/extension.props.ts"
-          ],
+          "internal": ["packages/viewer-adapter/src/extension.ts"],
           "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
         },
         "packages/viewer-adapter/src/extension.ts": {
           "internal": [
             "packages/viewer-adapter/src/children.ts",
             "packages/viewer-adapter/src/config.ts",
-            "packages/viewer-adapter/src/extension.props.ts",
             "packages/viewer-adapter/src/registerChildren.ts"
           ],
           "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
@@ -3815,7 +3561,6 @@
         },
         "packages/channel/src/createChannel.ts": {
           "internal": [
-            "packages/channel/src/buildMessage.props.ts",
             "packages/channel/src/buildMessage.ts",
             "packages/channel/src/config.ts",
             "packages/channel/src/createChannel.props.ts",
@@ -3827,11 +3572,7 @@
           "external": []
         },
         "packages/channel/src/incomingMessages.ts": {
-          "internal": [
-            "packages/channel/src/config.ts",
-            "packages/channel/src/incomingMessages.props.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/config.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/answers.ts": {
@@ -3841,16 +3582,12 @@
         "packages/orchestrator/src/createOrchestrator.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/orchestrator/src/armedTool.ts",
-            "packages/orchestrator/src/commandQueue.ts",
             "packages/orchestrator/src/config.ts",
             "packages/orchestrator/src/createOrchestrator.props.ts",
-            "packages/orchestrator/src/delivery.ts",
-            "packages/orchestrator/src/hostChannel.ts",
-            "packages/orchestrator/src/listeners.ts",
+            "packages/orchestrator/src/incomingEvents.ts",
             "packages/orchestrator/src/orchestratorState.ts",
-            "packages/orchestrator/src/teardown.ts",
-            "packages/orchestrator/src/viewerEvents.ts"
+            "packages/orchestrator/src/outgoingCommands.ts",
+            "packages/orchestrator/src/teardown.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
         },
@@ -3891,7 +3628,7 @@
       "canon": ["D-2", "D-5", "Q-1"],
       "dependsOn": ["F-59"],
       "slice": "54",
-      "status": "review",
+      "status": "done",
       "verify": "No instruction in the repository names the raw viewer command any more; the browser scenario was walked end to end against the published packages and passed at every step, with values read from the page and from the viewer's own services.",
       "files": [
         ".claude/agents/architect.md",
@@ -3903,6 +3640,86 @@
         "docs/CONVENTIONS.md"
       ],
       "imports": {}
+    },
+    {
+      "id": "F-61",
+      "name": "Fewer files, and one way to let go",
+      "description": "Undoes the part of the sibling-file rule that cost more than it gave: a component still keeps its props and styles beside it, another module only when the declarations are large or shared. Twenty small sibling files folded back, and the orchestrator, split by role while the channel took its transport, is gathered into modules that each answer one question. The two composition roots also released their resources differently, one tolerating a disposer that throws and one not, so the first failure left the rest attached; both now use one ordered, idempotent, forgiving disposer set.",
+      "canon": ["A-13", "D-2", "Q-5"],
+      "dependsOn": ["F-60"],
+      "slice": "55",
+      "status": "review",
+      "verify": "The count falls from 121 files to 91 for the same 4546 lines and the same 253 cases; the orchestrator goes from twenty files to nine; a disposer that throws is shown not to strand the ones after it, and each root keeps its own order, the armed tool cancelled while the channel is still live.",
+      "files": [
+        ".claude/rules/host-app.md",
+        "docs/CONVENTIONS.md",
+        "eslint.config.js",
+        "packages/channel/src/disposers.ts",
+        "packages/orchestrator/src/incomingEvents.ts",
+        "packages/orchestrator/src/outgoingCommands.ts",
+        "packages/orchestrator/src/teardown.ts",
+        "packages/viewer-bridge/src/bridge.ts"
+      ],
+      "imports": {
+        "eslint.config.js": {
+          "internal": [],
+          "external": [
+            "@eslint/js",
+            "eslint-config-prettier",
+            "eslint-plugin-react-hooks",
+            "eslint-plugin-react-refresh",
+            "globals",
+            "typescript-eslint"
+          ]
+        },
+        "packages/channel/src/disposers.ts": {
+          "internal": ["packages/channel/src/config.ts"],
+          "external": []
+        },
+        "packages/orchestrator/src/incomingEvents.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/orchestrator/src/config.ts",
+            "packages/orchestrator/src/createOrchestrator.props.ts",
+            "packages/orchestrator/src/orchestratorState.ts",
+            "packages/orchestrator/src/outgoingCommands.props.ts"
+          ],
+          "external": ["@bdiadiun/scoring-channel"]
+        },
+        "packages/orchestrator/src/outgoingCommands.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/orchestrator/src/outgoingCommands.props.ts"
+          ],
+          "external": []
+        },
+        "packages/orchestrator/src/teardown.ts": {
+          "internal": [
+            "packages/orchestrator/src/config.ts",
+            "packages/orchestrator/src/createOrchestrator.props.ts",
+            "packages/orchestrator/src/orchestratorState.ts",
+            "packages/orchestrator/src/outgoingCommands.props.ts"
+          ],
+          "external": ["@bdiadiun/scoring-channel"]
+        },
+        "packages/viewer-bridge/src/bridge.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/config.ts",
+            "packages/viewer-bridge/src/focus.ts",
+            "packages/viewer-bridge/src/handshake.ts",
+            "packages/viewer-bridge/src/measurementStream.ts",
+            "packages/viewer-bridge/src/messaging.ts",
+            "packages/viewer-bridge/src/ohif.props.ts",
+            "packages/viewer-bridge/src/registry.props.ts",
+            "packages/viewer-bridge/src/registry.ts",
+            "packages/viewer-bridge/src/removals.ts",
+            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/restore.ts"
+          ],
+          "external": ["@bdiadiun/scoring-channel"]
+        }
+      }
     }
   ]
 }

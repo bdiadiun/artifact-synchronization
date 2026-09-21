@@ -1,13 +1,27 @@
 import { useReducer } from 'react';
+import type { ToolName, ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { HostChannel } from '@bdiadiun/scoring-orchestrator';
 import { reducer, type FormState, type Row } from '@app/form/rows';
 import { createRowActions } from '@app/form/rowActions';
 import { createViewerEventHandlers } from '@app/form/viewerEventHandlers';
 import { usePersistRows } from './usePersistRows';
 import { useRestoredRows } from './useRestoredRows';
 import { useViewerEvents } from './useViewerEvents';
-import type { UseScoringFormOptions, UseScoringFormResult } from './useScoringForm.props';
 
-export type { UseScoringFormOptions, UseScoringFormResult } from './useScoringForm.props';
+export interface UseScoringFormOptions {
+  send: HostChannel['send'];
+  exchange: HostChannel['exchange'];
+  lastEvent: ViewerEvent | null;
+}
+
+export interface UseScoringFormResult {
+  rows: Row[];
+  addRow: (toolName?: ToolName) => void;
+  activate: (rowId: string) => void;
+  cancel: (rowId: string) => void;
+  remove: (rowId: string) => void;
+  focus: (rowId: string) => void;
+}
 
 // A-14: reducer stays pure, so restore reads sessionStorage once here, before the first render,
 // and seeds the reducer's initial state instead of dispatching an action.
