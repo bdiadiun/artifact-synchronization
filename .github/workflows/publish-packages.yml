@@ -147,6 +147,7 @@ jobs:
           : > "$RUNNER_TEMP/skipped-packages.txt"
           publish_package contract @bdiadiun/scoring-contract
           publish_package orchestrator @bdiadiun/scoring-orchestrator
+          publish_package viewer-bridge @bdiadiun/ohif-extension-scoring-bridge
 
       - name: Job summary
         run: |
