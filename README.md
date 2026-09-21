@@ -92,8 +92,7 @@ turns to "готовий" once the viewer has sent `VIEWER_READY`.
 
 ## Scripts (repository root)
 
-- `npm run lint`, `npm run typecheck`, `npm run test` — host-app and contract package.
-- `npm run lint:fork` — style rules from `docs/CONVENTIONS.md` applied to the OHIF extension source.
+- `npm run lint`, `npm run typecheck`, `npm run test` — the form and the three packages.
 - `npm run format:check` — Prettier check across the repository.
 - `npm run check:graph` — feature-graph invariants.
 - `npm run docs:build` — builds `docs/site/index.html`, a single-page reader of all project documents with clickable requirement IDs.

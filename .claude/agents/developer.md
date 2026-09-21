@@ -64,15 +64,13 @@ Before reporting
 - Report and revert anything in the working tree your brief did not ask for; do not commit it along.
 
 - Run every verification command in the brief and paste the tail of each. From the repository root
-  the full set is `npm run format:check`, `lint`, `lint:fork`, `typecheck`, `test`,
+  the full set is `npm run format:check`, `lint`, `typecheck`, `test`,
   `build --workspace host-app`, `check:graph`, `docs:build`; all must be green
-  unless the brief says otherwise. Work in the fork also needs `npm run lint:fork` and the fork's
-  Prettier.
+  unless the brief says otherwise.
 - Measure what the brief asks you to measure (comment ratio, test count, lint findings) before and
   after, and report both numbers instead of claiming an improvement.
-- Do not run git in the main repository. In the OHIF fork (`viewer/`) you may branch, commit and
-  push only when the brief says so, with the user's identity, Conventional Commits, no trailers, no
-  AI mentions.
+- Do not run git in the main repository. The OHIF fork holds no code of ours any more (A-20); touch
+  it only when a brief names the registration entry, the dependency line or its workflow.
 - Start the viewer dev server only as `OHIF_OPEN=false yarn --cwd platform/app dev`; stop every
   server you started.
 

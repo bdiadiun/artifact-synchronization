@@ -5,13 +5,21 @@
 // Usage: node scripts/viewer.mjs setup | dev | require
 
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PIN_FILE = 'viewer.json';
 const SETUP_HINT = 'Run `npm run viewer:setup` to clone it.';
+
+// A-2: the form's origin. The bridge is a published package that carries no deployment URL, so the
+// origin reaches it through `window.config`, which OHIF builds from the app config file named by
+// APP_CONFIG. The generated file stays untracked in the fork, whose diff is two registration lines.
+const HOST_ORIGIN = process.env.HOST_ORIGIN ?? 'http://localhost:5173';
+const BASE_APP_CONFIG = 'config/default.js';
+const GENERATED_APP_CONFIG = 'config/scoring.js';
+const PUBLIC_DIR = 'platform/app/public';
 
 const pin = JSON.parse(readFileSync(join(ROOT, PIN_FILE), 'utf8'));
 const viewerDir = join(ROOT, pin.directory);
@@ -80,9 +88,20 @@ const runSetup = () => {
   console.log('Ready. Start the viewer with `npm run viewer:dev`.');
 };
 
+const writeAppConfig = () => {
+  const base = readFileSync(join(viewerDir, PUBLIC_DIR, BASE_APP_CONFIG), 'utf8');
+  const generated = `${base}\nwindow.config.scoringBridge = { hostOrigin: ${JSON.stringify(HOST_ORIGIN)} };\n`;
+  writeFileSync(join(viewerDir, PUBLIC_DIR, GENERATED_APP_CONFIG), generated);
+  console.log(`Viewer configured to talk to ${HOST_ORIGIN} (${GENERATED_APP_CONFIG}).`);
+};
+
 const runDev = () => {
   requireCheckout();
-  run('yarn', ['--cwd', 'platform/app', 'dev'], viewerDir, { OHIF_OPEN: 'false' });
+  writeAppConfig();
+  run('yarn', ['--cwd', 'platform/app', 'dev'], viewerDir, {
+    OHIF_OPEN: 'false',
+    APP_CONFIG: GENERATED_APP_CONFIG,
+  });
 };
 
 const COMMANDS = { setup: runSetup, dev: runDev, require: requireCheckout };

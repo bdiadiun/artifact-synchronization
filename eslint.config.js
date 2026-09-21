@@ -1,5 +1,5 @@
 // Root ESLint 9 flat config, shared across the npm workspaces (decision A-13).
-// Covers host-app source, the contract package, and the repo's node scripts.
+// Covers host-app source, the published packages, and the repo's node scripts.
 import js from '@eslint/js';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
@@ -64,18 +64,12 @@ export default tseslint.config(
       'host-app/src/**/*.{ts,tsx}',
       'packages/contract/src/**/*.ts',
       'packages/orchestrator/src/**/*.ts',
+      'packages/viewer-bridge/src/**/*.ts',
     ],
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       parserOptions: {
-        // The published packages build to `dist`, so their tsconfigs exclude tests; those are
-        // linted against the default project instead of joining the published compilation.
-        projectService: {
-          allowDefaultProject: [
-            'packages/contract/src/__tests__/*.ts',
-            'packages/orchestrator/src/__tests__/*.ts',
-          ],
-        },
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {
@@ -160,6 +154,7 @@ export default tseslint.config(
       'host-app/src/**/*.tsx',
       'packages/contract/src/**/*.ts',
       'packages/orchestrator/src/**/*.ts',
+      'packages/viewer-bridge/src/**/*.ts',
     ],
     ignores: ['**/*.props.ts', '**/__tests__/**'],
     rules: {
@@ -169,6 +164,19 @@ export default tseslint.config(
         ...jsxRestrictions,
         siblingTypesRestriction,
       ],
+    },
+  },
+  {
+    // The published packages build to `dist`, so their build tsconfigs exclude the tests. Each
+    // package's `tsconfig.tests.json` type-checks them without emitting, and lint uses it so the
+    // type-aware rules apply here too; the default project refuses past eight matching files.
+    files: ['packages/*/src/__tests__/**/*.ts'],
+    languageOptions: {
+      parserOptions: {
+        projectService: false,
+        project: ['packages/*/tsconfig.tests.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
   },
   {

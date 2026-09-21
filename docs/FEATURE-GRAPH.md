@@ -64,48 +64,48 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-51 | Only a changed package is released                                                                                                                | A-15, A-17, D-2                                                 | F-50             | 45    | done    | The decision logic was exercised against this repository's own history: the commit that split the contract selects the contract and skips the orchestrator. A live run is what proves the event's commit range behaves as expected for a first push and for a merge.                                                                                                      |
 | F-52 | The study comes from the form's own URL                                                                                                           | A-19, C-4.1.3, S-5.6                                            | F-51             | 46    | done    | A valid parameter reaches the viewer URL encoded; seven malformed shapes each fall back and warn once; the resolved value is the same for every consumer within a page load; rows stored under one study are not returned under another.                                                                                                                                  |
 | F-53 | A module is addressed by where it lives                                                                                                           | A-13, D-2                                                       | F-52             | 47    | done    | Removing the alias from the TypeScript configuration produces forty-two unresolved imports and removing it from the graph script drops that check from fifteen to twelve, both shown and then restored; the count of resolved internal imports in the graph is unchanged before and after; the test run resolves through the alias, shown by a deliberate miss.           |
-| F-54 | The suite is a self-check, and the document says so                                                                                               | D-6, X-4                                                        | F-53             | 48    | review  | The delivery document explains what the suite is for, why the roles are separated, and that a rule counts as covered only when its failure was produced and reverted; no other file in the repository mentions it.                                                                                                                                                        |
+| F-55 | The viewer extension leaves the fork                                                                                                              | A-20, C-3.2, Q-2, Q-7                                           | F-53             | 49    | review  | The viewer builds with the package resolved through OHIF's plugin imports and the overlay's version substituted; the package's first tests, forty-three of them, cover the origin check, the guard, the registry, the unit tables, the geometry and the throttle; the packages' sources and tests are type-checked by `npm run typecheck` for the first time.             |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                                                                   |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                                                                   |
-| C-3.2   | F-05, F-44, F-47                                                                                                             |
-| C-3.3   | F-01                                                                                                                         |
-| C-3.4   | F-05, F-09, F-32                                                                                                             |
-| C-4.1.1 | F-04, F-45                                                                                                                   |
-| C-4.1.2 | F-04                                                                                                                         |
-| C-4.1.3 | F-02, F-04, F-52                                                                                                             |
-| C-4.2.1 | F-01                                                                                                                         |
-| C-4.2.2 | F-02                                                                                                                         |
-| C-4.2.3 | F-01                                                                                                                         |
-| C-4.3.1 | F-07                                                                                                                         |
-| C-4.3.2 | F-07                                                                                                                         |
-| C-4.3.3 | F-08                                                                                                                         |
-| C-4.3.4 | F-09                                                                                                                         |
-| C-4.3.5 | F-09, F-10                                                                                                                   |
-| C-4.3.6 | F-09, F-10                                                                                                                   |
-| C-4.3.7 | F-07                                                                                                                         |
-| C-4.3.8 | F-11                                                                                                                         |
-| C-4.4.1 | F-03, F-08                                                                                                                   |
-| C-4.4.2 | F-03, F-15, F-16                                                                                                             |
-| C-4.4.3 | F-03                                                                                                                         |
-| Q-1     | F-06, F-45                                                                                                                   |
-| Q-2     | F-05, F-06, F-45                                                                                                             |
-| Q-3     | F-07, F-08, F-09, F-19, F-45                                                                                                 |
-| Q-4     | F-14, F-15, F-19, F-39, F-45                                                                                                 |
-| Q-5     | F-05, F-06, F-39                                                                                                             |
-| Q-6     | F-09, F-10, F-11                                                                                                             |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49 |
-| D-1     | F-04, F-41, F-46, F-47                                                                                                       |
-| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                               |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                               |
-| D-4     | F-00, F-24                                                                                                                   |
-| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                           |
-| D-6     | F-00, F-12, F-21, F-25, F-28, F-54                                                                                           |
-| D-7     | F-12, F-25                                                                                                                   |
-| D-8     | F-13, F-25                                                                                                                   |
+| ID      | Covered by                                                                                                                         |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                                                         |
+| C-3.2   | F-05, F-44, F-47, F-55                                                                                                             |
+| C-3.3   | F-01                                                                                                                               |
+| C-3.4   | F-05, F-09, F-32                                                                                                                   |
+| C-4.1.1 | F-04, F-45                                                                                                                         |
+| C-4.1.2 | F-04                                                                                                                               |
+| C-4.1.3 | F-02, F-04, F-52                                                                                                                   |
+| C-4.2.1 | F-01                                                                                                                               |
+| C-4.2.2 | F-02                                                                                                                               |
+| C-4.2.3 | F-01                                                                                                                               |
+| C-4.3.1 | F-07                                                                                                                               |
+| C-4.3.2 | F-07                                                                                                                               |
+| C-4.3.3 | F-08                                                                                                                               |
+| C-4.3.4 | F-09                                                                                                                               |
+| C-4.3.5 | F-09, F-10                                                                                                                         |
+| C-4.3.6 | F-09, F-10                                                                                                                         |
+| C-4.3.7 | F-07                                                                                                                               |
+| C-4.3.8 | F-11                                                                                                                               |
+| C-4.4.1 | F-03, F-08                                                                                                                         |
+| C-4.4.2 | F-03, F-15, F-16                                                                                                                   |
+| C-4.4.3 | F-03                                                                                                                               |
+| Q-1     | F-06, F-45                                                                                                                         |
+| Q-2     | F-05, F-06, F-45, F-55                                                                                                             |
+| Q-3     | F-07, F-08, F-09, F-19, F-45                                                                                                       |
+| Q-4     | F-14, F-15, F-19, F-39, F-45                                                                                                       |
+| Q-5     | F-05, F-06, F-39                                                                                                                   |
+| Q-6     | F-09, F-10, F-11                                                                                                                   |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55 |
+| D-1     | F-04, F-41, F-46, F-47                                                                                                             |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53                                                                                     |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                     |
+| D-4     | F-00, F-24                                                                                                                         |
+| D-5     | F-12, F-20, F-24, F-25, F-46, F-47                                                                                                 |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                       |
+| D-7     | F-12, F-25                                                                                                                         |
+| D-8     | F-13, F-25                                                                                                                         |
 
 ## Diagram
 
@@ -165,7 +165,7 @@ graph TD
   F51["F-51 Only a changed package is released"]
   F52["F-52 The study comes from the form's own URL"]
   F53["F-53 A module is addressed by where it lives"]
-  F54["F-54 The suite is a self-check, and the document says so"]
+  F55["F-55 The viewer extension leaves the fork"]
 
   F20 --> F01
   F01 --> F02
@@ -225,7 +225,7 @@ graph TD
   F50 --> F51
   F51 --> F52
   F52 --> F53
-  F53 --> F54
+  F53 --> F55
 ```
 
 ## Slice → nodes
@@ -282,7 +282,7 @@ graph TD
 | 45 — fix: publish only the packages that changed             | `fix/publish-only-changed`                  | —   | F-51                   |
 | 46 — feat: the study comes from the form's URL               | `feat/study-from-url`                       | —   | F-52                   |
 | 47 — refactor: the app path alias                            | `refactor/app-path-alias`                   | —   | F-53                   |
-| 48 — docs: what the tests are for                            | `docs/tests-as-self-check`                  | —   | F-54                   |
+| 49 — feat: the viewer extension becomes a package            | `feat/extension-as-package`                 | —   | F-55                   |
 
 ## Node details
 
@@ -386,13 +386,15 @@ Canon: C-3.1, C-3.2, C-3.4, Q-2, Q-5. Depends on: F-03, F-04. Slice 2, status `d
 
 Files:
 
-- `viewer/extensions/scoring-bridge/babel.config.js` — no imports
-- `viewer/extensions/scoring-bridge/package.json`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/config.ts` — no imports
-- `viewer/extensions/scoring-bridge/src/id.js` — internal: `viewer/extensions/scoring-bridge/package.json`
-- `viewer/extensions/scoring-bridge/src/index.tsx` — internal: `viewer/extensions/scoring-bridge/src/bridge.ts`, `viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx`, `viewer/extensions/scoring-bridge/src/id.js`; external: `@ohif/core`
-- `viewer/extensions/scoring-bridge/src/registry.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `packages/viewer-bridge/package.json`
+- `packages/viewer-bridge/src/bridge.props.ts` — internal: `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/viewer-bridge/src/bridge.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/messaging.ts`, `packages/viewer-bridge/src/registry.props.ts`, `packages/viewer-bridge/src/registry.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`
+- `packages/viewer-bridge/src/config.ts` — no imports
+- `packages/viewer-bridge/src/extension.props.ts` — internal: `packages/viewer-bridge/src/getCustomizationModule.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/registry.props.ts` — internal: `packages/contract/src/index.ts`
+- `packages/viewer-bridge/src/registry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/registry.props.ts`
+- `packages/viewer-bridge/tsconfig.json`
 
 ### F-06 Host bridge client: origin check, handshake, early-command queue, cleanup
 
@@ -441,7 +443,8 @@ Files:
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
 
 ### F-09 Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool
 
@@ -453,9 +456,12 @@ Files:
 
 - `docs/decisions/A-11-units-and-metrics-payload.md`
 - `docs/decisions/A-8-id-correlation.md`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `packages/viewer-bridge/src/bridge.props.ts` — internal: `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/viewer-bridge/src/bridge.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/messaging.ts`, `packages/viewer-bridge/src/registry.props.ts`, `packages/viewer-bridge/src/registry.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`
+- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
+- `packages/viewer-bridge/src/measurements.props.ts` — no imports
+- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
 
 ### F-10 Row receives the value
 
@@ -527,9 +533,12 @@ Files:
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/hooks/useScoringForm.props.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`, `host-app/src/hooks/useScoringForm.props.ts`, `host-app/src/hooks/useViewerEvents.ts`; external: `react`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports
+- `packages/viewer-bridge/src/bridge.props.ts` — internal: `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/viewer-bridge/src/bridge.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/messaging.ts`, `packages/viewer-bridge/src/registry.props.ts`, `packages/viewer-bridge/src/registry.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`
+- `packages/viewer-bridge/src/measurements.props.ts` — no imports
+- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
+- `packages/viewer-bridge/src/throttle.props.ts` — no imports
+- `packages/viewer-bridge/src/throttle.ts` — internal: `packages/viewer-bridge/src/throttle.props.ts`
 
 ### F-15 Bonus: two-way deletion
 
@@ -560,9 +569,12 @@ Files:
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
 - `packages/contract/src/vocabulary.props.ts` — no imports
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
+- `packages/viewer-bridge/src/bridge.props.ts` — internal: `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/viewer-bridge/src/bridge.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/messaging.ts`, `packages/viewer-bridge/src/registry.props.ts`, `packages/viewer-bridge/src/registry.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`
+- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
+- `packages/viewer-bridge/src/removals.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/messaging.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/removals.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/removals.props.ts`
 
 ### F-16 Bonus: focus annotation from row
 
@@ -590,8 +602,10 @@ Files:
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
 - `packages/contract/src/vocabulary.props.ts` — no imports
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/focus.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
+- `packages/viewer-bridge/src/focus.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/focus.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.props.ts`
 
 ### F-17 Bonus: Length row type with separate sum
 
@@ -626,8 +640,10 @@ Canon: S-5.5. Depends on: F-04. Slice 9, status `done`.
 
 Files:
 
-- `viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx` — no imports
-- `viewer/extensions/scoring-bridge/src/index.tsx` — internal: `viewer/extensions/scoring-bridge/src/bridge.ts`, `viewer/extensions/scoring-bridge/src/getCustomizationModule.tsx`, `viewer/extensions/scoring-bridge/src/id.js`; external: `@ohif/core`
+- `packages/viewer-bridge/src/extension.props.ts` — internal: `packages/viewer-bridge/src/getCustomizationModule.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/getCustomizationModule.props.ts` — no imports
+- `packages/viewer-bridge/src/getCustomizationModule.ts` — internal: `packages/viewer-bridge/src/getCustomizationModule.props.ts`, `packages/viewer-bridge/src/viewerVersion.ts`
 
 ### F-19 Bonus: state restore after reload
 
@@ -670,9 +686,10 @@ Files:
 - `packages/contract/src/vocabulary.props.ts` — no imports
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/orchestrator/src/commands.ts` — internal: `packages/contract/src/index.ts`
+- `packages/viewer-bridge/src/geometry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
+- `packages/viewer-bridge/src/restore.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/messaging.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`
+- `packages/viewer-bridge/src/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/restore.props.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
 - `scripts/eslint-fork-style.config.js` — external: `typescript-eslint`
-- `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
-- `viewer/extensions/scoring-bridge/src/restore.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`; external: `@cornerstonejs/tools`
 
 ### F-20 Project tooling and state journal
 
@@ -862,14 +879,22 @@ Files:
 - `ARCHITECTURE.md`
 - `docs/DEFENCE.md`
 - `docs/notes/bridge-internals.md`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/handshake.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
-- `viewer/extensions/scoring-bridge/src/measurementStream.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/geometry.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`
-- `viewer/extensions/scoring-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/registry.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/throttle.ts`
-- `viewer/extensions/scoring-bridge/src/throttle.ts` — no imports
+- `packages/viewer-bridge/src/bridge.props.ts` — internal: `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/viewer-bridge/src/bridge.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/messaging.ts`, `packages/viewer-bridge/src/registry.props.ts`, `packages/viewer-bridge/src/registry.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`
+- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
+- `packages/viewer-bridge/src/handshake.props.ts` — internal: `packages/viewer-bridge/src/messaging.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/handshake.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/handshake.props.ts`, `packages/viewer-bridge/src/viewerVersion.ts`
+- `packages/viewer-bridge/src/measurementStream.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/measurements.props.ts`, `packages/viewer-bridge/src/messaging.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`
+- `packages/viewer-bridge/src/measurementStream.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/geometry.ts`, `packages/viewer-bridge/src/measurementStream.props.ts`, `packages/viewer-bridge/src/measurements.props.ts`, `packages/viewer-bridge/src/measurements.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/messaging.props.ts` — internal: `packages/contract/src/index.ts`
+- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`
+- `packages/viewer-bridge/src/registry.props.ts` — internal: `packages/contract/src/index.ts`
+- `packages/viewer-bridge/src/registry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/registry.props.ts`
+- `packages/viewer-bridge/src/reportedMeasurements.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/messaging.props.ts`
+- `packages/viewer-bridge/src/reportedMeasurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`, `packages/viewer-bridge/src/throttle.ts`
+- `packages/viewer-bridge/src/throttle.props.ts` — no imports
+- `packages/viewer-bridge/src/throttle.ts` — internal: `packages/viewer-bridge/src/throttle.props.ts`
 
 ### F-33 Scoring form hook and reducer split
 
@@ -1003,8 +1028,10 @@ Files:
 - `packages/orchestrator/src/armedTool.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.props.ts`, `packages/orchestrator/src/commands.ts`
 - `packages/orchestrator/src/createOrchestrator.props.ts` — internal: `packages/contract/src/index.ts`
 - `packages/orchestrator/src/createOrchestrator.ts` — internal: `packages/contract/src/index.ts`, `packages/orchestrator/src/armedTool.ts`, `packages/orchestrator/src/commandQueue.ts`, `packages/orchestrator/src/createOrchestrator.props.ts`, `packages/orchestrator/src/listeners.ts`, `packages/orchestrator/src/messageHandler.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/removals.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`
+- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
+- `packages/viewer-bridge/src/removals.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/messaging.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/removals.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/removals.props.ts`
 
 ### F-40 Workflow ownership and the return-statement rule
 
@@ -1044,7 +1071,7 @@ Files:
 - `packages/contract/src/vocabulary.props.ts` — no imports
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/tsconfig.json`
-- `viewer/extensions/scoring-bridge/src/geometry.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/measurements.ts`
+- `packages/viewer-bridge/src/geometry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
 
 ### F-42 The first release publishes
 
@@ -1068,8 +1095,10 @@ Files:
 - `.claude/rules/fork.md`
 - `.github/workflows/ci.yml`
 - `docs/decisions/A-15-publish-contract-package.md`
-- `viewer/extensions/scoring-bridge/package.json`
-- `viewer/extensions/scoring-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `packages/viewer-bridge/package.json`
+- `packages/viewer-bridge/src/messaging.props.ts` — internal: `packages/contract/src/index.ts`
+- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`
+- `packages/viewer-bridge/tsconfig.json`
 
 ### F-44 The bridge is an adapter with a handler registry
 
@@ -1081,9 +1110,12 @@ Files:
 
 - `docs/decisions/A-16-adapter-and-viewer-delivery.md`
 - `docs/notes/ohif-packaging.md`
-- `viewer/extensions/scoring-bridge/src/bridge.ts` — internal: `viewer/extensions/scoring-bridge/src/commands.ts`, `viewer/extensions/scoring-bridge/src/config.ts`, `viewer/extensions/scoring-bridge/src/focus.ts`, `viewer/extensions/scoring-bridge/src/handshake.ts`, `viewer/extensions/scoring-bridge/src/measurementStream.ts`, `viewer/extensions/scoring-bridge/src/messaging.ts`, `viewer/extensions/scoring-bridge/src/registry.ts`, `viewer/extensions/scoring-bridge/src/removals.ts`, `viewer/extensions/scoring-bridge/src/reportedMeasurements.ts`, `viewer/extensions/scoring-bridge/src/restore.ts`
-- `viewer/extensions/scoring-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
-- `viewer/extensions/scoring-bridge/src/registry.ts` — internal: `packages/contract/src/index.ts`, `viewer/extensions/scoring-bridge/src/config.ts`
+- `packages/viewer-bridge/src/bridge.props.ts` — internal: `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/viewer-bridge/src/bridge.props.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/messaging.ts`, `packages/viewer-bridge/src/registry.props.ts`, `packages/viewer-bridge/src/registry.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`
+- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
+- `packages/viewer-bridge/src/registry.props.ts` — internal: `packages/contract/src/index.ts`
+- `packages/viewer-bridge/src/registry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/registry.props.ts`
 
 ### F-45 The viewer client becomes the orchestrator package
 
@@ -1218,12 +1250,21 @@ Files:
 - `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
 - `scripts/graph.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`
 
-### F-54 The suite is a self-check, and the document says so
+### F-55 The viewer extension leaves the fork
 
-States in the delivery document what the tests in this repository are and are not: no test was typed by the author, and the suite exists to check that generated code does what it was briefed to do. The author's contribution is the checking system rather than the assertions: roles that cannot review their own work, briefs that name what must be proved, and the rule that a claim counts only with an artefact behind it. It belongs there and nowhere else, because the repository forbids mentioning the tooling outside that one file.
+Moves the whole viewer-side extension out of the OHIF checkout into the published package `@bdiadiun/ohif-extension-scoring-bridge`. Instead of OHIF's global types, which exist only inside its monorepo, the package declares the fifteen members it actually calls across five services and the commands manager. The host origin it accepts is no longer in its source: it arrives from the deployment's configuration and the bridge refuses to start without one. The fork keeps a registration entry, a dependency line and its workflow, and nothing else of ours.
 
-Canon: D-6, X-4. Depends on: F-53. Slice 48, status `review`.
+Canon: A-20, C-3.2, Q-2, Q-7. Depends on: F-53. Slice 49, status `review`.
 
 Files:
 
-- `AI-USAGE.md`
+- `docs/decisions/A-20-three-layers.md`
+- `docs/notes/ohif-extension-composition.md`
+- `packages/contract/tsconfig.tests.json`
+- `packages/orchestrator/tsconfig.tests.json`
+- `packages/viewer-bridge/package.json`
+- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/index.ts` — internal: `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/extension.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/messaging.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/messaging.props.ts`
+- `packages/viewer-bridge/src/ohif.props.ts` — internal: `packages/viewer-bridge/src/measurements.props.ts`
+- `packages/viewer-bridge/tsconfig.tests.json`

@@ -243,6 +243,14 @@ somebody deletes.
 - **A rule lives only as long as its reason.** When the cause of a constraint disappears, the
   constraint is revisited in the slice that removes the cause. The contract stayed one 345-line file
   for three slices after the copy that required it was gone.
+- **A folder excluded from the build needs a project of its own.** A package's tests are kept out of
+  its build so they cannot reach `dist`, and that exclusion also takes them out of every type-aware
+  check: for a while the packages' tests were neither type-checked nor linted with types, and
+  nothing said so. Each package therefore carries a second TypeScript project that includes its
+  tests, and the lint configuration points at it.
+- **A test that no command runs does not exist.** New tests are added to what `npm run test`
+  actually collects, and the case count is reported before and after, so the increase is visible
+  rather than assumed.
 - **Every fix leaves a rule behind.** The slice that fixes something also writes the general rule
   here or in the matching file under `.claude/`, naming the failure in one clause. A fix that leaves
   no rule behind gets made again.
@@ -269,12 +277,13 @@ somebody deletes.
 
 ## 13. The OHIF fork
 
-- Only `extensions/scoring-bridge/` and the one registration line in `pluginConfig.json` change.
-- The extension follows this document. The fork's own ESLint does not run at v3.12.17 (ESLint 9
-  with a legacy `.eslintrc.json` and `@typescript-eslint` 5 crashes while loading rules), and we do
-  not replace OHIF's tooling. `npm run lint:fork` applies the rules from this document that need no
-  type information (`scripts/eslint-fork-style.config.js`), and refuses to run until the fork is
-  checked out with `npm run viewer:setup` (A-18); the fork's Prettier formats the
-  extension. Type-aware rules are checked in review.
-- `AppTypes` and other OHIF globals are used as typed; no `any` for OHIF objects, use the narrowest
-  structural type that covers what we read.
+- No code of ours lives there. The viewer-side extension is the package
+  `@bdiadiun/ohif-extension-scoring-bridge`; the fork carries its registration entry in
+  `platform/app/pluginConfig.json`, the matching dependency, and its workflow (A-20).
+- We never describe OHIF's types, we describe the members we call, in the package's own
+  `ohif.props.ts`. No `any` for an OHIF object: the narrowest structural type that covers what we
+  actually use. Because that model replaces the compiler's knowledge of OHIF, a drift from the real
+  API cannot be caught by a type check; building the viewer and running the browser scenario is how
+  it is caught, and both belong to any slice that touches this code.
+- Command names are prefixed per package. OHIF namespaces module ids by extension but not command
+  names, so an unprefixed name silently replaces another extension's command.
