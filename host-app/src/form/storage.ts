@@ -2,9 +2,7 @@
 // and another tab or study never sees them. Every access is defensive: private mode, a full quota
 // or a cleared store throw or return nothing, and the form still has to render.
 
-import { useEffect, useState } from 'react';
 import { z } from 'zod';
-import { studyInstanceUid } from '@app/config';
 import { Row } from './rows';
 
 // The fields A-14 asks to persist; `restoreFailureReason` is not among them, so every load starts
@@ -49,18 +47,4 @@ export const saveRows = (studyInstanceUid: string, rows: readonly Row[]): void =
   } catch (error) {
     console.warn('[form] failed to persist form state', error);
   }
-};
-
-// Resolves before `useScoringForm` creates its reducer, because it seeds the initial state.
-// Read once per mount: sessionStorage is per-tab (A-14), so a later change to it (another tab,
-// another study) must not resurrect rows into an already-running session.
-export const useRestoredRows = (): Row[] =>
-  useState<Row[]>(() => loadStoredRows(studyInstanceUid()))[0];
-
-// A-14: the form owns the saved state, so every row change is written back, including the ones no
-// user action caused (the reducer applying a restore-failure marker).
-export const usePersistRows = (rows: readonly Row[]): void => {
-  useEffect(() => {
-    saveRows(studyInstanceUid(), rows);
-  }, [rows]);
 };

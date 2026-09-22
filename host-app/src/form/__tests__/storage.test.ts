@@ -1,12 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
-import { FALLBACK_STUDY_INSTANCE_UID } from '@app/config';
 import { RowStatus, type Row } from '@app/form/rows';
-import { loadStoredRows, saveRows, usePersistRows, useRestoredRows } from '@app/form/storage';
+import { loadStoredRows, saveRows } from '@app/form/storage';
 
 const STUDY_A = '1.2.3';
 const STUDY_B = '9.9.9';
-const CONFIGURED_STUDY = FALLBACK_STUDY_INSTANCE_UID;
 
 const doneRow = (overrides: Partial<Row> = {}): Row => ({
   rowId: 'row-1',
@@ -110,47 +107,5 @@ describe('saveRows / loadStoredRows', () => {
     }).not.toThrow();
 
     setItemSpy.mockRestore();
-  });
-});
-
-describe('useRestoredRows', () => {
-  it('returns the rows stored for the configured study', () => {
-    saveRows(CONFIGURED_STUDY, [doneRow()]);
-
-    const { result } = renderHook(() => useRestoredRows());
-
-    expect(result.current).toEqual([doneRow()]);
-  });
-
-  it('returns an empty list when nothing was stored', () => {
-    const { result } = renderHook(() => useRestoredRows());
-
-    expect(result.current).toEqual([]);
-  });
-});
-
-describe('usePersistRows', () => {
-  it('writes the given rows to sessionStorage for the configured study', () => {
-    renderHook(
-      ({ rows }: { rows: Row[] }) => {
-        usePersistRows(rows);
-      },
-      { initialProps: { rows: [doneRow()] } },
-    );
-
-    expect(loadStoredRows(CONFIGURED_STUDY)).toEqual([doneRow()]);
-  });
-
-  it('overwrites the stored state when rows change on rerender', () => {
-    const { rerender } = renderHook(
-      ({ rows }: { rows: Row[] }) => {
-        usePersistRows(rows);
-      },
-      { initialProps: { rows: [doneRow()] } },
-    );
-
-    rerender({ rows: [] });
-
-    expect(loadStoredRows(CONFIGURED_STUDY)).toEqual([]);
   });
 });

@@ -1,22 +1,25 @@
 import { useEffect, useReducer, useRef } from 'react';
 import type { HostChannel } from '@app/channel/useHostChannel';
+import { studyInstanceUid } from '@app/config';
 import { reducer, type FormContext, type FormState, type Row } from './rows';
 import { createRowActions, type RowActions } from './rowActions';
-import { usePersistRows, useRestoredRows } from './storage';
+import { loadStoredRows, saveRows } from './storage';
 import { createViewerEventHandlers } from './viewerEventHandlers';
 
 export interface UseScoringFormResult extends RowActions {
   rows: Row[];
 }
 
-// A-14: reducer stays pure, so restore reads sessionStorage once here, before the first render,
-// and seeds the reducer's initial state instead of dispatching an action.
-const buildInitialState = (rows: Row[]): FormState => ({ rows });
+// A-14: the rows of this study are read from sessionStorage once, as the reducer's initial state,
+// and written back on every change.
+const loadInitialState = (): FormState => ({ rows: loadStoredRows(studyInstanceUid()) });
 
 export const useScoringForm = (channel: HostChannel | null): UseScoringFormResult => {
-  const restoredRows = useRestoredRows();
-  const [state, dispatch] = useReducer(reducer, restoredRows, buildInitialState);
-  usePersistRows(state.rows);
+  const [state, dispatch] = useReducer(reducer, undefined, loadInitialState);
+  
+  useEffect(() => {
+    saveRows(studyInstanceUid(), state.rows);
+  }, [state.rows]);
 
   const context: FormContext = { state, dispatch, channel };
 
