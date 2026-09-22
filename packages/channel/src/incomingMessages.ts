@@ -3,7 +3,7 @@
 
 import type { BridgeMessage } from '@bdiadiun/scoring-contract';
 import { LOG_PREFIX } from './config.js';
-import type { Peer } from './createChannel.props.js';
+import type { Peer } from './outbox.js';
 import type { Disposable } from './disposers.js';
 
 export const createIncomingMessages = <TIncoming extends BridgeMessage>(

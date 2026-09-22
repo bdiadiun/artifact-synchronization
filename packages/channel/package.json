@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/scoring-channel",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "typed postMessage channel for the scoring contract: origin-checked delivery, guarded intake and request/answer exchange",
   "license": "MIT",
   "repository": {
@@ -29,6 +29,6 @@
     "prepare": "tsc -b --force"
   },
   "dependencies": {
-    "@bdiadiun/scoring-contract": "0.0.11"
+    "@bdiadiun/scoring-contract": "0.0.12"
   }
 }

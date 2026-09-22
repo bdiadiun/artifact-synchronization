@@ -3,7 +3,21 @@
 
 import type { BridgeMessage } from '@bdiadiun/scoring-contract';
 import { LOG_PREFIX } from './config.js';
-import type { ChannelState, Peer } from './createChannel.props.js';
+
+// The other window and the one origin this end talks to (Q-2), as one object: neither half is
+// useful without the other, and every part of the channel that needs one needs both.
+export interface Peer {
+  origin: string;
+  // A function, not a value: the window can be replaced or briefly absent (an iframe that is still
+  // mounting, a page that is not framed at all).
+  getWindow: () => Window | null;
+}
+
+// What an application shows about the way out: whether it is open and how much is waiting (P-9).
+export interface ChannelState {
+  ready: boolean;
+  queued: number;
+}
 
 export interface Outbox<TOutgoing extends BridgeMessage> {
   send: (message: TOutgoing) => boolean;
@@ -15,15 +29,13 @@ export interface Outbox<TOutgoing extends BridgeMessage> {
 
 export const INITIAL_CHANNEL_STATE: ChannelState = { ready: false, queued: 0 };
 
-const OPEN_CHANNEL_STATE: ChannelState = { ready: true, queued: 0 };
-
 export const createOutbox = <TOutgoing extends BridgeMessage>(
   peer: Peer,
   held: boolean,
 ): Outbox<TOutgoing> => {
   const queue: TOutgoing[] = [];
   const listeners = new Set<() => void>();
-  let state = held ? INITIAL_CHANNEL_STATE : OPEN_CHANNEL_STATE;
+  let state = INITIAL_CHANNEL_STATE;
 
   const publish = (ready: boolean): void => {
     // Replaced only when a value changed, so a subscriber may compare states by identity.
@@ -46,19 +58,21 @@ export const createOutbox = <TOutgoing extends BridgeMessage>(
 
     // Never '*': the target origin is always the configured peer origin (Q-2).
     peerWindow.postMessage(message, peer.origin);
+    console.debug(`${LOG_PREFIX} sent ${message.type}`, message);
     return true;
   };
 
   return {
     send: (message: TOutgoing): boolean => {
-      if (state.ready && post(message)) {
-        return true;
+      // An end that holds nothing back posts at once, ready or not: it is its own announcement
+      // that opens the way out, and what it cannot deliver it drops rather than growing a queue
+      // no handshake will ever flush.
+      if (!held) {
+        return post(message);
       }
 
-      // An end that never holds messages has nowhere to put one: the viewer drops what it cannot
-      // deliver rather than growing a queue no handshake will ever flush.
-      if (!held) {
-        return false;
+      if (state.ready && post(message)) {
+        return true;
       }
 
       // Kept and flushed in call order, with no coalescing (A-9).

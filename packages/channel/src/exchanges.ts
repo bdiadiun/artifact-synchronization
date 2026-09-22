@@ -4,8 +4,16 @@
 import { ANSWER_TYPE_BY_COMMAND } from '@bdiadiun/scoring-contract';
 import type { AnsweredCommandType, BridgeMessage } from '@bdiadiun/scoring-contract';
 import type { PayloadOf } from './buildMessage.js';
-import type { AnswerMessage, Channel, Deliver } from './createChannel.props.js';
+import type { AnswerMessage, Channel } from './createChannel.js';
 import type { PendingExchanges } from './pendingExchanges.js';
+
+// What the channel hands a message to when it is finally built: the type, its payload and the
+// request id the channel issued for it.
+type Deliver<TOutgoing extends BridgeMessage> = <TType extends TOutgoing['type']>(
+  type: TType,
+  payload: PayloadOf<TOutgoing, TType>,
+  requestId: string | undefined,
+) => boolean;
 
 export const createExchange =
   <TIncoming extends BridgeMessage, TOutgoing extends BridgeMessage>(

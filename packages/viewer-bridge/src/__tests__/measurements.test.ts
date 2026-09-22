@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { toMetrics } from '../measurements.js';
-import type { OhifMeasurementLike } from '../measurements.props.js';
+import { toGeometry, toMetrics } from '../measurements.js';
+import type { OhifMeasurementLike } from '../ohif.js';
 
 const ellipticalWithArea = (areaUnit: string): OhifMeasurementLike => ({
   uid: 'uid-1',
@@ -72,14 +72,67 @@ describe('toMetrics', () => {
 
     expect(metrics).toBeNull();
   });
+});
 
-  it('logs quietly instead of warning when the caller asks for a quiet check', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    const debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => undefined);
+const restorableMeasurement: OhifMeasurementLike = {
+  uid: 'uid-1',
+  referencedImageId: 'image-1',
+  points: [
+    [1, 2, 3],
+    [4, 5, 6],
+  ],
+  label: 'Lesion A',
+  metadata: { FrameOfReferenceUID: 'frame-1' },
+};
 
-    toMetrics(ellipticalWithArea('cm²'), { quiet: true });
+describe('toGeometry', () => {
+  it('builds restorable geometry from a complete measurement', () => {
+    const geometry = toGeometry(restorableMeasurement);
 
-    expect(warnSpy).not.toHaveBeenCalled();
-    expect(debugSpy).toHaveBeenCalled();
+    expect(geometry).toEqual({
+      frameOfReferenceUid: 'frame-1',
+      referencedImageId: 'image-1',
+      points: [
+        [1, 2, 3],
+        [4, 5, 6],
+      ],
+      label: 'Lesion A',
+    });
+  });
+
+  it('copies the points rather than sharing cornerstone live arrays', () => {
+    const originalPoints = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+
+    const geometry = toGeometry({ ...restorableMeasurement, points: originalPoints });
+
+    expect(geometry?.points).not.toBe(originalPoints);
+    expect(geometry?.points[0]).not.toBe(originalPoints[0]);
+  });
+
+  it('is undefined without a frame of reference', () => {
+    const geometry = toGeometry({ ...restorableMeasurement, metadata: {} });
+
+    expect(geometry).toBeUndefined();
+  });
+
+  it('is undefined without a referenced image id', () => {
+    const geometry = toGeometry({ ...restorableMeasurement, referencedImageId: undefined });
+
+    expect(geometry).toBeUndefined();
+  });
+
+  it('is undefined without any points', () => {
+    const geometry = toGeometry({ ...restorableMeasurement, points: undefined });
+
+    expect(geometry).toBeUndefined();
+  });
+
+  it('is undefined when a point is missing its z coordinate', () => {
+    const geometry = toGeometry({ ...restorableMeasurement, points: [[1, 2]] });
+
+    expect(geometry).toBeUndefined();
   });
 });

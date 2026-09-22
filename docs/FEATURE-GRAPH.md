@@ -49,7 +49,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-36 | Folder layout and the .claude workspace documented and applied                                                                                    | A-13, D-3, Q-7                                                  | F-35             | 30    | done    | host-app builds and its 149 tests pass after the move; npm run lint is clean; the docs page lists the structure document; the format hook rewrites a touched file.                                                                                                                                                                                                                                                                                                                                        |
 | F-37 | Layout folders created on first use                                                                                                               | A-13, Q-7                                                       | F-36             | 31    | done    | The three folders are gone, host-app builds and its 149 tests pass, and the layout document and the rule state when each folder is created.                                                                                                                                                                                                                                                                                                                                                               |
 | F-38 | Agent boundaries, instances and context handover                                                                                                  | A-13, D-2                                                       | F-37             | 32    | done    | Each of the five agent definitions states which files it may write, who owns its context and what to do when it fills; CLAUDE.md and the slice skill carry the one-instance rule; the handover skill is listed in the layout document. Enforcement is by brief and by the architect's diff review: Claude Code has no per-agent file permission, only session-wide rules.                                                                                                                                 |
-| F-39 | Audit fixes: disarm on teardown, answered removals, conventions                                                                                   | A-13, Q-4, Q-5, S-5.2                                           | F-38             | 33    | done    | The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.                                                                                                                                                                                                                                                |
+| F-39 | Audit fixes: disarm on teardown, answered removals, conventions                                                                                   | A-13, Q-4, Q-5, S-5.2                                           | F-38             | 33    | done    | The host channel test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.                                                                                                                                                                                                                                          |
 | F-40 | Workflow ownership and the return-statement rule                                                                                                  | A-13, D-2                                                       | F-39             | 34    | done    | The git operator definition lists the workflow files as the only thing it may write and its tool list allows writing; CLAUDE.md agrees. `npm run lint` passes with the widened selector, which proves no component creates a function inside a JSX prop.                                                                                                                                                                                                                                                  |
 | F-41 | The contract becomes a published package                                                                                                          | A-15, D-1, Q-7                                                  | F-40             | 35    | done    | A clean `npm ci` builds `dist` before anything imports it; `npm pack --dry-run` lists only the built files, the README and the manifest; the guards are covered by contract tests including the two, three and four coordinate cases; the host and the fork no longer define their own copies.                                                                                                                                                                                                            |
 | F-42 | The first release publishes                                                                                                                       | A-15, Q-7                                                       | F-41             | 36    | done    | A manual run of the workflow reaches the publish step and the package appears in the registry under the manifest version.                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -73,6 +73,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-61 | Fewer files, and one way to let go                                                                                                                | A-13, D-2, Q-5                                                  | F-60             | 55    | done    | The count falls from 121 files to 91 for the same 4546 lines and the same 253 cases; the orchestrator goes from twenty files to nine; a disposer that throws is shown not to strand the ones after it, and each root keeps its own order, the armed tool cancelled while the channel is still live.                                                                                                                                                                                                       |
 | F-62 | Nothing unused, nothing declared twice                                                                                                            | A-13, Q-5, Q-7, X-5                                             | F-61             | 56    | done    | The full verification set is green with the same behaviour cases; a grep for each removed symbol finds nothing; every interface that lets go of a resource extends the one Disposable; the line count falls while no test of behaviour is deleted, only the cases that asserted removed diagnostics.                                                                                                                                                                                                      |
 | F-63 | One channel API for both ends                                                                                                                     | A-13, Q-1, Q-2, Q-3, Q-4, Q-5, Q-7, X-5                         | F-62             | 57    | done    | The full verification set is green from a cold install with 277 cases; every scenario of the deleted orchestrator tests passes against `createHostChannel`; two events in one tick both reach the form; moving the flush after the handlers, dropping the queue, or removing the cancel on dispose each fails a named test; a command missing from the viewer's handler map fails the build; non-test lines fall from 4418 to under 3900. The browser scenario runs after the release, with the fork pin. |
+| F-64 | A minimal bridge                                                                                                                                  | A-13, C-4.3.6, Q-1, Q-3, Q-4, Q-5, X-5                          | F-63             | 58    | review  | The extension is under 1 100 lines in seven files against 1 538 in 23; the full browser scenario passes unchanged on the released packages; a wrong reply shape and a missing command handler each fail the build; skipping the tool restore after a measurement, omitting causedBy in reply, or answering a gone removal with send each fails a named test.                                                                                                                                              |
 
 ## Coverage of mandatory IDs
 
@@ -93,17 +94,17 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | C-4.3.3 | F-08                                                                                                                                                                   |
 | C-4.3.4 | F-09                                                                                                                                                                   |
 | C-4.3.5 | F-09, F-10                                                                                                                                                             |
-| C-4.3.6 | F-09, F-10                                                                                                                                                             |
+| C-4.3.6 | F-09, F-10, F-64                                                                                                                                                       |
 | C-4.3.7 | F-07                                                                                                                                                                   |
 | C-4.3.8 | F-11                                                                                                                                                                   |
 | C-4.4.1 | F-03, F-08                                                                                                                                                             |
 | C-4.4.2 | F-03, F-15, F-16                                                                                                                                                       |
 | C-4.4.3 | F-03                                                                                                                                                                   |
-| Q-1     | F-06, F-45, F-58, F-60, F-63                                                                                                                                           |
+| Q-1     | F-06, F-45, F-58, F-60, F-63, F-64                                                                                                                                     |
 | Q-2     | F-05, F-06, F-45, F-55, F-58, F-63                                                                                                                                     |
-| Q-3     | F-07, F-08, F-09, F-19, F-45, F-58, F-63                                                                                                                               |
-| Q-4     | F-14, F-15, F-19, F-39, F-45, F-58, F-63                                                                                                                               |
-| Q-5     | F-05, F-06, F-39, F-61, F-62, F-63                                                                                                                                     |
+| Q-3     | F-07, F-08, F-09, F-19, F-45, F-58, F-63, F-64                                                                                                                         |
+| Q-4     | F-14, F-15, F-19, F-39, F-45, F-58, F-63, F-64                                                                                                                         |
+| Q-5     | F-05, F-06, F-39, F-61, F-62, F-63, F-64                                                                                                                               |
 | Q-6     | F-09, F-10, F-11                                                                                                                                                       |
 | Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56, F-57, F-58, F-59, F-62, F-63 |
 | D-1     | F-04, F-41, F-46, F-47, F-59                                                                                                                                           |
@@ -182,6 +183,7 @@ graph TD
   F61["F-61 Fewer files, and one way to let go"]
   F62["F-62 Nothing unused, nothing declared twice"]
   F63["F-63 One channel API for both ends"]
+  F64["F-64 A minimal bridge"]
 
   F20 --> F01
   F01 --> F02
@@ -250,6 +252,7 @@ graph TD
   F60 --> F61
   F61 --> F62
   F62 --> F63
+  F63 --> F64
 ```
 
 ## Slice → nodes
@@ -315,6 +318,7 @@ graph TD
 | 55 — refactor: fewer files, one teardown                     | `refactor/fewer-files`                      | #67 | F-61                   |
 | 56 — refactor: remove dead code                              | `refactor/remove-dead-code`                 | #68 | F-62                   |
 | 57 — refactor: one channel API                               | `refactor/one-channel-api`                  | #69 | F-63                   |
+| 58 — refactor: minimal bridge                                | `refactor/minimal-bridge`                   | —   | F-64                   |
 
 ## Node details
 
@@ -419,10 +423,7 @@ Canon: C-3.1, C-3.2, C-3.4, Q-2, Q-5. Depends on: F-03, F-04. Slice 2, status `d
 Files:
 
 - `packages/viewer-bridge/package.json`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/config.ts` — no imports
-- `packages/viewer-bridge/src/extension.props.ts` — internal: `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/measurements.ts`, `packages/viewer-bridge/src/ohif.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/tsconfig.json`
 
 ### F-06 Host bridge client: origin check, handshake, early-command queue, cleanup
@@ -464,8 +465,7 @@ Files:
 - `docs/decisions/A-4-cancelled-activation.md`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-09 Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool
 
@@ -477,11 +477,8 @@ Files:
 
 - `docs/decisions/A-11-units-and-metrics-payload.md`
 - `docs/decisions/A-8-id-correlation.md`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
-- `packages/viewer-bridge/src/measurements.props.ts` — no imports
-- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/throttle.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-10 Row receives the value
 
@@ -550,10 +547,8 @@ Files:
 - `host-app/src/form/rows.ts` — internal: `host-app/src/form/rows.props.ts`, `host-app/src/utils/selectors.ts`
 - `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/hooks/__tests__/helpers.ts`, `host-app/src/hooks/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/measurements.props.ts` — no imports
-- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
-- `packages/viewer-bridge/src/throttle.ts` — external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/throttle.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/throttle.ts` — no imports
 
 ### F-15 Bonus: two-way deletion
 
@@ -583,10 +578,7 @@ Files:
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
 - `packages/contract/src/vocabulary.props.ts` — internal: `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
-- `packages/viewer-bridge/src/removals.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-16 Bonus: focus annotation from row
 
@@ -613,9 +605,7 @@ Files:
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
 - `packages/contract/src/vocabulary.props.ts` — internal: `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
-- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
-- `packages/viewer-bridge/src/focus.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/ohif.props.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-17 Bonus: Length row type with separate sum
 
@@ -649,9 +639,7 @@ Canon: S-5.5. Depends on: F-04. Slice 9, status `done`.
 
 Files:
 
-- `packages/viewer-bridge/src/extension.props.ts` — internal: `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/getCustomizationModule.ts` — internal: `packages/viewer-bridge/src/viewerVersion.ts`
+- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/measurements.ts`, `packages/viewer-bridge/src/ohif.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-19 Bonus: state restore after reload
 
@@ -687,9 +675,7 @@ Files:
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
 - `packages/contract/src/vocabulary.props.ts` — internal: `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
-- `packages/viewer-bridge/src/geometry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
-- `packages/viewer-bridge/src/restore.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/restore.props.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
+- `packages/viewer-bridge/src/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`; external: `@bdiadiun/scoring-channel`, `@cornerstonejs/core`, `@cornerstonejs/tools`
 - `scripts/eslint-fork-style.config.js` — external: `typescript-eslint`
 
 ### F-20 Project tooling and state journal
@@ -878,15 +864,8 @@ Files:
 - `ARCHITECTURE.md`
 - `docs/DEFENCE.md`
 - `docs/notes/bridge-internals.md`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
-- `packages/viewer-bridge/src/handshake.ts` — internal: `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/viewerVersion.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/measurementStream.props.ts` — internal: `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/measurementStream.ts` — internal: `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/geometry.ts`, `packages/viewer-bridge/src/measurementStream.props.ts`, `packages/viewer-bridge/src/measurements.props.ts`, `packages/viewer-bridge/src/measurements.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`
-- `packages/viewer-bridge/src/reportedMeasurements.props.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/reportedMeasurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`, `packages/viewer-bridge/src/throttle.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/throttle.ts` — external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/throttle.ts` — no imports
 
 ### F-33 Scoring form hook and reducer split
 
@@ -1002,9 +981,7 @@ Files:
 - `host-app/src/hooks/usePersistRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/hooks/useRestoredRows.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
-- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
-- `packages/viewer-bridge/src/removals.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/reportedMeasurements.props.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-40 Workflow ownership and the return-statement rule
 
@@ -1043,7 +1020,6 @@ Files:
 - `packages/contract/src/vocabulary.props.ts` — internal: `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/vocabulary.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/tsconfig.json`
-- `packages/viewer-bridge/src/geometry.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
 
 ### F-42 The first release publishes
 
@@ -1080,9 +1056,7 @@ Files:
 
 - `docs/decisions/A-16-adapter-and-viewer-delivery.md`
 - `docs/notes/ohif-packaging.md`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/commands.props.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.props.ts`, `packages/viewer-bridge/src/config.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-45 The viewer client becomes the orchestrator package
 
@@ -1219,9 +1193,8 @@ Files:
 - `docs/notes/ohif-extension-composition.md`
 - `packages/contract/tsconfig.tests.json`
 - `packages/viewer-bridge/package.json`
-- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/getCustomizationModule.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/index.ts` — internal: `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/extension.ts`, `packages/viewer-bridge/src/ohif.props.ts`
-- `packages/viewer-bridge/src/ohif.props.ts` — internal: `packages/viewer-bridge/src/extension.props.ts`, `packages/viewer-bridge/src/measurements.props.ts`
+- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/measurements.ts`, `packages/viewer-bridge/src/ohif.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/index.ts` — internal: `packages/viewer-bridge/src/extension.ts`, `packages/viewer-bridge/src/ohif.ts`
 - `packages/viewer-bridge/tsconfig.tests.json`
 
 ### F-56 The adapter registers our extensions
@@ -1263,8 +1236,8 @@ Files:
 - `docs/decisions/A-21-channel-and-exchange.md`
 - `host-app/src/form/unanswered.ts` — no imports
 - `packages/channel/package.json`
-- `packages/channel/src/createChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/createChannel.props.ts`, `packages/channel/src/exchanges.ts`, `packages/channel/src/incomingMessages.ts`, `packages/channel/src/outbox.ts`, `packages/channel/src/pendingExchanges.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/incomingMessages.ts` — internal: `packages/channel/src/config.ts`, `packages/channel/src/createChannel.props.ts`, `packages/channel/src/disposers.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/createChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/config.ts`, `packages/channel/src/disposers.ts`, `packages/channel/src/exchanges.ts`, `packages/channel/src/incomingMessages.ts`, `packages/channel/src/outbox.ts`, `packages/channel/src/pendingExchanges.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/incomingMessages.ts` — internal: `packages/channel/src/config.ts`, `packages/channel/src/disposers.ts`, `packages/channel/src/outbox.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/answers.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.props.ts`
 
 ### F-59 A published number is never reused
@@ -1310,7 +1283,6 @@ Files:
 - `docs/CONVENTIONS.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `packages/channel/src/disposers.ts` — internal: `packages/channel/src/config.ts`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-62 Nothing unused, nothing declared twice
 
@@ -1323,7 +1295,7 @@ Files:
 - `host-app/src/form/rowActions.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/unanswered.ts`, `host-app/src/utils/selectors.ts`, `packages/contract/src/index.ts`
 - `packages/channel/src/disposers.ts` — internal: `packages/channel/src/config.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
-- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/measurements.props.ts`
+- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/throttle.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-63 One channel API for both ends
 
@@ -1339,8 +1311,24 @@ Files:
 - `host-app/src/hooks/useChannelState.ts` — external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/hooks/useHostChannel.ts` — internal: `host-app/src/config.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `packages/channel/src/createChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/createChannel.props.ts`, `packages/channel/src/exchanges.ts`, `packages/channel/src/incomingMessages.ts`, `packages/channel/src/outbox.ts`, `packages/channel/src/pendingExchanges.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/hostChannel.ts` — internal: `packages/channel/src/createChannel.props.ts`, `packages/channel/src/createChannel.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/outbox.ts` — internal: `packages/channel/src/config.ts`, `packages/channel/src/createChannel.props.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/viewerChannel.ts` — internal: `packages/channel/src/createChannel.props.ts`, `packages/channel/src/createChannel.ts`, `packages/contract/src/index.ts`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/config.ts`, `packages/viewer-bridge/src/focus.ts`, `packages/viewer-bridge/src/handshake.ts`, `packages/viewer-bridge/src/measurementStream.ts`, `packages/viewer-bridge/src/ohif.props.ts`, `packages/viewer-bridge/src/removals.ts`, `packages/viewer-bridge/src/reportedMeasurements.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/channel/src/createChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/config.ts`, `packages/channel/src/disposers.ts`, `packages/channel/src/exchanges.ts`, `packages/channel/src/incomingMessages.ts`, `packages/channel/src/outbox.ts`, `packages/channel/src/pendingExchanges.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/hostChannel.ts` — internal: `packages/channel/src/createChannel.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/outbox.ts` — internal: `packages/channel/src/config.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/viewerChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/createChannel.ts`, `packages/contract/src/index.ts`
+
+### F-64 A minimal bridge
+
+The viewer extension had grown to fifteen hundred lines for hooking OHIF events and posting them. It keeps only what is about OHIF now: activating a tool and returning to the default one, reading cachedStats into metrics and geometry, rebuilding an annotation, the version overlay; six modules, no props files, no deps interfaces. What is protocol moved into the channel's viewer end: announcing readiness once with retries, the armed row mirrored from the incoming commands, and reply(command, payload), which sends the event the contract pairs with a command and refuses a wrong shape at compile time. The previous-tool snapshot, the ADDED correction timer, the uid-to-row gating and the de-duplication sets are gone, each shown to change nothing the form receives.
+
+Canon: A-13, C-4.3.6, Q-1, Q-3, Q-4, Q-5, X-5. Depends on: F-63. Slice 58, status `review`.
+
+Files:
+
+- `docs/decisions/A-23-minimal-bridge.md`
+- `packages/channel/src/viewerChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/createChannel.ts`, `packages/contract/src/index.ts`
+- `packages/contract/src/vocabulary.props.ts` — internal: `packages/contract/src/vocabulary.ts`
+- `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/measurements.ts`, `packages/viewer-bridge/src/ohif.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/throttle.ts`; external: `@bdiadiun/scoring-channel`
+- `packages/viewer-bridge/src/ohif.ts` — no imports
+- `packages/viewer-bridge/src/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`; external: `@bdiadiun/scoring-channel`, `@cornerstonejs/core`, `@cornerstonejs/tools`

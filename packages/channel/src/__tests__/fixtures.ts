@@ -5,6 +5,7 @@
 import { vi } from 'vitest';
 import type {
   ActivateToolCommand,
+  DeactivateToolCommand,
   HostCommand,
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
@@ -104,6 +105,16 @@ export const activateToolMessage = (rowId: string, requestId = 'req-1'): Activat
   requestId,
   rowId,
   toolName: 'EllipticalROI',
+});
+
+export const deactivateToolMessage = (
+  rowId: string,
+  requestId = 'req-2',
+): DeactivateToolCommand => ({
+  version: 1,
+  type: 'DEACTIVATE_TOOL',
+  requestId,
+  rowId,
 });
 
 export const measurementAddedMessage = (

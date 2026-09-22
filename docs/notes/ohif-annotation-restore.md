@@ -92,7 +92,7 @@ Too early → throws, `addMeasurement` swallows it (`initMeasurementService.ts:2
 annotation exists in cornerstone but never becomes a measurement.
 
 Signals, earliest to safest: `toolGroupService.EVENTS.VIEWPORT_ADDED`, already used by the handshake
-(`extensions/scoring-bridge/src/handshake.ts:42-48`) — means "a tool group exists", enough for
+(`packages/viewer-bridge/src/extension.ts`, the `VIEWPORT_ADDED` subscription) — means "a tool group exists", enough for
 `setToolActive` but **not** for restore; `cornerstoneViewportService.EVENTS.VIEWPORT_DATA_CHANGED`
 (`extensions/cornerstone/src/services/ViewportService/CornerstoneViewportService.ts:44`, broadcast
 `:492`, `:1229`) — the viewport now has its display set data, the right hook; `VIEWPORT_NEW_IMAGE_SET`

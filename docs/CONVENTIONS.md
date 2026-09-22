@@ -116,6 +116,14 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   the graph script included, has to learn the alias too, or it stops checking them and still
   reports success.
 - No barrel `index.ts` re-exports inside the app; import from the module that owns the symbol.
+- **A `.props.ts` file belongs to a React component only.** In a package, a type lives beside the
+  code that implements it; the one exception is a file that only describes a third party's surface
+  (`ohif.ts`). A type used by one file is declared in that file without `export`; a package's
+  `index.ts` exports what another package or the application uses and nothing else.
+- **Protocol goes to the channel, OHIF stays in the extension** (A-23). The test for a piece of
+  viewer-side code is whether it can be understood without OHIF: announcing readiness, the armed
+  row, answering a command can, and live in the channel; activating a tool or reading
+  `cachedStats` cannot, and live in the extension.
 - Never reach into another package's internals; the contract package is consumed through its
   public entry only.
 - **A shape is declared once, by the package that owns the idea.** Before writing an interface, a
@@ -337,7 +345,7 @@ somebody deletes.
   arrives as its dependency. The fork carries that entry, the matching dependency and its workflow,
   and nothing else (A-20). Adding a capability is a change to the adapter, not to the fork.
 - We never describe OHIF's types, we describe the members we call, in the package's own
-  `ohif.props.ts`. No `any` for an OHIF object: the narrowest structural type that covers what we
+  `ohif.ts`. No `any` for an OHIF object: the narrowest structural type that covers what we
   actually use. Because that model replaces the compiler's knowledge of OHIF, a drift from the real
   API cannot be caught by a type check; building the viewer and running the browser scenario is how
   it is caught, and both belong to any slice that touches this code.

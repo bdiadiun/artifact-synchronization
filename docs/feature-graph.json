@@ -318,6 +318,11 @@
       "title": "refactor: one channel API",
       "branch": "refactor/one-channel-api",
       "pr": 69
+    },
+    {
+      "id": "58",
+      "title": "refactor: minimal bridge",
+      "branch": "refactor/minimal-bridge"
     }
   ],
   "nodes": [
@@ -595,48 +600,17 @@
       "verify": "Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).",
       "files": [
         "packages/viewer-bridge/package.json",
-        "packages/viewer-bridge/src/bridge.ts",
-        "packages/viewer-bridge/src/config.ts",
-        "packages/viewer-bridge/src/extension.props.ts",
         "packages/viewer-bridge/src/extension.ts",
         "packages/viewer-bridge/tsconfig.json"
       ],
       "imports": {
-        "packages/viewer-bridge/src/bridge.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.ts",
-            "packages/viewer-bridge/src/handshake.ts",
-            "packages/viewer-bridge/src/measurementStream.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/removals.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.ts",
-            "packages/viewer-bridge/src/restore.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/viewer-bridge/src/config.ts": {
-          "internal": [],
-          "external": []
-        },
-        "packages/viewer-bridge/src/extension.props.ts": {
-          "internal": [
-            "packages/viewer-bridge/src/getCustomizationModule.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/extension.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/extension.props.ts",
-            "packages/viewer-bridge/src/getCustomizationModule.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/measurements.ts",
+            "packages/viewer-bridge/src/ohif.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         }
       }
     },
@@ -747,7 +721,6 @@
         "docs/decisions/A-4-cancelled-activation.md",
         "host-app/src/config.ts",
         "host-app/src/hooks/useScoringForm.ts",
-        "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts"
       ],
       "imports": {
@@ -766,21 +739,13 @@
           ],
           "external": ["@bdiadiun/scoring-channel", "react"]
         },
-        "packages/viewer-bridge/src/commands.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.props.ts",
-            "packages/viewer-bridge/src/config.ts"
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         }
       }
     },
@@ -796,55 +761,26 @@
       "files": [
         "docs/decisions/A-11-units-and-metrics-payload.md",
         "docs/decisions/A-8-id-correlation.md",
-        "packages/viewer-bridge/src/bridge.ts",
-        "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/measurements.props.ts",
         "packages/viewer-bridge/src/measurements.ts"
       ],
       "imports": {
-        "packages/viewer-bridge/src/bridge.ts": {
+        "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.ts",
-            "packages/viewer-bridge/src/handshake.ts",
-            "packages/viewer-bridge/src/measurementStream.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/removals.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/ohif.ts",
             "packages/viewer-bridge/src/restore.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
         },
-        "packages/viewer-bridge/src/commands.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/commands.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.props.ts",
-            "packages/viewer-bridge/src/config.ts"
-          ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/measurements.props.ts": {
-          "internal": [],
-          "external": []
-        },
         "packages/viewer-bridge/src/measurements.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/measurements.props.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/throttle.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         }
       }
     },
@@ -1012,8 +948,6 @@
         "host-app/src/form/rows.ts",
         "host-app/src/hooks/__tests__/useScoringForm.test.tsx",
         "host-app/src/hooks/useScoringForm.ts",
-        "packages/viewer-bridge/src/bridge.ts",
-        "packages/viewer-bridge/src/measurements.props.ts",
         "packages/viewer-bridge/src/measurements.ts",
         "packages/viewer-bridge/src/throttle.ts"
       ],
@@ -1053,36 +987,18 @@
           ],
           "external": ["@bdiadiun/scoring-channel", "react"]
         },
-        "packages/viewer-bridge/src/bridge.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.ts",
-            "packages/viewer-bridge/src/handshake.ts",
-            "packages/viewer-bridge/src/measurementStream.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/removals.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.ts",
-            "packages/viewer-bridge/src/restore.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/viewer-bridge/src/measurements.props.ts": {
-          "internal": [],
-          "external": []
-        },
         "packages/viewer-bridge/src/measurements.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/measurements.props.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/throttle.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/throttle.ts": {
           "internal": [],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -1116,10 +1032,7 @@
         "packages/contract/src/viewerEvents.ts",
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
-        "packages/viewer-bridge/src/bridge.ts",
-        "packages/viewer-bridge/src/commands.props.ts",
-        "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/removals.ts"
+        "packages/viewer-bridge/src/commands.ts"
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.tsx": {
@@ -1261,43 +1174,11 @@
           "internal": ["packages/contract/src/vocabulary.props.ts"],
           "external": []
         },
-        "packages/viewer-bridge/src/bridge.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.ts",
-            "packages/viewer-bridge/src/handshake.ts",
-            "packages/viewer-bridge/src/measurementStream.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/removals.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.ts",
-            "packages/viewer-bridge/src/restore.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/viewer-bridge/src/commands.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.props.ts",
-            "packages/viewer-bridge/src/config.ts"
-          ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/removals.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.props.ts"
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
         }
@@ -1330,9 +1211,7 @@
         "packages/contract/src/viewerEvents.ts",
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
-        "packages/viewer-bridge/src/commands.props.ts",
-        "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/focus.ts"
+        "packages/viewer-bridge/src/commands.ts"
       ],
       "imports": {
         "host-app/src/components/MeasurementRow.tsx": {
@@ -1462,29 +1341,13 @@
           "internal": ["packages/contract/src/vocabulary.props.ts"],
           "external": []
         },
-        "packages/viewer-bridge/src/commands.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.props.ts",
-            "packages/viewer-bridge/src/config.ts"
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/focus.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         }
       }
     },
@@ -1617,32 +1480,15 @@
       "slice": "9",
       "status": "done",
       "verify": "Version from `package.json` injected at build time appears on each viewport in a 2×2 grid.",
-      "files": [
-        "packages/viewer-bridge/src/extension.props.ts",
-        "packages/viewer-bridge/src/extension.ts",
-        "packages/viewer-bridge/src/getCustomizationModule.ts"
-      ],
+      "files": ["packages/viewer-bridge/src/extension.ts"],
       "imports": {
-        "packages/viewer-bridge/src/extension.props.ts": {
-          "internal": [
-            "packages/viewer-bridge/src/getCustomizationModule.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/extension.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/extension.props.ts",
-            "packages/viewer-bridge/src/getCustomizationModule.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/measurements.ts",
+            "packages/viewer-bridge/src/ohif.ts"
           ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/getCustomizationModule.ts": {
-          "internal": ["packages/viewer-bridge/src/viewerVersion.ts"],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         }
       }
     },
@@ -1682,8 +1528,6 @@
         "packages/contract/src/viewerEvents.ts",
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
-        "packages/viewer-bridge/src/geometry.ts",
-        "packages/viewer-bridge/src/restore.props.ts",
         "packages/viewer-bridge/src/restore.ts",
         "scripts/eslint-fork-style.config.js"
       ],
@@ -1843,30 +1687,9 @@
           "internal": ["packages/contract/src/vocabulary.props.ts"],
           "external": []
         },
-        "packages/viewer-bridge/src/geometry.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/measurements.props.ts"
-          ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/restore.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.props.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
         "packages/viewer-bridge/src/restore.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/restore.props.ts"
-          ],
-          "external": ["@cornerstonejs/core", "@cornerstonejs/tools"]
+          "internal": ["packages/contract/src/index.ts", "packages/viewer-bridge/src/ohif.ts"],
+          "external": ["@bdiadiun/scoring-channel", "@cornerstonejs/core", "@cornerstonejs/tools"]
         },
         "scripts/eslint-fork-style.config.js": {
           "internal": [],
@@ -2280,93 +2103,21 @@
         "ARCHITECTURE.md",
         "docs/DEFENCE.md",
         "docs/notes/bridge-internals.md",
-        "packages/viewer-bridge/src/bridge.ts",
-        "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/handshake.ts",
-        "packages/viewer-bridge/src/measurementStream.props.ts",
-        "packages/viewer-bridge/src/measurementStream.ts",
-        "packages/viewer-bridge/src/reportedMeasurements.props.ts",
-        "packages/viewer-bridge/src/reportedMeasurements.ts",
         "packages/viewer-bridge/src/throttle.ts"
       ],
       "imports": {
-        "packages/viewer-bridge/src/bridge.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.ts",
-            "packages/viewer-bridge/src/handshake.ts",
-            "packages/viewer-bridge/src/measurementStream.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/removals.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.ts",
-            "packages/viewer-bridge/src/restore.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/viewer-bridge/src/commands.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.props.ts",
-            "packages/viewer-bridge/src/config.ts"
-          ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/handshake.ts": {
-          "internal": [
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/viewerVersion.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/viewer-bridge/src/measurementStream.props.ts": {
-          "internal": [
-            "packages/viewer-bridge/src/commands.props.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.props.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/viewer-bridge/src/measurementStream.ts": {
-          "internal": [
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/geometry.ts",
-            "packages/viewer-bridge/src/measurementStream.props.ts",
-            "packages/viewer-bridge/src/measurements.props.ts",
-            "packages/viewer-bridge/src/measurements.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.props.ts"
-          ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/reportedMeasurements.props.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/viewer-bridge/src/reportedMeasurements.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.props.ts",
-            "packages/viewer-bridge/src/throttle.ts"
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/throttle.ts": {
           "internal": [],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -2599,16 +2350,14 @@
       "dependsOn": ["F-38"],
       "slice": "33",
       "status": "done",
-      "verify": "The bridge test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.",
+      "verify": "The host channel test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.",
       "files": [
         "ARCHITECTURE.md",
         "host-app/src/App.tsx",
         "host-app/src/hooks/usePersistRows.ts",
         "host-app/src/hooks/useRestoredRows.ts",
         "host-app/src/i18n.ts",
-        "packages/viewer-bridge/src/commands.props.ts",
-        "packages/viewer-bridge/src/commands.ts",
-        "packages/viewer-bridge/src/removals.ts"
+        "packages/viewer-bridge/src/commands.ts"
       ],
       "imports": {
         "host-app/src/App.tsx": {
@@ -2635,28 +2384,11 @@
           "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
-        "packages/viewer-bridge/src/commands.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.props.ts",
-            "packages/viewer-bridge/src/config.ts"
-          ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/removals.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.props.ts"
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
         }
@@ -2716,8 +2448,7 @@
         "packages/contract/src/viewerEvents.ts",
         "packages/contract/src/vocabulary.props.ts",
         "packages/contract/src/vocabulary.ts",
-        "packages/contract/tsconfig.json",
-        "packages/viewer-bridge/src/geometry.ts"
+        "packages/contract/tsconfig.json"
       ],
       "imports": {
         "host-app/src/form/rows.props.ts": {
@@ -2786,14 +2517,6 @@
         "packages/contract/src/vocabulary.ts": {
           "internal": ["packages/contract/src/vocabulary.props.ts"],
           "external": []
-        },
-        "packages/viewer-bridge/src/geometry.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/measurements.props.ts"
-          ],
-          "external": []
         }
       }
     },
@@ -2840,41 +2563,16 @@
       "files": [
         "docs/decisions/A-16-adapter-and-viewer-delivery.md",
         "docs/notes/ohif-packaging.md",
-        "packages/viewer-bridge/src/bridge.ts",
-        "packages/viewer-bridge/src/commands.props.ts",
         "packages/viewer-bridge/src/commands.ts"
       ],
       "imports": {
-        "packages/viewer-bridge/src/bridge.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.ts",
-            "packages/viewer-bridge/src/handshake.ts",
-            "packages/viewer-bridge/src/measurementStream.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/removals.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.ts",
-            "packages/viewer-bridge/src/restore.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
-        },
-        "packages/viewer-bridge/src/commands.props.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
         "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.props.ts",
-            "packages/viewer-bridge/src/config.ts"
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/restore.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         }
       }
     },
@@ -3181,32 +2879,21 @@
         "packages/viewer-bridge/package.json",
         "packages/viewer-bridge/src/extension.ts",
         "packages/viewer-bridge/src/index.ts",
-        "packages/viewer-bridge/src/ohif.props.ts",
         "packages/viewer-bridge/tsconfig.tests.json"
       ],
       "imports": {
         "packages/viewer-bridge/src/extension.ts": {
           "internal": [
-            "packages/viewer-bridge/src/bridge.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/extension.props.ts",
-            "packages/viewer-bridge/src/getCustomizationModule.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/measurements.ts",
+            "packages/viewer-bridge/src/ohif.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/index.ts": {
           "internal": [
-            "packages/viewer-bridge/src/extension.props.ts",
             "packages/viewer-bridge/src/extension.ts",
-            "packages/viewer-bridge/src/ohif.props.ts"
-          ],
-          "external": []
-        },
-        "packages/viewer-bridge/src/ohif.props.ts": {
-          "internal": [
-            "packages/viewer-bridge/src/extension.props.ts",
-            "packages/viewer-bridge/src/measurements.props.ts"
+            "packages/viewer-bridge/src/ohif.ts"
           ],
           "external": []
         }
@@ -3294,7 +2981,8 @@
         "packages/channel/src/createChannel.ts": {
           "internal": [
             "packages/channel/src/buildMessage.ts",
-            "packages/channel/src/createChannel.props.ts",
+            "packages/channel/src/config.ts",
+            "packages/channel/src/disposers.ts",
             "packages/channel/src/exchanges.ts",
             "packages/channel/src/incomingMessages.ts",
             "packages/channel/src/outbox.ts",
@@ -3306,8 +2994,8 @@
         "packages/channel/src/incomingMessages.ts": {
           "internal": [
             "packages/channel/src/config.ts",
-            "packages/channel/src/createChannel.props.ts",
             "packages/channel/src/disposers.ts",
+            "packages/channel/src/outbox.ts",
             "packages/contract/src/index.ts"
           ],
           "external": []
@@ -3373,8 +3061,7 @@
         ".claude/rules/host-app.md",
         "docs/CONVENTIONS.md",
         "eslint.config.js",
-        "packages/channel/src/disposers.ts",
-        "packages/viewer-bridge/src/bridge.ts"
+        "packages/channel/src/disposers.ts"
       ],
       "imports": {
         "eslint.config.js": {
@@ -3391,21 +3078,6 @@
         "packages/channel/src/disposers.ts": {
           "internal": ["packages/channel/src/config.ts"],
           "external": []
-        },
-        "packages/viewer-bridge/src/bridge.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.ts",
-            "packages/viewer-bridge/src/handshake.ts",
-            "packages/viewer-bridge/src/measurementStream.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/removals.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.ts",
-            "packages/viewer-bridge/src/restore.ts"
-          ],
-          "external": ["@bdiadiun/scoring-channel"]
         }
       }
     },
@@ -3450,10 +3122,11 @@
         "packages/viewer-bridge/src/measurements.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/measurements.props.ts"
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/throttle.ts"
           ],
-          "external": []
+          "external": ["@bdiadiun/scoring-channel"]
         }
       }
     },
@@ -3476,8 +3149,7 @@
         "packages/channel/src/createChannel.ts",
         "packages/channel/src/hostChannel.ts",
         "packages/channel/src/outbox.ts",
-        "packages/channel/src/viewerChannel.ts",
-        "packages/viewer-bridge/src/bridge.ts"
+        "packages/channel/src/viewerChannel.ts"
       ],
       "imports": {
         "eslint.config.js": {
@@ -3523,7 +3195,8 @@
         "packages/channel/src/createChannel.ts": {
           "internal": [
             "packages/channel/src/buildMessage.ts",
-            "packages/channel/src/createChannel.props.ts",
+            "packages/channel/src/config.ts",
+            "packages/channel/src/disposers.ts",
             "packages/channel/src/exchanges.ts",
             "packages/channel/src/incomingMessages.ts",
             "packages/channel/src/outbox.ts",
@@ -3533,43 +3206,87 @@
           "external": []
         },
         "packages/channel/src/hostChannel.ts": {
-          "internal": [
-            "packages/channel/src/createChannel.props.ts",
-            "packages/channel/src/createChannel.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/createChannel.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/channel/src/outbox.ts": {
-          "internal": [
-            "packages/channel/src/config.ts",
-            "packages/channel/src/createChannel.props.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/config.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/channel/src/viewerChannel.ts": {
           "internal": [
-            "packages/channel/src/createChannel.props.ts",
+            "packages/channel/src/buildMessage.ts",
+            "packages/channel/src/createChannel.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        }
+      }
+    },
+    {
+      "id": "F-64",
+      "name": "A minimal bridge",
+      "description": "The viewer extension had grown to fifteen hundred lines for hooking OHIF events and posting them. It keeps only what is about OHIF now: activating a tool and returning to the default one, reading cachedStats into metrics and geometry, rebuilding an annotation, the version overlay; six modules, no props files, no deps interfaces. What is protocol moved into the channel's viewer end: announcing readiness once with retries, the armed row mirrored from the incoming commands, and reply(command, payload), which sends the event the contract pairs with a command and refuses a wrong shape at compile time. The previous-tool snapshot, the ADDED correction timer, the uid-to-row gating and the de-duplication sets are gone, each shown to change nothing the form receives.",
+      "canon": ["A-13", "C-4.3.6", "Q-1", "Q-3", "Q-4", "Q-5", "X-5"],
+      "dependsOn": ["F-63"],
+      "slice": "58",
+      "status": "review",
+      "verify": "The extension is under 1 100 lines in seven files against 1 538 in 23; the full browser scenario passes unchanged on the released packages; a wrong reply shape and a missing command handler each fail the build; skipping the tool restore after a measurement, omitting causedBy in reply, or answering a gone removal with send each fails a named test.",
+      "files": [
+        "docs/decisions/A-23-minimal-bridge.md",
+        "packages/channel/src/viewerChannel.ts",
+        "packages/contract/src/vocabulary.props.ts",
+        "packages/viewer-bridge/src/commands.ts",
+        "packages/viewer-bridge/src/extension.ts",
+        "packages/viewer-bridge/src/measurements.ts",
+        "packages/viewer-bridge/src/ohif.ts",
+        "packages/viewer-bridge/src/restore.ts"
+      ],
+      "imports": {
+        "packages/channel/src/viewerChannel.ts": {
+          "internal": [
+            "packages/channel/src/buildMessage.ts",
             "packages/channel/src/createChannel.ts",
             "packages/contract/src/index.ts"
           ],
           "external": []
         },
-        "packages/viewer-bridge/src/bridge.ts": {
+        "packages/contract/src/vocabulary.props.ts": {
+          "internal": ["packages/contract/src/vocabulary.ts"],
+          "external": []
+        },
+        "packages/viewer-bridge/src/commands.ts": {
           "internal": [
             "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/commands.ts",
-            "packages/viewer-bridge/src/config.ts",
-            "packages/viewer-bridge/src/focus.ts",
-            "packages/viewer-bridge/src/handshake.ts",
-            "packages/viewer-bridge/src/measurementStream.ts",
-            "packages/viewer-bridge/src/ohif.props.ts",
-            "packages/viewer-bridge/src/removals.ts",
-            "packages/viewer-bridge/src/reportedMeasurements.ts",
+            "packages/viewer-bridge/src/ohif.ts",
             "packages/viewer-bridge/src/restore.ts"
           ],
           "external": ["@bdiadiun/scoring-channel"]
+        },
+        "packages/viewer-bridge/src/extension.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/measurements.ts",
+            "packages/viewer-bridge/src/ohif.ts"
+          ],
+          "external": ["@bdiadiun/scoring-channel"]
+        },
+        "packages/viewer-bridge/src/measurements.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/commands.ts",
+            "packages/viewer-bridge/src/ohif.ts",
+            "packages/viewer-bridge/src/throttle.ts"
+          ],
+          "external": ["@bdiadiun/scoring-channel"]
+        },
+        "packages/viewer-bridge/src/ohif.ts": {
+          "internal": [],
+          "external": []
+        },
+        "packages/viewer-bridge/src/restore.ts": {
+          "internal": ["packages/contract/src/index.ts", "packages/viewer-bridge/src/ohif.ts"],
+          "external": ["@bdiadiun/scoring-channel", "@cornerstonejs/core", "@cornerstonejs/tools"]
         }
       }
     }

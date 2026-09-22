@@ -8,12 +8,9 @@ export { createScoringBridgeExtension, SCORING_BRIDGE_EXTENSION_ID } from './ext
 export type {
   OhifAsyncExtension,
   OhifExtension,
-  ScoringBridgeExtensionOptions,
-} from './extension.props.js';
-export type {
   OhifExtensionManager,
   OhifExtensionParams,
   ScoringBridgeAppConfig,
-} from './ohif.props.js';
+} from './ohif.js';
 
 export default createScoringBridgeExtension();
