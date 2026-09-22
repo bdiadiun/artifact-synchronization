@@ -100,8 +100,8 @@ my-react-app/
 | `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                                                                                  |
 
 Outside `host-app`, the repository keeps the packages, each laid out by side or role (A-27):
-`packages/contract` (the wire contract, four flat files), `packages/channel` (`host/`, `viewer/`,
-`shared/`), `packages/viewer-bridge` (`commands/`, `events/`, `ohif/`), `packages/viewer-adapter`;
+`packages/contract` (the wire contract, four flat files), `packages/channel` (two files: `channel.ts`,
+`peer.ts`), `packages/viewer-bridge` (`commands/`, `events/`, `ohif/`), `packages/viewer-adapter`;
 then `viewer/` (the OHIF fork, a local checkout pinned by `viewer.json` and ignored by git),
 `scripts/` (checks and generators) and `docs/` (canon, graph, decisions, notes). `ARCHITECTURE.md`
 maps every concern to the file that owns it.

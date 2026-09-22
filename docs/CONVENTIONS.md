@@ -41,7 +41,7 @@ and the linter disagree, fix the linter config in the same PR and say so.
   React component props are exempt, and so is a signature a third party dictates (OHIF's
   extension parameters).
 - **No function inside a `return` object.** A factory declares every method above, with a name,
-  and returns a list of names: `return { send, on, exchange, dispose };`. The return then reads as
+  and returns a list of names: `return { send, onMessage, dispose };`. The return then reads as
   the file's table of contents and each method can be found by its name. (The same rule for
   components is in §6.)
 - **A factory is never called inside another call's argument list.** Declare the function or the
@@ -76,7 +76,7 @@ and the linter disagree, fix the linter config in the same PR and say so.
 | Thing                                | Style                                                                        | Example                                                                        |
 | ------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createOrchestrator`, `useScoringForm`                                         |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createChannel`, `useScoringForm`                                              |
 | Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                             |
 | Files: types and styles              | `.props.ts` next to a React component, and nowhere else (A-27)               | `TotalsFooter.props.ts`                                                        |
 | Files: everything else               | kebab-case or camelCase, one concept per file                                | `host-channel.ts` / `hostChannel.ts` (keep the existing style within a folder) |
@@ -100,7 +100,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - Split by role, not by size: the bridge is messaging, handshake and the measurement stream; a
   hook is user actions or event synchronisation, not both. A factory that does more than three
   things is two factories and a composition root that wires them.
-- A composition root (`createOrchestrator`, `App`, a top-level hook) only creates and connects; it holds
+- A composition root (`extension.ts`, `App`, a top-level hook) only creates and connects; it holds
   no branching logic of its own.
 - Repeated lookups become named selectors (`findRow`, `findRowByUid`) instead of inline `find`
   calls scattered through a module.
@@ -124,10 +124,10 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   code that implements it; the one exception is a file that only describes a third party's surface
   (`ohif.ts`). A type used by one file is declared in that file without `export`; a package's
   `index.ts` exports what another package or the application uses and nothing else.
-- **Protocol goes to the channel, OHIF stays in the extension** (A-23). The test for a piece of
-  viewer-side code is whether it can be understood without OHIF: announcing readiness, the armed
-  row, answering a command can, and live in the channel; activating a tool or reading
-  `cachedStats` cannot, and live in the extension.
+- **The channel is transport, the extension is what a message means** (A-29, A-31). The channel
+  knows origin, version, the guard, `send`, one `onMessage` handler and the queue until `readyOn`;
+  it never reads a field of a message. The armed row, announcing once and everything OHIF live in
+  the extension; the form's state lives in the form.
 - Never reach into another package's internals; the contract package is consumed through its
   public entry only.
 - **A shape is declared once, by the package that owns the idea.** Before writing an interface, a
@@ -140,7 +140,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   `z.discriminatedUnion('type', …)`; a type is `z.infer` of the schema of the same name; a guard is
   `safeParse(value).success`. No hand-written `isRecord` / `isNonEmptyString` guards anywhere: a
   consumer that must check a shape builds a schema from the contract's.
-- **A folder names a side or a role (A-27).** Channel: `host/`, `viewer/`, `shared/`; extension:
+- **A folder names a side or a role (A-27).** Channel: two files, no folder; extension:
   `commands/`, `events/`, `ohif/`; application: `channel/`, `form/`, `components/`, `pages/`. No
   `hooks/` or `utils/`: a hook lives beside what it connects, a helper beside its only caller. No
   file under twenty lines (a constant, a type or a one-function module joins its owner), except a

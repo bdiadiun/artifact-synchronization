@@ -3,10 +3,10 @@
 Implementation details of the bridge that are deliberate but not visible from the code alone.
 Decisions live in [`docs/decisions/`](../decisions/); OHIF behaviour we rely on is in
 [`ohif-bridge-api.md`](ohif-bridge-api.md). File names below refer to
-`packages/viewer-bridge/src/` unless a path is given. Since A-23 the extension is six modules, laid
-out by role since A-27: `extension.ts` (composition root), `commands/handlers.ts`,
-`commands/restore.ts`, `events/measurements.ts`, `ohif/surface.ts` and `ohif/throttle.ts`;
-announcing, the armed row and replies are the channel's (`packages/channel/src/viewer/viewerChannel.ts`).
+`packages/viewer-bridge/src/` unless a path is given. The extension is six modules, laid out by
+role (A-27): `extension.ts` (composition root, announces `VIEWER_READY` once), `commands/handlers.ts`
+(one `switch` over the commands, the armed row), `commands/restore.ts`, `events/measurements.ts`,
+`ohif/surface.ts` and `ohif/throttle.ts`. The channel is transport only (A-29, A-31).
 
 ## Lifecycle
 
@@ -41,29 +41,28 @@ announcing, the armed row and replies are the channel's (`packages/channel/src/v
 
 ## Commands
 
-- **Every command goes through one handler map** (`commands/handlers.ts`, registered with `channel.onEach`
-  and checked with `satisfies MessageHandlers<HostCommand>`): a command added to the contract
-  without a handler fails the type check, and an unknown type never reaches dispatch because the
-  contract guard rejects it on arrival.
-- **A removal is answered even when the measurement is already gone** (`commands/handlers.ts`):
-  `channel.reply(command, …)` at once, so the host's exchange settles instead of timing out; a
-  present measurement is removed and answered from the OHIF `MEASUREMENT_REMOVED` subscription.
+- **Every command goes through one `switch`** (`commands/handlers.ts`, registered with
+  `channel.onMessage`, `default` narrowing to `never`): a command added to the contract without a
+  case fails the type check, and an unknown type never reaches the switch because the contract
+  guard rejects it on arrival.
+- **A removal is fire-and-forget** (A-30): the handler calls `measurementService.remove` when the
+  uid is present and sends nothing itself; OHIF's `MEASUREMENT_REMOVED` reaches the host through
+  the subscription, for a row that is already gone.
 
 ## Host side
 
 - **No separate `uid → rowId` map on the host** (`host-app/src/form/useScoringForm.ts`). A `done`
   row stores its own `measurementUid`, and `MEASUREMENT_ADDED` carries `rowId`, so the rows array
-  is the map. The viewer keeps no map either since A-23; the channel remembers only the armed row, and
-  a removal is correlated through the pending `REMOVE_MEASUREMENT` command.
+  is the map. The viewer keeps no map either: `commands/handlers.ts` remembers only the armed
+  `rowId` (A-29), which the next `MEASUREMENT_ADDED` takes.
 
 ## Details moved out of the code (A-24)
 
-- **Announce retry** (`extension.ts`): a later `VIEWPORT_ADDED` repeats `announceReady` only when
-  the first attempt found no host window; once delivered, further calls are no-ops.
-- **Removal is answered by the subscription** (`commands/handlers.ts`, `events/measurements.ts`): the REMOVE handler
-  parks the command and calls `measurementService.remove` (the `removeMeasurement` command only
-  wraps that call, `commandsModule.ts:746-751`); the OHIF `MEASUREMENT_REMOVED` subscription then
-  replies. A uid that is already gone is replied to at once so the host's exchange settles.
+- **Announce once** (`extension.ts`): the first `VIEWPORT_ADDED` unsubscribes and sends
+  `VIEWER_READY`; a viewer reload starts a new extension instance, which announces again.
+- **Removal goes through OHIF** (`commands/handlers.ts`): `measurementService.remove` (the
+  `removeMeasurement` command only wraps that call, `commandsModule.ts:746-751`) fires OHIF's
+  `MEASUREMENT_REMOVED`, which the subscription in `events/measurements.ts` forwards.
 - **Focus** (`commands/handlers.ts`): cornerstone's `JUMP_TO_MEASUREMENT` handler selects the annotation and
   moves the camera (`commandsModule.ts:208-241`); an unknown uid is an ordinary race, not an error.
 - **Restore is hand-built** (`commands/restore.ts`): `EllipticalROITool.hydrate` re-derives metadata from the
@@ -115,6 +114,6 @@ announcing, the armed row and replies are the channel's (`packages/channel/src/v
 - `activeHandleIndex` must be `null`, not absent (`EllipticalROITool.js:445`); the group key for a string selector is `metadata.FrameOfReferenceUID` (`annotationState.js:59-68`, `addSRAnnotation.ts:142`); the study shown is the one the active display sets belong to (`DisplaySetService.ts:114`); a cornerstone viewport exists once `VIEWPORT_DATA_CHANGED` reported (`CornerstoneViewportService.ts:492, 509`).
 - `invalidated: true` makes cornerstone recompute the stats and emit `ANNOTATION_MODIFIED`, which is how the restored value reaches the form through the update stream.
 
-`packages/channel/src/shared/peer.ts`, `host/hostChannel.ts`, `host/outbox.ts`
+`packages/channel/src/peer.ts`, `channel.ts`
 
-- The `version` is the channel's (A-25); a foreign version is logged once and dropped before the guard. Only an event that names the request it answers can settle an exchange (A-10); an answer never reaches the general handlers. `VIEWER_READY` flushes the queue before the application's handlers run (A-9); a post that finds no window keeps the remainder queued (Q-1). On dispose, the armed row is cancelled through the still-live outbox only if the viewer was ready (Q-5).
+- The `version` is the channel's (A-25); a foreign version is logged once and dropped before the guard. The `readyOn` message flushes the queue before the application's handler runs (A-9); a post that finds no window keeps the remainder queued (Q-1). The armed row is cancelled by `useHostChannel` before it disposes the channel, only if the viewer was ready (Q-5, A-31).
