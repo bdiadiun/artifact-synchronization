@@ -12,7 +12,7 @@ export type {
 } from './vocabulary.props';
 
 export { ANSWER_TYPE_BY_COMMAND } from './answers';
-export type { AnsweredCommandType, AnswerTypeByCommand, AnswerTypeOf } from './answers.props';
+export type { AnsweredCommandType, AnswerTypeOf } from './answers.props';
 
 export {
   isFiniteNumber,

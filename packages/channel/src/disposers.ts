@@ -1,7 +1,7 @@
 // How both ends let go of what they hold (Q-5): in the order they registered it, once, and a
 // disposer that throws is logged rather than stranding the ones behind it.
 
-import { DEFAULT_LOG_PREFIX } from './config.js';
+import { LOG_PREFIX } from './config.js';
 
 export type Disposer = () => void;
 
@@ -23,7 +23,7 @@ export interface DisposerSetOptions {
 }
 
 export const createDisposerSet = ({
-  logPrefix = DEFAULT_LOG_PREFIX,
+  logPrefix = LOG_PREFIX,
 }: DisposerSetOptions = {}): DisposerSet => {
   const disposers: Disposer[] = [];
   let disposed = false;

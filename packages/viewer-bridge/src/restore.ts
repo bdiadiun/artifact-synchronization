@@ -1,6 +1,5 @@
 import {
   isMeasurementGeometry,
-  type MeasurementsRestoredEvent,
   type RestoreFailure,
   type RestoreFailureReason,
   type RestoreMeasurementRequest,
@@ -94,7 +93,7 @@ const createReadinessGate = (
 };
 
 const createRowRestorer =
-  ({ servicesManager, reported }: Omit<RestoreCommandsDeps, 'post'>) =>
+  ({ servicesManager, reported }: Omit<RestoreCommandsDeps, 'send'>) =>
   (request: RestoreMeasurementRequest): RestoreFailureReason | null => {
     if (servicesManager.services.measurementService?.getMeasurement(request.measurementUid)) {
       return 'already-present';
@@ -118,7 +117,7 @@ const createRowRestorer =
   };
 
 export const createRestoreCommands = (deps: RestoreCommandsDeps): RestoreCommands => {
-  const { servicesManager, post } = deps;
+  const { servicesManager, send } = deps;
   const { displaySetService, viewportGridService } = servicesManager.services;
 
   const activeViewportId = (): string | undefined => viewportGridService?.getActiveViewportId();
@@ -155,16 +154,10 @@ export const createRestoreCommands = (deps: RestoreCommandsDeps): RestoreCommand
       triggerAnnotationRenderForViewportIds([viewportId]);
     }
 
-    const event: MeasurementsRestoredEvent = {
-      version: 1,
-      type: 'MEASUREMENTS_RESTORED',
-      causedBy: command.requestId,
-      restored,
-      failed,
-    };
+    const payload = { causedBy: command.requestId, restored, failed };
 
-    if (post(event)) {
-      console.debug(`${LOG_PREFIX} MEASUREMENTS_RESTORED sent`, event);
+    if (send('MEASUREMENTS_RESTORED', payload)) {
+      console.debug(`${LOG_PREFIX} MEASUREMENTS_RESTORED sent`, payload);
     }
   };
 

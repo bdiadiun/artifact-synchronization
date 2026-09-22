@@ -1,13 +1,12 @@
 import type { RestoreMeasurementsCommand } from '@bdiadiun/scoring-contract';
-import type { Disposable } from '@bdiadiun/scoring-channel';
+import type { Disposable, ViewerChannel } from '@bdiadiun/scoring-channel';
 import type { OhifServicesManager } from './ohif.props.js';
-import type { PostToHost } from './messaging.props.js';
 import type { ReportedMeasurements } from './reportedMeasurements.props.js';
 
 export interface RestoreCommandsDeps {
   servicesManager: OhifServicesManager;
   reported: ReportedMeasurements;
-  post: PostToHost;
+  send: ViewerChannel['send'];
 }
 
 export interface RestoreCommands extends Disposable {

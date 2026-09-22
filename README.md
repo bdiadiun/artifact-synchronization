@@ -5,9 +5,9 @@ form. They run on separate ports and talk only over `window.postMessage`.
 
 - Requirements: [docs/CANON.md](docs/CANON.md); work breakdown: [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md).
 - Message contract and decisions: [ARCHITECTURE.md](ARCHITECTURE.md); AI usage: [AI-USAGE.md](AI-USAGE.md); defence notes: [docs/DEFENCE.md](docs/DEFENCE.md).
-- Layout: `host-app/` (React + Vite, port 5173) and five published packages: `packages/contract/`
+- Layout: `host-app/` (React + Vite, port 5173) and four published packages: `packages/contract/`
   (the message types), `packages/channel/` (the origin check, the guard and the request-and-answer
-  exchange both sides use), `packages/orchestrator/` (the client that talks to a viewer),
+  exchange, the queue until `VIEWER_READY`: the one API both sides talk through),
   `packages/viewer-bridge/` and `packages/viewer-adapter/` (the OHIF extension and the adapter that
   registers it); `viewer/` (a local checkout of
   [bdiadiun/Viewers](https://github.com/bdiadiun/Viewers), branch `scoring`, based on OHIF

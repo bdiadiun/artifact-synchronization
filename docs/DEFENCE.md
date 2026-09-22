@@ -9,28 +9,28 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 | Concern                 | Host-app                                                                                                                                                    | Viewer extension                                                                                                                                       |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Origin configured       | [`VIEWER_ORIGIN`](../host-app/src/config.ts#L4)                                                                                                             | [`HOST_ORIGIN`][fork-config]                                                                                                                           |
-| Origin checked          | [`event.origin !== peerOrigin`](../packages/channel/src/incomingMessages.ts#L38)                                                                            | [`event.origin !== HOST_ORIGIN`][fork-bridge-origin]                                                                                                   |
+| Origin checked          | [`event.origin !== peerOrigin`](../packages/channel/src/incomingMessages.ts#L27)                                                                            | [the same check, the viewer end of the channel][fork-bridge-origin]                                                                                    |
 | URL input validated     | [`study` parameter checked against a DICOM identifier, then `encodeURIComponent`](../host-app/src/config.ts)                                                | —                                                                                                                                                      |
-| Payload validated       | [`isViewerEvent`](../packages/orchestrator/src/incomingEvents.ts#L36)                                                                                       | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
-| Handshake               | [READY flushes the queue](../packages/orchestrator/src/incomingEvents.ts#L56)                                                                               | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`postViewerReady`][fork-bridge-ready] → [`window.parent.postMessage`][fork-bridge-post]         |
-| Early commands          | [`queue.push(command)`](../packages/orchestrator/src/outgoingCommands.ts#L83), [`flush`](../packages/orchestrator/src/outgoingCommands.ts#L54)              | —                                                                                                                                                      |
-| Row id / measurement id | [`crypto.randomUUID()` in `addRow`](../host-app/src/form/useScoringForm.ts#L27)                                                                             | [`uidToRowId.set`][fork-bridge-map]                                                                                                                    |
+| Payload validated       | [`isViewerEvent`](../packages/channel/src/hostChannel.ts#L23)                                                                                               | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
+| Handshake               | [READY opens the outbox](../packages/channel/src/createChannel.ts#L47)                                                                                      | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`postViewerReady`][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post]  |
+| Early commands          | [`queue.push(message)`](../packages/channel/src/outbox.ts#L65), [`open`](../packages/channel/src/outbox.ts#L70)                                             | —                                                                                                                                                      |
+| Row id / measurement id | [`crypto.randomUUID()` in `addRow`](../host-app/src/form/rowActions.ts#L21)                                                                                 | [`uidToRowId.set`][fork-bridge-map]                                                                                                                    |
 | Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L7)                                                                                                              | [snapshot `getActivePrimaryMouseButtonTool`][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]        |
-| Measurement delivered   | [`rowId === null` ignored](../host-app/src/form/useScoringForm.ts#L134)                                                                                     | [`MEASUREMENT_ADDED` subscription][fork-bridge-added], [posted][fork-bridge-added-post], [`toMetrics`][fork-metrics], [unit normalisation][fork-units] |
+| Measurement delivered   | [`rowId === null` ignored](../host-app/src/form/viewerEventHandlers.ts#L94)                                                                                 | [`MEASUREMENT_ADDED` subscription][fork-bridge-added], [posted][fork-bridge-added-post], [`toMetrics`][fork-metrics], [unit normalisation][fork-units] |
 | Live update (S-5.1)     | reducer `MeasurementUpdated` in [`rows.ts`](../host-app/src/form/rows.ts#L19)                                                                               | [throttled emitter][fork-bridge-throttle], [`UPDATE_INTERVAL_MS`][fork-bridge-interval]                                                                |
-| Deletion (S-5.2)        | [own `causedBy` ignored](../host-app/src/form/useScoringForm.ts#L182)                                                                                       | [`pendingRemovals`][fork-removals-map], [`measurementService.remove`][fork-removals-remove], [`MEASUREMENT_REMOVED` subscription][fork-bridge-removed] |
+| Deletion (S-5.2)        | [own echo consumed by the exchange](../host-app/src/form/rowActions.ts#L57)                                                                                 | [`pendingRemovals`][fork-removals-map], [`measurementService.remove`][fork-removals-remove], [`MEASUREMENT_REMOVED` subscription][fork-bridge-removed] |
 | Second tool (S-5.4)     | [`LENGTH_TOOL`](../host-app/src/config.ts), row's own `toolName` in `ACTIVATE_TOOL`, separate totals per metric                                             | reuses `toMetrics` `Length` mapping                                                                                                                    |
 | State restore (S-5.6)   | [`storage.ts`](../host-app/src/form/storage.ts), restore request in `viewerEventHandlers.ts`                                                                | `restore.ts` (readiness gate, re-add with the original uid), `geometry.ts`                                                                             |
 | Focus (S-5.3)           | clickable Done row in `MeasurementRow.tsx`                                                                                                                  | [`jumpToMeasurement`][fork-focus]                                                                                                                      |
 | Version overlay (S-5.5) | —                                                                                                                                                           | [`viewportOverlay.bottomRight`][fork-overlay]                                                                                                          |
 | State and totals        | [`RowStatus`](../host-app/src/form/rows.ts#L8), [`FormActionType`](../host-app/src/form/rows.ts#L14), [`computeTotals`](../host-app/src/form/totals.ts#L24) | —                                                                                                                                                      |
 | Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                            | log prefix `[scoring-bridge]` in the viewer console                                                                                                    |
-| Entry point             | [`useBridge`](../host-app/src/hooks/useBridge.ts)                                                                                                           | [`preRegistration`][fork-index]                                                                                                                        |
+| Entry point             | [`useHostChannel`](../host-app/src/hooks/useHostChannel.ts)                                                                                                 | [`preRegistration`][fork-index]                                                                                                                        |
 
 [fork-config]: ../packages/viewer-bridge/src/config.ts
 [fork-index]: ../packages/viewer-bridge/src/extension.ts
-[fork-bridge-origin]: ../packages/viewer-bridge/src/messaging.ts
-[fork-bridge-post]: ../packages/viewer-bridge/src/messaging.ts
+[fork-bridge-origin]: ../packages/channel/src/incomingMessages.ts#L27
+[fork-bridge-post]: ../packages/channel/src/outbox.ts#L48
 [fork-bridge-ready]: ../packages/viewer-bridge/src/handshake.ts
 [fork-bridge-viewport]: ../packages/viewer-bridge/src/handshake.ts
 [fork-bridge-map]: ../packages/viewer-bridge/src/reportedMeasurements.ts
@@ -39,7 +39,7 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 [fork-bridge-throttle]: ../packages/viewer-bridge/src/reportedMeasurements.ts
 [fork-bridge-interval]: ../packages/viewer-bridge/src/reportedMeasurements.ts
 [fork-bridge-removed]: ../packages/viewer-bridge/src/measurementStream.ts
-[fork-commands-guard]: ../packages/viewer-bridge/src/messaging.ts
+[fork-commands-guard]: ../packages/channel/src/viewerChannel.ts#L21
 [fork-commands-snapshot]: ../packages/viewer-bridge/src/commands.ts
 [fork-commands-active]: ../packages/viewer-bridge/src/commands.ts
 [fork-commands-disarm]: ../packages/viewer-bridge/src/commands.ts
@@ -55,10 +55,10 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 ## Questions (canon P-1..P-6)
 
 **P-1. The iframe loads slower than the user clicks.** "Активувати" calls `send`; while `ready` is
-false the command goes to [`queue.push(command)`](../packages/orchestrator/src/outgoingCommands.ts#L83) and
+false the command goes to [`queue.push(message)`](../packages/channel/src/outbox.ts#L65) and
 the status line shows `у черзі: N`. The viewer announces `VIEWER_READY` only after
 [the first viewport joins a tool group][fork-bridge-viewport], because `setToolActive` is a silent
-no-op before that. The host then [flushes the queue in order](../packages/orchestrator/src/incomingEvents.ts#L56).
+no-op before that. The host then [flushes the queue in order](../packages/channel/src/outbox.ts#L70).
 Demo: stop the viewer, click "Активувати", start the viewer, watch the counter drain.
 
 **P-2. Why `postMessage`.** The two apps have different origins, and `postMessage` is the only
@@ -68,7 +68,7 @@ receiver can verify. On one origin we could call into `iframe.contentWindow` dir
 the seam between two separately deployed apps.
 
 **P-3. Who issues which id.** The host issues `rowId`
-([`crypto.randomUUID()`](../host-app/src/form/useScoringForm.ts#L27)) before anything is drawn, so an
+([`crypto.randomUUID()`](../host-app/src/form/rowActions.ts#L21)) before anything is drawn, so an
 empty `Очікує` row can exist. The viewer issues `measurementUid` (the cornerstone annotation UID)
 and keeps [`uidToRowId`][fork-bridge-map]. Flipping it breaks two things: the form could not show a
 row before drawing, and OHIF's `_isValidMeasurement` rejects any foreign field, so a host id cannot
@@ -109,7 +109,7 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 [status line](../host-app/src/components/BridgeStatus.tsx#L6) stays at `очікує VIEWER_READY`, the
 queue count grows with each "Активувати", and the viewer console has no `VIEWER_READY sent`. Walk:
 [`postViewerReady`][fork-bridge-ready] → [VIEWPORT_ADDED subscription][fork-bridge-viewport] → host
-[READY branch](../packages/orchestrator/src/incomingEvents.ts#L49). If `ACTIVATE_TOOL` is disabled instead,
+[READY branch](../packages/channel/src/createChannel.ts#L47). If `ACTIVATE_TOOL` is disabled instead,
 the queue drains but the viewer logs no `armed row` and the tool stays WindowLevel.
 
 ## Rehearsal checklist

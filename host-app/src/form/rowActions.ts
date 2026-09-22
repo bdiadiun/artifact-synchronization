@@ -1,10 +1,10 @@
-// What each user-triggered row action does to state, dispatch and the outgoing bridge. Mirrors
+// What each user-triggered row action does to state, dispatch and the channel. Mirrors
 // viewerEventHandlers.ts, which does the same job for the incoming half of the form.
 
 import type { ToolName } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL } from '@app/config';
 import { findRow } from '@app/utils/selectors';
-import { FormActionType, RowStatus } from './rows';
+import { findDrawingRow, FormActionType, RowStatus } from './rows';
 import type { FormContext } from './rows.props';
 import { warnUnanswered } from './unanswered';
 
@@ -16,76 +16,62 @@ export interface RowActions {
   focus: (rowId: string) => void;
 }
 
-const addRow = (context: FormContext, toolName: ToolName = DEFAULT_TOOL): void => {
-  context.dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID(), toolName });
-};
+export const createRowActions = ({ state, dispatch, channel }: FormContext): RowActions => {
+  const addRow = (toolName: ToolName = DEFAULT_TOOL): void => {
+    dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID(), toolName });
+  };
 
-const activate = (context: FormContext, rowId: string): void => {
-  const previousArmedRowId = context.state.armedRowId;
-  const targetRow = findRow(context.state.rows, rowId);
-  context.dispatch({ type: FormActionType.ArmRow, rowId });
-  // Only one row can be armed at a time (A-4): deactivate the previous one first.
-  if (previousArmedRowId !== null && previousArmedRowId !== rowId) {
-    context.send('DEACTIVATE_TOOL', { rowId: previousArmedRowId });
-  }
-  if (targetRow !== undefined) {
-    context.send('ACTIVATE_TOOL', { rowId, toolName: targetRow.toolName });
-  }
-};
+  const activate = (rowId: string): void => {
+    const drawingRow = findDrawingRow(state.rows);
+    const targetRow = findRow(state.rows, rowId);
+    dispatch({ type: FormActionType.ArmRow, rowId });
+    // Only one row can be armed at a time (A-4): deactivate the previous one first.
+    if (drawingRow !== undefined && drawingRow.rowId !== rowId) {
+      channel?.send('DEACTIVATE_TOOL', { rowId: drawingRow.rowId });
+    }
+    if (targetRow !== undefined) {
+      channel?.send('ACTIVATE_TOOL', { rowId, toolName: targetRow.toolName });
+    }
+  };
 
-const cancel = (context: FormContext, rowId: string): void => {
-  context.dispatch({ type: FormActionType.DisarmRow, rowId });
-  context.send('DEACTIVATE_TOOL', { rowId });
-};
+  const cancel = (rowId: string): void => {
+    dispatch({ type: FormActionType.DisarmRow, rowId });
+    channel?.send('DEACTIVATE_TOOL', { rowId });
+  };
 
-// Behaviour depends on row status: `done` removes the real annotation in the viewer; `drawing`
-// is cancelled first (nothing drawn yet); `pending` just drops the row.
-const remove = (context: FormContext, rowId: string): void => {
-  const row = findRow(context.state.rows, rowId);
-  if (row === undefined) {
-    return;
-  }
-  if (row.status === RowStatus.Done) {
-    if (row.measurementUid === null) {
+  // Behaviour depends on row status: `done` removes the real annotation in the viewer; `drawing`
+  // is cancelled first (nothing drawn yet); `pending` just drops the row.
+  const remove = (rowId: string): void => {
+    const row = findRow(state.rows, rowId);
+    if (row === undefined) {
       return;
     }
-    context.dispatch({ type: FormActionType.RemoveRow, rowId });
-    // A-21: MEASUREMENT_REMOVED answers this request and is consumed by the exchange, so our own
-    // echo never reaches the incoming handlers (A-10) and silence is reported instead of ignored.
-    void context
-      .exchange('REMOVE_MEASUREMENT', { rowId, measurementUid: row.measurementUid })
-      .catch(warnUnanswered);
-    return;
-  }
-  if (row.status === RowStatus.Drawing) {
-    context.send('DEACTIVATE_TOOL', { rowId });
-  }
-  context.dispatch({ type: FormActionType.RemoveRow, rowId });
-};
+    if (row.status === RowStatus.Done) {
+      if (row.measurementUid === null) {
+        return;
+      }
+      dispatch({ type: FormActionType.RemoveRow, rowId });
+      // A-21: MEASUREMENT_REMOVED answers this request and is consumed by the exchange, so our own
+      // echo never reaches the incoming handlers (A-10) and silence is reported instead of ignored.
+      void channel
+        ?.exchange('REMOVE_MEASUREMENT', { rowId, measurementUid: row.measurementUid })
+        .catch(warnUnanswered);
+      return;
+    }
+    if (row.status === RowStatus.Drawing) {
+      channel?.send('DEACTIVATE_TOOL', { rowId });
+    }
+    dispatch({ type: FormActionType.RemoveRow, rowId });
+  };
 
-// Only a `done` row has a real annotation to scroll/highlight to; no reply expected.
-const focus = (context: FormContext, rowId: string): void => {
-  const row = findRow(context.state.rows, rowId);
-  if (row?.status !== RowStatus.Done || row.measurementUid === null) {
-    return;
-  }
-  context.send('FOCUS_MEASUREMENT', { rowId, measurementUid: row.measurementUid });
-};
+  // Only a `done` row has a real annotation to scroll/highlight to; no reply expected.
+  const focus = (rowId: string): void => {
+    const row = findRow(state.rows, rowId);
+    if (row?.status !== RowStatus.Done || row.measurementUid === null) {
+      return;
+    }
+    channel?.send('FOCUS_MEASUREMENT', { rowId, measurementUid: row.measurementUid });
+  };
 
-export const createRowActions = (context: FormContext): RowActions => ({
-  addRow: (toolName?: ToolName): void => {
-    addRow(context, toolName);
-  },
-  activate: (rowId: string): void => {
-    activate(context, rowId);
-  },
-  cancel: (rowId: string): void => {
-    cancel(context, rowId);
-  },
-  remove: (rowId: string): void => {
-    remove(context, rowId);
-  },
-  focus: (rowId: string): void => {
-    focus(context, rowId);
-  },
-});
+  return { addRow, activate, cancel, remove, focus };
+};

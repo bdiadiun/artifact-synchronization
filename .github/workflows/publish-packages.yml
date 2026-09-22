@@ -44,8 +44,9 @@ jobs:
             exit 1
           fi
 
-      # Published in dependency order: the orchestrator depends on the contract at an exact
-      # version, so a push that changes both must land the contract in the registry first.
+      # Published in dependency order: the bridge and adapter depend on the channel and the
+      # contract at exact versions, so a push that changes several packages must land the
+      # earlier ones in the registry first.
       # A version lives in the package's own manifest (docs/CONVENTIONS.md "Publishing"); the
       # workflow publishes exactly that version and skips a package whose version the registry
       # already has, so a change to one package does not mint a release of the other. A version
@@ -104,7 +105,6 @@ jobs:
           : > "$RUNNER_TEMP/skipped-packages.txt"
           publish_package contract @bdiadiun/scoring-contract
           publish_package channel @bdiadiun/scoring-channel
-          publish_package orchestrator @bdiadiun/scoring-orchestrator
           publish_package viewer-bridge @bdiadiun/ohif-extension-scoring-bridge
           publish_package viewer-adapter @bdiadiun/ohif-extension-scoring-adapter
 

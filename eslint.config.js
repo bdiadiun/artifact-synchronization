@@ -89,7 +89,7 @@ export default tseslint.config(
       'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }],
       complexity: ['error', 10],
       'max-depth': ['error', 3],
-      'max-params': ['error', 4],
+      'max-params': ['error', 3],
       eqeqeq: 'error',
       'no-console': ['warn', { allow: ['warn', 'error', 'debug', 'info'] }],
       'no-restricted-syntax': ['error', ...enumRestrictions],
