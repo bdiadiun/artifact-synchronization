@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                                 |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 61 `refactor: boundaries as schemas` (branch `refactor/boundaries-as-schemas`, node F-67, decision A-28), stacked on slice 60 (F-66, A-26/A-27) whose PR #78 is superseded: one PR, one commit per group, one release |
-| Gate           | implementation — groups 1–3 committed (channel API, OHIF boundary, metric vocabulary); group 4 (Row schema, MeasurementRow) in progress; then docs, version bump, e2e on the linked tree, PR                          |
-| Last merged PR | #77 `chore: pin the fork at the adapter release` (slice 59 closed: contract 0.0.13, channel 0.0.7, bridge 0.0.9, adapter 0.0.8, fork at ac786c8a)                                                                     |
-| Next slice     | release + fork pin; 62 `refactor: one storage abstraction`; the video (F-13)                                                                                                                                          |
+| Field          | Value                                                                                                                                                                                         |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 61 `refactor: boundaries as schemas` (branch `refactor/boundaries-as-schemas`, nodes F-66 + F-67, decisions A-26..A-31), one PR of eleven commits superseding #78                             |
+| Gate           | 2 — verify green (251 tests), browser scenario 11/11 on the linked tree, versions raised (contract 0.0.14, channel 0.0.8, bridge 0.0.10, adapter 0.0.9); PR open, awaiting the author's merge |
+| Last merged PR | #77 `chore: pin the fork at the adapter release` (slice 59 closed: contract 0.0.13, channel 0.0.7, bridge 0.0.9, adapter 0.0.8, fork at ac786c8a)                                             |
+| Next slice     | after the merge: release runs, then the fork pin; 62 `test: only the tests the assignment asks for` (sum, serialisation, reducer); the video (F-13)                                           |
 
 ## Open decisions (see CANON.md → Decisions)
 

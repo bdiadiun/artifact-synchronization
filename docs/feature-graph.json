@@ -2954,29 +2954,56 @@
     },
     {
       "id": "F-67",
-      "name": "Boundaries as schemas",
-      "description": "The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema in the extension, the form's Row is a schema the stored row is derived from, metric keys are an enum so no cast is needed to read a metric, and toMetrics reads the contract's tool-to-metric map. API without a caller is removed: channel.on, the viewer end's state, the disposer set, the hostOrigin option; OHIF services are typed as required with one start-up check. Curried factories left in the bridge and in MeasurementRow are plain functions.",
+      "name": "Boundaries as schemas, one channel",
+      "description": "The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed.",
       "canon": ["A-13", "D-2", "Q-7"],
       "dependsOn": ["F-66"],
       "slice": "61",
-      "status": "approved",
+      "status": "review",
       "verify": "All tests pass; no `.on(` call on a channel; no `as Partial<Metrics>` in host-app; no `typeof` guard beside a schema in the extension; a metric with an unknown key is refused by the guard; the browser scenario passes on the linked working tree.",
       "files": [
         "docs/decisions/A-28-boundaries-as-schemas.md",
+        "docs/decisions/A-29-channel-is-transport.md",
+        "docs/decisions/A-30-no-request-answer.md",
+        "docs/decisions/A-31-one-channel.md",
         "docs/notes/ohif-service-availability.md",
+        "eslint.config.js",
+        "host-app/src/channel/useHostChannel.ts",
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/form/format.ts",
+        "host-app/src/form/rowActions.ts",
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
         "host-app/src/form/totals.ts",
+        "host-app/src/form/viewerEventHandlers.ts",
+        "host-app/src/pages/ScoringPage.tsx",
         "packages/channel/src/channel.ts",
+        "packages/channel/src/peer.ts",
         "packages/contract/src/vocabulary.ts",
+        "packages/viewer-adapter/src/extension.ts",
         "packages/viewer-bridge/src/commands/handlers.ts",
+        "packages/viewer-bridge/src/commands/restore.ts",
         "packages/viewer-bridge/src/events/measurements.ts",
         "packages/viewer-bridge/src/extension.ts",
-        "packages/viewer-bridge/src/ohif/surface.ts"
+        "packages/viewer-bridge/src/ohif/surface.ts",
+        "packages/viewer-bridge/src/ohif/throttle.ts"
       ],
       "imports": {
+        "eslint.config.js": {
+          "internal": [],
+          "external": [
+            "@eslint/js",
+            "eslint-config-prettier",
+            "eslint-plugin-react-hooks",
+            "eslint-plugin-react-refresh",
+            "globals",
+            "typescript-eslint"
+          ]
+        },
+        "host-app/src/channel/useHostChannel.ts": {
+          "internal": ["host-app/src/config.ts", "packages/contract/src/index.ts"],
+          "external": ["@bdiadiun/scoring-channel", "react"]
+        },
         "host-app/src/components/MeasurementRow.tsx": {
           "internal": [
             "host-app/src/components/MeasurementRow.props.ts",
@@ -2994,6 +3021,14 @@
           ],
           "external": []
         },
+        "host-app/src/form/rowActions.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        },
         "host-app/src/form/rows.ts": {
           "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
           "external": ["react", "zod"]
@@ -3006,13 +3041,40 @@
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
           "external": []
         },
+        "host-app/src/form/viewerEventHandlers.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/pages/ScoringPage.tsx": {
+          "internal": [
+            "host-app/src/channel/useHostChannel.ts",
+            "host-app/src/components/BridgeStatus.tsx",
+            "host-app/src/components/ScoringPanel.tsx",
+            "host-app/src/components/ViewerFrame.tsx",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/useScoringForm.ts"
+          ],
+          "external": ["react"]
+        },
         "packages/channel/src/channel.ts": {
           "internal": ["packages/channel/src/peer.ts", "packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/channel/src/peer.ts": {
+          "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/vocabulary.ts": {
           "internal": [],
           "external": ["zod"]
+        },
+        "packages/viewer-adapter/src/extension.ts": {
+          "internal": [],
+          "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
         },
         "packages/viewer-bridge/src/commands/handlers.ts": {
           "internal": [
@@ -3021,6 +3083,13 @@
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
           "external": []
+        },
+        "packages/viewer-bridge/src/commands/restore.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/ohif/surface.ts"
+          ],
+          "external": ["@cornerstonejs/core", "@cornerstonejs/tools"]
         },
         "packages/viewer-bridge/src/events/measurements.ts": {
           "internal": [
@@ -3043,6 +3112,10 @@
         "packages/viewer-bridge/src/ohif/surface.ts": {
           "internal": ["packages/contract/src/index.ts"],
           "external": ["@bdiadiun/scoring-channel", "zod"]
+        },
+        "packages/viewer-bridge/src/ohif/throttle.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": []
         }
       }
     }
