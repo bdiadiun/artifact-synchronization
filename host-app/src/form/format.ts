@@ -2,7 +2,6 @@ import {
   METRIC_KEY_BY_TOOL,
   type Metric,
   type MetricKey,
-  type Metrics,
   type Unit,
 } from '@bdiadiun/scoring-contract';
 import { t } from '@app/i18n';
@@ -40,13 +39,11 @@ export const formatRowMetric = (row: Row): string | null => {
   if (row.status !== RowStatus.Done || row.metrics === null) {
     return null;
   }
-  // `Metrics` is `Record<string, Metric>`, so TS treats every key as present while at runtime only
-  // the metrics the viewer sent exist; `Partial` keeps the check below honest.
-  const own = (row.metrics as Partial<Metrics>)[METRIC_KEY_BY_TOOL[row.toolName]];
+  const own = row.metrics[METRIC_KEY_BY_TOOL[row.toolName]];
   if (own !== undefined) {
     return formatMetric(own);
   }
-  const firstEntry = Object.entries(row.metrics)[0] as [string, Metric] | undefined;
+  const firstEntry = Object.entries(row.metrics).at(0);
   if (firstEntry === undefined) {
     return null;
   }

@@ -1,6 +1,6 @@
 // Per-unit sums for the form footer (A-11). mm² and px² are never added together.
 
-import type { MetricKey, Metrics, Unit } from '@bdiadiun/scoring-contract';
+import type { MetricKey, Unit } from '@bdiadiun/scoring-contract';
 import { RowStatus, type Row } from './rows';
 
 export interface Total {
@@ -28,9 +28,7 @@ export const computeTotals = (rows: readonly Row[], metric: MetricKey): Total[] 
     if (row.status !== RowStatus.Done || row.metrics === null) {
       continue;
     }
-    // Cast to Partial: `Metrics` types every key as present, but a row only carries what the
-    // viewer actually sent.
-    const entry = (row.metrics as Partial<Metrics>)[metric];
+    const entry = row.metrics[metric];
     if (entry === undefined) {
       continue;
     }

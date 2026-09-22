@@ -43,7 +43,9 @@ simply reject the new type as unknown.
 | host → viewer | `RESTORE_MEASUREMENTS`  | `requestId`, `studyInstanceUid`, `measurements[]` (`rowId`, `measurementUid`, `toolName`, `geometry`)    | After a reload, when the form has stored rows for this study. The viewer waits for viewport data, re-adds each annotation with its original uid and answers once. Bonus S-5.6.                                                                                                                                                 |
 | viewer → host | `MEASUREMENTS_RESTORED` | `causedBy?`, `restored[]` (row ids), `failed[]` (`rowId`, `reason`)                                      | Answer to the restore command, delivered to the exchange that sent it; an answer that never arrives is reported rather than waited for. Reasons: `already-present`, `unknown-study`, `invalid-geometry`, `viewer-error`. Bonus S-5.6.                                                                                          |
 
-`unit` is `'mm2' | 'px2' | 'mm' | 'px'` and is copied from OHIF's `cachedStats`, never inferred.
+`metrics` is a partial record over the metric keys `'area' | 'length'` (A-28: a key outside the
+vocabulary is refused); `unit` is `'mm2' | 'px2' | 'mm' | 'px'` and is copied from OHIF's
+`cachedStats`, never inferred.
 The measurement events also carry an optional `geometry` (frame of reference, referenced image and
 handle points): the form persists it so the viewer can rebuild the annotation after a reload (A-14).
 

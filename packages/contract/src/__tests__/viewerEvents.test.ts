@@ -91,6 +91,12 @@ describe('isViewerEvent', () => {
     ).toBe(false);
   });
 
+  it('rejects a metric under a key the vocabulary does not name', () => {
+    expect(
+      isViewerEvent({ ...measurementAdded, metrics: { mean: { value: 40, unit: 'mm' } } }),
+    ).toBe(false);
+  });
+
   it('rejects a bad unit', () => {
     expect(
       isViewerEvent({ ...measurementAdded, metrics: { area: { value: 1, unit: 'cm2' } } }),

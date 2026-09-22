@@ -14,7 +14,10 @@ export const Metric = z.object({
 });
 export type Metric = z.infer<typeof Metric>;
 
-export const Metrics = z.record(z.string(), Metric);
+export const MetricKey = z.enum(['area', 'length']);
+export type MetricKey = z.infer<typeof MetricKey>;
+
+export const Metrics = z.partialRecord(MetricKey, Metric);
 export type Metrics = z.infer<typeof Metrics>;
 
 export const MeasurementGeometry = z.object({
@@ -24,8 +27,6 @@ export const MeasurementGeometry = z.object({
   label: z.string().optional(),
 });
 export type MeasurementGeometry = z.infer<typeof MeasurementGeometry>;
-
-export type MetricKey = 'area' | 'length';
 
 export const METRIC_KEY_BY_TOOL = {
   EllipticalROI: 'area',

@@ -14,6 +14,7 @@ const publishedNames = [
   'MeasurementUpdatedEvent',
   'MeasurementsRestoredEvent',
   'Metric',
+  'MetricKey',
   'Metrics',
   'RemoveMeasurementCommand',
   'RestoreFailure',

@@ -67,6 +67,18 @@ describe('Metric', () => {
 });
 
 describe('Metrics', () => {
+  it('accepts a measurement that reports no metric at all', () => {
+    expect(Metrics.safeParse({}).success).toBe(true);
+  });
+
+  it('accepts an area on its own', () => {
+    expect(Metrics.safeParse({ area: { value: 124.5, unit: 'mm2' } }).success).toBe(true);
+  });
+
+  it('accepts a length on its own', () => {
+    expect(Metrics.safeParse({ length: { value: 12, unit: 'mm' } }).success).toBe(true);
+  });
+
   it('accepts several metrics keyed by name', () => {
     const parsed = Metrics.safeParse({
       area: { value: 124.5, unit: 'mm2' },
@@ -74,6 +86,10 @@ describe('Metrics', () => {
     });
 
     expect(parsed.success).toBe(true);
+  });
+
+  it('refuses a metric under a key outside the vocabulary', () => {
+    expect(Metrics.safeParse({ mean: { value: 40, unit: 'mm' } }).success).toBe(false);
   });
 
   it('refuses a value that is not a metric', () => {

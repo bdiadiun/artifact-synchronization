@@ -2,11 +2,11 @@ export {
   MeasurementGeometry,
   METRIC_KEY_BY_TOOL,
   Metric,
+  MetricKey,
   Metrics,
   ToolName,
   Unit,
 } from './vocabulary.js';
-export type { MetricKey } from './vocabulary.js';
 
 export {
   ActivateToolCommand,
