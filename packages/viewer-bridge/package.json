@@ -30,7 +30,8 @@
   },
   "dependencies": {
     "@bdiadiun/scoring-channel": "0.0.7",
-    "@bdiadiun/scoring-contract": "0.0.13"
+    "@bdiadiun/scoring-contract": "0.0.13",
+    "zod": "4.6.5"
   },
   "peerDependencies": {
     "@cornerstonejs/tools": "^4.15.29"

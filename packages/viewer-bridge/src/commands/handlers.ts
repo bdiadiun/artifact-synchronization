@@ -9,15 +9,12 @@ import type { MessageHandlers, ViewerChannel } from '@bdiadiun/scoring-channel';
 import {
   LOG_PREFIX,
   type OhifCommandsManager,
-  type OhifMeasurementService,
   type OhifServices,
   type OhifToolGroupService,
 } from '../ohif/surface.js';
 import { createRestore } from './restore.js';
 
 const DEFAULT_TOOL = 'WindowLevel';
-
-type ActivateTool = (toolName: string) => void;
 
 export interface ScoringCommands {
   handlers: MessageHandlers<HostCommand>;
@@ -26,46 +23,68 @@ export interface ScoringCommands {
   dispose: () => void;
 }
 
-const createToolActivation =
-  (
-    toolGroupService: OhifToolGroupService | undefined,
-    commandsManager: OhifCommandsManager,
-  ): ActivateTool =>
-  (toolName) => {
-    const toolGroup = toolGroupService?.getToolGroup();
+const activateTool = (
+  toolGroupService: OhifToolGroupService,
+  commandsManager: OhifCommandsManager,
+  toolName: string,
+): void => {
+  const toolGroup = toolGroupService.getToolGroup();
 
-    if (!toolGroup) {
-      console.error(
-        `${LOG_PREFIX} no tool group for the active viewport; cannot activate ${toolName}`,
-      );
-      return;
-    }
+  if (!toolGroup) {
+    console.error(
+      `${LOG_PREFIX} no tool group for the active viewport; cannot activate ${toolName}`,
+    );
+    return;
+  }
 
-    if (!toolGroup.hasTool(toolName)) {
-      console.error(
-        `${LOG_PREFIX} tool ${toolName} is not registered in tool group ${toolGroup.id}`,
-      );
-      return;
-    }
+  if (!toolGroup.hasTool(toolName)) {
+    console.error(`${LOG_PREFIX} tool ${toolName} is not registered in tool group ${toolGroup.id}`);
+    return;
+  }
 
-    commandsManager.runCommand('setToolActive', { toolName });
+  commandsManager.runCommand('setToolActive', { toolName });
+};
+
+const focusMeasurement = (
+  services: OhifServices,
+  { measurementUid, rowId }: FocusMeasurementCommand,
+): void => {
+  const { measurementService, viewportGridService } = services;
+
+  if (!measurementService.getMeasurement(measurementUid)) {
+    console.debug(`${LOG_PREFIX} ${measurementUid} (row ${rowId}) is unknown; nothing to focus`);
+    return;
+  }
+
+  measurementService.jumpToMeasurement(viewportGridService.getActiveViewportId(), measurementUid);
+};
+
+export const createCommands = (
+  services: OhifServices,
+  commandsManager: OhifCommandsManager,
+  channel: ViewerChannel,
+): ScoringCommands => {
+  const pendingRemovals = new Map<string, RemoveMeasurementCommand>();
+  const restore = createRestore(services, channel);
+
+  const restoreDefaultTool = (): void => {
+    activateTool(services.toolGroupService, commandsManager, DEFAULT_TOOL);
   };
 
-const createRemoveHandler =
-  (
-    measurementService: OhifMeasurementService | undefined,
-    channel: ViewerChannel,
-    pendingRemovals: Map<string, RemoveMeasurementCommand>,
-  ) =>
-  (command: RemoveMeasurementCommand): void => {
+  const handleActivateTool = ({ toolName }: ActivateToolCommand): void => {
+    activateTool(services.toolGroupService, commandsManager, toolName);
+  };
+
+  const handleDeactivateTool = (): void => {
+    if (channel.getArmed() === null) {
+      restoreDefaultTool();
+    }
+  };
+
+  const handleRemove = (command: RemoveMeasurementCommand): void => {
     const { measurementUid, rowId } = command;
 
-    if (!measurementService) {
-      console.warn(`${LOG_PREFIX} measurementService unavailable; ${measurementUid} not removed`);
-      return;
-    }
-
-    if (!measurementService.getMeasurement(measurementUid)) {
+    if (!services.measurementService.getMeasurement(measurementUid)) {
       console.debug(`${LOG_PREFIX} ${measurementUid} (row ${rowId}) is already gone`);
       channel.reply(command, { measurementUid });
       return;
@@ -74,54 +93,14 @@ const createRemoveHandler =
     pendingRemovals.set(measurementUid, command);
 
     try {
-      measurementService.remove(measurementUid);
+      services.measurementService.remove(measurementUid);
     } finally {
       pendingRemovals.delete(measurementUid);
     }
   };
 
-const createFocusHandler =
-  (services: OhifServices) =>
-  ({ measurementUid, rowId }: FocusMeasurementCommand): void => {
-    const { measurementService, viewportGridService } = services;
-
-    if (!measurementService || !viewportGridService) {
-      console.warn(`${LOG_PREFIX} measurement/viewportGrid service unavailable; nothing focused`);
-      return;
-    }
-
-    if (!measurementService.getMeasurement(measurementUid)) {
-      console.debug(`${LOG_PREFIX} ${measurementUid} (row ${rowId}) is unknown; nothing to focus`);
-      return;
-    }
-
-    measurementService.jumpToMeasurement(viewportGridService.getActiveViewportId(), measurementUid);
-  };
-
-export const createCommands = (
-  services: OhifServices,
-  commandsManager: OhifCommandsManager,
-  channel: ViewerChannel,
-): ScoringCommands => {
-  const activateTool = createToolActivation(services.toolGroupService, commandsManager);
-  const pendingRemovals = new Map<string, RemoveMeasurementCommand>();
-  const restore = createRestore(services, channel);
-
-  const handleRemove = createRemoveHandler(services.measurementService, channel, pendingRemovals);
-  const handleFocus = createFocusHandler(services);
-
-  const restoreDefaultTool = (): void => {
-    activateTool(DEFAULT_TOOL);
-  };
-
-  const handleActivateTool = ({ toolName }: ActivateToolCommand): void => {
-    activateTool(toolName);
-  };
-
-  const handleDeactivateTool = (): void => {
-    if (channel.getArmed() === null) {
-      restoreDefaultTool();
-    }
+  const handleFocus = (command: FocusMeasurementCommand): void => {
+    focusMeasurement(services, command);
   };
 
   const handlers = {

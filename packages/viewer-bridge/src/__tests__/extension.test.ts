@@ -8,14 +8,16 @@ import type { HostCommand, ViewerEvent, ViewerReadyEvent } from '@bdiadiun/scori
 import { createScoringBridgeExtension } from '../extension.js';
 import type {
   OhifExtensionParams,
+  OhifMeasurement,
   OhifMeasurementEvent,
-  OhifMeasurementLike,
   OhifMeasurementService,
+  OhifServices,
   OhifToolGroupService,
+  ScoringBridgeAppConfig,
 } from '../ohif/surface.js';
+import { createServices, VIEWPORT_ID } from './helpers.js';
 
 const HOST_ORIGIN = 'http://localhost:5173';
-const VIEWPORT_ID = 'viewport-1';
 const UPDATE_INTERVAL_MS = 100;
 
 const EVENTS = {
@@ -24,7 +26,7 @@ const EVENTS = {
   MEASUREMENT_REMOVED: 'MEASUREMENT_REMOVED',
 };
 
-const ellipse = (uid: string, area = 12.5): OhifMeasurementLike => ({
+const ellipse = (uid: string, area = 12.5): OhifMeasurement => ({
   uid,
   toolName: 'EllipticalROI',
   referencedImageId: 'image-1',
@@ -86,7 +88,7 @@ interface BridgeFixture {
   runCommand: Mock;
   toolGroup: { id: string; hasTool: Mock };
   measurementService: OhifMeasurementService;
-  emit: (eventName: string, measurement: OhifMeasurementLike | string) => void;
+  emit: (eventName: string, measurement: unknown) => void;
   addViewport: () => void;
   unsubscribes: { measurement: Mock; viewport: Mock };
   posted: () => ViewerEvent[];
@@ -123,16 +125,11 @@ const startExtension = (): BridgeFixture => {
   };
 
   const params: OhifExtensionParams = {
-    servicesManager: {
-      services: {
-        measurementService,
-        toolGroupService,
-        viewportGridService: { getActiveViewportId: () => VIEWPORT_ID },
-      },
-    },
+    servicesManager: { services: createServices({ measurementService, toolGroupService }) },
     commandsManager: { runCommand },
+    appConfig: { scoringBridge: { hostOrigin: HOST_ORIGIN } },
   };
-  createScoringBridgeExtension({ hostOrigin: HOST_ORIGIN }).preRegistration(params);
+  createScoringBridgeExtension().preRegistration(params);
 
   return {
     runCommand,
@@ -167,16 +164,17 @@ afterEach(() => {
 });
 
 describe('the host origin the bridge is configured with (Q-2)', () => {
-  const inertParams: OhifExtensionParams = {
-    servicesManager: { services: {} },
+  const configured = (appConfig?: ScoringBridgeAppConfig): OhifExtensionParams => ({
+    servicesManager: { services: createServices() },
     commandsManager: { runCommand: vi.fn() },
-  };
+    appConfig,
+  });
 
   it('leaves the bridge inert when no host origin is configured anywhere', () => {
     const addSpy = vi.spyOn(window, 'addEventListener');
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
-    createScoringBridgeExtension().preRegistration(inertParams);
+    createScoringBridgeExtension().preRegistration(configured());
 
     expect(addSpy).not.toHaveBeenCalledWith('message', expect.anything());
     expect(addSpy).not.toHaveBeenCalledWith('pagehide', expect.anything());
@@ -187,7 +185,9 @@ describe('the host origin the bridge is configured with (Q-2)', () => {
     const addSpy = vi.spyOn(window, 'addEventListener');
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
-    createScoringBridgeExtension({ hostOrigin: '' }).preRegistration(inertParams);
+    createScoringBridgeExtension().preRegistration(
+      configured({ scoringBridge: { hostOrigin: '' } }),
+    );
 
     expect(addSpy).not.toHaveBeenCalledWith('message', expect.anything());
   });
@@ -196,15 +196,17 @@ describe('the host origin the bridge is configured with (Q-2)', () => {
     const addSpy = vi.spyOn(window, 'addEventListener');
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
-    createScoringBridgeExtension().preRegistration({ ...inertParams, appConfig: {} });
+    createScoringBridgeExtension().preRegistration(configured({}));
 
     expect(addSpy).not.toHaveBeenCalledWith('message', expect.anything());
   });
 
-  it('arms the bridge once a host origin is configured', () => {
+  it('arms the bridge once appConfig carries a host origin', () => {
     const addSpy = vi.spyOn(window, 'addEventListener');
 
-    createScoringBridgeExtension({ hostOrigin: HOST_ORIGIN }).preRegistration(inertParams);
+    createScoringBridgeExtension().preRegistration(
+      configured({ scoringBridge: { hostOrigin: HOST_ORIGIN } }),
+    );
 
     expect(addSpy).toHaveBeenCalledWith('message', expect.any(Function));
   });
@@ -215,6 +217,40 @@ describe('the host origin the bridge is configured with (Q-2)', () => {
     dispatchCommand(activateTool('row-1'), 'http://evil.example');
 
     expect(runCommand).not.toHaveBeenCalled();
+  });
+});
+
+describe('the cornerstone services the bridge needs', () => {
+  const startWith = (services: Partial<OhifServices>): void => {
+    createScoringBridgeExtension().preRegistration({
+      servicesManager: { services },
+      commandsManager: { runCommand: vi.fn() },
+      appConfig: { scoringBridge: { hostOrigin: HOST_ORIGIN } },
+    });
+  };
+
+  it('reports the missing cornerstone services and starts nothing when toolGroupService is absent', () => {
+    const addSpy = vi.spyOn(window, 'addEventListener');
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { toolGroupService, ...services } = createServices();
+
+    startWith(services);
+
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('cornerstone services'));
+    expect(addSpy).not.toHaveBeenCalledWith('message', expect.anything());
+    expect(addSpy).not.toHaveBeenCalledWith('pagehide', expect.anything());
+  });
+
+  it('reports the missing cornerstone services and starts nothing when cornerstoneViewportService is absent', () => {
+    const addSpy = vi.spyOn(window, 'addEventListener');
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { cornerstoneViewportService, ...services } = createServices();
+
+    startWith(services);
+
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('cornerstone services'));
+    expect(addSpy).not.toHaveBeenCalledWith('message', expect.anything());
+    expect(addSpy).not.toHaveBeenCalledWith('pagehide', expect.anything());
   });
 });
 

@@ -2566,7 +2566,6 @@
         "docs/decisions/A-20-three-layers.md",
         "host-app/vite.config.ts",
         "packages/viewer-adapter/package.json",
-        "packages/viewer-adapter/src/children.ts",
         "packages/viewer-adapter/src/extension.ts",
         "packages/viewer-adapter/src/registerChildren.ts"
       ],
@@ -2575,13 +2574,8 @@
           "internal": [],
           "external": ["@vitejs/plugin-react", "node:url", "vite"]
         },
-        "packages/viewer-adapter/src/children.ts": {
-          "internal": ["packages/viewer-adapter/src/extension.ts"],
-          "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
-        },
         "packages/viewer-adapter/src/extension.ts": {
           "internal": [
-            "packages/viewer-adapter/src/children.ts",
             "packages/viewer-adapter/src/config.ts",
             "packages/viewer-adapter/src/registerChildren.ts"
           ],
@@ -2902,7 +2896,7 @@
         },
         "packages/viewer-bridge/src/ohif/surface.ts": {
           "internal": [],
-          "external": []
+          "external": ["zod"]
         }
       }
     },
@@ -3139,7 +3133,7 @@
         },
         "packages/viewer-bridge/src/ohif/surface.ts": {
           "internal": [],
-          "external": []
+          "external": ["zod"]
         }
       }
     }

@@ -1,20 +1,24 @@
+import { z } from 'zod';
+
 export const LOG_PREFIX = '[scoring-bridge]';
 
 export interface OhifSubscription {
   unsubscribe: () => void;
 }
 
-export type StatsEntry = Record<string, unknown>;
+export const StatsEntry = z.record(z.string(), z.unknown());
+export type StatsEntry = z.infer<typeof StatsEntry>;
 
-export interface OhifMeasurementLike {
-  uid?: string;
-  toolName?: string;
-  referencedImageId?: string;
-  data?: Record<string, StatsEntry | undefined> | null;
-  points?: unknown;
-  label?: string;
-  metadata?: { FrameOfReferenceUID?: string } | null;
-}
+export const OhifMeasurement = z.object({
+  uid: z.string().min(1),
+  toolName: z.string(),
+  referencedImageId: z.string().optional(),
+  label: z.string().optional(),
+  metadata: z.object({ FrameOfReferenceUID: z.string().optional() }).nullish(),
+  points: z.array(z.array(z.number())).optional(),
+  data: z.record(z.string(), StatsEntry.optional()).nullish(),
+});
+export type OhifMeasurement = z.infer<typeof OhifMeasurement>;
 
 export interface OhifMeasurementServiceEvents {
   MEASUREMENT_ADDED: string;
@@ -23,7 +27,7 @@ export interface OhifMeasurementServiceEvents {
 }
 
 export interface OhifMeasurementEvent {
-  measurement: OhifMeasurementLike | string;
+  measurement: unknown;
 }
 
 export interface OhifMeasurementService {
@@ -32,7 +36,7 @@ export interface OhifMeasurementService {
     eventName: string,
     handler: (event: OhifMeasurementEvent) => void,
   ) => OhifSubscription;
-  getMeasurement: (measurementUid: string) => OhifMeasurementLike | undefined;
+  getMeasurement: (measurementUid: string) => unknown;
   remove: (measurementUid: string) => void;
   jumpToMeasurement: (viewportId: string, measurementUid: string) => void;
 }
@@ -75,15 +79,15 @@ export interface OhifDisplaySetService {
 }
 
 export interface OhifServices {
-  measurementService?: OhifMeasurementService;
-  toolGroupService?: OhifToolGroupService;
-  cornerstoneViewportService?: OhifCornerstoneViewportService;
-  viewportGridService?: OhifViewportGridService;
-  displaySetService?: OhifDisplaySetService;
+  measurementService: OhifMeasurementService;
+  toolGroupService: OhifToolGroupService;
+  cornerstoneViewportService: OhifCornerstoneViewportService;
+  viewportGridService: OhifViewportGridService;
+  displaySetService: OhifDisplaySetService;
 }
 
 export interface OhifServicesManager {
-  services: OhifServices;
+  services: Partial<OhifServices>;
 }
 
 export interface OhifCommandsManager {

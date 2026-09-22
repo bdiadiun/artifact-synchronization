@@ -1180,8 +1180,7 @@ Files:
 - `docs/decisions/A-20-three-layers.md`
 - `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
 - `packages/viewer-adapter/package.json`
-- `packages/viewer-adapter/src/children.ts` — internal: `packages/viewer-adapter/src/extension.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`
-- `packages/viewer-adapter/src/extension.ts` — internal: `packages/viewer-adapter/src/children.ts`, `packages/viewer-adapter/src/config.ts`, `packages/viewer-adapter/src/registerChildren.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`
+- `packages/viewer-adapter/src/extension.ts` — internal: `packages/viewer-adapter/src/config.ts`, `packages/viewer-adapter/src/registerChildren.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`
 - `packages/viewer-adapter/src/registerChildren.ts` — internal: `packages/viewer-adapter/src/config.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`
 
 ### F-57 The three layers are in place
@@ -1298,7 +1297,7 @@ Files:
 - `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`, `@cornerstonejs/core`, `@cornerstonejs/tools`
 - `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/measurements.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/ohif/surface.ts` — no imports
+- `packages/viewer-bridge/src/ohif/surface.ts` — external: `zod`
 
 ### F-65 Plain code
 
@@ -1357,4 +1356,4 @@ Files:
 - `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/measurements.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/ohif/surface.ts` — no imports
+- `packages/viewer-bridge/src/ohif/surface.ts` — external: `zod`

@@ -1,5 +1,7 @@
 import {
   MeasurementGeometry,
+  METRIC_KEY_BY_TOOL,
+  ToolName,
   type MetricKey,
   type Metrics,
   type Unit,
@@ -9,8 +11,8 @@ import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 import type { ScoringCommands } from '../commands/handlers.js';
 import {
   LOG_PREFIX,
+  OhifMeasurement,
   type OhifMeasurementEvent,
-  type OhifMeasurementLike,
   type OhifMeasurementService,
   type StatsEntry,
 } from '../ohif/surface.js';
@@ -38,9 +40,6 @@ const METRIC_SPECS = {
 
 const UPDATE_INTERVAL_MS = 100;
 
-const isFiniteNumber = (value: unknown): value is number =>
-  typeof value === 'number' && Number.isFinite(value);
-
 interface MeasurementUpdate {
   toolName: string;
   metrics: Metrics;
@@ -57,177 +56,154 @@ const normaliseUnit = (raw: unknown, table: Record<string, Unit | undefined>): U
   return table[baseUnitToken(raw)] ?? null;
 };
 
-const findStatsEntry = (measurement: OhifMeasurementLike, key: string): StatsEntry | null => {
-  const data = measurement.data;
+const finiteAt = (entry: StatsEntry | undefined, key: string): number | null => {
+  const value = entry?.[key];
 
-  if (!data || typeof data !== 'object') {
-    return null;
-  }
-
-  const preferred = data[`imageId:${String(measurement.referencedImageId)}`];
-
-  if (preferred && isFiniteNumber(preferred[key])) {
-    return preferred;
-  }
-
-  for (const entry of Object.values(data)) {
-    if (entry && isFiniteNumber(entry[key])) {
-      return entry;
-    }
-  }
-
-  return null;
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
 };
 
-const readMetrics = (measurement: OhifMeasurementLike, key: MetricKey): Metrics | null => {
+const findStatsEntry = (measurement: OhifMeasurement, key: string): StatsEntry | undefined => {
+  const data = measurement.data ?? {};
+  const preferred = data[`imageId:${measurement.referencedImageId ?? ''}`];
+  const entries = [preferred, ...Object.values(data)];
+
+  return entries.find((entry) => finiteAt(entry, key) !== null);
+};
+
+const readMetrics = (measurement: OhifMeasurement, key: MetricKey): Metrics | null => {
   const { unitField, units } = METRIC_SPECS[key];
   const stats = findStatsEntry(measurement, key);
-  const unit = stats === null ? null : normaliseUnit(stats[unitField], units);
+  const value = finiteAt(stats, key);
+  const unit = normaliseUnit(stats?.[unitField], units);
 
-  if (stats === null || unit === null) {
+  if (value === null || unit === null) {
     return null;
   }
 
-  return { [key]: { value: stats[key] as number, unit } };
+  return { [key]: { value, unit } };
 };
 
-export const toMetrics = (measurement: OhifMeasurementLike): Metrics | null => {
-  switch (measurement.toolName) {
-    case 'EllipticalROI':
-    case 'RectangleROI':
-      return readMetrics(measurement, 'area');
-    case 'Length':
-      return readMetrics(measurement, 'length');
-    case undefined:
-    default:
-      return null;
+export const toMetrics = (measurement: OhifMeasurement): Metrics | null => {
+  const toolName = ToolName.safeParse(measurement.toolName);
+
+  return toolName.success ? readMetrics(measurement, METRIC_KEY_BY_TOOL[toolName.data]) : null;
+};
+
+export const toGeometry = (measurement: OhifMeasurement): MeasurementGeometry | undefined =>
+  MeasurementGeometry.safeParse({
+    frameOfReferenceUid: measurement.metadata?.FrameOfReferenceUID,
+    referencedImageId: measurement.referencedImageId,
+    points: measurement.points,
+    label: measurement.label,
+  }).data;
+
+const parseMeasurement = ({ measurement }: OhifMeasurementEvent): OhifMeasurement | undefined =>
+  OhifMeasurement.safeParse(measurement).data;
+
+const announceAdded = (
+  channel: ViewerChannel,
+  restoreDefaultTool: () => void,
+  measurement: OhifMeasurement,
+): void => {
+  const metrics = toMetrics(measurement);
+
+  if (!metrics) {
+    console.warn(
+      `${LOG_PREFIX} no metrics for measurement ${measurement.uid}; nothing sent to the host`,
+    );
+    return;
+  }
+
+  const armed = channel.getArmed();
+
+  const sent = channel.send('MEASUREMENT_ADDED', {
+    rowId: armed?.rowId ?? null,
+    measurementUid: measurement.uid,
+    toolName: measurement.toolName,
+    metrics,
+    causedBy: armed?.requestId,
+    geometry: toGeometry(measurement),
+  });
+
+  if (sent && armed) {
+    restoreDefaultTool();
   }
 };
 
-const isUnknownArray = (value: unknown): value is unknown[] => Array.isArray(value);
+const queueUpdate = (
+  updates: ThrottledEmitter<MeasurementUpdate>,
+  measurement: OhifMeasurement,
+): void => {
+  const metrics = toMetrics(measurement);
 
-const copyPoint = (point: unknown): unknown => (isUnknownArray(point) ? [...point] : point);
+  if (metrics === null) {
+    return;
+  }
 
-export const toGeometry = (measurement: OhifMeasurementLike): MeasurementGeometry | undefined => {
-  const candidate = {
-    frameOfReferenceUid: measurement.metadata?.FrameOfReferenceUID,
-    referencedImageId: measurement.referencedImageId,
-    points: isUnknownArray(measurement.points) ? measurement.points.map(copyPoint) : undefined,
-    label: typeof measurement.label === 'string' ? measurement.label : undefined,
-  };
-
-  const parsed = MeasurementGeometry.safeParse(candidate);
-
-  return parsed.success ? parsed.data : undefined;
+  updates.push(measurement.uid, {
+    toolName: measurement.toolName,
+    metrics,
+    geometry: toGeometry(measurement),
+  });
 };
 
-const asMeasurement = (measurement: OhifMeasurementLike | string): OhifMeasurementLike | null =>
-  typeof measurement === 'string' ? null : measurement;
+const announceRemoved = (
+  channel: ViewerChannel,
+  takePendingRemoval: ScoringCommands['takePendingRemoval'],
+  measurementUid: string,
+): void => {
+  const command = takePendingRemoval(measurementUid);
 
-const readUid = (measurement: OhifMeasurementLike | null): string | null => {
-  const uid = measurement?.uid;
-  return typeof uid === 'string' && uid.length > 0 ? uid : null;
+  if (command) {
+    channel.reply(command, { measurementUid });
+    return;
+  }
+
+  channel.send('MEASUREMENT_REMOVED', { measurementUid });
 };
-
-const readToolName = (measurement: OhifMeasurementLike): string =>
-  typeof measurement.toolName === 'string' ? measurement.toolName : '';
-
-const createAddedHandler =
-  (channel: ViewerChannel, restoreDefaultTool: () => void) =>
-  ({ measurement }: OhifMeasurementEvent): void => {
-    const added = asMeasurement(measurement);
-    const uid = readUid(added);
-
-    if (added === null || uid === null) {
-      console.warn(`${LOG_PREFIX} MEASUREMENT_ADDED without a uid; ignored`, measurement);
-      return;
-    }
-
-    const metrics = toMetrics(added);
-
-    if (!metrics) {
-      console.warn(`${LOG_PREFIX} no metrics for measurement ${uid}; nothing sent to the host`);
-      return;
-    }
-
-    const armed = channel.getArmed();
-
-    const sent = channel.send('MEASUREMENT_ADDED', {
-      rowId: armed?.rowId ?? null,
-      measurementUid: uid,
-      toolName: readToolName(added),
-      metrics,
-      causedBy: armed?.requestId,
-      geometry: toGeometry(added),
-    });
-
-    if (sent && armed) {
-      restoreDefaultTool();
-    }
-  };
-
-const createUpdatedHandler =
-  (updates: ThrottledEmitter<MeasurementUpdate>) =>
-  ({ measurement }: OhifMeasurementEvent): void => {
-    const updated = asMeasurement(measurement);
-    const uid = readUid(updated);
-    const metrics = updated === null ? null : toMetrics(updated);
-
-    if (updated === null || uid === null || metrics === null) {
-      return;
-    }
-
-    updates.push(uid, {
-      toolName: readToolName(updated),
-      metrics,
-      geometry: toGeometry(updated),
-    });
-  };
-
-const createRemovedHandler =
-  (
-    channel: ViewerChannel,
-    updates: ThrottledEmitter<MeasurementUpdate>,
-    takePendingRemoval: ScoringCommands['takePendingRemoval'],
-  ) =>
-  ({ measurement }: OhifMeasurementEvent): void => {
-    const uid = typeof measurement === 'string' ? measurement : '';
-
-    if (uid.length === 0) {
-      console.warn(`${LOG_PREFIX} MEASUREMENT_REMOVED without a uid; ignored`, measurement);
-      return;
-    }
-
-    updates.discard(uid);
-
-    const command = takePendingRemoval(uid);
-
-    if (command) {
-      channel.reply(command, { measurementUid: uid });
-      return;
-    }
-
-    channel.send('MEASUREMENT_REMOVED', { measurementUid: uid });
-  };
 
 export const subscribeMeasurements = (
-  measurementService: OhifMeasurementService | undefined,
+  measurementService: OhifMeasurementService,
   channel: ViewerChannel,
   commands: Pick<ScoringCommands, 'restoreDefaultTool' | 'takePendingRemoval'>,
 ): (() => void) => {
-  if (!measurementService) {
-    console.warn(`${LOG_PREFIX} measurementService unavailable; measurements will not be seen`);
-    return (): void => undefined;
-  }
-
   const emitUpdate = (uid: string, { toolName, metrics, geometry }: MeasurementUpdate): void => {
     channel.send('MEASUREMENT_UPDATED', { measurementUid: uid, toolName, metrics, geometry });
   };
 
   const updates = createThrottledEmitter<MeasurementUpdate>(UPDATE_INTERVAL_MS, emitUpdate);
-  const handleAdded = createAddedHandler(channel, commands.restoreDefaultTool);
-  const handleUpdated = createUpdatedHandler(updates);
-  const handleRemoved = createRemovedHandler(channel, updates, commands.takePendingRemoval);
+
+  const handleAdded = (event: OhifMeasurementEvent): void => {
+    const measurement = parseMeasurement(event);
+
+    if (measurement === undefined) {
+      console.warn(
+        `${LOG_PREFIX} MEASUREMENT_ADDED is not a measurement; ignored`,
+        event.measurement,
+      );
+      return;
+    }
+
+    announceAdded(channel, commands.restoreDefaultTool, measurement);
+  };
+
+  const handleUpdated = (event: OhifMeasurementEvent): void => {
+    const measurement = parseMeasurement(event);
+
+    if (measurement !== undefined) {
+      queueUpdate(updates, measurement);
+    }
+  };
+
+  const handleRemoved = ({ measurement }: OhifMeasurementEvent): void => {
+    if (typeof measurement !== 'string' || measurement.length === 0) {
+      console.warn(`${LOG_PREFIX} MEASUREMENT_REMOVED without a uid; ignored`, measurement);
+      return;
+    }
+
+    updates.discard(measurement);
+    announceRemoved(channel, commands.takePendingRemoval, measurement);
+  };
 
   const { EVENTS } = measurementService;
   const subscriptions = [

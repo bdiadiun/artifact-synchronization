@@ -16,9 +16,15 @@ announcing, the armed row and replies are the channel's (`packages/channel/src/v
 - **`dispose()` returns to the default tool first** (`extension.ts`). `WindowLevel` is activated
   before the listeners and subscriptions go away, so closing the viewer never leaves the ellipse
   tool armed (A-23: no snapshot of the previous tool any more).
-- **Missing `toolGroupService` means `VIEWER_READY` is announced immediately** (`extension.ts`). Without
-  the cornerstone extension there is no viewport signal to wait for. The risk is accepted and
-  logged: commands may then arrive before a viewport exists and `setToolActive` would no-op.
+- **The OHIF services are required, not optional** (A-28, `ohif-service-availability.md`). The
+  three core services exist before any extension runs; `toolGroupService` and
+  `cornerstoneViewportService` are registered by `@ohif/extension-cornerstone`, which
+  `pluginConfig.json` lists before our adapter. `extension.ts` checks the two cornerstone services
+  once at `preRegistration` and refuses to start without them; no other "service unavailable"
+  branch exists.
+- **OHIF's measurement object is parsed once** by the `OhifMeasurement` schema in `ohif/surface.ts`
+  when a measurement event arrives; `toMetrics` and `toGeometry` work on the parsed value. An event
+  whose payload is not a measurement (a bare uid string, no uid) is ignored with one warning.
 
 ## Measurements
 

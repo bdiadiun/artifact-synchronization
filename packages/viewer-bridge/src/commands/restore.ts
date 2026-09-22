@@ -46,7 +46,7 @@ const restoreRow = (
   services: OhifServices,
   request: RestoreMeasurementRequest,
 ): RestoreFailureReason | null => {
-  if (services.measurementService?.getMeasurement(request.measurementUid)) {
+  if (services.measurementService.getMeasurement(request.measurementUid)) {
     return 'already-present';
   }
 
@@ -60,9 +60,9 @@ const restoreRow = (
 };
 
 const showsStudy = (services: OhifServices, studyInstanceUid: string): boolean =>
-  (services.displaySetService?.getActiveDisplaySets() ?? []).some(
-    (displaySet) => displaySet.StudyInstanceUID === studyInstanceUid,
-  );
+  services.displaySetService
+    .getActiveDisplaySets()
+    .some((displaySet) => displaySet.StudyInstanceUID === studyInstanceUid);
 
 const runRestore = (
   services: OhifServices,
@@ -85,7 +85,7 @@ const runRestore = (
     });
   }
 
-  const viewportId = services.viewportGridService?.getActiveViewportId();
+  const viewportId = services.viewportGridService.getActiveViewportId();
 
   if (restored.length > 0 && viewportId) {
     triggerAnnotationRenderForViewportIds([viewportId]);
@@ -99,12 +99,12 @@ export const createRestore = (services: OhifServices, channel: ViewerChannel): R
   const gates = new Set<{ unsubscribe: () => void }>();
 
   const holdsData = (): boolean => {
-    const viewportId = viewportGridService?.getActiveViewportId();
-    return Boolean(viewportId && cornerstoneViewportService?.getCornerstoneViewport(viewportId));
+    const viewportId = viewportGridService.getActiveViewportId();
+    return Boolean(viewportId && cornerstoneViewportService.getCornerstoneViewport(viewportId));
   };
 
   const whenReady = (run: () => void): void => {
-    if (holdsData() || !cornerstoneViewportService) {
+    if (holdsData()) {
       run();
       return;
     }

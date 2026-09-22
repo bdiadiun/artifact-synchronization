@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { SCORING_BRIDGE_EXTENSION_ID } from '@bdiadiun/ohif-extension-scoring-bridge';
 import type {
   OhifExtensionManager,
   OhifExtensionParams,
@@ -35,15 +36,15 @@ describe('createScoringAdapterExtension', () => {
     );
   });
 
-  it('registers its children through the extension manager it is handed', async () => {
+  it('registers exactly one child, the bridge, through the extension manager it is handed', async () => {
     const manager: OhifExtensionManager = { registerExtension: vi.fn() };
-    const extension = createScoringAdapterExtension({ hostOrigin: 'https://form.example.com' });
+    const extension = createScoringAdapterExtension();
 
     await extension.preRegistration(baseParams(manager));
 
     expect(manager.registerExtension).toHaveBeenCalledTimes(1);
     expect(manager.registerExtension).toHaveBeenCalledWith(
-      expect.objectContaining({ id: '@bdiadiun/ohif-extension-scoring-bridge' }),
+      expect.objectContaining({ id: SCORING_BRIDGE_EXTENSION_ID }),
     );
   });
 });

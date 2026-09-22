@@ -16,25 +16,18 @@ import {
 
 export const SCORING_BRIDGE_EXTENSION_ID = '@bdiadiun/ohif-extension-scoring-bridge';
 
-export interface ScoringBridgeExtensionOptions {
-  hostOrigin?: string;
-}
-
 const VIEWER_VERSION = readViewerVersion() ?? 'unknown';
 
+const hasCornerstoneServices = (services: Partial<OhifServices>): services is OhifServices =>
+  services.toolGroupService !== undefined && services.cornerstoneViewportService !== undefined;
+
 const announceOnViewport = (
-  toolGroupService: OhifToolGroupService | undefined,
+  toolGroupService: OhifToolGroupService,
   channel: ViewerChannel,
 ): (() => void) => {
   const announce = (): void => {
     channel.announceReady({ viewerVersion: VIEWER_VERSION });
   };
-
-  if (!toolGroupService) {
-    console.warn(`${LOG_PREFIX} toolGroupService unavailable; announcing the viewer immediately`);
-    announce();
-    return (): void => undefined;
-  }
 
   const subscription = toolGroupService.subscribe(toolGroupService.EVENTS.VIEWPORT_ADDED, announce);
 
@@ -82,15 +75,13 @@ const startBridge = (
   };
 };
 
-export const createScoringBridgeExtension = (
-  options: ScoringBridgeExtensionOptions = {},
-): OhifExtension => {
+export const createScoringBridgeExtension = (): OhifExtension => {
   const preRegistration = ({
     servicesManager,
     commandsManager,
     appConfig,
   }: OhifExtensionParams): void => {
-    const hostOrigin = options.hostOrigin ?? appConfig?.scoringBridge?.hostOrigin;
+    const hostOrigin = appConfig?.scoringBridge?.hostOrigin;
 
     if (hostOrigin === undefined || hostOrigin.length === 0) {
       console.error(
@@ -99,7 +90,16 @@ export const createScoringBridgeExtension = (
       return;
     }
 
-    const dispose = startBridge(servicesManager.services, commandsManager, hostOrigin);
+    const { services } = servicesManager;
+
+    if (!hasCornerstoneServices(services)) {
+      console.error(
+        `${LOG_PREFIX} cornerstone services are not registered; is @ohif/extension-cornerstone listed before this extension?`,
+      );
+      return;
+    }
+
+    const dispose = startBridge(services, commandsManager, hostOrigin);
 
     const handlePageHide = (): void => {
       dispose();

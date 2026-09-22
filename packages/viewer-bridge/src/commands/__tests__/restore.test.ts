@@ -16,6 +16,7 @@ import type {
 
 import { createRestore } from '../restore.js';
 import type { OhifServices, OhifSubscription } from '../../ohif/surface.js';
+import { createServices, STUDY_UID, VIEWPORT_ID } from '../../__tests__/helpers.js';
 
 vi.mock('@cornerstonejs/tools', () => ({
   annotation: { state: { addAnnotation: vi.fn() } },
@@ -26,8 +27,6 @@ vi.mock('@cornerstonejs/tools/utilities', () => ({
 }));
 
 const HOST_ORIGIN = 'http://localhost:5173';
-const VIEWPORT_ID = 'viewport-1';
-const STUDY_UID = 'study-1';
 
 const request = (rowId: string, measurementUid: string): RestoreMeasurementRequest => ({
   rowId,
@@ -66,25 +65,24 @@ const createViewportGate = (holdsData: boolean): ViewportGate => ({
   unsubscribe: vi.fn(),
 });
 
-const createServices = (gate: ViewportGate, knownUids: string[] = []): OhifServices => ({
-  measurementService: {
-    EVENTS: { MEASUREMENT_ADDED: 'a', MEASUREMENT_UPDATED: 'u', MEASUREMENT_REMOVED: 'r' },
-    subscribe: () => ({ unsubscribe: vi.fn() }),
-    getMeasurement: (uid: string) => (knownUids.includes(uid) ? { uid } : undefined),
-    remove: vi.fn(),
-    jumpToMeasurement: vi.fn(),
-  },
-  displaySetService: { getActiveDisplaySets: () => [{ StudyInstanceUID: STUDY_UID }] },
-  viewportGridService: { getActiveViewportId: () => VIEWPORT_ID },
-  cornerstoneViewportService: {
-    EVENTS: { VIEWPORT_DATA_CHANGED: 'VIEWPORT_DATA_CHANGED' },
-    subscribe: (_eventName: string, handler: () => void): OhifSubscription => {
-      gate.handlers.push(handler);
-      return { unsubscribe: gate.unsubscribe };
+const servicesFor = (gate: ViewportGate, knownUids: string[] = []): OhifServices =>
+  createServices({
+    measurementService: {
+      EVENTS: { MEASUREMENT_ADDED: 'a', MEASUREMENT_UPDATED: 'u', MEASUREMENT_REMOVED: 'r' },
+      subscribe: () => ({ unsubscribe: vi.fn() }),
+      getMeasurement: (uid: string) => (knownUids.includes(uid) ? { uid } : undefined),
+      remove: vi.fn(),
+      jumpToMeasurement: vi.fn(),
     },
-    getCornerstoneViewport: () => (gate.holdsData ? {} : null),
-  },
-});
+    cornerstoneViewportService: {
+      EVENTS: { VIEWPORT_DATA_CHANGED: 'VIEWPORT_DATA_CHANGED' },
+      subscribe: (_eventName: string, handler: () => void): OhifSubscription => {
+        gate.handlers.push(handler);
+        return { unsubscribe: gate.unsubscribe };
+      },
+      getCornerstoneViewport: () => (gate.holdsData ? {} : null),
+    },
+  });
 
 interface RestoreFixture {
   channel: ViewerChannel;
@@ -111,7 +109,7 @@ afterEach(() => {
 describe('restoring measurements (A-14)', () => {
   it('answers with the rows it restored, caused by the command', () => {
     const { channel, posted } = connect();
-    const restore = createRestore(createServices(createViewportGate(true)), channel);
+    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
 
     restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
 
@@ -129,7 +127,7 @@ describe('restoring measurements (A-14)', () => {
 
   it('adds the annotation under the frame of reference the host persisted', () => {
     const { channel } = connect();
-    const restore = createRestore(createServices(createViewportGate(true)), channel);
+    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
 
     restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
 
@@ -160,7 +158,7 @@ describe('restoring measurements (A-14)', () => {
 
   it('renders the active viewport once something was restored', () => {
     const { channel } = connect();
-    const restore = createRestore(createServices(createViewportGate(true)), channel);
+    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
 
     restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
 
@@ -170,7 +168,7 @@ describe('restoring measurements (A-14)', () => {
 
   it('fails every row with unknown-study when the viewer shows a different study', () => {
     const { channel, posted } = connect();
-    const restore = createRestore(createServices(createViewportGate(true)), channel);
+    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
 
     restore.handleRestore(restoreCommand([request('row-1', 'uid-1')], 'another-study'));
 
@@ -184,7 +182,7 @@ describe('restoring measurements (A-14)', () => {
 
   it('fails a row whose measurement the viewer already holds', () => {
     const { channel, posted } = connect();
-    const restore = createRestore(createServices(createViewportGate(true), ['uid-1']), channel);
+    const restore = createRestore(servicesFor(createViewportGate(true), ['uid-1']), channel);
 
     restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
 
@@ -202,7 +200,7 @@ describe('restoring measurements (A-14)', () => {
     vi.mocked(annotation.state.addAnnotation).mockImplementation(() => {
       throw new Error('no enabled element');
     });
-    const restore = createRestore(createServices(createViewportGate(true)), channel);
+    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
 
     restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
 
@@ -218,7 +216,7 @@ describe('waiting for the viewport to hold data', () => {
   it('restores nothing until the viewport reports its data', () => {
     const { channel, posted } = connect();
     const gate = createViewportGate(false);
-    const restore = createRestore(createServices(gate), channel);
+    const restore = createRestore(servicesFor(gate), channel);
 
     restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
 
@@ -237,7 +235,7 @@ describe('waiting for the viewport to hold data', () => {
   it('releases a gate still waiting when it is disposed', () => {
     const { channel, posted } = connect();
     const gate = createViewportGate(false);
-    const restore = createRestore(createServices(gate), channel);
+    const restore = createRestore(servicesFor(gate), channel);
     restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
 
     restore.dispose();

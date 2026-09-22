@@ -98,12 +98,13 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 
 **P-8. One more field through the whole chain (e.g. mean intensity).**
 
-1. Extension: in [`toMetrics`][fork-metrics] add `mean: { value: stats.mean, unit: … }`; if a new
-   unit is needed, extend the `Unit` enum in [`packages/contract/src/vocabulary.ts`](../packages/contract/src/vocabulary.ts)
-   then publish the package and raise its pinned version in the extension.
-2. Host: `MeasurementRow` already renders the first non-area metric; to show both, map over the
-   metrics object.
-3. Optional: add `'mean'` to `MetricKey` in the contract and call `computeTotals(rows, 'mean')`.
+1. Contract: add `'mean'` to the `MetricKey` enum in
+   [`packages/contract/src/vocabulary.ts`](../packages/contract/src/vocabulary.ts) (and a unit to
+   `Unit` if a new one is needed) — one line each, since A-28 the vocabulary is the only place a
+   metric is named; then publish the package and raise its pinned version in the extension.
+2. Extension: in [`toMetrics`][fork-metrics] read `stats.mean` the way `area` is read.
+3. Host: `MeasurementRow` already renders the first non-area metric; to show both, map over the
+   metrics object; `computeTotals(rows, 'mean')` gives the total.
 
 **P-9. A protocol element is disabled (e.g. `VIEWER_READY`).** Symptoms: the
 [status line](../host-app/src/components/BridgeStatus.tsx#L6) stays at `очікує VIEWER_READY`, the
