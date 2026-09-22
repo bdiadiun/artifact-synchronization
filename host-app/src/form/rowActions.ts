@@ -3,10 +3,13 @@
 
 import type { ToolName } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL } from '@app/config';
-import { findRow } from '@app/utils/selectors';
-import { findDrawingRow, FormActionType, RowStatus } from './rows';
-import type { FormContext } from './rows.props';
-import { warnUnanswered } from './unanswered';
+import { findDrawingRow, findRow, FormActionType, RowStatus, type FormContext } from './rows';
+
+// An exchange rejects when the viewer never answered or the bridge went away mid-request (A-21).
+// Neither is recoverable here; both are worth seeing in the console.
+export const warnUnanswered = (error: unknown): void => {
+  console.warn('[form] a request to the viewer went unanswered', error);
+};
 
 export interface RowActions {
   addRow: (toolName?: ToolName) => void;

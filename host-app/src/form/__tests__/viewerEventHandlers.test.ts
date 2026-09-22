@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { MeasurementRemovedEvent, MeasurementUpdatedEvent } from '@bdiadiun/scoring-contract';
 import { createViewerEventHandlers } from '@app/form/viewerEventHandlers';
 import { FormActionType, RowStatus, initialFormState } from '@app/form/rows';
-import type { FormContext } from '@app/form/rows.props';
+import type { FormContext } from '@app/form/rows';
 import type { Row } from '@app/form/rows';
 
 const doneRow: Row = {

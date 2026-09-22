@@ -22,10 +22,10 @@ clone installs it like any other dependency and needs no token.
 - The package is renamed `@bdiadiun/scoring-contract` and published to the public npm registry. It
   ships built JavaScript and declarations from `dist`, produced by the package's own `prepare`
   script, so a plain `npm ci` at the repository root builds it before anything imports it.
-- The contract exports what both sides were re-implementing: `isRecord`, `isNonEmptyString`,
-  `isToolName`, the tool-name list, `isMeasurementGeometry`, and the map from a tool name to the
-  metric key it produces. `host-app/src/form/storage.ts`, `host-app/src/form/rows.ts` and the
-  fork's `geometry.ts` import them instead of repeating them.
+- The contract exports what both sides were re-implementing: the vocabulary and geometry shapes and
+  the map from a tool name to the metric key it produces. (Since A-26 those are zod schemas —
+  `ToolName`, `Metrics`, `MeasurementGeometry` — and the primitive guards this decision first
+  exported are gone; `host-app/src/form/storage.ts` builds its stored-row schema from them.)
 - A world point is exactly three finite coordinates, in the contract itself. This removes the
   drift: what the contract accepts is now what the viewer can restore.
 - A workflow publishes a patch release when a merge into `main` changes the package. The version

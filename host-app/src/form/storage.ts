@@ -2,16 +2,10 @@
 // and another tab or study never sees them. Every access is defensive: private mode, a full quota
 // or a cleared store throw or return nothing, and the form still has to render.
 
-import {
-  isMeasurementGeometry,
-  isMetrics,
-  isNonEmptyString,
-  isOneOf,
-  isRecord,
-  isToolName,
-  type MeasurementGeometry,
-  type Metrics,
-} from '@bdiadiun/scoring-contract';
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
+import { MeasurementGeometry, Metrics, ToolName } from '@bdiadiun/scoring-contract';
+import { studyInstanceUid } from '@app/config';
 import { RowStatus, type Row } from './rows';
 
 // The fields A-14 asks to persist; `restoreFailureReason` is not among them, so every load starts
@@ -25,30 +19,19 @@ export interface StoredState {
 
 const storageKey = (studyInstanceUid: string): string => `scoring-form:rows:${studyInstanceUid}`;
 
-const ROW_STATUSES: readonly RowStatus[] = Object.values(RowStatus);
+const StoredRowSchema = z.object({
+  rowId: z.string().min(1),
+  status: z.enum(RowStatus),
+  toolName: ToolName,
+  metrics: Metrics.nullable(),
+  measurementUid: z.string().min(1).nullable(),
+  geometry: MeasurementGeometry.nullable(),
+});
 
-const isRowStatus = isOneOf(ROW_STATUSES);
-
-const isStoredMetrics = (value: unknown): value is Metrics | null =>
-  value === null || isMetrics(value);
-
-const isStoredGeometry = (value: unknown): value is MeasurementGeometry | null =>
-  value === null || isMeasurementGeometry(value);
-
-const isStoredRow = (value: unknown): value is StoredRow =>
-  isRecord(value) &&
-  isNonEmptyString(value.rowId) &&
-  isToolName(value.toolName) &&
-  isRowStatus(value.status) &&
-  isStoredMetrics(value.metrics) &&
-  (value.measurementUid === null || isNonEmptyString(value.measurementUid)) &&
-  isStoredGeometry(value.geometry);
-
-const isStoredState = (value: unknown): value is StoredState =>
-  isRecord(value) &&
-  isNonEmptyString(value.studyInstanceUid) &&
-  Array.isArray(value.rows) &&
-  value.rows.every(isStoredRow);
+const StoredStateSchema = z.object({
+  studyInstanceUid: z.string().min(1),
+  rows: z.array(StoredRowSchema),
+});
 
 // Empty on anything but a validated match for this exact study: a missing key, a throw, malformed
 // JSON and another study's state all fall back to "nothing to restore" rather than a crash.
@@ -58,11 +41,11 @@ export const loadStoredRows = (studyInstanceUid: string): Row[] => {
     if (raw === null) {
       return [];
     }
-    const parsed: unknown = JSON.parse(raw);
-    if (!isStoredState(parsed) || parsed.studyInstanceUid !== studyInstanceUid) {
+    const parsed = StoredStateSchema.safeParse(JSON.parse(raw));
+    if (!parsed.success || parsed.data.studyInstanceUid !== studyInstanceUid) {
       return [];
     }
-    return parsed.rows.map((row) => ({ ...row, restoreFailureReason: null }));
+    return parsed.data.rows.map((row) => ({ ...row, restoreFailureReason: null }));
   } catch (error) {
     console.warn('[form] failed to read stored form state', error);
     return [];
@@ -79,4 +62,18 @@ export const saveRows = (studyInstanceUid: string, rows: readonly Row[]): void =
   } catch (error) {
     console.warn('[form] failed to persist form state', error);
   }
+};
+
+// Resolves before `useScoringForm` creates its reducer, because it seeds the initial state.
+// Read once per mount: sessionStorage is per-tab (A-14), so a later change to it (another tab,
+// another study) must not resurrect rows into an already-running session.
+export const useRestoredRows = (): Row[] =>
+  useState<Row[]>(() => loadStoredRows(studyInstanceUid()))[0];
+
+// A-14: the form owns the saved state, so every row change is written back, including the ones no
+// user action caused (the reducer applying a restore-failure marker).
+export const usePersistRows = (rows: readonly Row[]): void => {
+  useEffect(() => {
+    saveRows(studyInstanceUid(), rows);
+  }, [rows]);
 };

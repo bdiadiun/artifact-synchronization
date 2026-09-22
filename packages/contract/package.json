@@ -27,5 +27,8 @@
     "build": "tsc -b",
     "typecheck": "tsc -p tsconfig.tests.json",
     "prepare": "tsc -b --force"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
   }
 }

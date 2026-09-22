@@ -1,8 +1,8 @@
 import { createDisposerSet, createViewerChannel } from '@bdiadiun/scoring-channel';
 import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 
-import { createCommands } from './commands.js';
-import { subscribeMeasurements } from './measurements.js';
+import { createCommands } from './commands/handlers.js';
+import { subscribeMeasurements } from './events/measurements.js';
 import {
   getCustomizationModule,
   LOG_PREFIX,
@@ -12,7 +12,7 @@ import {
   type OhifExtensionParams,
   type OhifServices,
   type OhifToolGroupService,
-} from './ohif.js';
+} from './ohif/surface.js';
 
 export const SCORING_BRIDGE_EXTENSION_ID = '@bdiadiun/ohif-extension-scoring-bridge';
 

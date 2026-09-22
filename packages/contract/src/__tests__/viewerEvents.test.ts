@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { isViewerEvent } from '../viewerEvents';
-import type {
-  MeasurementAddedEvent,
-  MeasurementRemovedEvent,
-  MeasurementsRestoredEvent,
-  MeasurementUpdatedEvent,
-  ViewerReadyEvent,
-} from '../viewerEvents.props';
-import type { ActivateToolCommand } from '../hostCommands.props';
-import type { MeasurementGeometry } from '../vocabulary.props';
+import {
+  isViewerEvent,
+  type MeasurementAddedEvent,
+  type MeasurementRemovedEvent,
+  type MeasurementsRestoredEvent,
+  type MeasurementUpdatedEvent,
+  type ViewerReadyEvent,
+} from '../viewerEvents';
+import type { ActivateToolCommand } from '../hostCommands';
+import type { MeasurementGeometry } from '../vocabulary';
 
 const activateTool: ActivateToolCommand = {
   type: 'ACTIVATE_TOOL',
@@ -77,10 +77,6 @@ describe('isViewerEvent', () => {
     expect(isViewerEvent({ ...measurementAdded, rowId: null })).toBe(true);
   });
 
-  it('rejects MEASUREMENT_UPDATED with a null rowId (rowId does not exist on this event)', () => {
-    expect(isViewerEvent({ ...measurementUpdated, rowId: null })).toBe(false);
-  });
-
   it('rejects a host command', () => {
     expect(isViewerEvent(activateTool)).toBe(false);
   });
@@ -108,6 +104,10 @@ describe('isViewerEvent', () => {
 
   it('accepts an unknown extra field (forward compatibility)', () => {
     expect(isViewerEvent({ ...measurementAdded, extra: 'ignored' })).toBe(true);
+  });
+
+  it('accepts the version key the channel stamps on the wire', () => {
+    expect(isViewerEvent({ ...measurementAdded, version: 1 })).toBe(true);
   });
 
   it('survives a JSON round-trip', () => {

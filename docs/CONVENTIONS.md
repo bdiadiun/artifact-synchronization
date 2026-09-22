@@ -73,17 +73,17 @@ and the linter disagree, fix the linter config in the same PR and say so.
 
 ## 4. Naming
 
-| Thing                                | Style                                                                           | Example                                                                        |
-| ------------------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Types, interfaces, enums, components | PascalCase                                                                      | `MeasurementRow`, `BridgeState`                                                |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                                               | `createOrchestrator`, `useScoringForm`                                         |
-| Files: components                    | PascalCase `.tsx`                                                               | `TotalsFooter.tsx`                                                             |
-| Files: types and styles              | `.props.ts` next to a component always, next to another module when it earns it | `TotalsFooter.props.ts`, `rows.props.ts`                                       |
-| Files: everything else               | kebab-case or camelCase, one concept per file                                   | `host-channel.ts` / `hostChannel.ts` (keep the existing style within a folder) |
-| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)`    | `form/__tests__/rows.test.ts`                                                  |
-| Booleans                             | `is`/`has`/`can`/`should` prefix                                                | `isReady`, `hasMetrics`                                                        |
-| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                      | `onRemove` / `handleRemove`                                                    |
-| Interfaces for props                 | `<Component>Props`                                                              | `ScoringPanelProps`                                                            |
+| Thing                                | Style                                                                        | Example                                                                        |
+| ------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createOrchestrator`, `useScoringForm`                                         |
+| Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                             |
+| Files: types and styles              | `.props.ts` next to a React component, and nowhere else (A-27)               | `TotalsFooter.props.ts`                                                        |
+| Files: everything else               | kebab-case or camelCase, one concept per file                                | `host-channel.ts` / `hostChannel.ts` (keep the existing style within a folder) |
+| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)` | `form/__tests__/rows.test.ts`                                                  |
+| Booleans                             | `is`/`has`/`can`/`should` prefix                                             | `isReady`, `hasMetrics`                                                        |
+| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                   | `onRemove` / `handleRemove`                                                    |
+| Interfaces for props                 | `<Component>Props`                                                           | `ScoringPanelProps`                                                            |
 
 No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`, `uid`, `url`.
 
@@ -131,11 +131,20 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - Never reach into another package's internals; the contract package is consumed through its
   public entry only.
 - **A shape is declared once, by the package that owns the idea.** Before writing an interface, a
-  guard or a constant, search the packages for one that already says it: `MessageHandlers` and
-  `ChannelState` belong to the channel, the primitive guards (`isOneOf`, `isFiniteNumber`,
-  `isMetrics`) and every vocabulary table to the contract, the initial channel state to the
-  channel. The application extends or picks from those (`extends RowActions`,
-  `Pick<ToolCommands, 'getArmed' | 'disarm'>`) instead of listing the members again.
+  schema or a constant, search the packages for one that already says it: `MessageHandlers` and
+  `ChannelState` belong to the channel, every message and vocabulary schema (`ToolName`, `Metrics`,
+  `MeasurementGeometry`) to the contract, the initial channel state to the channel. The application
+  extends or picks from those (`extends RowActions`, `Metrics.nullable()` in the stored-row schema)
+  instead of listing the members again.
+- **The contract is zod schemas (A-26).** A message is one `z.object`; the two directions are
+  `z.discriminatedUnion('type', …)`; a type is `z.infer` of the schema of the same name; a guard is
+  `safeParse(value).success`. No hand-written `isRecord` / `isNonEmptyString` guards anywhere: a
+  consumer that must check a shape builds a schema from the contract's.
+- **A folder names a side or a role (A-27).** Channel: `host/`, `viewer/`, `shared/`; extension:
+  `commands/`, `events/`, `ohif/`; application: `channel/`, `form/`, `components/`, `pages/`. No
+  `hooks/` or `utils/`: a hook lives beside what it connects, a helper beside its only caller. No
+  file under twenty lines (a constant, a type or a one-function module joins its owner), except a
+  package `index.ts`, `main.tsx` and a component's `.props.ts`. Tests move with the code they test.
 - **No code for a caller that does not exist.** A default every caller overrides, an export only a
   test imports, a counter nothing displays and a branch a guard upstream makes unreachable are
   removed, not kept "for later"; a one-line function that only renames an expression is inlined.
@@ -152,16 +161,10 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - No context providers until two unrelated subtrees need the same state; prop drilling two levels
   is fine.
 - **A component always has a sibling `{Name}.props.ts`** holding its props, its other types and its
-  `styles`; the `.tsx` keeps only rendering. **Another module has one when it earns it**: when the
-  declarations run past about twenty lines, or when another module imports them, so the type has a
-  stable home. A module with one or two types nobody else uses keeps them beside the code; the rule
-  existed to keep files readable, and splitting a thirty-line module in two serves nothing but the
-  rule itself. For a component that means
-  the props interface and the styles; for a module it means the shapes its functions take and
-  return. The suffix is `.props.ts` everywhere, deliberately: one name, one lint rule, no argument
-  about which file a declaration belongs in. An `enum` is a value rather than a type and stays with
-  its code. Two files are exempt: `packages/contract/src/messages.ts`, which must stay one
-  self-contained file with no imports because it is the published wire contract, and test files.
+  `styles`; the `.tsx` keeps only rendering. **No other module has one** (A-27): a module's types
+  live in the module, beside the code that uses them (`Row`, `FormState`, `FormAction` and
+  `FormContext` are in `form/rows.ts`). An `enum` is a value rather than a type and stays with its
+  code.
 
   ```ts
   // MeasurementRow.props.ts
@@ -192,8 +195,8 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - No inline style object literals in JSX (`style={{ … }}`); reference `styles.<key>` from the
   `.props.ts` file (lint rule). A style that depends on state is a small function in the same file,
   e.g. `rowStyle(focusable)` returning `styles.row` merged with `styles.rowClickable`. A component without props or styles does not need the file.
-- Types shared by several modules live with the module that owns them, in that module's
-  `.props.ts` (e.g. `Row` in `form/rows.props.ts`), and are imported from there rather than copied.
+- Types shared by several modules live with the module that owns them (e.g. `Row` in
+  `form/rows.ts`) and are imported from there rather than copied.
 - No function is created inside the `return` statement. Every function a component renders with is
   declared in the component body with a name, above the `return`, and the returned JSX mentions it
   by that name. The one exception is the callback of a list render, `rows.map(...)`, because
@@ -209,7 +212,8 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 ## 7. Errors, logging and defensive code
 
 - Validate every external input at the boundary (`postMessage` payloads through the contract
-  guards; OHIF measurement objects through `toMetrics`). Inside the boundary, trust the types.
+  schemas; `sessionStorage` through the stored-row schema; OHIF measurement objects through
+  `toMetrics`). Inside the boundary, trust the types.
 - Ignored input is logged once with a reason at the level that matches its severity:
   `console.debug` for expected noise (foreign origins, mid-drag frames), `console.info` for
   intentional no-ops, `console.warn` for something a developer should look at, `console.error`
@@ -238,7 +242,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   `../rows`. One test file per module under test; shared test helpers go to
   `__tests__/helpers.ts` in the same folder.
 
-- Vitest. Targeted tests only (X-4): pure logic (reducers, totals, throttle, contract guards) and
+- Vitest. Targeted tests only (X-4): pure logic (reducers, totals, throttle, contract schemas) and
   the bridge client behaviour. No snapshot tests, no tests of styling.
 - Test names read as behaviour: `it('queues a command sent before VIEWER_READY and flushes it in order')`.
 - Arrange / act / assert with blank lines between; one behaviour per test; assert on state or on

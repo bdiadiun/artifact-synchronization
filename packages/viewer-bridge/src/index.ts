@@ -7,6 +7,6 @@ export type {
   OhifExtensionManager,
   OhifExtensionParams,
   ScoringBridgeAppConfig,
-} from './ohif.js';
+} from './ohif/surface.js';
 
 export default createScoringBridgeExtension();

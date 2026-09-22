@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                               |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 59 `refactor: plain channel` (branch `refactor/plain-channel`, node F-65, decision A-24)                                                                                            |
-| Gate           | 2 — channel without the generic core, guards as functions, comments cut; awaiting result approval                                                                                   |
-| Last merged PR | #73 `chore: pin the fork at the adapter release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                                |
-| Next slice     | after the release: fork pin 0.0.8 + browser scenario; 60 the same plain-code pass over the form; 61 `refactor: one storage abstraction`; the adapter question (A-20) for the author |
+| Field          | Value                                                                                                                                                                                               |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 60 `refactor: zod contract and layout` (branch `refactor/zod-contract-and-layout`, node F-66, decisions A-26 and A-27)                                                                              |
+| Gate           | 1 approved — the contract as zod schemas, every package and the app laid out by side or role; implementation in progress                                                                            |
+| Last merged PR | #77 `chore: pin the fork at the adapter release` (slice 59 closed: contract 0.0.13, channel 0.0.7, bridge 0.0.9, adapter 0.0.8, fork at ac786c8a)                                                   |
+| Next slice     | 61 the same plain-code / no-comments pass over the form (`rowActions`, `viewerEventHandlers`, `MeasurementRow`); 62 `refactor: one storage abstraction`; the adapter question (A-20) for the author |
 
 ## Open decisions (see CANON.md → Decisions)
 

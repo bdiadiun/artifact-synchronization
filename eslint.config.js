@@ -159,7 +159,7 @@ export default tseslint.config(
     // The published packages build to `dist`, so their build tsconfigs exclude the tests. Each
     // package's `tsconfig.tests.json` type-checks them without emitting, and lint uses it so the
     // type-aware rules apply here too; the default project refuses past eight matching files.
-    files: ['packages/*/src/__tests__/**/*.ts'],
+    files: ['packages/*/src/**/__tests__/**/*.ts'],
     languageOptions: {
       parserOptions: {
         projectService: false,

@@ -12,9 +12,8 @@ import type {
 } from '@bdiadiun/scoring-contract';
 import type { MessageHandlers } from '@bdiadiun/scoring-channel';
 import { studyInstanceUid } from '@app/config';
-import { findDrawingRow, FormActionType, type Row } from './rows';
-import type { FormContext } from './rows.props';
-import { warnUnanswered } from './unanswered';
+import { findDrawingRow, FormActionType, type FormContext, type Row } from './rows';
+import { warnUnanswered } from './rowActions';
 
 export interface ViewerEventHandlersDeps {
   // Read at call time, not at registration: the handlers are registered once per channel and have

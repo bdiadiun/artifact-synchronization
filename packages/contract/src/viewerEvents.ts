@@ -1,78 +1,83 @@
-import {
-  isMeasurementGeometry,
-  isMetrics,
-  isNonEmptyString,
-  isOneOf,
-  isOptionalString,
-  isRecord,
-} from './primitiveGuards';
-import type { ViewerEvent } from './viewerEvents.props';
+import { z } from 'zod';
+import type { HostCommand } from './hostCommands.js';
+import { MeasurementGeometry, Metrics } from './vocabulary.js';
 
-export const RESTORE_FAILURE_REASON_VALUES = [
+export const ViewerReadyEvent = z.object({
+  type: z.literal('VIEWER_READY'),
+  viewerVersion: z.string(),
+});
+export type ViewerReadyEvent = z.infer<typeof ViewerReadyEvent>;
+
+export const MeasurementAddedEvent = z.object({
+  type: z.literal('MEASUREMENT_ADDED'),
+  rowId: z.string().min(1).nullable(),
+  measurementUid: z.string().min(1),
+  toolName: z.string(),
+  metrics: Metrics,
+  causedBy: z.string().optional(),
+  geometry: MeasurementGeometry.optional(),
+});
+export type MeasurementAddedEvent = z.infer<typeof MeasurementAddedEvent>;
+
+export const MeasurementUpdatedEvent = z.object({
+  type: z.literal('MEASUREMENT_UPDATED'),
+  measurementUid: z.string().min(1),
+  toolName: z.string(),
+  metrics: Metrics,
+  causedBy: z.string().optional(),
+  geometry: MeasurementGeometry.optional(),
+});
+export type MeasurementUpdatedEvent = z.infer<typeof MeasurementUpdatedEvent>;
+
+export const MeasurementRemovedEvent = z.object({
+  type: z.literal('MEASUREMENT_REMOVED'),
+  measurementUid: z.string().min(1),
+  causedBy: z.string().optional(),
+});
+export type MeasurementRemovedEvent = z.infer<typeof MeasurementRemovedEvent>;
+
+export const RestoreFailureReason = z.enum([
   'already-present',
   'unknown-study',
   'invalid-geometry',
   'viewer-error',
-] as const;
+]);
+export type RestoreFailureReason = z.infer<typeof RestoreFailureReason>;
 
-export const VIEWER_EVENT_TYPES: readonly ViewerEvent['type'][] = [
-  'VIEWER_READY',
-  'MEASUREMENT_ADDED',
-  'MEASUREMENT_UPDATED',
-  'MEASUREMENT_REMOVED',
-  'MEASUREMENTS_RESTORED',
-];
+export const RestoreFailure = z.object({
+  rowId: z.string().min(1),
+  reason: RestoreFailureReason,
+});
+export type RestoreFailure = z.infer<typeof RestoreFailure>;
 
-const isViewerEventType = isOneOf(VIEWER_EVENT_TYPES);
+export const MeasurementsRestoredEvent = z.object({
+  type: z.literal('MEASUREMENTS_RESTORED'),
+  causedBy: z.string().optional(),
+  restored: z.array(z.string().min(1)),
+  failed: z.array(RestoreFailure),
+});
+export type MeasurementsRestoredEvent = z.infer<typeof MeasurementsRestoredEvent>;
 
-const isRestoreFailureReason = isOneOf(RESTORE_FAILURE_REASON_VALUES);
+export const ViewerEvent = z.discriminatedUnion('type', [
+  ViewerReadyEvent,
+  MeasurementAddedEvent,
+  MeasurementUpdatedEvent,
+  MeasurementRemovedEvent,
+  MeasurementsRestoredEvent,
+]);
+export type ViewerEvent = z.infer<typeof ViewerEvent>;
 
-const isRestoreFailure = (value: unknown): boolean =>
-  isRecord(value) && isNonEmptyString(value.rowId) && isRestoreFailureReason(value.reason);
+export const isViewerEvent = (value: unknown): value is ViewerEvent =>
+  ViewerEvent.safeParse(value).success;
 
-const isViewerReadyEvent = (value: Record<string, unknown>): boolean =>
-  typeof value.viewerVersion === 'string';
+export type BridgeMessage = HostCommand | ViewerEvent;
 
-const hasMeasurementValue = (value: Record<string, unknown>): boolean =>
-  isNonEmptyString(value.measurementUid) &&
-  typeof value.toolName === 'string' &&
-  isMetrics(value.metrics) &&
-  isOptionalString(value.causedBy) &&
-  (value.geometry === undefined || isMeasurementGeometry(value.geometry));
+export const ANSWER_TYPE_BY_COMMAND = {
+  REMOVE_MEASUREMENT: 'MEASUREMENT_REMOVED',
+  RESTORE_MEASUREMENTS: 'MEASUREMENTS_RESTORED',
+} as const satisfies Partial<Record<HostCommand['type'], ViewerEvent['type']>>;
 
-const isMeasurementAddedEvent = (value: Record<string, unknown>): boolean =>
-  hasMeasurementValue(value) && (value.rowId === null || isNonEmptyString(value.rowId));
+export type AnsweredCommandType = keyof typeof ANSWER_TYPE_BY_COMMAND;
 
-const isMeasurementUpdatedEvent = (value: Record<string, unknown>): boolean =>
-  hasMeasurementValue(value) && value.rowId !== null;
-
-const isMeasurementRemovedEvent = (value: Record<string, unknown>): boolean =>
-  isNonEmptyString(value.measurementUid) && isOptionalString(value.causedBy);
-
-const isMeasurementsRestoredEvent = (value: Record<string, unknown>): boolean =>
-  isOptionalString(value.causedBy) &&
-  Array.isArray(value.restored) &&
-  value.restored.every(isNonEmptyString) &&
-  Array.isArray(value.failed) &&
-  value.failed.every(isRestoreFailure);
-
-export const isViewerEvent = (value: unknown): value is ViewerEvent => {
-  if (!isRecord(value) || !isViewerEventType(value.type)) {
-    return false;
-  }
-
-  switch (value.type) {
-    case 'VIEWER_READY':
-      return isViewerReadyEvent(value);
-    case 'MEASUREMENT_ADDED':
-      return isMeasurementAddedEvent(value);
-    case 'MEASUREMENT_UPDATED':
-      return isMeasurementUpdatedEvent(value);
-    case 'MEASUREMENT_REMOVED':
-      return isMeasurementRemovedEvent(value);
-    case 'MEASUREMENTS_RESTORED':
-      return isMeasurementsRestoredEvent(value);
-    default:
-      return false;
-  }
-};
+export type AnswerTypeOf<TType extends AnsweredCommandType> =
+  (typeof ANSWER_TYPE_BY_COMMAND)[TType];

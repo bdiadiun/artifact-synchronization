@@ -3,9 +3,12 @@ import type { Metrics } from '@bdiadiun/scoring-contract';
 import {
   FormActionType,
   RowStatus,
+  findRow,
+  findRowByUid,
   initialFormState,
   reducer,
   type FormState,
+  type Row,
 } from '@app/form/rows';
 
 const metrics: Metrics = { area: { value: 124.5, unit: 'mm2' } };
@@ -354,5 +357,41 @@ describe('rows reducer', () => {
       reason: 'viewer-error',
     });
     expect(next).toBe(state);
+  });
+});
+
+const storedRow = (rowId: string, measurementUid: string | null): Row => ({
+  rowId,
+  status: measurementUid === null ? RowStatus.Pending : RowStatus.Done,
+  toolName: 'EllipticalROI',
+  metrics: null,
+  measurementUid,
+  geometry: null,
+  restoreFailureReason: null,
+});
+
+const storedRows: Row[] = [storedRow('row-1', null), storedRow('row-2', 'uid-2')];
+
+describe('findRow', () => {
+  it('returns the row with the given id', () => {
+    expect(findRow(storedRows, 'row-2')).toBe(storedRows[1]);
+  });
+
+  it('returns undefined for an unknown id', () => {
+    expect(findRow(storedRows, 'row-9')).toBeUndefined();
+  });
+
+  it('returns undefined for an empty list', () => {
+    expect(findRow([], 'row-1')).toBeUndefined();
+  });
+});
+
+describe('findRowByUid', () => {
+  it('returns the row carrying the measurement uid', () => {
+    expect(findRowByUid(storedRows, 'uid-2')).toBe(storedRows[1]);
+  });
+
+  it('never matches a row without a measurement', () => {
+    expect(findRowByUid(storedRows, 'uid-9')).toBeUndefined();
   });
 });

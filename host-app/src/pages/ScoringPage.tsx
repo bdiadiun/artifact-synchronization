@@ -2,9 +2,8 @@ import { useRef, type JSX } from 'react';
 import { BridgeStatus } from '@app/components/BridgeStatus';
 import { ScoringPanel } from '@app/components/ScoringPanel';
 import { ViewerFrame } from '@app/components/ViewerFrame';
-import { useChannelState } from '@app/hooks/useChannelState';
-import { useHostChannel } from '@app/hooks/useHostChannel';
-import { useScoringForm } from '@app/hooks/useScoringForm';
+import { useChannelState, useHostChannel } from '@app/channel/useHostChannel';
+import { useScoringForm } from '@app/form/useScoringForm';
 
 export const ScoringPage = (): JSX.Element => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);

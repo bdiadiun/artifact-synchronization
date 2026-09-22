@@ -37,7 +37,8 @@ was split down the middle: the host half in the channel, the viewer half in the 
   repeated `MEASUREMENT_UPDATED` with the same value is harmless to the reducer.
 - **The ADDED correction timer is gone**: a value that settles one render late arrives through
   the update stream, which exists since S-5.1.
-- **`ArmedRow { rowId, requestId }` is a contract type**, the one correlation both ends keep.
+- **`ArmedRow { rowId, requestId }` is the viewer channel's type** (since A-27; it was declared in
+  the contract until only the channel used it), the one correlation the viewer end keeps.
 
 ## Why this way
 

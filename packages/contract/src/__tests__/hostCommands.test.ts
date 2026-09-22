@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { isHostCommand } from '../hostCommands';
-import type {
-  ActivateToolCommand,
-  DeactivateToolCommand,
-  FocusMeasurementCommand,
-  RemoveMeasurementCommand,
-  RestoreMeasurementsCommand,
-} from '../hostCommands.props';
-import type { MeasurementGeometry } from '../vocabulary.props';
-import type { ViewerReadyEvent } from '../viewerEvents.props';
+import {
+  isHostCommand,
+  type ActivateToolCommand,
+  type DeactivateToolCommand,
+  type FocusMeasurementCommand,
+  type RemoveMeasurementCommand,
+  type RestoreMeasurementsCommand,
+} from '../hostCommands';
+import type { MeasurementGeometry } from '../vocabulary';
+import type { ViewerReadyEvent } from '../viewerEvents';
 
 const activateTool: ActivateToolCommand = {
   type: 'ACTIVATE_TOOL',
@@ -90,6 +90,10 @@ describe('isHostCommand', () => {
 
   it('accepts an unknown extra field (forward compatibility)', () => {
     expect(isHostCommand({ ...activateTool, extra: 'ignored' })).toBe(true);
+  });
+
+  it('accepts the version key the channel stamps on the wire', () => {
+    expect(isHostCommand({ ...activateTool, version: 1 })).toBe(true);
   });
 
   it('survives a JSON round-trip', () => {

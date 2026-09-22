@@ -12,7 +12,7 @@ import type {
   OhifMeasurementLike,
   OhifMeasurementService,
   OhifToolGroupService,
-} from '../ohif.js';
+} from '../ohif/surface.js';
 
 const HOST_ORIGIN = 'http://localhost:5173';
 const VIEWPORT_ID = 'viewport-1';
