@@ -63,7 +63,7 @@ describe('useHostChannel', () => {
     expect(capturedRef.current?.state).toEqual({ ready: false, queued: 0 });
 
     act(() => {
-      dispatchFromViewer({ version: 1, type: 'VIEWER_READY', viewerVersion: '1.0.0' });
+      dispatchFromViewer({ type: 'VIEWER_READY', viewerVersion: '1.0.0' });
     });
 
     expect(capturedRef.current?.state).toEqual({ ready: true, queued: 0 });
@@ -79,7 +79,7 @@ describe('useHostChannel', () => {
     }
     const postMessageSpy = vi.spyOn(contentWindow, 'postMessage');
     act(() => {
-      dispatchFromViewer({ version: 1, type: 'VIEWER_READY', viewerVersion: '1.0.0' });
+      dispatchFromViewer({ type: 'VIEWER_READY', viewerVersion: '1.0.0' });
     });
     act(() => {
       capturedRef.current?.channel?.send('ACTIVATE_TOOL', {

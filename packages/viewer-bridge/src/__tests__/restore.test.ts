@@ -48,7 +48,6 @@ const restoreCommand = (
   measurements: RestoreMeasurementRequest[],
   studyInstanceUid = STUDY_UID,
 ): RestoreMeasurementsCommand => ({
-  version: 1,
   type: 'RESTORE_MEASUREMENTS',
   requestId: 'req-restore',
   studyInstanceUid,

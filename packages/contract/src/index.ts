@@ -1,7 +1,4 @@
-// The wire contract's single public entry: both sides consume it as the published package
-// `@bdiadiun/scoring-contract` and never import a module of it directly (A-15, Q-7).
-
-export { CONTRACT_VERSION, METRIC_KEY_BY_TOOL, TOOL_NAME_VALUES } from './vocabulary';
+export { METRIC_KEY_BY_TOOL, TOOL_NAME_VALUES } from './vocabulary';
 export type {
   ArmedRow,
   MeasurementGeometry,
@@ -13,7 +10,7 @@ export type {
 } from './vocabulary.props';
 
 export { ANSWER_TYPE_BY_COMMAND } from './answers';
-export type { AnsweredCommandType, AnswerTypeOf } from './answers.props';
+export type { AnsweredCommandType, AnswerTypeOf } from './answers';
 
 export {
   isFiniteNumber,

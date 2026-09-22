@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/ohif-extension-scoring-adapter",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "OHIF extension that registers our viewer extensions, so the viewer fork carries one entry that never changes",
   "license": "MIT",
   "repository": {
@@ -29,6 +29,6 @@
     "prepare": "tsc -b --force"
   },
   "dependencies": {
-    "@bdiadiun/ohif-extension-scoring-bridge": "0.0.8"
+    "@bdiadiun/ohif-extension-scoring-bridge": "0.0.9"
   }
 }

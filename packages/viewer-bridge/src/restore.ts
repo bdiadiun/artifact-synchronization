@@ -12,9 +12,6 @@ import type { Types } from '@cornerstonejs/core';
 
 import { LOG_PREFIX, type OhifServices } from './ohif.js';
 
-// A-14 / S-5.6. No value is posted from here: cornerstone recomputes cachedStats in the render
-// pass this triggers, and the ordinary MEASUREMENT_UPDATED path delivers it.
-
 export interface RestoreCommands {
   handleRestore: (command: RestoreMeasurementsCommand) => void;
   dispose: () => void;
@@ -25,12 +22,8 @@ const failAll = (
   reason: RestoreFailureReason,
 ): RestoreFailure[] => measurements.map(({ rowId }) => ({ rowId, reason }));
 
-// The contract guarantees three finite numbers per point (primitiveGuards.ts isPoints), which is
-// cornerstone's world point; the guard admitted this command before it reached us.
 const toWorldPoint = ([x, y, z]: number[]): Types.Point3 => [x, y, z];
 
-// Hand-built rather than EllipticalROITool.hydrate: that one re-derives metadata from the live
-// camera, needs an enabled element and drops the label (ohif-annotation-restore.md §1).
 const toAnnotation = ({
   measurementUid,
   toolName,
@@ -43,12 +36,9 @@ const toAnnotation = ({
     referencedImageId: geometry.referencedImageId,
   },
   data: {
-    // activeHandleIndex must be null, not absent: the renderer treats `!== null` as "a handle is
-    // active" and then indexes the canvas coordinates with undefined (EllipticalROITool.js:445).
     handles: { points: geometry.points.map(toWorldPoint), activeHandleIndex: null },
     label: geometry.label,
   },
-  // Makes cornerstone recompute the stats and emit ANNOTATION_MODIFIED afterwards.
   invalidated: true,
 });
 
@@ -61,8 +51,6 @@ const restoreRow = (
   }
 
   try {
-    // The selector is only read when it is an enabled HTMLDivElement (annotationState.js:59-68);
-    // for any string the group key comes from metadata.FrameOfReferenceUID (addSRAnnotation.ts:142).
     annotation.state.addAnnotation(toAnnotation(request), request.geometry.frameOfReferenceUid);
     return null;
   } catch (error) {
@@ -71,8 +59,6 @@ const restoreRow = (
   }
 };
 
-// The study the viewer shows is the one its loaded display sets belong to
-// (DisplaySetService.ts:114, getActiveDisplaySets).
 const showsStudy = (services: OhifServices, studyInstanceUid: string): boolean =>
   (services.displaySetService?.getActiveDisplaySets() ?? []).some(
     (displaySet) => displaySet.StudyInstanceUID === studyInstanceUid,
@@ -117,8 +103,6 @@ export const createRestore = (services: OhifServices, channel: ViewerChannel): R
     return Boolean(viewportId && cornerstoneViewportService?.getCornerstoneViewport(viewportId));
   };
 
-  // The viewport holds a cornerstone viewport only once its display set data has been set
-  // (CornerstoneViewportService.ts:509), the moment VIEWPORT_DATA_CHANGED reports (:492, :1229).
   const whenReady = (run: () => void): void => {
     if (holdsData() || !cornerstoneViewportService) {
       run();
@@ -137,18 +121,18 @@ export const createRestore = (services: OhifServices, channel: ViewerChannel): R
     gates.add(subscription);
   };
 
-  return {
-    handleRestore: (command: RestoreMeasurementsCommand): void => {
-      whenReady(() => {
-        runRestore(services, channel, command);
-      });
-    },
-
-    dispose: (): void => {
-      gates.forEach((subscription) => {
-        subscription.unsubscribe();
-      });
-      gates.clear();
-    },
+  const handleRestore = (command: RestoreMeasurementsCommand): void => {
+    whenReady(() => {
+      runRestore(services, channel, command);
+    });
   };
+
+  const dispose = (): void => {
+    gates.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
+    gates.clear();
+  };
+
+  return { handleRestore, dispose };
 };

@@ -48,7 +48,6 @@ const ELLIPSE_GEOMETRY = {
 };
 
 const activateTool = (rowId: string, requestId = 'req-1'): HostCommand => ({
-  version: 1,
   type: 'ACTIVATE_TOOL',
   requestId,
   rowId,
@@ -56,14 +55,12 @@ const activateTool = (rowId: string, requestId = 'req-1'): HostCommand => ({
 });
 
 const deactivateTool = (rowId: string): HostCommand => ({
-  version: 1,
   type: 'DEACTIVATE_TOOL',
   requestId: 'req-2',
   rowId,
 });
 
 const removeMeasurement = (measurementUid: string, requestId = 'req-3'): HostCommand => ({
-  version: 1,
   type: 'REMOVE_MEASUREMENT',
   requestId,
   rowId: 'row-1',
@@ -71,15 +68,16 @@ const removeMeasurement = (measurementUid: string, requestId = 'req-3'): HostCom
 });
 
 const focusMeasurement = (measurementUid: string): HostCommand => ({
-  version: 1,
   type: 'FOCUS_MEASUREMENT',
   requestId: 'req-4',
   rowId: 'row-1',
   measurementUid,
 });
 
-const dispatchCommand = (command: unknown, origin = HOST_ORIGIN): void => {
-  window.dispatchEvent(new MessageEvent('message', { data: command, origin }));
+// The contract version lives on the wire, not in the message types (A-25), so it is stamped here
+// the way the host's channel stamps it; without it the bridge's channel drops the command.
+const dispatchCommand = (command: HostCommand, origin = HOST_ORIGIN): void => {
+  window.dispatchEvent(new MessageEvent('message', { data: { version: 1, ...command }, origin }));
 };
 
 type Mock = ReturnType<typeof vi.fn>;

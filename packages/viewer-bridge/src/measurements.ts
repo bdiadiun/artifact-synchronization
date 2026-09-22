@@ -18,9 +18,6 @@ import {
 } from './ohif.js';
 import { createThrottledEmitter, type ThrottledEmitter } from './throttle.js';
 
-// A-11: values are not rounded and travel with their unit; an unnameable unit is dropped.
-
-// Spellings from cornerstone's getCalibratedUnits.js, plus ASCII in case the ² is dropped.
 const AREA_UNITS: Record<string, Unit | undefined> = {
   'mm²': 'mm2',
   mm2: 'mm2',
@@ -36,14 +33,11 @@ const LENGTH_UNITS: Record<string, Unit | undefined> = {
   pixels: 'px',
 };
 
-// The stats field naming the unit and the table of spellings, per metric key.
 const METRIC_SPECS = {
   area: { unitField: 'areaUnit', units: AREA_UNITS },
-  // No `'mm'` default as in OHIF's Length.ts:118: mm on an uncalibrated image would break Q-6.
   length: { unitField: 'unit', units: LENGTH_UNITS },
 } satisfies Record<MetricKey, { unitField: string; units: Record<string, Unit | undefined> }>;
 
-// Ten updates a second follow a drag without visible lag and cut a 60 fps drag six-fold.
 const UPDATE_INTERVAL_MS = 100;
 
 interface MeasurementUpdate {
@@ -52,7 +46,6 @@ interface MeasurementUpdate {
   geometry?: MeasurementGeometry;
 }
 
-// A calibration suffix (`'mm² ERMF'`) is provenance, not a different unit.
 const baseUnitToken = (raw: string): string => raw.trim().split(/\s+/)[0] ?? '';
 
 const normaliseUnit = (raw: unknown, table: Record<string, Unit | undefined>): Unit | null => {
@@ -94,13 +87,9 @@ const readMetrics = (measurement: OhifMeasurementLike, key: MetricKey): Metrics 
     return null;
   }
 
-  // The assertion is safe: findStatsEntry only returns an entry whose value already passed
-  // isFiniteNumber.
   return { [key]: { value: stats[key] as number, unit } };
 };
 
-// Null when the measurement carries no value this contract can name; mid-drag frames without
-// recomputed stats are the ordinary case, so nothing is logged here.
 export const toMetrics = (measurement: OhifMeasurementLike): Metrics | null => {
   switch (measurement.toolName) {
     case 'EllipticalROI':
@@ -114,18 +103,14 @@ export const toMetrics = (measurement: OhifMeasurementLike): Metrics | null => {
   }
 };
 
-// Array.isArray narrows to `any[]`, which would spread an unchecked value into the event.
 const isUnknownArray = (value: unknown): value is unknown[] => Array.isArray(value);
 
 const copyPoint = (point: unknown): unknown => (isUnknownArray(point) ? [...point] : point);
 
-// A-14: what the host persists so the viewer can rebuild the annotation after a reload.
-// Everything comes from the measurement itself (EllipticalROI.ts:61-81); nothing is derived.
 export const toGeometry = (measurement: OhifMeasurementLike): MeasurementGeometry | undefined => {
   const candidate = {
     frameOfReferenceUid: measurement.metadata?.FrameOfReferenceUID,
     referencedImageId: measurement.referencedImageId,
-    // Copied so the event does not carry cornerstone's live handle arrays.
     points: isUnknownArray(measurement.points) ? measurement.points.map(copyPoint) : undefined,
     label: typeof measurement.label === 'string' ? measurement.label : undefined,
   };
@@ -133,8 +118,6 @@ export const toGeometry = (measurement: OhifMeasurementLike): MeasurementGeometr
   return isMeasurementGeometry(candidate) ? candidate : undefined;
 };
 
-// Only MEASUREMENT_REMOVED carries a uid instead of the measurement (MeasurementService.ts:686-689);
-// the object handlers state that here rather than trusting the event they subscribed to.
 const asMeasurement = (measurement: OhifMeasurementLike | string): OhifMeasurementLike | null =>
   typeof measurement === 'string' ? null : measurement;
 
@@ -160,7 +143,6 @@ const createAddedHandler =
     const metrics = toMetrics(added);
 
     if (!metrics) {
-      // The row stays in "drawing" and the tool stays armed, so the user can simply draw again.
       console.warn(`${LOG_PREFIX} no metrics for measurement ${uid}; nothing sent to the host`);
       return;
     }
@@ -168,25 +150,19 @@ const createAddedHandler =
     const armed = channel.getArmed();
 
     const sent = channel.send('MEASUREMENT_ADDED', {
-      // A-8: a drawing made while nothing is armed is forwarded with rowId: null.
       rowId: armed?.rowId ?? null,
       measurementUid: uid,
       toolName: readToolName(added),
       metrics,
       causedBy: armed?.requestId,
-      // A-14: carried so the form can persist enough to have the annotation rebuilt after a reload.
       geometry: toGeometry(added),
     });
 
-    // C-4.3.6: released after the measurement is posted, so a failing tool restore cannot swallow
-    // the event.
     if (sent && armed) {
       restoreDefaultTool();
     }
   };
 
-// S-5.1: every update is forwarded, throttled per measurement; the form ignores a uid it does not
-// hold, which is the only place that knows whether a row is behind it.
 const createUpdatedHandler =
   (updates: ThrottledEmitter<MeasurementUpdate>) =>
   ({ measurement }: OhifMeasurementEvent): void => {
@@ -205,8 +181,6 @@ const createUpdatedHandler =
     });
   };
 
-// P-6 / A-10, the echo-loop point: a removal the host asked for answers its command, and one the
-// doctor made in the viewer is an event of its own.
 const createRemovedHandler =
   (
     channel: ViewerChannel,
@@ -221,7 +195,6 @@ const createRemovedHandler =
       return;
     }
 
-    // Discarded, not flushed: a trailing UPDATED after the removal would resurrect the row.
     updates.discard(uid);
 
     const command = takePendingRemoval(uid);
@@ -234,8 +207,6 @@ const createRemovedHandler =
     channel.send('MEASUREMENT_REMOVED', { measurementUid: uid });
   };
 
-// P-4: measurementService, not raw cornerstone events, because it merges ANNOTATION_ADDED +
-// ANNOTATION_COMPLETED into one MEASUREMENT_ADDED (MeasurementService.ts:545-576).
 export const subscribeMeasurements = (
   measurementService: OhifMeasurementService | undefined,
   channel: ViewerChannel,

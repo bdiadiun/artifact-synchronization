@@ -1,8 +1,6 @@
 import type { OhifExtension, OhifExtensionManager } from '@bdiadiun/ohif-extension-scoring-bridge';
 import { LOG_PREFIX } from './config.js';
 
-// Sequential and awaited: registerExtension runs each child's own preRegistration and is async
-// (ExtensionManager.ts:251-286), and the order the children are declared in is the order they get.
 export const registerChildren = async (
   extensionManager: OhifExtensionManager,
   children: readonly OhifExtension[],

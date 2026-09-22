@@ -22,7 +22,7 @@ the first.
 - **Three layers, one question each.** The contract is the wire format. The channel is the whole
   communication API. The two applications, the form and the viewer extension, raise a channel and
   use its methods; neither touches `postMessage`, `version`, a request id or a target origin.
-- **The channel owns what it was being handed.** `createChannel` takes the peer (its origin and how
+- **The channel owns what it was being handed.** The channel end takes the peer (its origin and how
   to find its window), the guard for what comes in, and optionally the incoming message that opens
   the way out. It builds its own post, its own outgoing queue and its own observable state
   (`ready`, `queued`). The host end names `VIEWER_READY` as that message and adds the one thing
@@ -52,6 +52,9 @@ the form lives in it. What A-17 added beyond that, a second package, was the cos
 benefit once A-21 had put the transport in a package both ends share.
 
 ## Consequences
+
+- A-24 later replaced the shared generic core with two concrete ends; the decision above about
+  what the channel owns is unchanged.
 
 - The status line shows readiness and the queue length; the type of the last event is gone from
   it. It was a development aid and the same information is in the console under each end's prefix.

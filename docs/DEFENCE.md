@@ -9,11 +9,11 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 | Concern                 | Host-app                                                                                                                                                    | Viewer extension                                                                                                                                       |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Origin configured       | [`VIEWER_ORIGIN`](../host-app/src/config.ts#L4)                                                                                                             | [`HOST_ORIGIN`][fork-config]                                                                                                                           |
-| Origin checked          | [`event.origin !== peerOrigin`](../packages/channel/src/incomingMessages.ts#L27)                                                                            | [the same check, the viewer end of the channel][fork-bridge-origin]                                                                                    |
+| Origin checked          | [`event.origin !== peer.origin`](../packages/channel/src/peer.ts#L36)                                                                                       | [the same check, the viewer end of the channel][fork-bridge-origin]                                                                                    |
 | URL input validated     | [`study` parameter checked against a DICOM identifier, then `encodeURIComponent`](../host-app/src/config.ts)                                                | —                                                                                                                                                      |
-| Payload validated       | [`isViewerEvent`](../packages/channel/src/hostChannel.ts#L23)                                                                                               | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
-| Handshake               | [READY opens the outbox](../packages/channel/src/createChannel.ts#L47)                                                                                      | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`announceReady`][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post]    |
-| Early commands          | [`queue.push(message)`](../packages/channel/src/outbox.ts#L65), [`open`](../packages/channel/src/outbox.ts#L70)                                             | —                                                                                                                                                      |
+| Payload validated       | [`isViewerEvent`](../packages/channel/src/hostChannel.ts#L135)                                                                                              | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
+| Handshake               | [READY flushes the outbox](../packages/channel/src/hostChannel.ts#L129)                                                                                     | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`announceReady`][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post]    |
+| Early commands          | [`queued.push(command)`](../packages/channel/src/hostOutbox.ts#L44), [`flush`](../packages/channel/src/hostOutbox.ts#L49)                                   | —                                                                                                                                                      |
 | Row id / measurement id | [`crypto.randomUUID()` in `addRow`](../host-app/src/form/rowActions.ts#L21)                                                                                 | [`getArmed()` on the channel][fork-bridge-map]                                                                                                         |
 | Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L7)                                                                                                              | [fixed `DEFAULT_TOOL` after a measurement][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]          |
 | Measurement delivered   | [`rowId === null` ignored](../host-app/src/form/viewerEventHandlers.ts#L94)                                                                                 | [`MEASUREMENT_ADDED` subscription][fork-bridge-added], [posted][fork-bridge-added-post], [`toMetrics`][fork-metrics], [unit normalisation][fork-units] |
@@ -29,23 +29,23 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 
 [fork-config]: ../packages/viewer-bridge/src/extension.ts
 [fork-index]: ../packages/viewer-bridge/src/extension.ts
-[fork-bridge-origin]: ../packages/channel/src/incomingMessages.ts#L27
-[fork-bridge-post]: ../packages/channel/src/outbox.ts#L48
-[fork-bridge-ready]: ../packages/channel/src/viewerChannel.ts
+[fork-bridge-origin]: ../packages/channel/src/peer.ts#L36
+[fork-bridge-post]: ../packages/channel/src/peer.ts#L19
+[fork-bridge-ready]: ../packages/channel/src/viewerChannel.ts#L164
 [fork-bridge-viewport]: ../packages/viewer-bridge/src/extension.ts#L46
-[fork-bridge-map]: ../packages/channel/src/viewerChannel.ts#L100
+[fork-bridge-map]: ../packages/channel/src/viewerChannel.ts#L47
 [fork-bridge-added]: ../packages/viewer-bridge/src/measurements.ts#L239
 [fork-bridge-added-post]: ../packages/viewer-bridge/src/measurements.ts#L149
 [fork-bridge-throttle]: ../packages/viewer-bridge/src/throttle.ts
 [fork-bridge-interval]: ../packages/viewer-bridge/src/measurements.ts#L47
 [fork-bridge-removed]: ../packages/viewer-bridge/src/measurements.ts#L234
-[fork-commands-guard]: ../packages/channel/src/viewerChannel.ts#L21
+[fork-commands-guard]: ../packages/channel/src/viewerChannel.ts#L155
 [fork-commands-snapshot]: ../packages/viewer-bridge/src/commands.ts#L20
 [fork-commands-active]: ../packages/viewer-bridge/src/commands.ts
 [fork-commands-disarm]: ../packages/viewer-bridge/src/commands.ts
 [fork-commands-idempotent]: ../packages/viewer-bridge/src/commands.ts
 [fork-removals-map]: ../packages/viewer-bridge/src/commands.ts#L84
-[fork-removals-cause]: ../packages/channel/src/viewerChannel.ts#L35
+[fork-removals-cause]: ../packages/channel/src/viewerChannel.ts#L49
 [fork-removals-remove]: ../packages/viewer-bridge/src/commands.ts#L89
 [fork-focus]: ../packages/viewer-bridge/src/commands.ts#L117
 [fork-metrics]: ../packages/viewer-bridge/src/measurements.ts
@@ -55,10 +55,10 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 ## Questions (canon P-1..P-6)
 
 **P-1. The iframe loads slower than the user clicks.** "Активувати" calls `send`; while `ready` is
-false the command goes to [`queue.push(message)`](../packages/channel/src/outbox.ts#L65) and
+false the command goes to [`queued.push(command)`](../packages/channel/src/hostOutbox.ts#L44) and
 the status line shows `у черзі: N`. The viewer announces `VIEWER_READY` only after
 [the first viewport joins a tool group][fork-bridge-viewport], because `setToolActive` is a silent
-no-op before that. The host then [flushes the queue in order](../packages/channel/src/outbox.ts#L70).
+no-op before that. The host then [flushes the queue in order](../packages/channel/src/hostOutbox.ts#L49).
 Demo: stop the viewer, click "Активувати", start the viewer, watch the counter drain.
 
 **P-2. Why `postMessage`.** The two apps have different origins, and `postMessage` is the only
@@ -109,7 +109,7 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 [status line](../host-app/src/components/BridgeStatus.tsx#L6) stays at `очікує VIEWER_READY`, the
 queue count grows with each "Активувати", and the viewer console has no `[channel] sent VIEWER_READY`. Walk:
 [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`channel.announceReady`][fork-bridge-ready] → host
-[READY branch](../packages/channel/src/createChannel.ts#L47). If `ACTIVATE_TOOL` is disabled instead,
+[READY branch](../packages/channel/src/hostChannel.ts#L129). If `ACTIVATE_TOOL` is disabled instead,
 the queue drains but the viewer console has no `[channel] received ACTIVATE_TOOL` and the tool stays WindowLevel.
 
 ## Rehearsal checklist

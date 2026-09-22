@@ -1,6 +1,6 @@
 // The viewer end's own behaviour on top of the generic channel (A-23): announcing the viewer,
 // the row the host armed, and the answer a command is entitled to. Origin, the contract guard and
-// the queue are exercised in createChannel.test.ts and not repeated here.
+// the queue are exercised in channel.test.ts and not repeated here.
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type {
@@ -20,7 +20,6 @@ import {
 } from './fixtures';
 
 const removeCommand = (requestId = 'req-remove'): RemoveMeasurementCommand => ({
-  version: 1,
   type: 'REMOVE_MEASUREMENT',
   requestId,
   rowId: 'row-1',
@@ -28,14 +27,13 @@ const removeCommand = (requestId = 'req-remove'): RemoveMeasurementCommand => ({
 });
 
 const restoreCommand = (requestId = 'req-restore'): RestoreMeasurementsCommand => ({
-  version: 1,
   type: 'RESTORE_MEASUREMENTS',
   requestId,
   studyInstanceUid: 'study-1',
   measurements: [],
 });
 
-type MeasurementAddedPayload = Omit<MeasurementAddedEvent, 'version' | 'type'>;
+type MeasurementAddedPayload = Omit<MeasurementAddedEvent, 'type'>;
 
 const measurementAddedPayload = (rowId: string | null): MeasurementAddedPayload => ({
   rowId,
@@ -94,6 +92,43 @@ describe('announcing the viewer (Q-1)', () => {
     expect(announced).toBe(true);
     expect(hostWindow.postMessage).toHaveBeenCalledTimes(1);
     channel.dispose();
+  });
+});
+
+describe('state and subscription (Q-1)', () => {
+  it('reports not ready with nothing queued before the viewer announces itself', () => {
+    const { channel } = createViewerChannelFixture();
+
+    expect(channel.getState()).toEqual({ ready: false, queued: 0 });
+  });
+
+  it('reports ready with nothing queued once announceReady has delivered VIEWER_READY', () => {
+    const { channel } = createViewerChannelFixture();
+
+    channel.announceReady({ viewerVersion: '3.12.17' });
+
+    expect(channel.getState()).toEqual({ ready: true, queued: 0 });
+  });
+
+  it('notifies a subscriber when announceReady delivers VIEWER_READY', () => {
+    const { channel } = createViewerChannelFixture();
+    const listener = vi.fn();
+    channel.subscribe(listener);
+
+    channel.announceReady({ viewerVersion: '3.12.17' });
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops notifying a subscriber once it has unsubscribed', () => {
+    const { channel } = createViewerChannelFixture();
+    const listener = vi.fn();
+    const unsubscribe = channel.subscribe(listener);
+    unsubscribe();
+
+    channel.announceReady({ viewerVersion: '3.12.17' });
+
+    expect(listener).not.toHaveBeenCalled();
   });
 });
 

@@ -40,6 +40,10 @@ and the linter disagree, fix the linter config in the same PR and say so.
   pass the count is not a fix, and an options bag of test-only seams does not escape the rule.
   React component props are exempt, and so is a signature a third party dictates (OHIF's
   extension parameters).
+- **No function inside a `return` object.** A factory declares every method above, with a name,
+  and returns a list of names: `return { send, on, exchange, dispose };`. The return then reads as
+  the file's table of contents and each method can be found by its name. (The same rule for
+  components is in §6.)
 - **A factory is never called inside another call's argument list.** Declare the function or the
   value with a name above and pass it by name, so the call reads as a list of things that already
   exist. No `createX` for what is one variable or one function.
@@ -69,17 +73,17 @@ and the linter disagree, fix the linter config in the same PR and say so.
 
 ## 4. Naming
 
-| Thing                                | Style                                                                           | Example                                                                            |
-| ------------------------------------ | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Types, interfaces, enums, components | PascalCase                                                                      | `MeasurementRow`, `BridgeState`                                                    |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                                               | `createOrchestrator`, `useScoringForm`                                             |
-| Files: components                    | PascalCase `.tsx`                                                               | `TotalsFooter.tsx`                                                                 |
-| Files: types and styles              | `.props.ts` next to a component always, next to another module when it earns it | `TotalsFooter.props.ts`, `rows.props.ts`                                           |
-| Files: everything else               | kebab-case or camelCase, one concept per file                                   | `create-channel.ts` / `createChannel.ts` (keep the existing style within a folder) |
-| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)`    | `form/__tests__/rows.test.ts`                                                      |
-| Booleans                             | `is`/`has`/`can`/`should` prefix                                                | `isReady`, `hasMetrics`                                                            |
-| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                      | `onRemove` / `handleRemove`                                                        |
-| Interfaces for props                 | `<Component>Props`                                                              | `ScoringPanelProps`                                                                |
+| Thing                                | Style                                                                           | Example                                                                        |
+| ------------------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Types, interfaces, enums, components | PascalCase                                                                      | `MeasurementRow`, `BridgeState`                                                |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                               | `createOrchestrator`, `useScoringForm`                                         |
+| Files: components                    | PascalCase `.tsx`                                                               | `TotalsFooter.tsx`                                                             |
+| Files: types and styles              | `.props.ts` next to a component always, next to another module when it earns it | `TotalsFooter.props.ts`, `rows.props.ts`                                       |
+| Files: everything else               | kebab-case or camelCase, one concept per file                                   | `host-channel.ts` / `hostChannel.ts` (keep the existing style within a folder) |
+| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)`    | `form/__tests__/rows.test.ts`                                                  |
+| Booleans                             | `is`/`has`/`can`/`should` prefix                                                | `isReady`, `hasMetrics`                                                        |
+| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                      | `onRemove` / `handleRemove`                                                    |
+| Interfaces for props                 | `<Component>Props`                                                              | `ScoringPanelProps`                                                            |
 
 No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`, `uid`, `url`.
 
@@ -127,8 +131,8 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - Never reach into another package's internals; the contract package is consumed through its
   public entry only.
 - **A shape is declared once, by the package that owns the idea.** Before writing an interface, a
-  guard or a constant, search the packages for one that already says it: `Disposable` and
-  `MessageOfType` belong to the channel, the primitive guards (`isOneOf`, `isFiniteNumber`,
+  guard or a constant, search the packages for one that already says it: `MessageHandlers` and
+  `ChannelState` belong to the channel, the primitive guards (`isOneOf`, `isFiniteNumber`,
   `isMetrics`) and every vocabulary table to the contract, the initial channel state to the
   channel. The application extends or picks from those (`extends RowActions`,
   `Pick<ToolCommands, 'getArmed' | 'disarm'>`) instead of listing the members again.
@@ -215,28 +219,17 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 
 ## 8. Comments
 
-Code should read without comments: names, small functions and types carry the meaning. A comment
-is a cost every reader pays, so it has to earn its place.
-
-Write a comment only when the code cannot say _why_:
-
-- non-obvious behaviour of OHIF, cornerstone or the browser that the code depends on, with a short
-  `file:line` citation at the pinned version;
-- a workaround or a deliberate deviation from the obvious approach;
-- a security-relevant check whose purpose is not evident from the condition itself.
-
-Rules:
-
-- One to three lines. A longer rationale belongs in `docs/decisions/A-n-*.md` or `ARCHITECTURE.md`;
-  the code carries at most a pointer, e.g. `// A-8: the viewer owns measurement ids.`
-- No comments that restate the code, no JSDoc that repeats a name or its types, no section banners.
-- Canon and decision IDs only where a decision is implemented, not on every block; traceability
-  lives in `docs/FEATURE-GRAPH.md`, `ARCHITECTURE.md` and `docs/DEFENCE.md`.
+- **No comments in the packages** (A-24, author's decision 2026-09-22). Names, small functions and
+  types carry the meaning; a comment loads the reader and gets in the way of remembering the code.
+  What the code cannot say — the reason for a call, the OHIF or cornerstone `file:line` that
+  justifies it, the decision behind it — lives in `docs/notes/bridge-internals.md` and
+  `docs/decisions/`, where it is read on purpose rather than skipped over. The one exception is
+  a directive the tooling needs (`eslint-disable`, `@ts-expect-error`, the DefinePlugin note above
+  `declare const process`), kept to one line.
+- In the application the same rule applies; a component's `.props.ts` needs no explanation of its
+  own props.
 - No commented-out code, no TODO without an owner and a follow-up entry in `docs/STATE.md`.
-- English only; no mention of AI tools anywhere in code or comments (AI usage is documented in
-  `AI-USAGE.md`).
-- Target: comment lines stay under about 10% of non-blank lines in a file. More than that is a
-  signal to rename, extract a function, or move the explanation into the docs.
+- English only; no mention of AI tools anywhere in code (AI usage is documented in `AI-USAGE.md`).
 
 ## 9. Tests
 

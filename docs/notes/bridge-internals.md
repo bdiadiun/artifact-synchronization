@@ -48,3 +48,66 @@ and `ohif.ts`; announcing, the armed row and replies are the channel's (`package
   row stores its own `measurementUid`, and `MEASUREMENT_ADDED` carries `rowId`, so the rows array
   is the map. The viewer keeps no map either since A-23; the channel remembers only the armed row, and
   a removal is correlated through the pending `REMOVE_MEASUREMENT` command.
+
+## Details moved out of the code (A-24)
+
+- **Announce retry** (`extension.ts`): a later `VIEWPORT_ADDED` repeats `announceReady` only when
+  the first attempt found no host window; once delivered, further calls are no-ops.
+- **Removal is answered by the subscription** (`commands.ts`, `measurements.ts`): the REMOVE handler
+  parks the command and calls `measurementService.remove` (the `removeMeasurement` command only
+  wraps that call, `commandsModule.ts:746-751`); the OHIF `MEASUREMENT_REMOVED` subscription then
+  replies. A uid that is already gone is replied to at once so the host's exchange settles.
+- **Focus** (`commands.ts`): cornerstone's `JUMP_TO_MEASUREMENT` handler selects the annotation and
+  moves the camera (`commandsModule.ts:208-241`); an unknown uid is an ordinary race, not an error.
+- **Restore is hand-built** (`restore.ts`): `EllipticalROITool.hydrate` re-derives metadata from the
+  live camera, needs an enabled element and drops the label; `activeHandleIndex` must be `null`,
+  not absent, or the renderer indexes canvas coordinates with `undefined`
+  (`EllipticalROITool.js:445`); the group key for `addAnnotation` comes from
+  `metadata.FrameOfReferenceUID` for any string selector (`annotationState.js:59-68`); the viewport
+  holds data only after `VIEWPORT_DATA_CHANGED` (`CornerstoneViewportService.ts:492, 1229`).
+- **Mid-drag frames without stats are ordinary** (`measurements.ts`): cornerstone recomputes
+  `cachedStats` in the render pass, so the update path skips a measurement without stats silently.
+- **Only the form knows which uid belongs to a row**: the viewer sends every update and the reducer
+  ignores unknown uids (A-23).
+- **OHIF types** (`ohif.ts`): no OHIF package publishes declarations and the global `AppTypes` only
+  resolves inside the OHIF monorepo, so the extension declares the members it calls.
+- **Version overlay** (`ohif.ts`): customizations merge in registration order after cornerstone, so
+  `$push` appends to its list (`CustomizationService.ts:381-397`).
+- **Throttle per key** (`throttle.ts`): one annotation's drag cannot swallow another's final value.
+
+## OHIF facts behind specific lines (the code carries no comments, A-24)
+
+`commands.ts`
+
+- A released row returns to `WindowLevel`, OHIF's default primary-mouse tool (`modes/longitudinal … initToolGroups.ts:21-24`, A-23).
+- `setToolActive`, not `setToolActiveToolbar`, which arms every tool group (`commandsModule.ts:1025-1068`); the tool group and `hasTool` are checked first because `setToolActive` fails silently without them.
+- REMOVE for a uid the service no longer holds is answered at once (`MeasurementService.ts:675-680` returns silently; A-10); for a present uid the command is parked before `remove()` because the service broadcasts `MEASUREMENT_REMOVED` synchronously (`:674-689`), and cornerstone erases the drawing on that event (`initMeasurementService.ts:501-522`).
+- FOCUS: an unknown uid is an ordinary race, not the error `jumpToMeasurement` would warn about (`MeasurementService.ts:741-745`); the measurement panel makes the same call (`commandsModule.ts:739-744`).
+
+`extension.ts`
+
+- `setToolActive` is a silent no-op until a viewport has a tool group (`commandsModule.ts:1050-1055`), so `VIEWER_READY` is announced on `toolGroupService` `VIEWPORT_ADDED` (A-9).
+- OHIF's generated loader imports the default export of the package named in `pluginConfig.json` (`writePluginImportsFile.js:89-94`), so the configured extension is the default export.
+
+`measurements.ts`
+
+- `MEASUREMENT_ADDED` merges cornerstone's `ANNOTATION_ADDED` and `ANNOTATION_COMPLETED` into one event (`MeasurementService.ts:545-576`, P-4); `MEASUREMENT_REMOVED` carries only the uid (`:686-689`).
+- `measurement.data` is `cachedStats` keyed per render target, normally `imageId:<referencedImageId>` (`measurementServiceMappings/EllipticalROI.ts:110`); the `RectangleROI` mapping has the same shape (`RectangleROI.ts:60-80`).
+- No `'mm'` default as in OHIF's `Length.ts:118`: mm on an uncalibrated image would break Q-6.
+- Geometry for restore comes from the measurement itself (`EllipticalROI.ts:61-81`, A-14); points are copied so the event does not carry cornerstone's live handle arrays.
+
+`ohif.ts`
+
+- `window.config` reaches every extension through `preRegistration` (`ExtensionManager.ts:276-286`); the manager reads `id`, `preRegistration` and the module getters it finds (`:260-273`, `:297-341`), awaits the hook (`:277`), and `registerExtension` is public and re-entrant (`:251-286`), which is how the adapter registers its children.
+- `getToolGroup()` without an id resolves the active viewport's group (`ToolGroupService.ts:73-104`).
+- The version overlay uses `contentF`, not `label`, because the overlay renders one text node (`CustomizableViewportOverlay.tsx:380-397`); `$push` appends to cornerstone's list because customizations merge in registration order (`CustomizationService.ts:118-131, 381-397`).
+- `process.env.VERSION_NUMBER` is replaced by OHIF's webpack at build time (`.webpack/webpack.base.js:32,46`); `process` never exists in the browser, so the expression is written exactly as DefinePlugin matches it.
+
+`restore.ts`
+
+- `activeHandleIndex` must be `null`, not absent (`EllipticalROITool.js:445`); the group key for a string selector is `metadata.FrameOfReferenceUID` (`annotationState.js:59-68`, `addSRAnnotation.ts:142`); the study shown is the one the active display sets belong to (`DisplaySetService.ts:114`); a cornerstone viewport exists once `VIEWPORT_DATA_CHANGED` reported (`CornerstoneViewportService.ts:492, 509`).
+- `invalidated: true` makes cornerstone recompute the stats and emit `ANNOTATION_MODIFIED`, which is how the restored value reaches the form through the update stream.
+
+`channel/peer.ts`, `hostChannel.ts`, `hostOutbox.ts`
+
+- The `version` is the channel's (A-25); a foreign version is logged once and dropped before the guard. Only an event that names the request it answers can settle an exchange (A-10); an answer never reaches the general handlers. `VIEWER_READY` flushes the queue before the application's handlers run (A-9); a post that finds no window keeps the remainder queued (Q-1). On dispose, the armed row is cancelled through the still-live outbox only if the viewer was ready (Q-5).

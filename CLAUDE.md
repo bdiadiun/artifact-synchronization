@@ -153,7 +153,7 @@ Indicative slice order (the minimum from the canon; refined in the graph): 0. `d
 ## 5. Technical rules
 
 - **Message contract** is described in one place and shared by both apps; every message carries
-  `version: 1`. A contract change = updated types + updated table in `ARCHITECTURE.md` in the same PR.
+  `version: 1`, added and checked by the channel alone (A-25). A contract change = updated types + updated table in `ARCHITECTURE.md` in the same PR.
 - **Origin**: every `message` handler checks `event.origin` against a configured value;
   `postMessage` is never called with `targetOrigin: '*'`.
 - **Handshake**: the host sends no commands before `VIEWER_READY`; commands that arrive too early

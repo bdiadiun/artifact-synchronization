@@ -10,7 +10,6 @@ export const isNonEmptyString = (value: unknown): value is string =>
 export const isFiniteNumber = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value);
 
-// The one membership test behind every "is it one of these strings" guard, on both sides.
 export const isOneOf =
   <TValue extends string>(values: readonly TValue[]): ((value: unknown) => value is TValue) =>
   (value: unknown): value is TValue =>
@@ -30,7 +29,6 @@ export const isMetrics = (value: unknown): value is Metrics => {
   return Object.values(value).every(isMetric);
 };
 
-// A world point is [x, y, z]; a shorter tuple breaks the first render in the viewer.
 const WORLD_POINT_LENGTH = 3;
 
 const isWorldPoint = (value: unknown): value is number[] =>
@@ -45,8 +43,6 @@ export const isMeasurementGeometry = (value: unknown): value is MeasurementGeome
   isNonEmptyString(value.referencedImageId) &&
   isPoints(value.points) &&
   (value.label === undefined || typeof value.label === 'string');
-
-export const hasVersion1 = (value: Record<string, unknown>): boolean => value.version === 1;
 
 export const isOptionalString = (value: unknown): boolean =>
   value === undefined || typeof value === 'string';

@@ -74,47 +74,48 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-62 | Nothing unused, nothing declared twice                                                                                                            | A-13, Q-5, Q-7, X-5                                             | F-61             | 56    | done    | The full verification set is green with the same behaviour cases; a grep for each removed symbol finds nothing; every interface that lets go of a resource extends the one Disposable; the line count falls while no test of behaviour is deleted, only the cases that asserted removed diagnostics.                                                                                                                                                                                                      |
 | F-63 | One channel API for both ends                                                                                                                     | A-13, Q-1, Q-2, Q-3, Q-4, Q-5, Q-7, X-5                         | F-62             | 57    | done    | The full verification set is green from a cold install with 277 cases; every scenario of the deleted orchestrator tests passes against `createHostChannel`; two events in one tick both reach the form; moving the flush after the handlers, dropping the queue, or removing the cancel on dispose each fails a named test; a command missing from the viewer's handler map fails the build; non-test lines fall from 4418 to under 3900. The browser scenario runs after the release, with the fork pin. |
 | F-64 | A minimal bridge                                                                                                                                  | A-13, C-4.3.6, Q-1, Q-3, Q-4, Q-5, X-5                          | F-63             | 58    | done    | The extension is under 1 100 lines in seven files against 1 538 in 23; the full browser scenario passes unchanged on the released packages; a wrong reply shape and a missing command handler each fail the build; skipping the tool restore after a measurement, omitting causedBy in reply, or answering a gone removal with send each fails a named test.                                                                                                                                              |
+| F-65 | Plain code                                                                                                                                        | A-13, D-2, Q-7                                                  | F-64             | 59    | review  | All tests pass unchanged; no `as unknown as` remains in the packages; comment lines are under 10% of non-blank lines in channel, contract and bridge; removing a case from a guard's switch fails lint; the browser scenario passes on the linked working tree before the release.                                                                                                                                                                                                                        |
 
 ## Coverage of mandatory IDs
 
-| ID      | Covered by                                                                                                                                                             |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| C-3.1   | F-05, F-06                                                                                                                                                             |
-| C-3.2   | F-05, F-44, F-47, F-55, F-56, F-57                                                                                                                                     |
-| C-3.3   | F-01                                                                                                                                                                   |
-| C-3.4   | F-05, F-09, F-32                                                                                                                                                       |
-| C-4.1.1 | F-04, F-45                                                                                                                                                             |
-| C-4.1.2 | F-04                                                                                                                                                                   |
-| C-4.1.3 | F-02, F-04, F-52                                                                                                                                                       |
-| C-4.2.1 | F-01                                                                                                                                                                   |
-| C-4.2.2 | F-02                                                                                                                                                                   |
-| C-4.2.3 | F-01                                                                                                                                                                   |
-| C-4.3.1 | F-07                                                                                                                                                                   |
-| C-4.3.2 | F-07                                                                                                                                                                   |
-| C-4.3.3 | F-08                                                                                                                                                                   |
-| C-4.3.4 | F-09                                                                                                                                                                   |
-| C-4.3.5 | F-09, F-10                                                                                                                                                             |
-| C-4.3.6 | F-09, F-10, F-64                                                                                                                                                       |
-| C-4.3.7 | F-07                                                                                                                                                                   |
-| C-4.3.8 | F-11                                                                                                                                                                   |
-| C-4.4.1 | F-03, F-08                                                                                                                                                             |
-| C-4.4.2 | F-03, F-15, F-16                                                                                                                                                       |
-| C-4.4.3 | F-03                                                                                                                                                                   |
-| Q-1     | F-06, F-45, F-58, F-60, F-63, F-64                                                                                                                                     |
-| Q-2     | F-05, F-06, F-45, F-55, F-58, F-63                                                                                                                                     |
-| Q-3     | F-07, F-08, F-09, F-19, F-45, F-58, F-63, F-64                                                                                                                         |
-| Q-4     | F-14, F-15, F-19, F-39, F-45, F-58, F-63, F-64                                                                                                                         |
-| Q-5     | F-05, F-06, F-39, F-61, F-62, F-63, F-64                                                                                                                               |
-| Q-6     | F-09, F-10, F-11                                                                                                                                                       |
-| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56, F-57, F-58, F-59, F-62, F-63 |
-| D-1     | F-04, F-41, F-46, F-47, F-59                                                                                                                                           |
-| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53, F-60, F-61                                                                                                             |
-| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                                                         |
-| D-4     | F-00, F-24                                                                                                                                                             |
-| D-5     | F-12, F-20, F-24, F-25, F-46, F-47, F-60                                                                                                                               |
-| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                                                           |
-| D-7     | F-12, F-25                                                                                                                                                             |
-| D-8     | F-13, F-25                                                                                                                                                             |
+| ID      | Covered by                                                                                                                                                                   |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-3.1   | F-05, F-06                                                                                                                                                                   |
+| C-3.2   | F-05, F-44, F-47, F-55, F-56, F-57                                                                                                                                           |
+| C-3.3   | F-01                                                                                                                                                                         |
+| C-3.4   | F-05, F-09, F-32                                                                                                                                                             |
+| C-4.1.1 | F-04, F-45                                                                                                                                                                   |
+| C-4.1.2 | F-04                                                                                                                                                                         |
+| C-4.1.3 | F-02, F-04, F-52                                                                                                                                                             |
+| C-4.2.1 | F-01                                                                                                                                                                         |
+| C-4.2.2 | F-02                                                                                                                                                                         |
+| C-4.2.3 | F-01                                                                                                                                                                         |
+| C-4.3.1 | F-07                                                                                                                                                                         |
+| C-4.3.2 | F-07                                                                                                                                                                         |
+| C-4.3.3 | F-08                                                                                                                                                                         |
+| C-4.3.4 | F-09                                                                                                                                                                         |
+| C-4.3.5 | F-09, F-10                                                                                                                                                                   |
+| C-4.3.6 | F-09, F-10, F-64                                                                                                                                                             |
+| C-4.3.7 | F-07                                                                                                                                                                         |
+| C-4.3.8 | F-11                                                                                                                                                                         |
+| C-4.4.1 | F-03, F-08                                                                                                                                                                   |
+| C-4.4.2 | F-03, F-15, F-16                                                                                                                                                             |
+| C-4.4.3 | F-03                                                                                                                                                                         |
+| Q-1     | F-06, F-45, F-58, F-60, F-63, F-64                                                                                                                                           |
+| Q-2     | F-05, F-06, F-45, F-55, F-58, F-63                                                                                                                                           |
+| Q-3     | F-07, F-08, F-09, F-19, F-45, F-58, F-63, F-64                                                                                                                               |
+| Q-4     | F-14, F-15, F-19, F-39, F-45, F-58, F-63, F-64                                                                                                                               |
+| Q-5     | F-05, F-06, F-39, F-61, F-62, F-63, F-64                                                                                                                                     |
+| Q-6     | F-09, F-10, F-11                                                                                                                                                             |
+| Q-7     | F-03, F-22, F-23, F-24, F-26, F-27, F-28, F-29, F-30, F-31, F-32, F-33, F-34, F-35, F-36, F-37, F-41, F-42, F-43, F-44, F-49, F-55, F-56, F-57, F-58, F-59, F-62, F-63, F-65 |
+| D-1     | F-04, F-41, F-46, F-47, F-59                                                                                                                                                 |
+| D-2     | F-00, F-20, F-38, F-40, F-48, F-50, F-51, F-53, F-60, F-61, F-65                                                                                                             |
+| D-3     | F-00, F-20, F-21, F-22, F-24, F-28, F-29, F-36                                                                                                                               |
+| D-4     | F-00, F-24                                                                                                                                                                   |
+| D-5     | F-12, F-20, F-24, F-25, F-46, F-47, F-60                                                                                                                                     |
+| D-6     | F-00, F-12, F-21, F-25, F-28                                                                                                                                                 |
+| D-7     | F-12, F-25                                                                                                                                                                   |
+| D-8     | F-13, F-25                                                                                                                                                                   |
 
 ## Diagram
 
@@ -184,6 +185,7 @@ graph TD
   F62["F-62 Nothing unused, nothing declared twice"]
   F63["F-63 One channel API for both ends"]
   F64["F-64 A minimal bridge"]
+  F65["F-65 Plain code"]
 
   F20 --> F01
   F01 --> F02
@@ -253,6 +255,7 @@ graph TD
   F61 --> F62
   F62 --> F63
   F63 --> F64
+  F64 --> F65
 ```
 
 ## Slice → nodes
@@ -319,6 +322,7 @@ graph TD
 | 56 — refactor: remove dead code                              | `refactor/remove-dead-code`                 | #68 | F-62                   |
 | 57 — refactor: one channel API                               | `refactor/one-channel-api`                  | #69 | F-63                   |
 | 58 — refactor: minimal bridge                                | `refactor/minimal-bridge`                   | #72 | F-64                   |
+| 59 — refactor: plain channel                                 | `refactor/plain-channel`                    | —   | F-65                   |
 
 ## Node details
 
@@ -391,7 +395,7 @@ Files:
 - `packages/contract/src/__tests__/vocabulary.test.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -572,7 +576,7 @@ Files:
 - `packages/contract/src/__tests__/vocabulary.test.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -599,7 +603,7 @@ Files:
 - `packages/contract/src/__tests__/vocabulary.test.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -669,7 +673,7 @@ Files:
 - `host-app/src/utils/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -1013,7 +1017,7 @@ Files:
 - `packages/contract/package.json`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -1118,7 +1122,7 @@ Files:
 - `packages/contract/README.md`
 - `packages/contract/src/hostCommands.props.ts` — internal: `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
-- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.props.ts`, `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
+- `packages/contract/src/index.ts` — internal: `packages/contract/src/answers.ts`, `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/hostCommands.ts`, `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/primitiveGuards.ts` — internal: `packages/contract/src/vocabulary.props.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.props.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.props.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
@@ -1236,8 +1240,8 @@ Files:
 - `docs/decisions/A-21-channel-and-exchange.md`
 - `host-app/src/form/unanswered.ts` — no imports
 - `packages/channel/package.json`
-- `packages/channel/src/createChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/config.ts`, `packages/channel/src/disposers.ts`, `packages/channel/src/exchanges.ts`, `packages/channel/src/incomingMessages.ts`, `packages/channel/src/outbox.ts`, `packages/channel/src/pendingExchanges.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/incomingMessages.ts` — internal: `packages/channel/src/config.ts`, `packages/channel/src/disposers.ts`, `packages/channel/src/outbox.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/hostChannel.ts` — internal: `packages/channel/src/channelState.ts`, `packages/channel/src/hostOutbox.ts`, `packages/channel/src/messageHandlers.ts`, `packages/channel/src/peer.ts`, `packages/channel/src/pendingAnswers.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/peer.ts` — internal: `packages/channel/src/config.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/answers.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.props.ts`
 
 ### F-59 A published number is never reused
@@ -1311,10 +1315,9 @@ Files:
 - `host-app/src/hooks/useChannelState.ts` — external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/hooks/useHostChannel.ts` — internal: `host-app/src/config.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.props.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/viewerEventHandlers.ts`, `host-app/src/hooks/usePersistRows.ts`, `host-app/src/hooks/useRestoredRows.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `packages/channel/src/createChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/config.ts`, `packages/channel/src/disposers.ts`, `packages/channel/src/exchanges.ts`, `packages/channel/src/incomingMessages.ts`, `packages/channel/src/outbox.ts`, `packages/channel/src/pendingExchanges.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/hostChannel.ts` — internal: `packages/channel/src/createChannel.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/outbox.ts` — internal: `packages/channel/src/config.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/viewerChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/createChannel.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/hostChannel.ts` — internal: `packages/channel/src/channelState.ts`, `packages/channel/src/hostOutbox.ts`, `packages/channel/src/messageHandlers.ts`, `packages/channel/src/peer.ts`, `packages/channel/src/pendingAnswers.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/hostOutbox.ts` — internal: `packages/channel/src/channelState.ts`, `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/viewerChannel.ts` — internal: `packages/channel/src/channelState.ts`, `packages/channel/src/messageHandlers.ts`, `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
 
 ### F-64 A minimal bridge
 
@@ -1325,10 +1328,30 @@ Canon: A-13, C-4.3.6, Q-1, Q-3, Q-4, Q-5, X-5. Depends on: F-63. Slice 58, statu
 Files:
 
 - `docs/decisions/A-23-minimal-bridge.md`
-- `packages/channel/src/viewerChannel.ts` — internal: `packages/channel/src/buildMessage.ts`, `packages/channel/src/createChannel.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/viewerChannel.ts` — internal: `packages/channel/src/channelState.ts`, `packages/channel/src/messageHandlers.ts`, `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/vocabulary.props.ts` — internal: `packages/contract/src/vocabulary.ts`
 - `packages/viewer-bridge/src/commands.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/restore.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/extension.ts` — internal: `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/measurements.ts`, `packages/viewer-bridge/src/ohif.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands.ts`, `packages/viewer-bridge/src/ohif.ts`, `packages/viewer-bridge/src/throttle.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/ohif.ts` — no imports
 - `packages/viewer-bridge/src/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif.ts`; external: `@bdiadiun/scoring-channel`, `@cornerstonejs/core`, `@cornerstonejs/tools`
+
+### F-65 Plain code
+
+The channel's generic core, written once for both ends, needed six helper types, a curried factory and casts through unknown to type-check, and its author called it a skyscraper. Each end is now its own file with concrete types, sharing three plain functions; the thirty lines they have in common are duplicated on purpose. Contract guards are named functions with an exhaustive switch instead of tables. Comments in the three packages are cut to what the code cannot say, under a tenth of the lines, and the explanations worth keeping moved to the bridge-internals note. Nothing on the wire, in the state or in the order of events changes; all 308 tests passed without an edit. The contract version moved into the channel (A-25) and every comment left the packages: what they said lives in the bridge-internals note. No function is written inside a return object.
+
+Canon: A-13, D-2, Q-7. Depends on: F-64. Slice 59, status `review`.
+
+Files:
+
+- `docs/CONVENTIONS.md`
+- `docs/decisions/A-24-plain-code.md`
+- `docs/decisions/A-25-version-in-the-channel.md`
+- `packages/channel/src/hostChannel.ts` — internal: `packages/channel/src/channelState.ts`, `packages/channel/src/hostOutbox.ts`, `packages/channel/src/messageHandlers.ts`, `packages/channel/src/peer.ts`, `packages/channel/src/pendingAnswers.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/hostOutbox.ts` — internal: `packages/channel/src/channelState.ts`, `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/peer.ts` — internal: `packages/channel/src/config.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/pendingAnswers.ts` — internal: `packages/channel/src/config.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/viewerChannel.ts` — internal: `packages/channel/src/channelState.ts`, `packages/channel/src/messageHandlers.ts`, `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
+- `packages/contract/src/answers.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/viewerEvents.props.ts`
+- `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/hostCommands.props.ts`, `packages/contract/src/primitiveGuards.ts`
+- `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/primitiveGuards.ts`, `packages/contract/src/viewerEvents.props.ts`
