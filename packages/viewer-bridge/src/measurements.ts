@@ -39,25 +39,14 @@ const note = (quiet: boolean | undefined, message: string, detail?: unknown): vo
   }
 };
 
-const normaliseUnit = (
-  raw: unknown,
-  table: Record<string, Unit | undefined>,
-  context: string,
-  quiet?: boolean,
-): Unit | null => {
+// Null for a missing, empty or unknown spelling; the caller has the context to say which
+// measurement it was and how loudly to complain.
+const normaliseUnit = (raw: unknown, table: Record<string, Unit | undefined>): Unit | null => {
   if (typeof raw !== 'string' || raw.trim().length === 0) {
-    note(quiet, `${LOG_PREFIX} ${context}: missing unit`, raw);
     return null;
   }
 
-  const unit = table[baseUnitToken(raw)];
-
-  if (!unit) {
-    note(quiet, `${LOG_PREFIX} ${context}: unsupported unit string "${raw}"`);
-    return null;
-  }
-
-  return unit;
+  return table[baseUnitToken(raw)] ?? null;
 };
 
 const findStatsEntry = (measurement: OhifMeasurementLike, key: string): StatsEntry | null => {
@@ -107,14 +96,14 @@ const readMetrics = (
     return null;
   }
 
-  const unit = normaliseUnit(
-    stats[unitField],
-    units,
-    `${key} of ${measurement.uid ?? '(no uid)'}`,
-    quiet,
-  );
+  const unit = normaliseUnit(stats[unitField], units);
 
   if (!unit) {
+    note(
+      quiet,
+      `${LOG_PREFIX} ${key} of ${measurement.uid ?? '(no uid)'}: missing or unsupported unit`,
+      stats[unitField],
+    );
     return null;
   }
 

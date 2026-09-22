@@ -1,15 +1,13 @@
-import type { ViewerReadyEvent } from '@bdiadiun/scoring-contract';
-import type { Disposable } from '@bdiadiun/scoring-channel';
+import type { Disposable, ViewerChannel } from '@bdiadiun/scoring-channel';
 
 import { LOG_PREFIX } from './config.js';
 import { readViewerVersion } from './viewerVersion.js';
 import type { OhifServicesManager } from './ohif.props.js';
-import type { PostToHost } from './messaging.props.js';
 
 export interface HandshakeDeps {
   servicesManager: OhifServicesManager;
   hostOrigin: string;
-  post: PostToHost;
+  send: ViewerChannel['send'];
 }
 
 export type Handshake = Disposable;
@@ -19,7 +17,7 @@ const VIEWER_VERSION = readViewerVersion() ?? 'unknown';
 export const createHandshake = ({
   servicesManager,
   hostOrigin,
-  post,
+  send,
 }: HandshakeDeps): Handshake => {
   const { toolGroupService } = servicesManager.services;
 
@@ -31,13 +29,7 @@ export const createHandshake = ({
       return;
     }
 
-    const message: ViewerReadyEvent = {
-      version: 1,
-      type: 'VIEWER_READY',
-      viewerVersion: VIEWER_VERSION,
-    };
-
-    if (!post(message)) {
+    if (!send('VIEWER_READY', { viewerVersion: VIEWER_VERSION })) {
       return;
     }
 

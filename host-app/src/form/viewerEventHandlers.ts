@@ -1,5 +1,6 @@
-// What each viewer event does to the form. Pure wiring around `dispatch`/`send`: the row state
-// itself stays in the reducer, `useViewerEvents` decides *when* these run.
+// What each viewer event does to the form. Pure wiring around `dispatch` and the channel: which
+// rows change is the reducer's decision, and it is the reducer that ignores an event for a row that
+// is not drawing or a uid no row holds.
 
 import type {
   MeasurementAddedEvent,
@@ -7,15 +8,18 @@ import type {
   MeasurementsRestoredEvent,
   MeasurementUpdatedEvent,
   RestoreMeasurementRequest,
+  ViewerEvent,
 } from '@bdiadiun/scoring-contract';
+import type { MessageHandlers } from '@bdiadiun/scoring-channel';
 import { studyInstanceUid } from '@app/config';
-import type { ViewerEventHandlers } from '@app/hooks/useViewerEvents';
-import { findRow, findRowByUid } from '@app/utils/selectors';
-import { FormActionType, RowStatus, type Row } from './rows';
+import { findDrawingRow, FormActionType, type Row } from './rows';
 import type { FormContext } from './rows.props';
 import { warnUnanswered } from './unanswered';
 
-export interface ViewerEventContext extends FormContext {
+export interface ViewerEventHandlersDeps {
+  // Read at call time, not at registration: the handlers are registered once per channel and have
+  // to see the state of the render that is current when an event arrives.
+  getContext: () => FormContext;
   // Rows loaded from sessionStorage at mount (A-14); fixed for the session, independent of `state`.
   restoredRows: readonly Row[];
 }
@@ -37,10 +41,7 @@ const restorableMeasurements = (rows: readonly Row[]): RestoreMeasurementRequest
 
 // A-14: a row the viewer refused is marked from the answer to our own request, which the exchange
 // hands back here; no reply of anyone else's can reach this code.
-const dispatchRestoreFailures = (
-  context: ViewerEventContext,
-  answer: MeasurementsRestoredEvent,
-): void => {
+const dispatchRestoreFailures = (context: FormContext, answer: MeasurementsRestoredEvent): void => {
   for (const failure of answer.failed) {
     context.dispatch({
       type: FormActionType.RestoreFailed,
@@ -50,119 +51,83 @@ const dispatchRestoreFailures = (
   }
 };
 
-const sendRestoreIfNeeded = (context: ViewerEventContext): void => {
-  const measurements = restorableMeasurements(context.restoredRows);
+const requestRestore = (context: FormContext, restoredRows: readonly Row[]): void => {
+  const measurements = restorableMeasurements(restoredRows);
   if (measurements.length === 0) {
     return;
   }
-  void context
-    .exchange('RESTORE_MEASUREMENTS', { studyInstanceUid: studyInstanceUid(), measurements })
+  void context.channel
+    ?.exchange('RESTORE_MEASUREMENTS', { studyInstanceUid: studyInstanceUid(), measurements })
     .then((answer) => {
       dispatchRestoreFailures(context, answer);
     })
     .catch(warnUnanswered);
 };
 
-// A viewer reload forgot any flushed command, so an armed row is re-sent; on the first READY an
-// early activation is still queued in the bridge and flushes itself (A-9). That first READY is
-// instead where a reload of the host is answered with a restore request (A-14).
-const handleViewerReady = (context: ViewerEventContext, isReload: boolean): void => {
-  if (!isReload) {
-    sendRestoreIfNeeded(context);
-    return;
-  }
-  const { armedRowId, rows } = context.state;
-  if (armedRowId === null) {
-    return;
-  }
-  const armedRow = findRow(rows, armedRowId);
-  if (armedRow === undefined) {
-    return;
-  }
-  context.send('ACTIVATE_TOOL', { rowId: armedRow.rowId, toolName: armedRow.toolName });
-};
+export const createViewerEventHandlers = ({
+  getContext,
+  restoredRows,
+}: ViewerEventHandlersDeps): Partial<MessageHandlers<ViewerEvent>> => {
+  let readyCount = 0;
 
-const handleMeasurementAdded = (
-  context: ViewerEventContext,
-  event: MeasurementAddedEvent,
-): void => {
-  // A-8: a measurement drawn while nothing is armed arrives with `rowId: null` and is dropped.
-  if (event.rowId === null) {
-    console.info('[form] measurement without an armed row ignored', event.measurementUid);
-    return;
-  }
-  const row = findRow(context.state.rows, event.rowId);
-  // The reducer already refuses this for a missing/non-`drawing` row; logged here so the
-  // console shows *where* the no-op was decided.
-  if (row?.status !== RowStatus.Drawing) {
-    console.warn(
-      '[form] measurement for a row that is not armed',
-      event.rowId,
-      event.measurementUid,
-    );
-    return;
-  }
-  context.dispatch({
-    type: FormActionType.MeasurementReceived,
-    rowId: event.rowId,
-    measurementUid: event.measurementUid,
-    metrics: event.metrics,
-    geometry: event.geometry ?? null,
-  });
-};
+  // The first READY is where a reloaded form asks for its annotations back (A-14); an early
+  // activation is still queued in the channel and flushes itself (A-9). A later READY means the
+  // viewer reloaded and forgot the tool it was armed with, so the drawing row is armed again.
+  const handleViewerReady = (): void => {
+    readyCount += 1;
+    const context = getContext();
+    if (readyCount === 1) {
+      requestRestore(context, restoredRows);
+      return;
+    }
+    const drawingRow = findDrawingRow(context.state.rows);
+    if (drawingRow !== undefined) {
+      context.channel?.send('ACTIVATE_TOOL', {
+        rowId: drawingRow.rowId,
+        toolName: drawingRow.toolName,
+      });
+    }
+  };
 
-const handleMeasurementUpdated = (
-  context: ViewerEventContext,
-  event: MeasurementUpdatedEvent,
-): void => {
-  const row = findRowByUid(context.state.rows, event.measurementUid);
-  // Unknown uid is expected (a measurement drawn without an armed row), not an error.
-  if (row?.status !== RowStatus.Done) {
-    console.debug('[form] update for a measurement not tracked by any row', event.measurementUid);
-    return;
-  }
-  // Only dispatches locally, never `send`: no command here for the viewer to echo (A-10).
-  context.dispatch({
-    type: FormActionType.MeasurementUpdated,
-    measurementUid: event.measurementUid,
-    metrics: event.metrics,
-  });
-};
+  const handleMeasurementAdded = (event: MeasurementAddedEvent): void => {
+    // A-8: a measurement drawn while nothing is armed arrives with `rowId: null` and is dropped.
+    if (event.rowId === null) {
+      console.info('[form] measurement without an armed row ignored', event.measurementUid);
+      return;
+    }
+    getContext().dispatch({
+      type: FormActionType.MeasurementReceived,
+      rowId: event.rowId,
+      measurementUid: event.measurementUid,
+      metrics: event.metrics,
+      geometry: event.geometry ?? null,
+    });
+  };
 
-const handleMeasurementRemoved = (
-  context: ViewerEventContext,
-  event: MeasurementRemovedEvent,
-): void => {
+  // Only dispatches locally, never sends: no command here for the viewer to echo (A-10).
+  const handleMeasurementUpdated = (event: MeasurementUpdatedEvent): void => {
+    getContext().dispatch({
+      type: FormActionType.MeasurementUpdated,
+      measurementUid: event.measurementUid,
+      metrics: event.metrics,
+    });
+  };
+
   // The echo of our own REMOVE_MEASUREMENT never arrives here: it answers the exchange that asked
   // for it (A-10, A-21). What reaches this handler was deleted in the viewer.
-  const row = findRowByUid(context.state.rows, event.measurementUid);
-  if (row?.status !== RowStatus.Done) {
-    console.debug('[form] removal for a measurement not tracked by any row', event.measurementUid);
-    return;
-  }
-  context.dispatch({ type: FormActionType.MeasurementCleared, rowId: row.rowId });
-};
+  const handleMeasurementRemoved = (event: MeasurementRemovedEvent): void => {
+    getContext().dispatch({
+      type: FormActionType.MeasurementCleared,
+      measurementUid: event.measurementUid,
+    });
+  };
 
-// The answer to our own RESTORE_MEASUREMENTS is consumed by the exchange, so anything arriving as an
-// event is a duplicate or a reply to a request this session never made (A-21).
-const handleMeasurementsRestored = (event: MeasurementsRestoredEvent): void => {
-  console.debug('[form] ignoring unmatched MEASUREMENTS_RESTORED', event.causedBy);
+  // No handler for MEASUREMENTS_RESTORED: the exchange above consumes the answer to our own
+  // request, and no other reply concerns this session (A-21).
+  return {
+    VIEWER_READY: handleViewerReady,
+    MEASUREMENT_ADDED: handleMeasurementAdded,
+    MEASUREMENT_UPDATED: handleMeasurementUpdated,
+    MEASUREMENT_REMOVED: handleMeasurementRemoved,
+  };
 };
-
-export const createViewerEventHandlers = (context: ViewerEventContext): ViewerEventHandlers => ({
-  onViewerReady: (isReload: boolean): void => {
-    handleViewerReady(context, isReload);
-  },
-  onMeasurementAdded: (event: MeasurementAddedEvent): void => {
-    handleMeasurementAdded(context, event);
-  },
-  onMeasurementUpdated: (event: MeasurementUpdatedEvent): void => {
-    handleMeasurementUpdated(context, event);
-  },
-  onMeasurementRemoved: (event: MeasurementRemovedEvent): void => {
-    handleMeasurementRemoved(context, event);
-  },
-  onMeasurementsRestored: (event: MeasurementsRestoredEvent): void => {
-    handleMeasurementsRestored(event);
-  },
-});

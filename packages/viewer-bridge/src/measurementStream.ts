@@ -1,5 +1,3 @@
-import type { MeasurementAddedEvent, MeasurementRemovedEvent } from '@bdiadiun/scoring-contract';
-
 import { LOG_PREFIX } from './config.js';
 import { DisarmReason } from './commands.js';
 import { toGeometry } from './geometry.js';
@@ -9,10 +7,10 @@ import type { OhifMeasurementEvent } from './ohif.props.js';
 import type {
   AddedCorrection,
   AddedCorrectionDeps,
-  AddedEventParts,
   MeasurementStream,
   MeasurementStreamDeps,
 } from './measurementStream.props.js';
+import type { AddedPayload } from './reportedMeasurements.props.js';
 
 // About nine frames: past the render pass that settles cachedStats after mouse-up, yet quick
 // enough that a corrected value reaches the form before the user looks at it.
@@ -30,25 +28,6 @@ const readUid = (measurement: OhifMeasurementLike | null): string | null => {
 
 const readToolName = (measurement: OhifMeasurementLike): string =>
   typeof measurement.toolName === 'string' ? measurement.toolName : '';
-
-// A-8: unarmed drawings are forwarded with rowId: null; the host decides what to do.
-const toAddedEvent = ({
-  uid,
-  toolName,
-  metrics,
-  measurement,
-  armed,
-}: AddedEventParts): MeasurementAddedEvent => ({
-  version: 1,
-  type: 'MEASUREMENT_ADDED',
-  rowId: armed?.rowId ?? null,
-  measurementUid: uid,
-  toolName,
-  metrics,
-  causedBy: armed?.requestId,
-  // A-14: carried so the form can persist enough to have the annotation rebuilt after a reload.
-  geometry: toGeometry(measurement),
-});
 
 const createAddedCorrection = ({
   measurementService,
@@ -96,7 +75,7 @@ const createAddedCorrection = ({
 };
 
 const createAddedHandler =
-  ({ post, reported, getArmed, disarm }: MeasurementStreamDeps, correction: AddedCorrection) =>
+  ({ reported, armed }: MeasurementStreamDeps, correction: AddedCorrection) =>
   ({ measurement }: OhifMeasurementEvent): void => {
     const added = asMeasurement(measurement);
     const uid = readUid(added);
@@ -119,25 +98,28 @@ const createAddedHandler =
       return;
     }
 
-    const armed = getArmed();
-    const toolName = readToolName(added);
-    const event = toAddedEvent({ uid, toolName, metrics, measurement: added, armed });
+    const armedRow = armed.getArmed();
 
-    if (!post(event)) {
+    // A-8: unarmed drawings are forwarded with rowId: null; the host decides what to do.
+    const payload: AddedPayload = {
+      rowId: armedRow?.rowId ?? null,
+      measurementUid: uid,
+      toolName: readToolName(added),
+      metrics,
+      causedBy: armedRow?.requestId,
+      // A-14: carried so the form can persist enough to have the annotation rebuilt after a reload.
+      geometry: toGeometry(added),
+    };
+
+    if (!reported.reportAdded(payload)) {
       return;
     }
 
-    reported.recordAdded(uid, event.rowId, metrics);
-
-    if (event.rowId !== null) {
+    // Both only concern a measurement that belongs to a row; the disarm comes after the report, so
+    // a failing tool restore cannot swallow the event (C-4.3.6).
+    if (armedRow) {
       correction.schedule(uid);
-    }
-
-    console.debug(`${LOG_PREFIX} MEASUREMENT_ADDED sent`, event);
-
-    // C-4.3.6: after posting, so a failing tool restore cannot swallow the event.
-    if (armed) {
-      disarm(DisarmReason.MeasurementReceived);
+      armed.disarm(DisarmReason.MeasurementReceived);
     }
   };
 
@@ -175,7 +157,7 @@ const createUpdatedHandler =
 // P-6 / A-10: the other end of the loop in removals.ts. `measurement` is the uid string, not
 // the object (MeasurementService.ts:686-689).
 const createRemovedHandler =
-  ({ post, reported, takeCause }: MeasurementStreamDeps) =>
+  ({ reported }: MeasurementStreamDeps) =>
   ({ measurement }: OhifMeasurementEvent): void => {
     const uid = typeof measurement === 'string' ? measurement : undefined;
 
@@ -184,22 +166,7 @@ const createRemovedHandler =
       return;
     }
 
-    const causedBy = takeCause(uid);
-
-    const event: MeasurementRemovedEvent = {
-      version: 1,
-      type: 'MEASUREMENT_REMOVED',
-      measurementUid: uid,
-      causedBy,
-    };
-
-    reported.forget(uid);
-
-    if (!post(event)) {
-      return;
-    }
-
-    console.debug(`${LOG_PREFIX} MEASUREMENT_REMOVED sent`, event);
+    reported.reportRemoved(uid);
   };
 
 // P-4: measurementService, not raw cornerstone events, because it merges ANNOTATION_ADDED +

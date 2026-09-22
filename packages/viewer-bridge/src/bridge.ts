@@ -1,13 +1,16 @@
-import { createDisposerSet, type Disposable } from '@bdiadiun/scoring-channel';
+import {
+  createDisposerSet,
+  createViewerChannel,
+  type Disposable,
+  type MessageHandlers,
+} from '@bdiadiun/scoring-channel';
+import type { HostCommand } from '@bdiadiun/scoring-contract';
 import { LOG_PREFIX } from './config.js';
 import { createToolCommands, DisarmReason } from './commands.js';
 import { createRemovalCommands } from './removals.js';
 import { createFocusCommands } from './focus.js';
 import { createRestoreCommands } from './restore.js';
 import { createHandshake } from './handshake.js';
-import { createCommandListener, createPostToHost } from './messaging.js';
-import { createCommandRegistry, toCommandHandlerEntries } from './registry.js';
-import type { CommandHandlers } from './registry.props.js';
 import { createMeasurementStream } from './measurementStream.js';
 import { createReportedMeasurements } from './reportedMeasurements.js';
 import type { OhifCommandsManager, OhifServicesManager } from './ohif.props.js';
@@ -25,16 +28,14 @@ export const createBridge = ({
   commandsManager,
   hostOrigin,
 }: BridgeDeps): Bridge => {
-  const postToHost = createPostToHost(hostOrigin);
-  const reported = createReportedMeasurements({ post: postToHost });
+  const channel = createViewerChannel({ hostOrigin });
+  const send = channel.send;
 
-  const removals = createRemovalCommands({
-    servicesManager,
-    post: postToHost,
-    forget: reported.forget,
-  });
+  const reported = createReportedMeasurements({ send });
+
+  const removals = createRemovalCommands({ servicesManager, send, reported });
   const focus = createFocusCommands({ servicesManager });
-  const restore = createRestoreCommands({ servicesManager, reported, post: postToHost });
+  const restore = createRestoreCommands({ servicesManager, reported, send });
 
   const toolCommands = createToolCommands({ servicesManager, commandsManager });
 
@@ -47,35 +48,23 @@ export const createBridge = ({
     REMOVE_MEASUREMENT: removals.handleRemove,
     FOCUS_MEASUREMENT: focus.handleFocus,
     RESTORE_MEASUREMENTS: restore.handleRestore,
-  } satisfies CommandHandlers;
+  } satisfies MessageHandlers<HostCommand>;
 
-  const registry = createCommandRegistry();
+  channel.onEach(commandHandlers);
 
-  for (const [type, handler] of toCommandHandlerEntries(commandHandlers)) {
-    registry.register(type, handler);
-  }
+  const stream = createMeasurementStream({ servicesManager, reported, armed: toolCommands });
 
-  const stream = createMeasurementStream({
-    servicesManager,
-    post: postToHost,
-    reported,
-    getArmed: toolCommands.getArmed,
-    disarm: toolCommands.disarm,
-    takeCause: removals.takeCause,
-  });
-
-  const listener = createCommandListener({ hostOrigin, onCommand: registry.dispatch });
-  const handshake = createHandshake({ servicesManager, hostOrigin, post: postToHost });
+  const handshake = createHandshake({ servicesManager, hostOrigin, send });
 
   const disposers = createDisposerSet({ logPrefix: LOG_PREFIX });
 
   // The doctor's tool is restored before the subscriptions go away, and every subscription is
-  // released in the order it was taken out in.
+  // released in the order it was taken out in. The channel's own handlers go with it.
   disposers.add(() => {
     toolCommands.disarm(DisarmReason.BridgeDispose);
   });
   disposers.add(handshake.dispose);
-  disposers.add(listener.dispose);
+  disposers.add(channel.dispose);
   disposers.add(stream.dispose);
   disposers.add(restore.dispose);
   disposers.add(reported.dispose);

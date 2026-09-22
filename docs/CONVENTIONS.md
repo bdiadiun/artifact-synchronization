@@ -32,6 +32,17 @@ and the linter disagree, fix the linter config in the same PR and say so.
   in one module) and carries a comment saying so.
 - Exported functions declare their return type explicitly. Internal helpers may infer.
 - Prefer small named helpers over long inline lambdas; a callback longer than ~5 lines gets a name.
+- **At most three inputs.** A function, factory, hook or helper takes no more than three inputs,
+  counting positional parameters or, when it takes an options or dependencies object, that
+  object's properties. More than three means it works with everything in the world: let it own
+  what it was being handed, split it, or pass the one cohesive object that already exists (a
+  channel, a service) instead of its members one by one. Nesting the extras in a sub-object to
+  pass the count is not a fix, and an options bag of test-only seams does not escape the rule.
+  React component props are exempt, and so is a signature a third party dictates (OHIF's
+  extension parameters).
+- **A factory is never called inside another call's argument list.** Declare the function or the
+  value with a name above and pass it by name, so the call reads as a list of things that already
+  exist. No `createX` for what is one variable or one function.
 - Exhaustiveness over a discriminated union is never left to discipline. Either a `switch` keeps a
   `default` branch narrowing to `never`, or a registration map is written with a `satisfies` clause
   against the union of keys, as the viewer adapter does; both fail the build when a case is added
@@ -58,17 +69,17 @@ and the linter disagree, fix the linter config in the same PR and say so.
 
 ## 4. Naming
 
-| Thing                                | Style                                                                           | Example                                                                                      |
-| ------------------------------------ | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Types, interfaces, enums, components | PascalCase                                                                      | `MeasurementRow`, `BridgeState`                                                              |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                                               | `createOrchestrator`, `useScoringForm`                                                       |
-| Files: components                    | PascalCase `.tsx`                                                               | `TotalsFooter.tsx`                                                                           |
-| Files: types and styles              | `.props.ts` next to a component always, next to another module when it earns it | `TotalsFooter.props.ts`, `rows.props.ts`                                                     |
-| Files: everything else               | kebab-case or camelCase, one concept per file                                   | `create-orchestrator.ts` / `createOrchestrator.ts` (keep the existing style within a folder) |
-| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)`    | `form/__tests__/rows.test.ts`                                                                |
-| Booleans                             | `is`/`has`/`can`/`should` prefix                                                | `isReady`, `hasMetrics`                                                                      |
-| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                      | `onRemove` / `handleRemove`                                                                  |
-| Interfaces for props                 | `<Component>Props`                                                              | `ScoringPanelProps`                                                                          |
+| Thing                                | Style                                                                           | Example                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Types, interfaces, enums, components | PascalCase                                                                      | `MeasurementRow`, `BridgeState`                                                    |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                               | `createOrchestrator`, `useScoringForm`                                             |
+| Files: components                    | PascalCase `.tsx`                                                               | `TotalsFooter.tsx`                                                                 |
+| Files: types and styles              | `.props.ts` next to a component always, next to another module when it earns it | `TotalsFooter.props.ts`, `rows.props.ts`                                           |
+| Files: everything else               | kebab-case or camelCase, one concept per file                                   | `create-channel.ts` / `createChannel.ts` (keep the existing style within a folder) |
+| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)`    | `form/__tests__/rows.test.ts`                                                      |
+| Booleans                             | `is`/`has`/`can`/`should` prefix                                                | `isReady`, `hasMetrics`                                                            |
+| Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                      | `onRemove` / `handleRemove`                                                        |
+| Interfaces for props                 | `<Component>Props`                                                              | `ScoringPanelProps`                                                                |
 
 No `I` prefix on interfaces, no Hungarian notation, no abbreviations except `id`, `uid`, `url`.
 
@@ -110,9 +121,9 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - **A shape is declared once, by the package that owns the idea.** Before writing an interface, a
   guard or a constant, search the packages for one that already says it: `Disposable` and
   `MessageOfType` belong to the channel, the primitive guards (`isOneOf`, `isFiniteNumber`,
-  `isMetrics`) and every vocabulary table to the contract, the initial orchestrator state to the
-  orchestrator. The application extends or picks from those (`extends RowActions`,
-  `Pick<Orchestrator, 'send' | 'exchange'>`) instead of listing the members again.
+  `isMetrics`) and every vocabulary table to the contract, the initial channel state to the
+  channel. The application extends or picks from those (`extends RowActions`,
+  `Pick<ToolCommands, 'getArmed' | 'disarm'>`) instead of listing the members again.
 - **No code for a caller that does not exist.** A default every caller overrides, an export only a
   test imports, a counter nothing displays and a branch a guard upstream makes unreachable are
   removed, not kept "for later"; a one-line function that only renames an expression is inlined.

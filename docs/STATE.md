@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 56 `refactor: remove dead code` (branch `refactor/remove-dead-code`, node F-62)                                                                                            |
-| Gate           | 2 — unused code removed and repeated declarations written once; awaiting result approval                                                                                   |
-| Last merged PR | #67 `refactor: fewer files, one teardown`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                              |
-| Next slice     | 57 `refactor: one dispatch path` (the bridge on `createChannel`, the form subscribed to events directly, the orchestrator folded), then 58 `refactor: drop viewer-adapter` |
+| Field          | Value                                                                                                                                                             |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 57 `refactor: one channel API` (branch `refactor/one-channel-api`, node F-63, decision A-22)                                                                      |
+| Gate           | 2 — the orchestrator package, `lastEvent` and the bridge registry are gone; awaiting result approval                                                              |
+| Last merged PR | #68 `refactor: remove dead code`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                              |
+| Next slice     | after the release: fork PR raising the adapter pin, then the browser scenario; 58 `refactor: one storage abstraction` (host only); 59 the adapter question (A-20) |
 
 ## Open decisions (see CANON.md → Decisions)
 

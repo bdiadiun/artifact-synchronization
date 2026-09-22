@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createBridge } from '../bridge';
-import type { OhifCommandsManager, OhifServicesManager } from '../ohif.props';
+import type {
+  OhifCommandsManager,
+  OhifMeasurementEvent,
+  OhifMeasurementService,
+  OhifServicesManager,
+} from '../ohif.props';
 
 const HOST_ORIGIN = 'http://host.example.com';
 
@@ -103,5 +108,154 @@ describe('createBridge dispose ordering', () => {
     expect(warnSpy).toHaveBeenCalled();
     expect(unsubscribeSpy).toHaveBeenCalledTimes(1);
     expect(removeEventListenerSpy).toHaveBeenCalledWith('message', expect.any(Function));
+  });
+});
+
+interface FakeMeasurementService {
+  service: OhifMeasurementService;
+  handlers: Map<string, (event: OhifMeasurementEvent) => void>;
+}
+
+const createFakeMeasurementService = (): FakeMeasurementService => {
+  const handlers = new Map<string, (event: OhifMeasurementEvent) => void>();
+
+  return {
+    handlers,
+    service: {
+      EVENTS: {
+        MEASUREMENT_ADDED: 'MEASUREMENT_ADDED',
+        MEASUREMENT_UPDATED: 'MEASUREMENT_UPDATED',
+        MEASUREMENT_REMOVED: 'MEASUREMENT_REMOVED',
+      },
+      subscribe: (eventName, handler) => {
+        handlers.set(eventName, handler);
+        return { unsubscribe: vi.fn() };
+      },
+      getMeasurement: vi.fn(),
+      remove: vi.fn(),
+      jumpToMeasurement: vi.fn(),
+    },
+  };
+};
+
+const ellipticalMeasurement = (uid: string): OhifMeasurementEvent['measurement'] => ({
+  uid,
+  toolName: 'EllipticalROI',
+  referencedImageId: 'image-1',
+  data: { 'imageId:image-1': { area: 12.5, areaUnit: 'mm2' } },
+});
+
+describe('createBridge end-to-end (A-21)', () => {
+  const setUp = (): {
+    hostWindow: { postMessage: ReturnType<typeof vi.fn> };
+    commandsManager: OhifCommandsManager;
+    measurementService: FakeMeasurementService;
+  } => {
+    const hostWindow = { postMessage: vi.fn() };
+    vi.spyOn(window, 'parent', 'get').mockReturnValue(hostWindow as unknown as Window);
+    const { service: toolGroupService } = createFakeToolGroupService([]);
+    const measurementService = createFakeMeasurementService();
+    const commandsManager: OhifCommandsManager = { runCommand: vi.fn() };
+    const servicesManager: OhifServicesManager = {
+      services: { toolGroupService, measurementService: measurementService.service },
+    };
+
+    createBridge({ servicesManager, commandsManager, hostOrigin: HOST_ORIGIN });
+
+    return { hostWindow, commandsManager, measurementService };
+  };
+
+  it('ACTIVATE_TOOL arms the row and activates the requested tool', () => {
+    const { commandsManager } = setUp();
+
+    armRow('row-1');
+
+    expect(commandsManager.runCommand).toHaveBeenCalledWith('setToolActive', {
+      toolName: 'EllipticalROI',
+    });
+  });
+
+  it('ignores a command from any origin other than the configured host', () => {
+    const { commandsManager } = setUp();
+
+    dispatchFromHost(
+      {
+        version: 1,
+        type: 'ACTIVATE_TOOL',
+        requestId: 'req-1',
+        rowId: 'row-1',
+        toolName: 'EllipticalROI',
+      },
+      'http://evil.example',
+    );
+
+    expect(commandsManager.runCommand).not.toHaveBeenCalled();
+  });
+
+  it('sends MEASUREMENT_ADDED with version 1, the armed rowId and the causing requestId', () => {
+    const { hostWindow, measurementService } = setUp();
+    armRow('row-1');
+
+    measurementService.handlers.get('MEASUREMENT_ADDED')?.({
+      measurement: ellipticalMeasurement('uid-1'),
+    });
+
+    expect(hostWindow.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        version: 1,
+        type: 'MEASUREMENT_ADDED',
+        rowId: 'row-1',
+        measurementUid: 'uid-1',
+        causedBy: 'req-1',
+      }),
+      HOST_ORIGIN,
+    );
+  });
+
+  it('answers REMOVE_MEASUREMENT with causedBy once the measurement is actually removed', () => {
+    const { hostWindow, measurementService } = setUp();
+    (measurementService.service.getMeasurement as ReturnType<typeof vi.fn>).mockReturnValue(
+      ellipticalMeasurement('uid-1'),
+    );
+    (measurementService.service.remove as ReturnType<typeof vi.fn>).mockImplementation(
+      (uid: string) => {
+        measurementService.handlers.get('MEASUREMENT_REMOVED')?.({ measurement: uid });
+      },
+    );
+
+    dispatchFromHost({
+      version: 1,
+      type: 'REMOVE_MEASUREMENT',
+      requestId: 'req-2',
+      rowId: 'row-1',
+      measurementUid: 'uid-1',
+    });
+
+    expect(measurementService.service.remove).toHaveBeenCalledWith('uid-1');
+    expect(hostWindow.postMessage).toHaveBeenCalledWith(
+      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1', causedBy: 'req-2' },
+      HOST_ORIGIN,
+    );
+  });
+
+  it('answers REMOVE_MEASUREMENT with causedBy without calling remove() when the measurement is already gone', () => {
+    const { hostWindow, measurementService } = setUp();
+    (measurementService.service.getMeasurement as ReturnType<typeof vi.fn>).mockReturnValue(
+      undefined,
+    );
+
+    dispatchFromHost({
+      version: 1,
+      type: 'REMOVE_MEASUREMENT',
+      requestId: 'req-3',
+      rowId: 'row-1',
+      measurementUid: 'uid-1',
+    });
+
+    expect(measurementService.service.remove).not.toHaveBeenCalled();
+    expect(hostWindow.postMessage).toHaveBeenCalledWith(
+      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1', causedBy: 'req-3' },
+      HOST_ORIGIN,
+    );
   });
 });

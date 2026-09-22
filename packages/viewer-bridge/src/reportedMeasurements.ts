@@ -1,8 +1,11 @@
-import type { MeasurementUpdatedEvent, Metrics } from '@bdiadiun/scoring-contract';
+import type { Metrics } from '@bdiadiun/scoring-contract';
+import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 
 import { LOG_PREFIX } from './config.js';
 import { createThrottledEmitter } from './throttle.js';
+import type { ThrottledEmitter } from './throttle.js';
 import type {
+  AddedPayload,
   MeasurementUpdate,
   ReportedMeasurements,
   ReportedMeasurementsDeps,
@@ -11,8 +14,26 @@ import type {
 // Ten updates a second follow a drag without visible lag and cut a 60 fps drag six-fold.
 const UPDATE_INTERVAL_MS = 100;
 
+const createUpdateEmitter = (
+  send: ViewerChannel['send'],
+  lastSentMetrics: Map<string, string>,
+): ThrottledEmitter<MeasurementUpdate> => {
+  const emitUpdate = (uid: string, { toolName, metrics, geometry }: MeasurementUpdate): void => {
+    const payload = { measurementUid: uid, toolName, metrics, geometry };
+
+    if (!send('MEASUREMENT_UPDATED', payload)) {
+      return;
+    }
+
+    lastSentMetrics.set(uid, JSON.stringify(metrics));
+    console.debug(`${LOG_PREFIX} MEASUREMENT_UPDATED sent`, payload);
+  };
+
+  return createThrottledEmitter<MeasurementUpdate>(UPDATE_INTERVAL_MS, emitUpdate);
+};
+
 export const createReportedMeasurements = ({
-  post,
+  send,
 }: ReportedMeasurementsDeps): ReportedMeasurements => {
   // A-8: needed because MEASUREMENT_REMOVED carries only the uid (MeasurementService.ts:686-689).
   const uidToRowId = new Map<string, string>();
@@ -25,26 +46,17 @@ export const createReportedMeasurements = ({
   // point (MeasurementService.ts:365-386), so an update always comes from the user's drag.
   const lastSentMetrics = new Map<string, string>();
 
-  const updateEmitter = createThrottledEmitter<MeasurementUpdate>(
-    UPDATE_INTERVAL_MS,
-    (uid, { toolName, metrics, geometry }) => {
-      const event: MeasurementUpdatedEvent = {
-        version: 1,
-        type: 'MEASUREMENT_UPDATED',
-        measurementUid: uid,
-        toolName,
-        metrics,
-        geometry,
-      };
+  const removalCauses = new Map<string, string>();
+  const updateEmitter = createUpdateEmitter(send, lastSentMetrics);
 
-      if (!post(event)) {
-        return;
-      }
-
-      lastSentMetrics.set(uid, JSON.stringify(metrics));
-      console.debug(`${LOG_PREFIX} MEASUREMENT_UPDATED sent`, event);
-    },
-  );
+  const forget = (uid: string): void => {
+    uidToRowId.delete(uid);
+    reportedUids.delete(uid);
+    lastSentMetrics.delete(uid);
+    removalCauses.delete(uid);
+    // Discard, not flush: a trailing UPDATED after REMOVED would resurrect the cleared row.
+    updateEmitter.discard(uid);
+  };
 
   return {
     isReported: (uid: string): boolean => reportedUids.has(uid),
@@ -52,13 +64,37 @@ export const createReportedMeasurements = ({
     wasLastSent: (uid: string, metrics: Metrics): boolean =>
       JSON.stringify(metrics) === lastSentMetrics.get(uid),
 
-    recordAdded: (uid: string, rowId: string | null, metrics: Metrics): void => {
-      reportedUids.add(uid);
-      lastSentMetrics.set(uid, JSON.stringify(metrics));
+    reportAdded: (payload: AddedPayload): boolean => {
+      if (!send('MEASUREMENT_ADDED', payload)) {
+        return false;
+      }
+
+      const { measurementUid, rowId, metrics } = payload;
+      reportedUids.add(measurementUid);
+      lastSentMetrics.set(measurementUid, JSON.stringify(metrics));
 
       if (rowId !== null) {
-        uidToRowId.set(uid, rowId);
+        uidToRowId.set(measurementUid, rowId);
       }
+
+      console.debug(`${LOG_PREFIX} MEASUREMENT_ADDED sent`, payload);
+      return true;
+    },
+
+    reportRemoved: (uid: string): void => {
+      // P-6 / A-10: the cause is what lets the host recognise the echo of its own command.
+      const payload = { measurementUid: uid, causedBy: removalCauses.get(uid) };
+      forget(uid);
+
+      if (!send('MEASUREMENT_REMOVED', payload)) {
+        return;
+      }
+
+      console.debug(`${LOG_PREFIX} MEASUREMENT_REMOVED sent`, payload);
+    },
+
+    expectRemoval: (uid: string, requestId: string): void => {
+      removalCauses.set(uid, requestId);
     },
 
     // A-14: a restored annotation never broadcasts MEASUREMENT_ADDED, so its row binding is
@@ -71,19 +107,14 @@ export const createReportedMeasurements = ({
       updateEmitter.push(uid, update);
     },
 
-    forget: (uid: string): void => {
-      uidToRowId.delete(uid);
-      reportedUids.delete(uid);
-      lastSentMetrics.delete(uid);
-      // Discard, not flush: a trailing UPDATED after REMOVED would resurrect the cleared row.
-      updateEmitter.discard(uid);
-    },
+    forget,
 
     dispose: (): void => {
       updateEmitter.dispose();
       lastSentMetrics.clear();
       reportedUids.clear();
       uidToRowId.clear();
+      removalCauses.clear();
     },
   };
 };

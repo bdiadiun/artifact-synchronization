@@ -89,11 +89,11 @@ my-react-app/
 | `src/assets/`     | Not created yet: the form uses native elements and no imagery (canon X-3).                                                                                              |
 | `src/components/` | `ViewerFrame`, `ScoringPanel`, `MeasurementRow`, `TotalsFooter`, `BridgeStatus`, each with its `.props.ts`; other modules keep one only when it earns its place (A-13). |
 | `src/pages/`      | `ScoringPage` — the single page: the viewer iframe on the left, the form panel on the right.                                                                            |
-| `src/hooks/`      | `useBridge`, `useScoringForm`, `useViewerEvents`, `usePersistedRows`.                                                                                                   |
+| `src/hooks/`      | `useHostChannel`, `useChannelState`, `useScoringForm`, `usePersistRows`, `useRestoredRows`.                                                                             |
 | `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                                                          |
 | `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                                                        |
 | `src/utils/`      | `format` (values, statuses, kinds) and `selectors` (row lookups).                                                                                                       |
-| `src/hooks/`      | Also holds `useBridge`, the React binding to the orchestrator package; the channel itself is not in this app (A-17).                                                    |
+| `src/hooks/`      | `useHostChannel` and `useChannelState` are the React binding to the channel package; the channel itself is not in this app (A-22).                                      |
 | `src/form/`       | The row model and everything around it: `rows` (reducer), `rowActions`, `commands`, `viewerEventHandlers`, `storage`, `totals`.                                         |
 | `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                                                                     |
 

@@ -17,12 +17,6 @@ export interface KeyState<T> {
   pending: { value: T } | null;
 }
 
-export interface EmitterState<T> {
-  keys: Map<string, KeyState<T>>;
-  intervalMs: number;
-  emit: Emit<T>;
-}
-
 const stopTimer = <T>(state: KeyState<T>): void => {
   if (state.timer !== null) {
     clearTimeout(state.timer);
@@ -30,85 +24,77 @@ const stopTimer = <T>(state: KeyState<T>): void => {
   }
 };
 
-const emitNow = <T>(key: string, state: KeyState<T>, value: T, emit: Emit<T>): void => {
-  state.lastEmitAt = Date.now();
-  state.pending = null;
-  emit(key, value);
-};
-
-const emitPending = <T>(key: string, state: KeyState<T>, emit: Emit<T>): void => {
-  const pending = state.pending;
-
-  if (pending) {
-    emitNow(key, state, pending.value, emit);
-  }
-};
-
-const pushValue = <T>({ keys, intervalMs, emit }: EmitterState<T>, key: string, value: T): void => {
-  let state = keys.get(key);
-
-  if (!state) {
-    state = { lastEmitAt: null, timer: null, pending: null };
-    keys.set(key, state);
-  }
-
-  state.pending = { value };
-
-  if (state.timer !== null) {
-    return;
-  }
-
-  const elapsed = state.lastEmitAt === null ? Infinity : Date.now() - state.lastEmitAt;
-
-  if (elapsed >= intervalMs) {
-    emitNow(key, state, value, emit);
-    return;
-  }
-
-  const scheduled = state;
-  scheduled.timer = setTimeout(() => {
-    scheduled.timer = null;
-    emitPending(key, scheduled, emit);
-  }, intervalMs - elapsed);
-};
-
 export const createThrottledEmitter = <T>(
   intervalMs: number,
   emit: Emit<T>,
 ): ThrottledEmitter<T> => {
-  const state: EmitterState<T> = { keys: new Map<string, KeyState<T>>(), intervalMs, emit };
+  const keys = new Map<string, KeyState<T>>();
   let disposed = false;
 
-  return {
-    push: (key: string, value: T): void => {
-      if (disposed) {
-        return;
-      }
+  const emitNow = (key: string, state: KeyState<T>, value: T): void => {
+    state.lastEmitAt = Date.now();
+    state.pending = null;
+    emit(key, value);
+  };
 
-      pushValue(state, key, value);
-    },
+  const emitPendingLater = (key: string, state: KeyState<T>, delayMs: number): void => {
+    state.timer = setTimeout(() => {
+      state.timer = null;
+      const pending = state.pending;
+
+      if (pending) {
+        emitNow(key, state, pending.value);
+      }
+    }, delayMs);
+  };
+
+  const push = (key: string, value: T): void => {
+    if (disposed) {
+      return;
+    }
+
+    const state = keys.get(key) ?? { lastEmitAt: null, timer: null, pending: null };
+    keys.set(key, state);
+    state.pending = { value };
+
+    if (state.timer !== null) {
+      return;
+    }
+
+    const elapsed = state.lastEmitAt === null ? Infinity : Date.now() - state.lastEmitAt;
+
+    if (elapsed >= intervalMs) {
+      emitNow(key, state, value);
+      return;
+    }
+
+    emitPendingLater(key, state, intervalMs - elapsed);
+  };
+
+  return {
+    push,
 
     discard: (key: string): void => {
-      const keyState = state.keys.get(key);
+      const state = keys.get(key);
 
-      if (!keyState) {
+      if (!state) {
         return;
       }
 
-      stopTimer(keyState);
-      keyState.pending = null;
-      state.keys.delete(key);
+      stopTimer(state);
+      state.pending = null;
+      keys.delete(key);
     },
 
     dispose: (): void => {
       disposed = true;
 
-      for (const keyState of state.keys.values()) {
-        stopTimer(keyState);
-        keyState.pending = null;
+      for (const state of keys.values()) {
+        stopTimer(state);
+        state.pending = null;
       }
 
-      state.keys.clear();
+      keys.clear();
     },
   };
 };

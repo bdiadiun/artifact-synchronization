@@ -1,4 +1,4 @@
-// Pure, side-effect-free reducer; `useScoringForm.ts` wires it to `send`/`lastEvent`.
+// Pure, side-effect-free reducer; `useScoringForm.ts` wires it to the channel's events.
 
 import { findRow, findRowByUid } from '@app/utils/selectors';
 import type { ActionOf, FormAction, FormState, Row } from './rows.props';
@@ -25,10 +25,11 @@ export enum FormActionType {
   RestoreFailed = 'RESTORE_FAILED',
 }
 
-export const initialFormState: FormState = { rows: [], armedRowId: null };
+export const initialFormState: FormState = { rows: [] };
 
-const clearArmed = (state: FormState, rowId: string): string | null =>
-  state.armedRowId === rowId ? null : state.armedRowId;
+// A-4: one row is armed at a time, and it is the one the viewer is drawing into.
+export const findDrawingRow = (rows: readonly Row[]): Row | undefined =>
+  rows.find((row) => row.status === RowStatus.Drawing);
 
 const replaceRow = (state: FormState, rowId: string, patch: Partial<Row>): Row[] =>
   state.rows.map((row) => (row.rowId === rowId ? { ...row, ...patch } : row));
@@ -43,21 +44,23 @@ const addRow = (state: FormState, action: ActionOf<FormActionType.AddRow>): Form
     geometry: null,
     restoreFailureReason: null,
   };
-  return { ...state, rows: [...state.rows, newRow] };
+  return { rows: [...state.rows, newRow] };
 };
 
 const armRow = (state: FormState, action: ActionOf<FormActionType.ArmRow>): FormState => {
-  if (findRow(state.rows, action.rowId) === undefined) {
+  const target = findRow(state.rows, action.rowId);
+  // Already drawing means nothing changes: A-4 keeps every other row out of that status.
+  if (target === undefined || target.status === RowStatus.Drawing) {
     return state;
   }
   const rows = state.rows.map((row) => {
     if (row.rowId === action.rowId) {
-      return row.status === RowStatus.Drawing ? row : { ...row, status: RowStatus.Drawing };
+      return { ...row, status: RowStatus.Drawing };
     }
     // Only one row armed at a time (A-4): any other drawing row goes back to pending.
     return row.status === RowStatus.Drawing ? { ...row, status: RowStatus.Pending } : row;
   });
-  return { rows, armedRowId: action.rowId };
+  return { rows };
 };
 
 const disarmRow = (state: FormState, action: ActionOf<FormActionType.DisarmRow>): FormState => {
@@ -65,10 +68,7 @@ const disarmRow = (state: FormState, action: ActionOf<FormActionType.DisarmRow>)
   if (target?.status !== RowStatus.Drawing) {
     return state;
   }
-  return {
-    rows: replaceRow(state, action.rowId, { status: RowStatus.Pending }),
-    armedRowId: clearArmed(state, action.rowId),
-  };
+  return { rows: replaceRow(state, action.rowId, { status: RowStatus.Pending }) };
 };
 
 const receiveMeasurement = (
@@ -86,7 +86,6 @@ const receiveMeasurement = (
       measurementUid: action.measurementUid,
       geometry: action.geometry,
     }),
-    armedRowId: clearArmed(state, action.rowId),
   };
 };
 
@@ -101,30 +100,28 @@ const updateMeasurement = (
   const rows = state.rows.map((row) =>
     row.measurementUid === action.measurementUid ? { ...row, metrics: action.metrics } : row,
   );
-  return { ...state, rows };
+  return { rows };
 };
 
 const removeRow = (state: FormState, action: ActionOf<FormActionType.RemoveRow>): FormState => {
   if (findRow(state.rows, action.rowId) === undefined) {
     return state;
   }
-  return {
-    rows: state.rows.filter((row) => row.rowId !== action.rowId),
-    armedRowId: clearArmed(state, action.rowId),
-  };
+  return { rows: state.rows.filter((row) => row.rowId !== action.rowId) };
 };
 
+// A-8: the viewer owns measurement ids, so a deletion that happened there names the uid and the
+// row it belongs to is looked up here.
 const clearMeasurement = (
   state: FormState,
   action: ActionOf<FormActionType.MeasurementCleared>,
 ): FormState => {
-  const target = findRow(state.rows, action.rowId);
+  const target = findRowByUid(state.rows, action.measurementUid);
   if (target?.status !== RowStatus.Done) {
     return state;
   }
   return {
-    ...state,
-    rows: replaceRow(state, action.rowId, {
+    rows: replaceRow(state, target.rowId, {
       status: RowStatus.Pending,
       metrics: null,
       measurementUid: null,
@@ -140,10 +137,7 @@ const markRestoreFailed = (
   if (target === undefined || target.restoreFailureReason === action.reason) {
     return state;
   }
-  return {
-    ...state,
-    rows: replaceRow(state, action.rowId, { restoreFailureReason: action.reason }),
-  };
+  return { rows: replaceRow(state, action.rowId, { restoreFailureReason: action.reason }) };
 };
 
 export const reducer = (state: FormState, action: FormAction): FormState => {

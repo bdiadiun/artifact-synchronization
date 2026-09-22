@@ -2,21 +2,27 @@
 // settled, timed-out or rejected exchange leaves nothing behind.
 
 import type { BridgeMessage } from '@bdiadiun/scoring-contract';
+import { EXCHANGE_TIMEOUT_MS } from './config.js';
 
-export interface PendingExchange<TIncoming extends BridgeMessage> {
+export interface PendingRequest {
   requestId: string;
   commandType: string;
   answerType: string;
-  timeoutMs: number;
-  resolve: (answer: TIncoming) => void;
-  reject: (error: Error) => void;
 }
 
 export interface PendingExchanges<TIncoming extends BridgeMessage> {
-  add: (exchange: PendingExchange<TIncoming>) => void;
+  // Resolves with the answer to this request, or rejects when none arrives in time.
+  awaitAnswer: (request: PendingRequest) => Promise<TIncoming>;
   // True when the message was the answer somebody was waiting for and has been handed to it.
   settle: (message: TIncoming) => boolean;
   rejectAll: (reason: string) => void;
+}
+
+interface Waiting<TIncoming extends BridgeMessage> {
+  request: PendingRequest;
+  timer: ReturnType<typeof setTimeout>;
+  resolve: (answer: TIncoming) => void;
+  reject: (error: Error) => void;
 }
 
 // Only an event that names the request it answers can settle one (A-10).
@@ -26,24 +32,22 @@ const causeOf = (message: BridgeMessage): string | undefined =>
 export const createPendingExchanges = <
   TIncoming extends BridgeMessage,
 >(): PendingExchanges<TIncoming> => {
-  const waiting = new Map<
-    string,
-    { exchange: PendingExchange<TIncoming>; timer: ReturnType<typeof setTimeout> }
-  >();
+  const waiting = new Map<string, Waiting<TIncoming>>();
 
   return {
-    add: (exchange: PendingExchange<TIncoming>): void => {
-      const timer = setTimeout(() => {
-        waiting.delete(exchange.requestId);
-        exchange.reject(
-          new Error(
-            `${exchange.commandType} ${exchange.requestId} was not answered with ${exchange.answerType} within ${String(exchange.timeoutMs)} ms`,
-          ),
-        );
-      }, exchange.timeoutMs);
+    awaitAnswer: (request: PendingRequest): Promise<TIncoming> =>
+      new Promise<TIncoming>((resolve, reject) => {
+        const timer = setTimeout(() => {
+          waiting.delete(request.requestId);
+          reject(
+            new Error(
+              `${request.commandType} ${request.requestId} was not answered with ${request.answerType} within ${String(EXCHANGE_TIMEOUT_MS)} ms`,
+            ),
+          );
+        }, EXCHANGE_TIMEOUT_MS);
 
-      waiting.set(exchange.requestId, { exchange, timer });
-    },
+        waiting.set(request.requestId, { request, timer, resolve, reject });
+      }),
 
     settle: (message: TIncoming): boolean => {
       const causedBy = causeOf(message);
@@ -54,20 +58,20 @@ export const createPendingExchanges = <
 
       const pending = waiting.get(causedBy);
 
-      if (pending?.exchange.answerType !== message.type) {
+      if (pending?.request.answerType !== message.type) {
         return false;
       }
 
       clearTimeout(pending.timer);
       waiting.delete(causedBy);
-      pending.exchange.resolve(message);
+      pending.resolve(message);
       return true;
     },
 
     rejectAll: (reason: string): void => {
-      for (const { exchange, timer } of waiting.values()) {
+      for (const { request, timer, reject } of waiting.values()) {
         clearTimeout(timer);
-        exchange.reject(new Error(`${exchange.commandType} ${exchange.requestId}: ${reason}`));
+        reject(new Error(`${request.commandType} ${request.requestId}: ${reason}`));
       }
       waiting.clear();
     },

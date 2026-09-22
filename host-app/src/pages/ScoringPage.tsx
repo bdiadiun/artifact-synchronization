@@ -2,17 +2,15 @@ import { useRef, type JSX } from 'react';
 import { BridgeStatus } from '@app/components/BridgeStatus';
 import { ScoringPanel } from '@app/components/ScoringPanel';
 import { ViewerFrame } from '@app/components/ViewerFrame';
-import { useBridge } from '@app/hooks/useBridge';
+import { useChannelState } from '@app/hooks/useChannelState';
+import { useHostChannel } from '@app/hooks/useHostChannel';
 import { useScoringForm } from '@app/hooks/useScoringForm';
 
 export const ScoringPage = (): JSX.Element => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const { send, exchange, state } = useBridge(iframeRef);
-  const { rows, addRow, activate, cancel, remove, focus } = useScoringForm({
-    send,
-    exchange,
-    lastEvent: state.lastEvent,
-  });
+  const channel = useHostChannel(iframeRef);
+  const channelState = useChannelState(channel);
+  const { rows, addRow, activate, cancel, remove, focus } = useScoringForm(channel);
 
   return (
     <div className="layout">
@@ -20,7 +18,7 @@ export const ScoringPage = (): JSX.Element => {
         <ViewerFrame ref={iframeRef} />
       </div>
       <div className="layout__panel">
-        <BridgeStatus state={state} />
+        <BridgeStatus state={channelState} />
         <ScoringPanel
           rows={rows}
           addRow={addRow}

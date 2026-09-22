@@ -1,74 +1,130 @@
-// Shared test doubles for the channel's own tests: a fake window that behaves like the real one for
-// the one thing the channel needs (a `message` listener), and the two directions of the protocol
-// built from the actual contract, so the tests exercise real guards, not stand-ins for them.
+// Shared test doubles for the channel's own tests. Neither end's channel takes an injected
+// window any more (A-22): both listen on the real jsdom `window`, so incoming traffic is
+// dispatched there; what each end injects is only its peer, a fake `{ postMessage }` window.
 
-import { isHostCommand, isViewerEvent } from '@bdiadiun/scoring-contract';
-import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
-import { createChannel } from '../createChannel';
-import type { Channel } from '../createChannel.props';
+import { vi } from 'vitest';
+import type {
+  ActivateToolCommand,
+  HostCommand,
+  MeasurementAddedEvent,
+  MeasurementRemovedEvent,
+  ViewerEvent,
+  ViewerReadyEvent,
+} from '@bdiadiun/scoring-contract';
+import { createHostChannel } from '../hostChannel';
+import type { HostChannel } from '../hostChannel';
+import { createViewerChannel } from '../viewerChannel';
+import type { ViewerChannel } from '../viewerChannel';
 
 export const HOST_ORIGIN = 'http://localhost:5173';
 export const VIEWER_ORIGIN = 'http://localhost:3000';
 
-// A plain EventTarget stands in for `window`: the channel only ever calls addEventListener,
-// removeEventListener and (indirectly, through the test) dispatchEvent on it.
-export const createFakeWindow = (): Window => new EventTarget() as unknown as Window;
+export interface FakePeerWindow {
+  postMessage: ReturnType<typeof vi.fn>;
+}
 
-export const dispatchMessage = (target: Window, data: unknown, origin: string): void => {
-  target.dispatchEvent(new MessageEvent('message', { data, origin }));
+export const createFakePeerWindow = (): FakePeerWindow => ({ postMessage: vi.fn() });
+
+export const dispatchMessage = (data: unknown, origin: string): void => {
+  window.dispatchEvent(new MessageEvent('message', { data, origin }));
+};
+
+// Tracked so a test file's `afterEach` can release every listener the fixtures created: jsdom's
+// `window` is shared across the tests in one file, and a channel left live would still be
+// listening when the next test dispatches on it.
+const createdChannels: { dispose: () => void }[] = [];
+
+export const disposeAllFixtureChannels = (): void => {
+  for (const channel of createdChannels.splice(0)) {
+    channel.dispose();
+  }
 };
 
 export interface HostChannelFixture {
-  channel: Channel<ViewerEvent, HostCommand>;
-  deliver: (message: HostCommand) => boolean;
-  delivered: HostCommand[];
-  localWindow: Window;
+  channel: HostChannel;
+  viewerWindow: FakePeerWindow;
+  posted: () => HostCommand[];
 }
 
-// The host end: sends `HostCommand`s, receives `ViewerEvent`s.
-export const createHostChannelFixture = (
-  overrides: Partial<{ exchangeTimeoutMs: number; deliverResult: boolean }> = {},
-): HostChannelFixture => {
-  const delivered: HostCommand[] = [];
-  const localWindow = createFakeWindow();
-
-  const deliver = (message: HostCommand): boolean => {
-    delivered.push(message);
-    return overrides.deliverResult ?? true;
-  };
-
-  const channel = createChannel<ViewerEvent, HostCommand>({
-    peerOrigin: VIEWER_ORIGIN,
-    isIncoming: isViewerEvent,
-    deliver,
-    localWindow,
-    exchangeTimeoutMs: overrides.exchangeTimeoutMs,
+export const createHostChannelFixture = (): HostChannelFixture => {
+  const viewerWindow = createFakePeerWindow();
+  const channel = createHostChannel({
+    viewerOrigin: VIEWER_ORIGIN,
+    getViewerWindow: () => viewerWindow as unknown as Window,
   });
+  createdChannels.push(channel);
 
-  return { channel, deliver, delivered, localWindow };
+  return {
+    channel,
+    viewerWindow,
+    posted: (): HostCommand[] =>
+      viewerWindow.postMessage.mock.calls.map(([message]) => message as HostCommand),
+  };
 };
+
+export interface ViewerChannelFixtureOptions {
+  framed?: boolean;
+}
 
 export interface ViewerChannelFixture {
-  channel: Channel<HostCommand, ViewerEvent>;
-  delivered: ViewerEvent[];
-  localWindow: Window;
+  channel: ViewerChannel;
+  hostWindow: FakePeerWindow;
+  posted: () => ViewerEvent[];
 }
 
-// The viewer end: sends `ViewerEvent`s, receives `HostCommand`s. Proves the same mechanics work in
-// the opposite direction, with the opposite guard.
-export const createViewerChannelFixture = (): ViewerChannelFixture => {
-  const delivered: ViewerEvent[] = [];
-  const localWindow = createFakeWindow();
+// The viewer's peer window is not injected: `createViewerChannel` reads `window.parent` itself
+// (A-22), so a framed viewer is simulated by mocking that getter.
+export const createViewerChannelFixture = ({
+  framed = true,
+}: ViewerChannelFixtureOptions = {}): ViewerChannelFixture => {
+  const hostWindow = createFakePeerWindow();
+  vi.spyOn(window, 'parent', 'get').mockReturnValue(
+    (framed ? hostWindow : window) as unknown as Window,
+  );
+  const channel = createViewerChannel({ hostOrigin: HOST_ORIGIN });
+  createdChannels.push(channel);
 
-  const channel = createChannel<HostCommand, ViewerEvent>({
-    peerOrigin: HOST_ORIGIN,
-    isIncoming: isHostCommand,
-    deliver: (message: ViewerEvent): boolean => {
-      delivered.push(message);
-      return true;
-    },
-    localWindow,
-  });
-
-  return { channel, delivered, localWindow };
+  return {
+    channel,
+    hostWindow,
+    posted: (): ViewerEvent[] =>
+      hostWindow.postMessage.mock.calls.map(([message]) => message as ViewerEvent),
+  };
 };
+
+export const viewerReadyMessage = (viewerVersion = '1.0.0'): ViewerReadyEvent => ({
+  version: 1,
+  type: 'VIEWER_READY',
+  viewerVersion,
+});
+
+export const activateToolMessage = (rowId: string, requestId = 'req-1'): ActivateToolCommand => ({
+  version: 1,
+  type: 'ACTIVATE_TOOL',
+  requestId,
+  rowId,
+  toolName: 'EllipticalROI',
+});
+
+export const measurementAddedMessage = (
+  rowId: string | null,
+  overrides: Partial<MeasurementAddedEvent> = {},
+): MeasurementAddedEvent => ({
+  version: 1,
+  type: 'MEASUREMENT_ADDED',
+  rowId,
+  measurementUid: 'uid-1',
+  toolName: 'EllipticalROI',
+  metrics: { area: { value: 124.5, unit: 'mm2' } },
+  ...overrides,
+});
+
+export const measurementRemovedMessage = (
+  measurementUid: string,
+  overrides: Partial<MeasurementRemovedEvent> = {},
+): MeasurementRemovedEvent => ({
+  version: 1,
+  type: 'MEASUREMENT_REMOVED',
+  measurementUid,
+  ...overrides,
+});

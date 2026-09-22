@@ -1,12 +1,12 @@
-// The package's single public entry: both ends import from `@bdiadiun/scoring-channel` and never
-// reach into a module of it (A-21).
+// The package's single public entry: each end raises its own channel and never reaches into a
+// module of this package (A-21). The generic core behind both ends stays internal.
 
-export { createChannel } from './createChannel.js';
-export type { AnswerMessage, Channel, ChannelOptions } from './createChannel.props.js';
-export type { MessageOfType, PayloadOf } from './buildMessage.js';
-export { createPeerPost } from './peerPost.js';
-export type { PeerPost, PeerPostOptions } from './peerPost.js';
-export { createIncomingMessages } from './incomingMessages.js';
-export type { IncomingMessages, IncomingMessagesOptions } from './incomingMessages.js';
+export { createHostChannel } from './hostChannel.js';
+export type { HostChannel } from './hostChannel.js';
+export { createViewerChannel } from './viewerChannel.js';
+export type { ViewerChannel } from './viewerChannel.js';
+export { INITIAL_CHANNEL_STATE } from './outbox.js';
+export type { ChannelState, MessageHandlers } from './createChannel.props.js';
+export type { PayloadOf } from './buildMessage.js';
 export { createDisposerSet } from './disposers.js';
-export type { Disposable, Disposer, DisposerSet, DisposerSetOptions } from './disposers.js';
+export type { Disposable } from './disposers.js';

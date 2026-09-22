@@ -34,7 +34,7 @@ measurement state each live in their own module.
 
 ## Commands
 
-- **Every command goes through a handler registry** (`registry.ts`, wired in `bridge.ts`). A new
+- **Every command goes through one handler map** (`channel.onEach` in `bridge.ts`, checked with `satisfies`; A-22 replaced the bridge's own registry). A new
   capability is a registered handler, not a new branch, so the fork does not change when the
   adapter grows. The registration map carries a `satisfies` clause against the contract's union of
   command types, so a command added to the contract without a handler fails the type check; that is

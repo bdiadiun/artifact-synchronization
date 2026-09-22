@@ -1,18 +1,18 @@
-import type { MeasurementRemovedEvent, RemoveMeasurementCommand } from '@bdiadiun/scoring-contract';
+import type { RemoveMeasurementCommand } from '@bdiadiun/scoring-contract';
+import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 
 import { LOG_PREFIX } from './config.js';
 import type { OhifServicesManager } from './ohif.props.js';
-import type { PostToHost } from './messaging.props.js';
+import type { ReportedMeasurements } from './reportedMeasurements.props.js';
 
 export interface RemovalCommandsDeps {
   servicesManager: OhifServicesManager;
-  post: PostToHost;
-  forget: (uid: string) => void;
+  send: ViewerChannel['send'];
+  reported: ReportedMeasurements;
 }
 
 export interface RemovalCommands {
   handleRemove: (command: RemoveMeasurementCommand) => void;
-  takeCause: (uid: string) => string | undefined;
 }
 
 // P-6 / A-10, the echo-loop point: causedBy lets the host recognise its own echo, and
@@ -20,12 +20,10 @@ export interface RemovalCommands {
 
 export const createRemovalCommands = ({
   servicesManager,
-  post,
-  forget,
+  send,
+  reported,
 }: RemovalCommandsDeps): RemovalCommands => {
   const { measurementService } = servicesManager.services;
-
-  const pendingRemovals = new Map<string, string>();
 
   const handleRemove = (command: RemoveMeasurementCommand): void => {
     const { measurementUid, requestId, rowId } = command;
@@ -43,43 +41,31 @@ export const createRemovalCommands = ({
       console.debug(
         `${LOG_PREFIX} REMOVE_MEASUREMENT ${requestId}: measurement ${measurementUid} (row ${rowId}) is already gone; answering without removing`,
       );
-      forget(measurementUid);
+      reported.forget(measurementUid);
       // Answered anyway, so the host's exchange settles at once instead of waiting for its
       // timeout.
-      const event: MeasurementRemovedEvent = {
-        version: 1,
-        type: 'MEASUREMENT_REMOVED',
-        measurementUid,
-        causedBy: requestId,
-      };
-      post(event);
+      send('MEASUREMENT_REMOVED', { measurementUid, causedBy: requestId });
       return;
     }
 
-    // Parked before the call: remove() broadcasts synchronously (MeasurementService.ts:674-689).
-    pendingRemovals.set(measurementUid, requestId);
+    // Parked before the call: remove() broadcasts synchronously (MeasurementService.ts:674-689),
+    // and the stream's removed handler is what stamps the cause on the outgoing event.
+    reported.expectRemoval(measurementUid, requestId);
 
     try {
       // The removeMeasurement command only wraps this call (commandsModule.ts:746-751); cornerstone
       // erases the drawing on MEASUREMENT_REMOVED (initMeasurementService.ts:501-522).
       measurementService.remove(measurementUid);
     } finally {
-      // If remove() threw, a stale requestId would be stamped on a later unrelated deletion.
-      pendingRemovals.delete(measurementUid);
+      // Also clears the expectation: if remove() threw, a stale requestId would be stamped on a
+      // later unrelated deletion.
+      reported.forget(measurementUid);
     }
 
-    forget(measurementUid);
     console.debug(
       `${LOG_PREFIX} REMOVE_MEASUREMENT ${requestId}: removed ${measurementUid} (row ${rowId})`,
     );
   };
 
-  return {
-    handleRemove,
-    takeCause: (uid: string): string | undefined => {
-      const requestId = pendingRemovals.get(uid);
-      pendingRemovals.delete(uid);
-      return requestId;
-    },
-  };
+  return { handleRemove };
 };

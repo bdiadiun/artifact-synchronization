@@ -1,5 +1,7 @@
 import type { HostCommand } from './hostCommands.props';
 import type { MeasurementGeometry, Metrics } from './vocabulary.props';
+// Type-only import of the tuple the guard tests against, so the reasons are listed once.
+import type { RESTORE_FAILURE_REASON_VALUES } from './viewerEvents';
 
 export interface ViewerReadyEvent {
   version: 1;
@@ -42,8 +44,7 @@ export interface MeasurementRemovedEvent {
 
 // Reason a single row's restore failed (A-14); string literals so the form can render a
 // per-row explanation without a lookup table.
-export type RestoreFailureReason =
-  'already-present' | 'unknown-study' | 'invalid-geometry' | 'viewer-error';
+export type RestoreFailureReason = (typeof RESTORE_FAILURE_REASON_VALUES)[number];
 
 export interface RestoreFailure {
   rowId: string;

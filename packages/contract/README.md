@@ -2,7 +2,7 @@
 
 Single source of truth for the host-app <-> viewer `postMessage` contract (canon Q-7).
 
-Published to npm; the form, the orchestrator package and the viewer extension all depend on it at
+Published to npm; the form, the channel package and the viewer extension all depend on it at
 an exact version. There is no copy of it anywhere: the extension consumed a byte-identical copy
 until decision A-15 replaced that with this package.
 

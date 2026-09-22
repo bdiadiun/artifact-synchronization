@@ -1,16 +1,11 @@
-import { useReducer } from 'react';
-import type { ViewerEvent } from '@bdiadiun/scoring-contract';
-import type { Orchestrator } from '@bdiadiun/scoring-orchestrator';
+import { useEffect, useReducer, useRef } from 'react';
+import type { HostChannel } from '@bdiadiun/scoring-channel';
 import { reducer, type FormState, type Row } from '@app/form/rows';
+import type { FormContext } from '@app/form/rows.props';
 import { createRowActions, type RowActions } from '@app/form/rowActions';
 import { createViewerEventHandlers } from '@app/form/viewerEventHandlers';
 import { usePersistRows } from './usePersistRows';
 import { useRestoredRows } from './useRestoredRows';
-import { useViewerEvents } from './useViewerEvents';
-
-export interface UseScoringFormOptions extends Pick<Orchestrator, 'send' | 'exchange'> {
-  lastEvent: ViewerEvent | null;
-}
 
 export interface UseScoringFormResult extends RowActions {
   rows: Row[];
@@ -18,27 +13,29 @@ export interface UseScoringFormResult extends RowActions {
 
 // A-14: reducer stays pure, so restore reads sessionStorage once here, before the first render,
 // and seeds the reducer's initial state instead of dispatching an action.
-const buildInitialState = (rows: Row[]): FormState => ({ rows, armedRowId: null });
+const buildInitialState = (rows: Row[]): FormState => ({ rows });
 
-export const useScoringForm = ({
-  send,
-  exchange,
-  lastEvent,
-}: UseScoringFormOptions): UseScoringFormResult => {
+export const useScoringForm = (channel: HostChannel | null): UseScoringFormResult => {
   const restoredRows = useRestoredRows();
   const [state, dispatch] = useReducer(reducer, restoredRows, buildInitialState);
   usePersistRows(state.rows);
 
-  const rowActions = createRowActions({ state, dispatch, send, exchange });
+  const context: FormContext = { state, dispatch, channel };
 
-  const eventHandlers = createViewerEventHandlers({
-    state,
-    dispatch,
-    send,
-    exchange,
-    restoredRows,
+  // The handlers below are registered once per channel, so they read the latest committed context
+  // through this ref instead of being taken out and registered again on every render.
+  const contextRef = useRef(context);
+  useEffect(() => {
+    contextRef.current = context;
   });
-  useViewerEvents(lastEvent, eventHandlers);
 
-  return { rows: state.rows, ...rowActions };
+  useEffect(() => {
+    if (channel === null) {
+      return undefined;
+    }
+    const getContext = (): FormContext => contextRef.current;
+    return channel.onEach(createViewerEventHandlers({ getContext, restoredRows }));
+  }, [channel, restoredRows]);
+
+  return { rows: state.rows, ...createRowActions(context) };
 };

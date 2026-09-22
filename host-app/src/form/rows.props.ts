@@ -5,7 +5,7 @@ import type {
   RestoreFailureReason,
   ToolName,
 } from '@bdiadiun/scoring-contract';
-import type { Orchestrator } from '@bdiadiun/scoring-orchestrator';
+import type { HostChannel } from '@bdiadiun/scoring-channel';
 // The two enums stay in `rows.ts`: an enum is a value, and these are imported here in type
 // position only, so nothing is required at runtime in either direction.
 import type { FormActionType, RowStatus } from './rows';
@@ -23,10 +23,10 @@ export interface Row {
   restoreFailureReason: RestoreFailureReason | null;
 }
 
+// At most one row is `drawing` at a time (A-4), so the armed row is the drawing one and is not
+// mirrored anywhere: `findDrawingRow` reads it off the rows.
 export interface FormState {
   rows: Row[];
-  // At most one row is `drawing` at a time (A-4); this mirrors that row's id, or null.
-  armedRowId: string | null;
 }
 
 export type FormAction =
@@ -42,14 +42,16 @@ export type FormAction =
     }
   | { type: FormActionType.MeasurementUpdated; measurementUid: string; metrics: Metrics }
   | { type: FormActionType.RemoveRow; rowId: string }
-  | { type: FormActionType.MeasurementCleared; rowId: string }
+  | { type: FormActionType.MeasurementCleared; measurementUid: string }
   | { type: FormActionType.RestoreFailed; rowId: string; reason: RestoreFailureReason };
 
 export type ActionOf<T extends FormActionType> = Extract<FormAction, { type: T }>;
 
 // What a row action and a viewer-event handler are both given: the state they read, the dispatch
-// they change it with and the two ways to reach the viewer.
-export interface FormContext extends Pick<Orchestrator, 'send' | 'exchange'> {
+// they change it with and the channel they reach the viewer through. The channel is null until the
+// mount effect has created it, before which nothing can be clicked.
+export interface FormContext {
   state: FormState;
   dispatch: Dispatch<FormAction>;
+  channel: HostChannel | null;
 }
