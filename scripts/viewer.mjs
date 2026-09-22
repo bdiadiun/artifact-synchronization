@@ -2,10 +2,18 @@
 // The OHIF fork is a local checkout, not part of this repository (decision A-18). viewer.json pins
 // the repository, the branch and the exact commit a reviewer must run; the folder itself is ignored.
 //
-// Usage: node scripts/viewer.mjs setup | dev | require
+// Usage: node scripts/viewer.mjs setup | dev | require | link | unlink
 
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  lstatSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -104,10 +112,59 @@ const runDev = () => {
   });
 };
 
-const COMMANDS = { setup: runSetup, dev: runDev, require: requireCheckout };
+// The fork consumes our packages from the registry. For a browser run of the working tree, the
+// four installed copies are swapped for symlinks to `packages/*` (built output included); the
+// fork's webpack follows symlinks and still resolves every dependency from its own node_modules,
+// so cornerstone stays a single instance. `unlink` puts the installed copies back.
+const LINKED_PACKAGES = {
+  'scoring-contract': 'contract',
+  'scoring-channel': 'channel',
+  'ohif-extension-scoring-bridge': 'viewer-bridge',
+  'ohif-extension-scoring-adapter': 'viewer-adapter',
+};
+const SCOPE_DIR = 'node_modules/@bdiadiun';
+const KEEP_SUFFIX = '.installed';
+
+const runLink = () => {
+  requireCheckout();
+  run('npm', ['run', 'build', '--workspaces', '--if-present'], ROOT);
+  for (const [name, folder] of Object.entries(LINKED_PACKAGES)) {
+    const target = join(viewerDir, SCOPE_DIR, name);
+    if (lstatSync(target, { throwIfNoEntry: false })?.isSymbolicLink()) {
+      continue;
+    }
+    if (existsSync(target)) {
+      renameSync(target, `${target}${KEEP_SUFFIX}`);
+    }
+    symlinkSync(join(ROOT, 'packages', folder), target);
+    console.log(`${name} -> packages/${folder}`);
+  }
+  console.log('Linked. Run `npm run viewer:unlink` before pinning a release.');
+};
+
+const runUnlink = () => {
+  requireCheckout();
+  for (const name of Object.keys(LINKED_PACKAGES)) {
+    const target = join(viewerDir, SCOPE_DIR, name);
+    if (!lstatSync(target, { throwIfNoEntry: false })?.isSymbolicLink()) {
+      continue;
+    }
+    rmSync(target);
+    renameSync(`${target}${KEEP_SUFFIX}`, target);
+    console.log(`${name} restored`);
+  }
+};
+
+const COMMANDS = {
+  setup: runSetup,
+  dev: runDev,
+  require: requireCheckout,
+  link: runLink,
+  unlink: runUnlink,
+};
 const command = COMMANDS[process.argv[2]];
 if (command === undefined) {
-  console.error('Usage: node scripts/viewer.mjs setup | dev | require');
+  console.error('Usage: node scripts/viewer.mjs setup | dev | require | link | unlink');
   process.exit(2);
 }
 command();

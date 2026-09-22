@@ -26,6 +26,7 @@ not a log. Update it in every PR (same commit as the work it describes).
 - GitHub default branch was the first pushed branch (`docs/canon-and-feature-graph`) until 2026-09-16; now `main`. A plain `git clone` therefore works.
 - OHIF facts (measurement shape, events, tool activation) are in `docs/notes/ohif-bridge-api.md`; do not re-research.
 - corepack 0.30 is available; yarn 1 for the fork comes from corepack, no global install.
+- Browser runs use `npm run viewer:link` (symlinks the four packages into the fork; `viewer:unlink` restores). Publish and pin only after the scenario passed on the linked tree.
 - Viewer dev server: `OHIF_OPEN=false yarn --cwd platform/app dev` inside `viewer/` (root `yarn dev` picks up `bun.lock` and fails; without `OHIF_OPEN=false` webpack opens a browser tab on the user's machine on every start).
 - Fork branches: `scoring` (base, from v3.12.17), feature branches PR into it; fork PR #1 = bridge extension.
 - Study `1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1` has pixel spacing → areas arrive in mm² (verified with a headless ellipse).
