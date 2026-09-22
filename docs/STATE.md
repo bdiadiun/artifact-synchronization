@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                             |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 57 `refactor: one channel API` (branch `refactor/one-channel-api`, node F-63, decision A-22)                                                                      |
-| Gate           | 2 — the orchestrator package, `lastEvent` and the bridge registry are gone; awaiting result approval                                                              |
-| Last merged PR | #68 `refactor: remove dead code`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                              |
-| Next slice     | after the release: fork PR raising the adapter pin, then the browser scenario; 58 `refactor: one storage abstraction` (host only); 59 the adapter question (A-20) |
+| Field          | Value                                                                                                                                                |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | none in progress; 57 `refactor: one channel API` merged (#69), fork on adapter 0.0.6 (Viewers#20), pin #70                                           |
+| Gate           | — (the browser scenario passed on the released packages: 8 of 8 behaviour checks, the ninth is OHIF's own prop-type warning)                         |
+| Last merged PR | #70 `chore: pin the fork at the adapter release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
+| Next slice     | 58 `refactor: one storage abstraction` (host only, sessionStorage behind one module + one hook); 59 the adapter question (A-20) for the author       |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -42,8 +42,6 @@ not a log. Update it in every PR (same commit as the work it describes).
 - A warm `node_modules` hid a broken dependency layout: after `npm ci`, Vitest could not find jsdom and ESLint could not resolve React types for Testing Library. Shared test tooling and React types now live in the root `package.json` (CONVENTIONS §1). Always verify with `npm ci` before gate 2.
 
 ## Follow-ups (out of current scope)
-
-- The fork has an uncommitted local branch `chore/take-the-adapter-release` (adapter pin 0.0.3 → 0.0.4, lock follows); it waits for approval and will be superseded by the pin that follows slice 56's release.
 
 - Optional, not scheduled: unit tests for the extension's `throttle.ts` and `toMetrics`; bonus S-5.4 Length (F-17); bonus S-5.6 state restore (F-19).
 

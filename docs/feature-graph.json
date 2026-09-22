@@ -316,7 +316,8 @@
     {
       "id": "57",
       "title": "refactor: one channel API",
-      "branch": "refactor/one-channel-api"
+      "branch": "refactor/one-channel-api",
+      "pr": 69
     }
   ],
   "nodes": [
@@ -3463,7 +3464,7 @@
       "canon": ["A-13", "Q-1", "Q-2", "Q-3", "Q-4", "Q-5", "Q-7", "X-5"],
       "dependsOn": ["F-62"],
       "slice": "57",
-      "status": "review",
+      "status": "done",
       "verify": "The full verification set is green from a cold install with 277 cases; every scenario of the deleted orchestrator tests passes against `createHostChannel`; two events in one tick both reach the form; moving the flush after the handlers, dropping the queue, or removing the cancel on dispose each fails a named test; a command missing from the viewer's handler map fails the build; non-test lines fall from 4418 to under 3900. The browser scenario runs after the release, with the fork pin.",
       "files": [
         "docs/decisions/A-22-one-channel-api.md",
