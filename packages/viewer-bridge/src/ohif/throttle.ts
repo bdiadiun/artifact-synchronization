@@ -1,20 +1,20 @@
-export interface ThrottledEmitter<T> {
-  push: (key: string, value: T) => void;
+import type { ViewerEvent } from '@bdiadiun/scoring-contract';
+
+export interface ThrottledEmitter {
+  push: (key: string, event: ViewerEvent) => void;
   discard: (key: string) => void;
   dispose: () => void;
 }
 
-type Emit<T> = (key: string, value: T) => void;
-
-export const createThrottledEmitter = <T>(
+export const createThrottledEmitter = (
   intervalMs: number,
-  emit: Emit<T>,
-): ThrottledEmitter<T> => {
+  emit: (event: ViewerEvent) => void,
+): ThrottledEmitter => {
   const timers = new Map<string, ReturnType<typeof setTimeout>>();
-  const pending = new Map<string, T>();
+  const pending = new Map<string, ViewerEvent>();
   let disposed = false;
 
-  const push = (key: string, value: T): void => {
+  const push = (key: string, value: ViewerEvent): void => {
     if (disposed) {
       return;
     }
@@ -24,7 +24,7 @@ export const createThrottledEmitter = <T>(
       return;
     }
 
-    emit(key, value);
+    emit(value);
 
     const timer = setTimeout(() => {
       timers.delete(key);

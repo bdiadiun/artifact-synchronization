@@ -552,7 +552,7 @@ Files:
 - `host-app/src/form/rows.ts` — internal: `host-app/src/channel/useHostChannel.ts`, `packages/contract/src/index.ts`; external: `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/channel/useHostChannel.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `react`
 - `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`
-- `packages/viewer-bridge/src/ohif/throttle.ts` — no imports
+- `packages/viewer-bridge/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
 
 ### F-15 Bonus: two-way deletion
 
@@ -849,7 +849,7 @@ Files:
 - `docs/DEFENCE.md`
 - `docs/notes/bridge-internals.md`
 - `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/ohif/throttle.ts` — no imports
+- `packages/viewer-bridge/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
 
 ### F-33 Scoring form hook and reducer split
 

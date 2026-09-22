@@ -16,7 +16,7 @@ import {
   type OhifMeasurementService,
   type StatsEntry,
 } from '../ohif/surface.js';
-import { createThrottledEmitter, type ThrottledEmitter } from '../ohif/throttle.js';
+import { createThrottledEmitter } from '../ohif/throttle.js';
 
 const AREA_UNITS: Record<string, Unit | undefined> = {
   'mm²': 'mm2',
@@ -39,14 +39,6 @@ const METRIC_SPECS = {
 } satisfies Record<MetricKey, { unitField: string; units: Record<string, Unit | undefined> }>;
 
 const UPDATE_INTERVAL_MS = 100;
-
-type MeasurementCommands = Pick<ScoringCommands, 'takeArmed' | 'restoreDefaultTool'>;
-
-interface MeasurementUpdate {
-  toolName: string;
-  metrics: Metrics;
-  geometry?: MeasurementGeometry;
-}
 
 const baseUnitToken = (raw: string): string => raw.trim().split(/\s+/)[0] ?? '';
 
@@ -99,54 +91,23 @@ export const toGeometry = (measurement: OhifMeasurement): MeasurementGeometry | 
     label: measurement.label,
   }).data;
 
+type MeasurementCommands = Pick<ScoringCommands, 'takeArmed' | 'restoreDefaultTool'>;
+
+interface Measured {
+  toolName: string;
+  metrics: Metrics;
+  geometry: MeasurementGeometry | undefined;
+}
+
 const parseMeasurement = ({ measurement }: OhifMeasurementEvent): OhifMeasurement | undefined =>
   OhifMeasurement.safeParse(measurement).data;
 
-const announceAdded = (
-  channel: ViewerChannel,
-  commands: MeasurementCommands,
-  measurement: OhifMeasurement,
-): void => {
+const measure = (measurement: OhifMeasurement): Measured | null => {
   const metrics = toMetrics(measurement);
 
-  if (!metrics) {
-    console.warn(
-      `${LOG_PREFIX} no metrics for measurement ${measurement.uid}; nothing sent to the host`,
-    );
-    return;
-  }
-
-  const rowId = commands.takeArmed();
-
-  channel.send({
-    type: 'MEASUREMENT_ADDED',
-    rowId,
-    measurementUid: measurement.uid,
-    toolName: measurement.toolName,
-    metrics,
-    geometry: toGeometry(measurement),
-  });
-
-  if (rowId !== null) {
-    commands.restoreDefaultTool();
-  }
-};
-
-const queueUpdate = (
-  updates: ThrottledEmitter<MeasurementUpdate>,
-  measurement: OhifMeasurement,
-): void => {
-  const metrics = toMetrics(measurement);
-
-  if (metrics === null) {
-    return;
-  }
-
-  updates.push(measurement.uid, {
-    toolName: measurement.toolName,
-    metrics,
-    geometry: toGeometry(measurement),
-  });
+  return metrics === null
+    ? null
+    : { toolName: measurement.toolName, metrics, geometry: toGeometry(measurement) };
 };
 
 export const subscribeMeasurements = (
@@ -154,37 +115,41 @@ export const subscribeMeasurements = (
   channel: ViewerChannel,
   commands: MeasurementCommands,
 ): (() => void) => {
-  const emitUpdate = (uid: string, { toolName, metrics, geometry }: MeasurementUpdate): void => {
-    channel.send({
-      type: 'MEASUREMENT_UPDATED',
-      measurementUid: uid,
-      toolName,
-      metrics,
-      geometry,
-    });
-  };
-
-  const updates = createThrottledEmitter<MeasurementUpdate>(UPDATE_INTERVAL_MS, emitUpdate);
+  const updates = createThrottledEmitter(UPDATE_INTERVAL_MS, channel.send);
 
   const handleAdded = (event: OhifMeasurementEvent): void => {
     const measurement = parseMeasurement(event);
+    const measured = measurement === undefined ? null : measure(measurement);
 
-    if (measurement === undefined) {
-      console.warn(
-        `${LOG_PREFIX} MEASUREMENT_ADDED is not a measurement; ignored`,
-        event.measurement,
-      );
+    if (measurement === undefined || measured === null) {
+      console.warn(`${LOG_PREFIX} MEASUREMENT_ADDED without metrics; ignored`, event.measurement);
       return;
     }
 
-    announceAdded(channel, commands, measurement);
+    const rowId = commands.takeArmed();
+
+    channel.send({
+      type: 'MEASUREMENT_ADDED',
+      rowId,
+      measurementUid: measurement.uid,
+      ...measured,
+    });
+
+    if (rowId !== null) {
+      commands.restoreDefaultTool();
+    }
   };
 
   const handleUpdated = (event: OhifMeasurementEvent): void => {
     const measurement = parseMeasurement(event);
+    const measured = measurement === undefined ? null : measure(measurement);
 
-    if (measurement !== undefined) {
-      queueUpdate(updates, measurement);
+    if (measurement !== undefined && measured !== null) {
+      updates.push(measurement.uid, {
+        type: 'MEASUREMENT_UPDATED',
+        measurementUid: measurement.uid,
+        ...measured,
+      });
     }
   };
 
