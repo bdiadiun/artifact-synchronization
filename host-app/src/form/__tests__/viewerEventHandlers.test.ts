@@ -1,6 +1,5 @@
-// Direct coverage of createViewerEventHandlers; useScoringForm.test.tsx covers the same handlers
-// wired through a real channel end to end. Handlers are now registered by message type through
-// `channel.onEach` (A-22), so each entry here is exercised by calling it under its contract key.
+// Direct coverage of createViewerEventHandlers, the one function the channel hands every viewer
+// event to (A-29); useScoringForm.test.tsx covers the same wiring through a real channel.
 
 import { describe, expect, it, vi } from 'vitest';
 import type { MeasurementRemovedEvent, MeasurementUpdatedEvent } from '@bdiadiun/scoring-contract';
@@ -30,13 +29,13 @@ const buildDeps = (
 describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
   it('clears the done row whose measurementUid matches the event', () => {
     const { dispatch, getContext } = buildDeps([doneRow]);
-    const handlers = createViewerEventHandlers({ getContext, restoredRows: [] });
+    const handleEvent = createViewerEventHandlers({ getContext, restoredRows: [] });
 
     const event: MeasurementRemovedEvent = {
       type: 'MEASUREMENT_REMOVED',
       measurementUid: 'uid-1',
     };
-    handlers.MEASUREMENT_REMOVED?.(event);
+    handleEvent(event);
 
     expect(dispatch).toHaveBeenCalledWith({
       type: FormActionType.MeasurementCleared,
@@ -46,13 +45,13 @@ describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
 
   it('dispatches MeasurementCleared even for a measurementUid matching no row, leaving the reducer to ignore it', () => {
     const { dispatch, getContext } = buildDeps([]);
-    const handlers = createViewerEventHandlers({ getContext, restoredRows: [] });
+    const handleEvent = createViewerEventHandlers({ getContext, restoredRows: [] });
 
     const event: MeasurementRemovedEvent = {
       type: 'MEASUREMENT_REMOVED',
       measurementUid: 'uid-unknown',
     };
-    handlers.MEASUREMENT_REMOVED?.(event);
+    handleEvent(event);
 
     expect(dispatch).toHaveBeenCalledWith({
       type: FormActionType.MeasurementCleared,
@@ -64,7 +63,7 @@ describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
 describe('createViewerEventHandlers MEASUREMENT_UPDATED', () => {
   it('dispatches MeasurementUpdated with the event metrics, never sending anything back (Q-4)', () => {
     const { dispatch, getContext } = buildDeps([doneRow]);
-    const handlers = createViewerEventHandlers({ getContext, restoredRows: [] });
+    const handleEvent = createViewerEventHandlers({ getContext, restoredRows: [] });
 
     const event: MeasurementUpdatedEvent = {
       type: 'MEASUREMENT_UPDATED',
@@ -72,7 +71,7 @@ describe('createViewerEventHandlers MEASUREMENT_UPDATED', () => {
       toolName: 'EllipticalROI',
       metrics: { area: { value: 200, unit: 'mm2' } },
     };
-    handlers.MEASUREMENT_UPDATED?.(event);
+    handleEvent(event);
 
     expect(dispatch).toHaveBeenCalledWith({
       type: FormActionType.MeasurementUpdated,
@@ -86,9 +85,9 @@ describe('createViewerEventHandlers MEASUREMENT_ADDED', () => {
   it('logs and dispatches nothing for a measurement drawn with no armed row (A-8)', () => {
     const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined);
     const { dispatch, getContext } = buildDeps([]);
-    const handlers = createViewerEventHandlers({ getContext, restoredRows: [] });
+    const handleEvent = createViewerEventHandlers({ getContext, restoredRows: [] });
 
-    handlers.MEASUREMENT_ADDED?.({
+    handleEvent({
       type: 'MEASUREMENT_ADDED',
       rowId: null,
       measurementUid: 'uid-2',

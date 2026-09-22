@@ -10,19 +10,12 @@ import type { Annotation } from '@cornerstonejs/tools/types';
 import { triggerAnnotationRenderForViewportIds } from '@cornerstonejs/tools/utilities';
 import type { Types } from '@cornerstonejs/core';
 
-import { LOG_PREFIX, type OhifServices } from '../ohif/surface.js';
+import { LOG_PREFIX, type OhifServices, type OhifSubscription } from '../ohif/surface.js';
 
 export interface RestoreCommands {
   handleRestore: (command: RestoreMeasurementsCommand) => void;
   dispose: () => void;
 }
-
-const failAll = (
-  measurements: RestoreMeasurementRequest[],
-  reason: RestoreFailureReason,
-): RestoreFailure[] => measurements.map(({ rowId }) => ({ rowId, reason }));
-
-const toWorldPoint = ([x, y, z]: number[]): Types.Point3 => [x, y, z];
 
 const toAnnotation = ({
   measurementUid,
@@ -36,7 +29,7 @@ const toAnnotation = ({
     referencedImageId: geometry.referencedImageId,
   },
   data: {
-    handles: { points: geometry.points.map(toWorldPoint), activeHandleIndex: null },
+    handles: { points: geometry.points as Types.Point3[], activeHandleIndex: null },
     label: geometry.label,
   },
   invalidated: true,
@@ -72,7 +65,7 @@ const runRestore = (
   const restored: string[] = [];
   const failed: RestoreFailure[] = showsStudy(services, command.studyInstanceUid)
     ? []
-    : failAll(command.measurements, 'unknown-study');
+    : command.measurements.map(({ rowId }) => ({ rowId, reason: 'unknown-study' }));
 
   if (failed.length === 0) {
     command.measurements.forEach((request) => {
@@ -91,12 +84,17 @@ const runRestore = (
     triggerAnnotationRenderForViewportIds([viewportId]);
   }
 
-  channel.reply(command, { restored, failed });
+  channel.send({
+    type: 'MEASUREMENTS_RESTORED',
+    restored,
+    failed,
+    causedBy: command.requestId,
+  });
 };
 
 export const createRestore = (services: OhifServices, channel: ViewerChannel): RestoreCommands => {
   const { cornerstoneViewportService, viewportGridService } = services;
-  const gates = new Set<{ unsubscribe: () => void }>();
+  let gate: OhifSubscription | null = null;
 
   const holdsData = (): boolean => {
     const viewportId = viewportGridService.getActiveViewportId();
@@ -109,16 +107,14 @@ export const createRestore = (services: OhifServices, channel: ViewerChannel): R
       return;
     }
 
-    const subscription = cornerstoneViewportService.subscribe(
+    gate = cornerstoneViewportService.subscribe(
       cornerstoneViewportService.EVENTS.VIEWPORT_DATA_CHANGED,
       () => {
-        subscription.unsubscribe();
-        gates.delete(subscription);
+        gate?.unsubscribe();
+        gate = null;
         run();
       },
     );
-
-    gates.add(subscription);
   };
 
   const handleRestore = (command: RestoreMeasurementsCommand): void => {
@@ -128,10 +124,7 @@ export const createRestore = (services: OhifServices, channel: ViewerChannel): R
   };
 
   const dispose = (): void => {
-    gates.forEach((subscription) => {
-      subscription.unsubscribe();
-    });
-    gates.clear();
+    gate?.unsubscribe();
   };
 
   return { handleRestore, dispose };

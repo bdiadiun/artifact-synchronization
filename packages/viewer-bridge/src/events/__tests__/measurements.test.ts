@@ -164,14 +164,11 @@ const stops: (() => void)[] = [];
 const listen = (): Listening => {
   const handlers = new Map<string, (event: OhifMeasurementEvent) => void>();
   const send = vi.fn().mockReturnValue(true);
-  const channel = {
+  const channel: ViewerChannel = {
     send,
-    reply: vi.fn().mockReturnValue(true),
-    onEach: vi.fn(),
-    announceReady: vi.fn(),
-    getArmed: () => null,
+    onCommand: vi.fn(),
     dispose: vi.fn(),
-  } as unknown as ViewerChannel;
+  };
 
   const measurementService: OhifMeasurementService = {
     EVENTS,
@@ -186,8 +183,8 @@ const listen = (): Listening => {
 
   stops.push(
     subscribeMeasurements(measurementService, channel, {
+      takeArmed: () => null,
       restoreDefaultTool: vi.fn(),
-      takePendingRemoval: vi.fn(),
     }),
   );
 
@@ -221,7 +218,7 @@ describe('what OHIF hands the bridge', () => {
 
     emit(EVENTS.MEASUREMENT_REMOVED, 'uid-1');
 
-    expect(send).toHaveBeenCalledWith('MEASUREMENT_REMOVED', { measurementUid: 'uid-1' });
+    expect(send).toHaveBeenCalledWith({ type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1' });
   });
 
   it('sends the metrics and the geometry of a measurement carrying a key it does not know', () => {
@@ -230,8 +227,8 @@ describe('what OHIF hands the bridge', () => {
     emit(EVENTS.MEASUREMENT_ADDED, { ...ellipseWithArea, unmappedByThisBridge: 'a newer OHIF' });
 
     expect(send).toHaveBeenCalledWith(
-      'MEASUREMENT_ADDED',
       expect.objectContaining({
+        type: 'MEASUREMENT_ADDED',
         measurementUid: 'uid-1',
         metrics: { area: { value: 12.5, unit: 'mm2' } },
         geometry: {

@@ -654,7 +654,7 @@ Files:
 - `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`; external: `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
@@ -867,7 +867,7 @@ Files:
 - `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 
 ### F-34 Contract published as one package
 
@@ -1136,7 +1136,7 @@ Files:
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/form/__tests__/studyIsolation.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`; external: `react`, `zod`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 
 ### F-53 A module is addressed by where it lives
 
@@ -1180,8 +1180,7 @@ Files:
 - `docs/decisions/A-20-three-layers.md`
 - `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
 - `packages/viewer-adapter/package.json`
-- `packages/viewer-adapter/src/extension.ts` — internal: `packages/viewer-adapter/src/config.ts`, `packages/viewer-adapter/src/registerChildren.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`
-- `packages/viewer-adapter/src/registerChildren.ts` — internal: `packages/viewer-adapter/src/config.ts`; external: `@bdiadiun/ohif-extension-scoring-bridge`
+- `packages/viewer-adapter/src/extension.ts` — external: `@bdiadiun/ohif-extension-scoring-bridge`
 
 ### F-57 The three layers are in place
 
@@ -1206,7 +1205,7 @@ Files:
 - `docs/decisions/A-21-channel-and-exchange.md`
 - `host-app/src/form/rowActions.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `packages/channel/package.json`
-- `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 - `packages/channel/src/shared/peer.ts` — internal: `packages/contract/src/index.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 
@@ -1277,10 +1276,10 @@ Files:
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/channel/useHostChannel.ts` — internal: `host-app/src/config.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
+- `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 - `packages/channel/src/host/outbox.ts` — internal: `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/viewer/viewerChannel.ts` — internal: `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/viewer/viewerChannel.ts` — internal: `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 
 ### F-64 A minimal bridge
 
@@ -1291,7 +1290,7 @@ Canon: A-13, C-4.3.6, Q-1, Q-3, Q-4, Q-5, X-5. Depends on: F-63. Slice 58, statu
 Files:
 
 - `docs/decisions/A-23-minimal-bridge.md`
-- `packages/channel/src/viewer/viewerChannel.ts` — internal: `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/viewer/viewerChannel.ts` — internal: `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
 - `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`, `@cornerstonejs/core`, `@cornerstonejs/tools`
@@ -1310,11 +1309,11 @@ Files:
 - `docs/CONVENTIONS.md`
 - `docs/decisions/A-24-plain-code.md`
 - `docs/decisions/A-25-version-in-the-channel.md`
-- `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 - `packages/channel/src/host/outbox.ts` — internal: `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 - `packages/channel/src/host/pendingAnswers.ts` — internal: `packages/contract/src/index.ts`
 - `packages/channel/src/shared/peer.ts` — internal: `packages/contract/src/index.ts`
-- `packages/channel/src/viewer/viewerChannel.ts` — internal: `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/viewer/viewerChannel.ts` — internal: `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 
@@ -1349,9 +1348,8 @@ Files:
 - `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`; external: `react`, `zod`
 - `host-app/src/form/totals.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/shared/channelApi.ts` — internal: `packages/contract/src/index.ts`
-- `packages/channel/src/viewer/viewerChannel.ts` — internal: `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/viewer/viewerChannel.ts` — internal: `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
 - `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`; external: `@bdiadiun/scoring-channel`

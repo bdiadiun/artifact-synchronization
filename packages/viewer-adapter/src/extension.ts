@@ -1,16 +1,15 @@
 import { createScoringBridgeExtension } from '@bdiadiun/ohif-extension-scoring-bridge';
 import type {
   OhifAsyncExtension,
-  OhifExtension,
   OhifExtensionParams,
 } from '@bdiadiun/ohif-extension-scoring-bridge';
-import { LOG_PREFIX } from './config.js';
-import { registerChildren } from './registerChildren.js';
+
+const LOG_PREFIX = '[scoring-adapter]';
 
 export const SCORING_ADAPTER_EXTENSION_ID = '@bdiadiun/ohif-extension-scoring-adapter';
 
 export const createScoringAdapterExtension = (): OhifAsyncExtension => {
-  const children: readonly OhifExtension[] = [createScoringBridgeExtension()];
+  const bridge = createScoringBridgeExtension();
 
   const preRegistration = async ({ extensionManager }: OhifExtensionParams): Promise<void> => {
     if (extensionManager === undefined) {
@@ -18,7 +17,11 @@ export const createScoringAdapterExtension = (): OhifAsyncExtension => {
       return;
     }
 
-    await registerChildren(extensionManager, children);
+    try {
+      await extensionManager.registerExtension(bridge);
+    } catch (error) {
+      console.error(`${LOG_PREFIX} ${bridge.id} was not registered`, error);
+    }
   };
 
   return { id: SCORING_ADAPTER_EXTENSION_ID, preRegistration };

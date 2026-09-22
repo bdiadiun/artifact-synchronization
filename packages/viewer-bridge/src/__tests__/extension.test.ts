@@ -430,7 +430,7 @@ describe('updates while the doctor drags (S-5.1)', () => {
 });
 
 describe('removing a measurement (A-10)', () => {
-  it('removes it and answers the command that asked for it', () => {
+  it('removes it, reports the deletion and then answers the command that asked for it', () => {
     const fixture = startExtension();
     mockedRemoval(fixture);
 
@@ -438,6 +438,7 @@ describe('removing a measurement (A-10)', () => {
 
     expect(fixture.measurementService.remove).toHaveBeenCalledWith('uid-1');
     expect(fixture.posted()).toEqual([
+      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1' },
       { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1', causedBy: 'req-3' },
     ]);
   });

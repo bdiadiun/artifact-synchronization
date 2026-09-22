@@ -40,6 +40,8 @@ const METRIC_SPECS = {
 
 const UPDATE_INTERVAL_MS = 100;
 
+type MeasurementCommands = Pick<ScoringCommands, 'takeArmed' | 'restoreDefaultTool'>;
+
 interface MeasurementUpdate {
   toolName: string;
   metrics: Metrics;
@@ -102,7 +104,7 @@ const parseMeasurement = ({ measurement }: OhifMeasurementEvent): OhifMeasuremen
 
 const announceAdded = (
   channel: ViewerChannel,
-  restoreDefaultTool: () => void,
+  commands: MeasurementCommands,
   measurement: OhifMeasurement,
 ): void => {
   const metrics = toMetrics(measurement);
@@ -114,9 +116,10 @@ const announceAdded = (
     return;
   }
 
-  const armed = channel.getArmed();
+  const armed = commands.takeArmed();
 
-  const sent = channel.send('MEASUREMENT_ADDED', {
+  channel.send({
+    type: 'MEASUREMENT_ADDED',
     rowId: armed?.rowId ?? null,
     measurementUid: measurement.uid,
     toolName: measurement.toolName,
@@ -125,8 +128,8 @@ const announceAdded = (
     geometry: toGeometry(measurement),
   });
 
-  if (sent && armed) {
-    restoreDefaultTool();
+  if (armed) {
+    commands.restoreDefaultTool();
   }
 };
 
@@ -147,28 +150,19 @@ const queueUpdate = (
   });
 };
 
-const announceRemoved = (
-  channel: ViewerChannel,
-  takePendingRemoval: ScoringCommands['takePendingRemoval'],
-  measurementUid: string,
-): void => {
-  const command = takePendingRemoval(measurementUid);
-
-  if (command) {
-    channel.reply(command, { measurementUid });
-    return;
-  }
-
-  channel.send('MEASUREMENT_REMOVED', { measurementUid });
-};
-
 export const subscribeMeasurements = (
   measurementService: OhifMeasurementService,
   channel: ViewerChannel,
-  commands: Pick<ScoringCommands, 'restoreDefaultTool' | 'takePendingRemoval'>,
+  commands: MeasurementCommands,
 ): (() => void) => {
   const emitUpdate = (uid: string, { toolName, metrics, geometry }: MeasurementUpdate): void => {
-    channel.send('MEASUREMENT_UPDATED', { measurementUid: uid, toolName, metrics, geometry });
+    channel.send({
+      type: 'MEASUREMENT_UPDATED',
+      measurementUid: uid,
+      toolName,
+      metrics,
+      geometry,
+    });
   };
 
   const updates = createThrottledEmitter<MeasurementUpdate>(UPDATE_INTERVAL_MS, emitUpdate);
@@ -184,7 +178,7 @@ export const subscribeMeasurements = (
       return;
     }
 
-    announceAdded(channel, commands.restoreDefaultTool, measurement);
+    announceAdded(channel, commands, measurement);
   };
 
   const handleUpdated = (event: OhifMeasurementEvent): void => {
@@ -202,7 +196,7 @@ export const subscribeMeasurements = (
     }
 
     updates.discard(measurement);
-    announceRemoved(channel, commands.takePendingRemoval, measurement);
+    channel.send({ type: 'MEASUREMENT_REMOVED', measurementUid: measurement });
   };
 
   const { EVENTS } = measurementService;

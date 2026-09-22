@@ -1,7 +1,7 @@
 // What each user-triggered row action does to state, dispatch and the channel. Mirrors
 // viewerEventHandlers.ts, which does the same job for the incoming half of the form.
 
-import type { ToolName } from '@bdiadiun/scoring-contract';
+import type { HostCommand, ToolName } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL } from '@app/config';
 import { findDrawingRow, findRow, FormActionType, RowStatus, type FormContext } from './rows';
 
@@ -10,6 +10,26 @@ import { findDrawingRow, findRow, FormActionType, RowStatus, type FormContext } 
 export const warnUnanswered = (error: unknown): void => {
   console.warn('[form] a request to the viewer went unanswered', error);
 };
+
+export const activateTool = (rowId: string, toolName: ToolName): HostCommand => ({
+  type: 'ACTIVATE_TOOL',
+  requestId: crypto.randomUUID(),
+  rowId,
+  toolName,
+});
+
+const deactivateTool = (rowId: string): HostCommand => ({
+  type: 'DEACTIVATE_TOOL',
+  requestId: crypto.randomUUID(),
+  rowId,
+});
+
+const focusMeasurement = (rowId: string, measurementUid: string): HostCommand => ({
+  type: 'FOCUS_MEASUREMENT',
+  requestId: crypto.randomUUID(),
+  rowId,
+  measurementUid,
+});
 
 export interface RowActions {
   addRow: (toolName?: ToolName) => void;
@@ -30,16 +50,16 @@ export const createRowActions = ({ state, dispatch, channel }: FormContext): Row
     dispatch({ type: FormActionType.ArmRow, rowId });
     // Only one row can be armed at a time (A-4): deactivate the previous one first.
     if (drawingRow !== undefined && drawingRow.rowId !== rowId) {
-      channel?.send('DEACTIVATE_TOOL', { rowId: drawingRow.rowId });
+      channel?.send(deactivateTool(drawingRow.rowId));
     }
     if (targetRow !== undefined) {
-      channel?.send('ACTIVATE_TOOL', { rowId, toolName: targetRow.toolName });
+      channel?.send(activateTool(rowId, targetRow.toolName));
     }
   };
 
   const cancel = (rowId: string): void => {
     dispatch({ type: FormActionType.DisarmRow, rowId });
-    channel?.send('DEACTIVATE_TOOL', { rowId });
+    channel?.send(deactivateTool(rowId));
   };
 
   // Behaviour depends on row status: `done` removes the real annotation in the viewer; `drawing`
@@ -62,7 +82,7 @@ export const createRowActions = ({ state, dispatch, channel }: FormContext): Row
       return;
     }
     if (row.status === RowStatus.Drawing) {
-      channel?.send('DEACTIVATE_TOOL', { rowId });
+      channel?.send(deactivateTool(rowId));
     }
     dispatch({ type: FormActionType.RemoveRow, rowId });
   };
@@ -73,7 +93,7 @@ export const createRowActions = ({ state, dispatch, channel }: FormContext): Row
     if (row?.status !== RowStatus.Done || row.measurementUid === null) {
       return;
     }
-    channel?.send('FOCUS_MEASUREMENT', { rowId, measurementUid: row.measurementUid });
+    channel?.send(focusMeasurement(rowId, row.measurementUid));
   };
 
   return { addRow, activate, cancel, remove, focus };

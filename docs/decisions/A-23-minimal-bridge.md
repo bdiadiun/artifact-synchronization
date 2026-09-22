@@ -1,4 +1,7 @@
-# A-23 — a minimal bridge: the extension keeps what is about OHIF, the channel keeps the protocol
+# A-23 — a minimal bridge
+
+> Partly superseded by [A-29](A-29-channel-is-transport.md): the armed row, the once-only
+> announcement and `reply` went back to the extension; the channel is transport only.: the extension keeps what is about OHIF, the channel keeps the protocol
 
 Status: approved 2026-09-22. Canon: C-4.3, C-4.3.6, Q-1, Q-3, Q-4, Q-5, X-5. Builds on
 [A-22](A-22-one-channel-api.md), [A-8](A-8-id-correlation.md), A-10, [A-9](A-9-handshake-and-queue.md).

@@ -6,11 +6,14 @@
 // Dropped from the old orchestrator suite, not ported: `lastEvent` and the notification count it
 // drove no longer exist (A-22); the false -> true `ready` flip the old suite counted on a second
 // READY never happened here either, because `ready` only ever moves from false to true once.
+// The host is handed whole commands and holds one event handler (A-29).
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createHostChannel } from '../hostChannel';
 import {
+  activateToolCommand,
   createHostChannelFixture,
+  deactivateToolCommand,
   disposeAllFixtureChannels,
   dispatchMessage,
   VIEWER_ORIGIN,
@@ -25,7 +28,7 @@ describe('the queue held until VIEWER_READY', () => {
   it('queues a command sent before VIEWER_READY instead of posting it', () => {
     const { channel, viewerWindow } = createHostChannelFixture();
 
-    const delivered = channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    const delivered = channel.send(activateToolCommand('row-1'));
 
     expect(delivered).toBe(false);
     expect(viewerWindow.postMessage).not.toHaveBeenCalled();
@@ -35,8 +38,8 @@ describe('the queue held until VIEWER_READY', () => {
   it('flushes the queue in FIFO order on VIEWER_READY, each with the exact target origin', () => {
     const { channel, viewerWindow } = createHostChannelFixture();
 
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
-    channel.send('DEACTIVATE_TOOL', { rowId: 'row-1' });
+    channel.send(activateToolCommand('row-1'));
+    channel.send(deactivateToolCommand('row-1'));
 
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
 
@@ -58,7 +61,7 @@ describe('the queue held until VIEWER_READY', () => {
     const { channel, viewerWindow } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
 
-    const delivered = channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    const delivered = channel.send(activateToolCommand('row-1'));
 
     expect(delivered).toBe(true);
     expect(viewerWindow.postMessage).toHaveBeenCalledTimes(1);
@@ -72,8 +75,8 @@ describe('the queue held until VIEWER_READY', () => {
       viewerOrigin: VIEWER_ORIGIN,
       getViewerWindow: () => (viewerWindowAvailable ? (viewerWindow as unknown as Window) : null),
     });
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
-    channel.send('DEACTIVATE_TOOL', { rowId: 'row-1' });
+    channel.send(activateToolCommand('row-1'));
+    channel.send(deactivateToolCommand('row-1'));
     viewerWindow.postMessage.mockImplementationOnce(() => {
       viewerWindowAvailable = false;
     });
@@ -88,12 +91,10 @@ describe('the queue held until VIEWER_READY', () => {
 
   it('flushes the queue before the application handler for VIEWER_READY runs', () => {
     const { channel } = createHostChannelFixture();
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    channel.send(activateToolCommand('row-1'));
     const stateSeenByHandler: { ready: boolean; queued: number }[] = [];
-    channel.onEach({
-      VIEWER_READY: () => {
-        stateSeenByHandler.push(channel.getState());
-      },
+    channel.onEvent(() => {
+      stateSeenByHandler.push(channel.getState());
     });
 
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
@@ -104,7 +105,7 @@ describe('the queue held until VIEWER_READY', () => {
   it('reaches the application handler again on a second VIEWER_READY (a viewer reload)', () => {
     const { channel } = createHostChannelFixture();
     const onReady = vi.fn();
-    channel.onEach({ VIEWER_READY: onReady });
+    channel.onEvent(onReady);
 
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
@@ -128,7 +129,7 @@ describe('state and subscription', () => {
     const listener = vi.fn();
     channel.subscribe(listener);
 
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    channel.send(activateToolCommand('row-1'));
     expect(listener).toHaveBeenCalledTimes(1);
 
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
@@ -137,7 +138,7 @@ describe('state and subscription', () => {
 
   it('resets to not-ready with an empty queue once disposed', () => {
     const { channel } = createHostChannelFixture();
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    channel.send(activateToolCommand('row-1'));
 
     channel.dispose();
 
@@ -149,7 +150,7 @@ describe('cancelling the armed row on dispose (Q-5)', () => {
   it('sends one DEACTIVATE_TOOL for the armed row through the still-live channel', () => {
     const { channel, viewerWindow } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    channel.send(activateToolCommand('row-1'));
     viewerWindow.postMessage.mockClear();
 
     channel.dispose();
@@ -163,7 +164,7 @@ describe('cancelling the armed row on dispose (Q-5)', () => {
   it('sends the DEACTIVATE_TOOL before the underlying listener is removed', () => {
     const { channel, viewerWindow } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    channel.send(activateToolCommand('row-1'));
     viewerWindow.postMessage.mockClear();
     const order: string[] = [];
     viewerWindow.postMessage.mockImplementation(() => order.push('DEACTIVATE_TOOL posted'));
@@ -182,7 +183,7 @@ describe('cancelling the armed row on dispose (Q-5)', () => {
 
   it('sends nothing on dispose when the viewer never became ready, even if a row was armed', () => {
     const { channel, viewerWindow } = createHostChannelFixture();
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    channel.send(activateToolCommand('row-1'));
     viewerWindow.postMessage.mockClear();
 
     channel.dispose();
@@ -193,8 +194,8 @@ describe('cancelling the armed row on dispose (Q-5)', () => {
   it('sends nothing on dispose when the armed row was already deactivated', () => {
     const { channel, viewerWindow } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
-    channel.send('DEACTIVATE_TOOL', { rowId: 'row-1' });
+    channel.send(activateToolCommand('row-1'));
+    channel.send(deactivateToolCommand('row-1'));
     viewerWindow.postMessage.mockClear();
 
     channel.dispose();
@@ -205,7 +206,7 @@ describe('cancelling the armed row on dispose (Q-5)', () => {
   it('sends at most one DEACTIVATE_TOOL when dispose is called twice while armed', () => {
     const { channel, viewerWindow } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    channel.send(activateToolCommand('row-1'));
     viewerWindow.postMessage.mockClear();
 
     channel.dispose();
@@ -222,7 +223,7 @@ describe('cancelling the armed row on dispose (Q-5)', () => {
       getViewerWindow: () => (viewerWindowAvailable ? (viewerWindow as unknown as Window) : null),
     });
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+    channel.send(activateToolCommand('row-1'));
     viewerWindowAvailable = false;
     viewerWindow.postMessage.mockClear();
 

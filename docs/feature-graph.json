@@ -1427,7 +1427,7 @@
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/index.ts"],
@@ -1957,7 +1957,7 @@
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -2469,7 +2469,7 @@
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -2550,8 +2550,7 @@
         "docs/decisions/A-20-three-layers.md",
         "host-app/vite.config.ts",
         "packages/viewer-adapter/package.json",
-        "packages/viewer-adapter/src/extension.ts",
-        "packages/viewer-adapter/src/registerChildren.ts"
+        "packages/viewer-adapter/src/extension.ts"
       ],
       "imports": {
         "host-app/vite.config.ts": {
@@ -2559,14 +2558,7 @@
           "external": ["@vitejs/plugin-react", "node:url", "vite"]
         },
         "packages/viewer-adapter/src/extension.ts": {
-          "internal": [
-            "packages/viewer-adapter/src/config.ts",
-            "packages/viewer-adapter/src/registerChildren.ts"
-          ],
-          "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
-        },
-        "packages/viewer-adapter/src/registerChildren.ts": {
-          "internal": ["packages/viewer-adapter/src/config.ts"],
+          "internal": [],
           "external": ["@bdiadiun/ohif-extension-scoring-bridge"]
         }
       }
@@ -2617,7 +2609,6 @@
           "internal": [
             "packages/channel/src/host/outbox.ts",
             "packages/channel/src/host/pendingAnswers.ts",
-            "packages/channel/src/shared/channelApi.ts",
             "packages/channel/src/shared/peer.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2788,13 +2779,12 @@
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "packages/channel/src/host/hostChannel.ts": {
           "internal": [
             "packages/channel/src/host/outbox.ts",
             "packages/channel/src/host/pendingAnswers.ts",
-            "packages/channel/src/shared/channelApi.ts",
             "packages/channel/src/shared/peer.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2805,11 +2795,7 @@
           "external": []
         },
         "packages/channel/src/viewer/viewerChannel.ts": {
-          "internal": [
-            "packages/channel/src/shared/channelApi.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         }
       }
@@ -2835,11 +2821,7 @@
       ],
       "imports": {
         "packages/channel/src/viewer/viewerChannel.ts": {
-          "internal": [
-            "packages/channel/src/shared/channelApi.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/vocabulary.ts": {
@@ -2910,7 +2892,6 @@
           "internal": [
             "packages/channel/src/host/outbox.ts",
             "packages/channel/src/host/pendingAnswers.ts",
-            "packages/channel/src/shared/channelApi.ts",
             "packages/channel/src/shared/peer.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2929,11 +2910,7 @@
           "external": []
         },
         "packages/channel/src/viewer/viewerChannel.ts": {
-          "internal": [
-            "packages/channel/src/shared/channelApi.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/hostCommands.ts": {
@@ -3022,7 +2999,6 @@
         "host-app/src/form/storage.ts",
         "host-app/src/form/totals.ts",
         "packages/channel/src/host/hostChannel.ts",
-        "packages/channel/src/shared/channelApi.ts",
         "packages/channel/src/viewer/viewerChannel.ts",
         "packages/contract/src/vocabulary.ts",
         "packages/viewer-bridge/src/commands/handlers.ts",
@@ -3064,22 +3040,13 @@
           "internal": [
             "packages/channel/src/host/outbox.ts",
             "packages/channel/src/host/pendingAnswers.ts",
-            "packages/channel/src/shared/channelApi.ts",
             "packages/channel/src/shared/peer.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": []
-        },
-        "packages/channel/src/shared/channelApi.ts": {
-          "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
         "packages/channel/src/viewer/viewerChannel.ts": {
-          "internal": [
-            "packages/channel/src/shared/channelApi.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/vocabulary.ts": {

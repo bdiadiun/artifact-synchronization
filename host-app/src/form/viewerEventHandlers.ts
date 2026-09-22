@@ -10,10 +10,9 @@ import type {
   RestoreMeasurementRequest,
   ViewerEvent,
 } from '@bdiadiun/scoring-contract';
-import type { MessageHandlers } from '@bdiadiun/scoring-channel';
 import { studyInstanceUid } from '@app/config';
 import { findDrawingRow, FormActionType, type FormContext, type Row } from './rows';
-import { warnUnanswered } from './rowActions';
+import { activateTool, warnUnanswered } from './rowActions';
 
 export interface ViewerEventHandlersDeps {
   // Read at call time, not at registration: the handlers are registered once per channel and have
@@ -50,6 +49,39 @@ const dispatchRestoreFailures = (context: FormContext, answer: MeasurementsResto
   }
 };
 
+const dispatchMeasurementAdded = (context: FormContext, event: MeasurementAddedEvent): void => {
+  // A-8: a measurement drawn while nothing is armed arrives with `rowId: null` and is dropped.
+  if (event.rowId === null) {
+    console.info('[form] measurement without an armed row ignored', event.measurementUid);
+    return;
+  }
+  context.dispatch({
+    type: FormActionType.MeasurementReceived,
+    rowId: event.rowId,
+    measurementUid: event.measurementUid,
+    metrics: event.metrics,
+    geometry: event.geometry ?? null,
+  });
+};
+
+// Only dispatches locally, never sends: no command here for the viewer to echo (A-10).
+const dispatchMeasurementUpdated = (context: FormContext, event: MeasurementUpdatedEvent): void => {
+  context.dispatch({
+    type: FormActionType.MeasurementUpdated,
+    measurementUid: event.measurementUid,
+    metrics: event.metrics,
+  });
+};
+
+// The echo of our own REMOVE_MEASUREMENT never arrives here: it answers the exchange that asked for
+// it (A-10, A-21). What reaches this handler was deleted in the viewer.
+const dispatchMeasurementCleared = (context: FormContext, event: MeasurementRemovedEvent): void => {
+  context.dispatch({
+    type: FormActionType.MeasurementCleared,
+    measurementUid: event.measurementUid,
+  });
+};
+
 const requestRestore = (context: FormContext, restoredRows: readonly Row[]): void => {
   const measurements = restorableMeasurements(restoredRows);
   if (measurements.length === 0) {
@@ -66,7 +98,7 @@ const requestRestore = (context: FormContext, restoredRows: readonly Row[]): voi
 export const createViewerEventHandlers = ({
   getContext,
   restoredRows,
-}: ViewerEventHandlersDeps): Partial<MessageHandlers<ViewerEvent>> => {
+}: ViewerEventHandlersDeps): ((event: ViewerEvent) => void) => {
   let readyCount = 0;
 
   // The first READY is where a reloaded form asks for its annotations back (A-14); an early
@@ -81,52 +113,32 @@ export const createViewerEventHandlers = ({
     }
     const drawingRow = findDrawingRow(context.state.rows);
     if (drawingRow !== undefined) {
-      context.channel?.send('ACTIVATE_TOOL', {
-        rowId: drawingRow.rowId,
-        toolName: drawingRow.toolName,
-      });
+      context.channel?.send(activateTool(drawingRow.rowId, drawingRow.toolName));
     }
   };
 
-  const handleMeasurementAdded = (event: MeasurementAddedEvent): void => {
-    // A-8: a measurement drawn while nothing is armed arrives with `rowId: null` and is dropped.
-    if (event.rowId === null) {
-      console.info('[form] measurement without an armed row ignored', event.measurementUid);
-      return;
+  // Nothing for MEASUREMENTS_RESTORED: the exchange above consumes the answer to our own request,
+  // and no other reply concerns this session (A-21).
+  return (event: ViewerEvent): void => {
+    switch (event.type) {
+      case 'VIEWER_READY':
+        handleViewerReady();
+        break;
+      case 'MEASUREMENT_ADDED':
+        dispatchMeasurementAdded(getContext(), event);
+        break;
+      case 'MEASUREMENT_UPDATED':
+        dispatchMeasurementUpdated(getContext(), event);
+        break;
+      case 'MEASUREMENT_REMOVED':
+        dispatchMeasurementCleared(getContext(), event);
+        break;
+      case 'MEASUREMENTS_RESTORED':
+        break;
+      default: {
+        const exhaustive: never = event;
+        return exhaustive;
+      }
     }
-    getContext().dispatch({
-      type: FormActionType.MeasurementReceived,
-      rowId: event.rowId,
-      measurementUid: event.measurementUid,
-      metrics: event.metrics,
-      geometry: event.geometry ?? null,
-    });
-  };
-
-  // Only dispatches locally, never sends: no command here for the viewer to echo (A-10).
-  const handleMeasurementUpdated = (event: MeasurementUpdatedEvent): void => {
-    getContext().dispatch({
-      type: FormActionType.MeasurementUpdated,
-      measurementUid: event.measurementUid,
-      metrics: event.metrics,
-    });
-  };
-
-  // The echo of our own REMOVE_MEASUREMENT never arrives here: it answers the exchange that asked
-  // for it (A-10, A-21). What reaches this handler was deleted in the viewer.
-  const handleMeasurementRemoved = (event: MeasurementRemovedEvent): void => {
-    getContext().dispatch({
-      type: FormActionType.MeasurementCleared,
-      measurementUid: event.measurementUid,
-    });
-  };
-
-  // No handler for MEASUREMENTS_RESTORED: the exchange above consumes the answer to our own
-  // request, and no other reply concerns this session (A-21).
-  return {
-    VIEWER_READY: handleViewerReady,
-    MEASUREMENT_ADDED: handleMeasurementAdded,
-    MEASUREMENT_UPDATED: handleMeasurementUpdated,
-    MEASUREMENT_REMOVED: handleMeasurementRemoved,
   };
 };

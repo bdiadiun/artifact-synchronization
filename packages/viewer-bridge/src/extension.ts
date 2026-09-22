@@ -11,6 +11,7 @@ import {
   type OhifExtension,
   type OhifExtensionParams,
   type OhifServices,
+  type OhifSubscription,
   type OhifToolGroupService,
 } from './ohif/surface.js';
 
@@ -25,14 +26,21 @@ const announceOnViewport = (
   toolGroupService: OhifToolGroupService,
   channel: ViewerChannel,
 ): (() => void) => {
-  const announce = (): void => {
-    channel.announceReady({ viewerVersion: VIEWER_VERSION });
+  let subscription: OhifSubscription | null = null;
+
+  const announceOnce = (): void => {
+    if (subscription === null) {
+      return;
+    }
+    subscription.unsubscribe();
+    subscription = null;
+    channel.send({ type: 'VIEWER_READY', viewerVersion: VIEWER_VERSION });
   };
 
-  const subscription = toolGroupService.subscribe(toolGroupService.EVENTS.VIEWPORT_ADDED, announce);
+  subscription = toolGroupService.subscribe(toolGroupService.EVENTS.VIEWPORT_ADDED, announceOnce);
 
   return (): void => {
-    subscription.unsubscribe();
+    subscription?.unsubscribe();
   };
 };
 
@@ -59,13 +67,13 @@ const startBridge = (
     channel,
     commands,
   );
-  const unsubscribeCommands = channel.onEach(commands.handlers);
   const unsubscribeAnnounce = announceOnViewport(services.toolGroupService, channel);
+
+  channel.onCommand(commands.handleCommand);
 
   const disposers = [
     commands.dispose,
     unsubscribeMeasurements,
-    unsubscribeCommands,
     unsubscribeAnnounce,
     channel.dispose,
   ];

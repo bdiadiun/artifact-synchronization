@@ -1,10 +1,11 @@
 import type {
   ActivateToolCommand,
+  DeactivateToolCommand,
   FocusMeasurementCommand,
   HostCommand,
   RemoveMeasurementCommand,
 } from '@bdiadiun/scoring-contract';
-import type { MessageHandlers, ViewerChannel } from '@bdiadiun/scoring-channel';
+import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 
 import {
   LOG_PREFIX,
@@ -16,9 +17,14 @@ import { createRestore } from './restore.js';
 
 const DEFAULT_TOOL = 'WindowLevel';
 
+export interface ArmedRow {
+  rowId: string;
+  requestId: string;
+}
+
 export interface ScoringCommands {
-  handlers: MessageHandlers<HostCommand>;
-  takePendingRemoval: (measurementUid: string) => RemoveMeasurementCommand | undefined;
+  handleCommand: (command: HostCommand) => void;
+  takeArmed: () => ArmedRow | null;
   restoreDefaultTool: () => void;
   dispose: () => void;
 }
@@ -45,6 +51,18 @@ const activateTool = (
   commandsManager.runCommand('setToolActive', { toolName });
 };
 
+const removeMeasurement = (
+  services: OhifServices,
+  channel: ViewerChannel,
+  { measurementUid, requestId }: RemoveMeasurementCommand,
+): void => {
+  if (services.measurementService.getMeasurement(measurementUid)) {
+    services.measurementService.remove(measurementUid);
+  }
+
+  channel.send({ type: 'MEASUREMENT_REMOVED', measurementUid, causedBy: requestId });
+};
+
 const focusMeasurement = (
   services: OhifServices,
   { measurementUid, rowId }: FocusMeasurementCommand,
@@ -64,65 +82,61 @@ export const createCommands = (
   commandsManager: OhifCommandsManager,
   channel: ViewerChannel,
 ): ScoringCommands => {
-  const pendingRemovals = new Map<string, RemoveMeasurementCommand>();
   const restore = createRestore(services, channel);
+  let armed: ArmedRow | null = null;
 
   const restoreDefaultTool = (): void => {
     activateTool(services.toolGroupService, commandsManager, DEFAULT_TOOL);
   };
 
-  const handleActivateTool = ({ toolName }: ActivateToolCommand): void => {
+  const takeArmed = (): ArmedRow | null => {
+    const taken = armed;
+    armed = null;
+    return taken;
+  };
+
+  const handleActivateTool = ({ rowId, requestId, toolName }: ActivateToolCommand): void => {
+    armed = { rowId, requestId };
     activateTool(services.toolGroupService, commandsManager, toolName);
   };
 
-  const handleDeactivateTool = (): void => {
-    if (channel.getArmed() === null) {
+  const handleDeactivateTool = ({ rowId }: DeactivateToolCommand): void => {
+    if (armed?.rowId === rowId) {
+      armed = null;
       restoreDefaultTool();
     }
   };
 
-  const handleRemove = (command: RemoveMeasurementCommand): void => {
-    const { measurementUid, rowId } = command;
-
-    if (!services.measurementService.getMeasurement(measurementUid)) {
-      console.debug(`${LOG_PREFIX} ${measurementUid} (row ${rowId}) is already gone`);
-      channel.reply(command, { measurementUid });
-      return;
+  const handleCommand = (command: HostCommand): void => {
+    switch (command.type) {
+      case 'ACTIVATE_TOOL':
+        handleActivateTool(command);
+        break;
+      case 'DEACTIVATE_TOOL':
+        handleDeactivateTool(command);
+        break;
+      case 'REMOVE_MEASUREMENT':
+        removeMeasurement(services, channel, command);
+        break;
+      case 'FOCUS_MEASUREMENT':
+        focusMeasurement(services, command);
+        break;
+      case 'RESTORE_MEASUREMENTS':
+        restore.handleRestore(command);
+        break;
+      default: {
+        const exhaustive: never = command;
+        return exhaustive;
+      }
     }
-
-    pendingRemovals.set(measurementUid, command);
-
-    try {
-      services.measurementService.remove(measurementUid);
-    } finally {
-      pendingRemovals.delete(measurementUid);
-    }
-  };
-
-  const handleFocus = (command: FocusMeasurementCommand): void => {
-    focusMeasurement(services, command);
-  };
-
-  const handlers = {
-    ACTIVATE_TOOL: handleActivateTool,
-    DEACTIVATE_TOOL: handleDeactivateTool,
-    REMOVE_MEASUREMENT: handleRemove,
-    FOCUS_MEASUREMENT: handleFocus,
-    RESTORE_MEASUREMENTS: restore.handleRestore,
-  } satisfies MessageHandlers<HostCommand>;
-
-  const takePendingRemoval = (measurementUid: string): RemoveMeasurementCommand | undefined => {
-    const command = pendingRemovals.get(measurementUid);
-    pendingRemovals.delete(measurementUid);
-    return command;
   };
 
   const dispose = (): void => {
-    if (channel.getArmed() !== null) {
+    if (armed !== null) {
       restoreDefaultTool();
     }
     restore.dispose();
   };
 
-  return { handlers, takePendingRemoval, restoreDefaultTool, dispose };
+  return { handleCommand, takeArmed, restoreDefaultTool, dispose };
 };

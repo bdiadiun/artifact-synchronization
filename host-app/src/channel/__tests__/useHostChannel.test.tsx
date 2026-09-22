@@ -81,7 +81,9 @@ describe('useHostChannel', () => {
       dispatchFromViewer({ type: 'VIEWER_READY', viewerVersion: '1.0.0' });
     });
     act(() => {
-      capturedRef.current?.channel?.send('ACTIVATE_TOOL', {
+      capturedRef.current?.channel?.send({
+        type: 'ACTIVATE_TOOL',
+        requestId: 'req-1',
         rowId: 'row-1',
         toolName: 'EllipticalROI',
       });

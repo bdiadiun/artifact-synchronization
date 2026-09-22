@@ -10,7 +10,7 @@ export interface ChannelState {
 export const INITIAL_CHANNEL_STATE: ChannelState = { ready: false, queued: 0 };
 
 export interface HostOutbox {
-  send: (type: HostCommand['type'], payload: object, requestId: string) => boolean;
+  send: (command: HostCommand) => boolean;
   flush: () => void;
   getState: () => ChannelState;
   subscribe: (listener: () => void) => () => void;
@@ -32,9 +32,7 @@ export const createHostOutbox = (peer: Peer): HostOutbox => {
     }
   };
 
-  const send = (type: HostCommand['type'], payload: object, requestId: string): boolean => {
-    const command = { type, requestId, ...payload } as HostCommand;
-
+  const send = (command: HostCommand): boolean => {
     if (state.ready && postTo(peer, command)) {
       return true;
     }

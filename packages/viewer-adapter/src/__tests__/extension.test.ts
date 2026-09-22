@@ -47,4 +47,19 @@ describe('createScoringAdapterExtension', () => {
       expect.objectContaining({ id: SCORING_BRIDGE_EXTENSION_ID }),
     );
   });
+
+  it('reports a registration that fails instead of throwing out of preRegistration', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const manager: OhifExtensionManager = {
+      registerExtension: vi.fn().mockRejectedValue(new Error('the viewer refused the extension')),
+    };
+    const extension = createScoringAdapterExtension();
+
+    await expect(extension.preRegistration(baseParams(manager))).resolves.toBeUndefined();
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining(SCORING_BRIDGE_EXTENSION_ID),
+      expect.any(Error),
+    );
+  });
 });
