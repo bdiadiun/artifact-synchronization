@@ -45,13 +45,10 @@ const handleViewerReady = ({ state, channel }: FormContext): void => {
   }
 };
 
-export const createViewerEventHandlers = (
-  getContext: () => FormContext,
-): ((event: ViewerEvent) => void) => {
-  const handleViewerEvent = (event: ViewerEvent): void => {
-    const context = getContext();
-    const { dispatch } = context;
+export const createViewerEventHandlers = (context: FormContext): ((event: ViewerEvent) => void) => {
+  const { dispatch } = context;
 
+  const handleViewerEvent = (event: ViewerEvent): void => {
     switch (event.type) {
       case 'VIEWER_READY':
         handleViewerReady(context);

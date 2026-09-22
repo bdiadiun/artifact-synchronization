@@ -24,16 +24,16 @@ const doneRow: Row = {
 
 const buildDeps = (
   rows: Row[] = [],
-): { dispatch: ReturnType<typeof vi.fn>; getContext: () => FormContext } => {
+): { dispatch: ReturnType<typeof vi.fn>; context: FormContext } => {
   const dispatch = vi.fn();
   const context: FormContext = { state: { ...initialFormState, rows }, dispatch, channel: null };
-  return { dispatch, getContext: () => context };
+  return { dispatch, context };
 };
 
 describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
   it('clears the done row whose measurementUid matches the event', () => {
-    const { dispatch, getContext } = buildDeps([doneRow]);
-    const handleEvent = createViewerEventHandlers(getContext);
+    const { dispatch, context } = buildDeps([doneRow]);
+    const handleEvent = createViewerEventHandlers(context);
 
     const event: MeasurementRemovedEvent = {
       type: 'MEASUREMENT_REMOVED',
@@ -48,8 +48,8 @@ describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
   });
 
   it('dispatches MeasurementCleared even for a measurementUid matching no row, leaving the reducer to ignore it', () => {
-    const { dispatch, getContext } = buildDeps([]);
-    const handleEvent = createViewerEventHandlers(getContext);
+    const { dispatch, context } = buildDeps([]);
+    const handleEvent = createViewerEventHandlers(context);
 
     const event: MeasurementRemovedEvent = {
       type: 'MEASUREMENT_REMOVED',
@@ -66,8 +66,8 @@ describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
 
 describe('createViewerEventHandlers MEASUREMENT_UPDATED', () => {
   it('dispatches MeasurementUpdated with the event metrics, never sending anything back (Q-4)', () => {
-    const { dispatch, getContext } = buildDeps([doneRow]);
-    const handleEvent = createViewerEventHandlers(getContext);
+    const { dispatch, context } = buildDeps([doneRow]);
+    const handleEvent = createViewerEventHandlers(context);
 
     const event: MeasurementUpdatedEvent = {
       type: 'MEASUREMENT_UPDATED',
@@ -87,8 +87,8 @@ describe('createViewerEventHandlers MEASUREMENT_UPDATED', () => {
 
 describe('createViewerEventHandlers MEASUREMENTS_RESTORED', () => {
   it('marks every row the viewer refused with the reason it gave', () => {
-    const { dispatch, getContext } = buildDeps([doneRow]);
-    const handleEvent = createViewerEventHandlers(getContext);
+    const { dispatch, context } = buildDeps([doneRow]);
+    const handleEvent = createViewerEventHandlers(context);
 
     const event: MeasurementsRestoredEvent = {
       type: 'MEASUREMENTS_RESTORED',
@@ -109,8 +109,8 @@ describe('createViewerEventHandlers MEASUREMENTS_RESTORED', () => {
 describe('createViewerEventHandlers MEASUREMENT_ADDED', () => {
   it('logs and dispatches nothing for a measurement drawn with no armed row (A-8)', () => {
     const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined);
-    const { dispatch, getContext } = buildDeps([]);
-    const handleEvent = createViewerEventHandlers(getContext);
+    const { dispatch, context } = buildDeps([]);
+    const handleEvent = createViewerEventHandlers(context);
 
     handleEvent({
       type: 'MEASUREMENT_ADDED',

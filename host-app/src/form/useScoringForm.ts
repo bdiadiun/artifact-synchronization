@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import type { HostChannel } from '@app/channel/useHostChannel';
 import { studyInstanceUid } from '@app/config';
 import { reducer, type FormContext, type FormState, type Row } from './rows';
@@ -16,29 +16,19 @@ const loadInitialState = (): FormState => ({ rows: loadStoredRows(studyInstanceU
 
 export const useScoringForm = (channel: HostChannel | null): UseScoringFormResult => {
   const [state, dispatch] = useReducer(reducer, undefined, loadInitialState);
-  
+
   useEffect(() => {
     saveRows(studyInstanceUid(), state.rows);
   }, [state.rows]);
 
-  const context: FormContext = { state, dispatch, channel };
+  const context: FormContext = useMemo(
+    () => ({ state, dispatch, channel }),
+    [state, dispatch, channel],
+  );
 
-  // The handlers below are registered once per channel, so they read the latest committed context
-  // through this ref instead of being taken out and registered again on every render.
-  const contextRef = useRef(context);
-  useEffect(() => {
-    contextRef.current = context;
-  });
-
-  useEffect(() => {
-    if (channel === null) {
-      return undefined;
-    }
-    const getContext = (): FormContext => contextRef.current;
-    const handleViewerEvent = createViewerEventHandlers(getContext);
-
-    return channel.onMessage(handleViewerEvent);
-  }, [channel]);
+  // Re-registered whenever the context changes, so a viewer event always reads the current rows;
+  // swapping the handler is one assignment in the channel.
+  useEffect(() => channel?.onMessage(createViewerEventHandlers(context)), [channel, context]);
 
   return { rows: state.rows, ...createRowActions(context) };
 };
