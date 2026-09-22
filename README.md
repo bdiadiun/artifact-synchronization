@@ -44,6 +44,8 @@ repository was tested against. The folder is ignored by git and is not part of t
 Wait for "compiled successfully", then check http://localhost:3000/viewer?StudyInstanceUIDs=1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1
 opens a study. Notes:
 
+- `viewer:link` makes the viewer run the packages of this working tree instead of the released
+  ones (symlinks into the fork's `node_modules`); `viewer:unlink` restores the installed copies.
 - `viewer:dev` runs the server from `platform/app` with the browser tab suppressed. Running
   `yarn dev` at the viewer root instead does not work: that script picks up a `bun.lock` and
   requires bun.

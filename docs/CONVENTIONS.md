@@ -317,6 +317,10 @@ somebody deletes.
   a sibling package is symlinked and compiles against the working tree, no matter what version the
   manifest names. Before pinning, fetch the published tarball of that exact version and check that
   what the dependent imports is really in it.
+- **The browser scenario runs on the working tree before anything is published.** `npm run
+viewer:link` swaps the fork's installed copies of our packages for symlinks to `packages/*`; the
+  scenario passes there first, then the release is cut and pinned. A version is never published to
+  find out whether it works.
 - **The dependency is published before the dependent.** A package pinned at an exact version cannot
   be released in the same step as the thing that pins it.
 - **A new package is added to the publish workflow in the slice that creates it.** The workflow

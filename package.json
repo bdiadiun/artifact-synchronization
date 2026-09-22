@@ -22,7 +22,9 @@
     "format:check": "prettier --check .",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "viewer:setup": "node scripts/viewer.mjs setup",
-    "viewer:dev": "node scripts/viewer.mjs dev"
+    "viewer:dev": "node scripts/viewer.mjs dev",
+    "viewer:link": "node scripts/viewer.mjs link",
+    "viewer:unlink": "node scripts/viewer.mjs unlink"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
