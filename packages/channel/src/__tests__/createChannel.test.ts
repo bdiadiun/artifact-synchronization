@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ActivateToolCommand, MeasurementRemovedEvent } from '@bdiadiun/scoring-contract';
-import { EXCHANGE_TIMEOUT_MS } from '../config';
+import { EXCHANGE_TIMEOUT_MS, LOG_PREFIX } from '../config';
 import {
   activateToolMessage,
   createHostChannelFixture,
@@ -291,21 +291,56 @@ describe('exchange', () => {
 });
 
 describe('the viewer channel, which holds nothing back', () => {
-  it('is ready from the start, before any message arrives', () => {
+  it('is not ready before it has announced itself', () => {
     const { channel } = createViewerChannelFixture();
+
+    expect(channel.getState()).toEqual({ ready: false, queued: 0 });
+  });
+
+  it('becomes ready once its announcement has been delivered', () => {
+    const { channel } = createViewerChannelFixture();
+
+    channel.send('VIEWER_READY', { viewerVersion: '1.0.0' });
 
     expect(channel.getState()).toEqual({ ready: true, queued: 0 });
   });
 
-  it('is ready but drops, without queuing, what it cannot deliver when the page is not framed', () => {
-    const { channel, hostWindow } = createViewerChannelFixture({ framed: false });
+  it('posts an event before the announcement rather than queuing it', () => {
+    const { channel, hostWindow } = createViewerChannelFixture();
 
-    expect(channel.getState()).toEqual({ ready: true, queued: 0 });
+    const delivered = channel.send('MEASUREMENT_REMOVED', { measurementUid: 'uid-1' });
+
+    expect(delivered).toBe(true);
+    expect(hostWindow.postMessage).toHaveBeenCalledTimes(1);
+    expect(channel.getState().queued).toBe(0);
+  });
+
+  it('drops, without queuing, what it cannot deliver when the page is not framed', () => {
+    const { channel, hostWindow } = createViewerChannelFixture({ framed: false });
 
     const delivered = channel.send('VIEWER_READY', { viewerVersion: '1.0.0' });
 
     expect(delivered).toBe(false);
     expect(hostWindow.postMessage).not.toHaveBeenCalled();
-    expect(channel.getState().queued).toBe(0);
+    expect(channel.getState()).toEqual({ ready: false, queued: 0 });
+  });
+});
+
+describe('what the channel writes to the console', () => {
+  it('logs every message it sends and every message it receives at debug level', () => {
+    const debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => undefined);
+    const { channel } = createHostChannelFixture();
+
+    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
+    channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
+
+    expect(debugSpy).toHaveBeenCalledWith(
+      `${LOG_PREFIX} received VIEWER_READY`,
+      expect.objectContaining({ type: 'VIEWER_READY' }),
+    );
+    expect(debugSpy).toHaveBeenCalledWith(
+      `${LOG_PREFIX} sent ACTIVATE_TOOL`,
+      expect.objectContaining({ type: 'ACTIVATE_TOOL' }),
+    );
   });
 });

@@ -14,8 +14,8 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 | Payload validated       | [`isViewerEvent`](../packages/channel/src/hostChannel.ts#L23)                                                                                               | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
 | Handshake               | [READY opens the outbox](../packages/channel/src/createChannel.ts#L47)                                                                                      | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`postViewerReady`][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post]  |
 | Early commands          | [`queue.push(message)`](../packages/channel/src/outbox.ts#L65), [`open`](../packages/channel/src/outbox.ts#L70)                                             | —                                                                                                                                                      |
-| Row id / measurement id | [`crypto.randomUUID()` in `addRow`](../host-app/src/form/rowActions.ts#L21)                                                                                 | [`uidToRowId.set`][fork-bridge-map]                                                                                                                    |
-| Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L7)                                                                                                              | [snapshot `getActivePrimaryMouseButtonTool`][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]        |
+| Row id / measurement id | [`crypto.randomUUID()` in `addRow`](../host-app/src/form/rowActions.ts#L21)                                                                                 | [`getArmed()` on the channel][fork-bridge-map]                                                                                                         |
+| Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L7)                                                                                                              | [fixed `DEFAULT_TOOL` after a measurement][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]          |
 | Measurement delivered   | [`rowId === null` ignored](../host-app/src/form/viewerEventHandlers.ts#L94)                                                                                 | [`MEASUREMENT_ADDED` subscription][fork-bridge-added], [posted][fork-bridge-added-post], [`toMetrics`][fork-metrics], [unit normalisation][fork-units] |
 | Live update (S-5.1)     | reducer `MeasurementUpdated` in [`rows.ts`](../host-app/src/form/rows.ts#L19)                                                                               | [throttled emitter][fork-bridge-throttle], [`UPDATE_INTERVAL_MS`][fork-bridge-interval]                                                                |
 | Deletion (S-5.2)        | [own echo consumed by the exchange](../host-app/src/form/rowActions.ts#L57)                                                                                 | [`pendingRemovals`][fork-removals-map], [`measurementService.remove`][fork-removals-remove], [`MEASUREMENT_REMOVED` subscription][fork-bridge-removed] |
@@ -27,30 +27,30 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 | Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                            | log prefix `[scoring-bridge]` in the viewer console                                                                                                    |
 | Entry point             | [`useHostChannel`](../host-app/src/hooks/useHostChannel.ts)                                                                                                 | [`preRegistration`][fork-index]                                                                                                                        |
 
-[fork-config]: ../packages/viewer-bridge/src/config.ts
+[fork-config]: ../packages/viewer-bridge/src/extension.ts
 [fork-index]: ../packages/viewer-bridge/src/extension.ts
 [fork-bridge-origin]: ../packages/channel/src/incomingMessages.ts#L27
 [fork-bridge-post]: ../packages/channel/src/outbox.ts#L48
-[fork-bridge-ready]: ../packages/viewer-bridge/src/handshake.ts
-[fork-bridge-viewport]: ../packages/viewer-bridge/src/handshake.ts
-[fork-bridge-map]: ../packages/viewer-bridge/src/reportedMeasurements.ts
-[fork-bridge-added]: ../packages/viewer-bridge/src/measurementStream.ts
-[fork-bridge-added-post]: ../packages/viewer-bridge/src/measurementStream.ts
-[fork-bridge-throttle]: ../packages/viewer-bridge/src/reportedMeasurements.ts
-[fork-bridge-interval]: ../packages/viewer-bridge/src/reportedMeasurements.ts
-[fork-bridge-removed]: ../packages/viewer-bridge/src/measurementStream.ts
+[fork-bridge-ready]: ../packages/channel/src/viewerChannel.ts
+[fork-bridge-viewport]: ../packages/viewer-bridge/src/extension.ts#L46
+[fork-bridge-map]: ../packages/channel/src/viewerChannel.ts#L100
+[fork-bridge-added]: ../packages/viewer-bridge/src/measurements.ts#L239
+[fork-bridge-added-post]: ../packages/viewer-bridge/src/measurements.ts#L149
+[fork-bridge-throttle]: ../packages/viewer-bridge/src/throttle.ts
+[fork-bridge-interval]: ../packages/viewer-bridge/src/measurements.ts#L47
+[fork-bridge-removed]: ../packages/viewer-bridge/src/measurements.ts#L234
 [fork-commands-guard]: ../packages/channel/src/viewerChannel.ts#L21
-[fork-commands-snapshot]: ../packages/viewer-bridge/src/commands.ts
+[fork-commands-snapshot]: ../packages/viewer-bridge/src/commands.ts#L20
 [fork-commands-active]: ../packages/viewer-bridge/src/commands.ts
 [fork-commands-disarm]: ../packages/viewer-bridge/src/commands.ts
 [fork-commands-idempotent]: ../packages/viewer-bridge/src/commands.ts
-[fork-removals-map]: ../packages/viewer-bridge/src/removals.ts
-[fork-removals-cause]: ../packages/viewer-bridge/src/removals.ts
-[fork-removals-remove]: ../packages/viewer-bridge/src/removals.ts
-[fork-focus]: ../packages/viewer-bridge/src/focus.ts
+[fork-removals-map]: ../packages/viewer-bridge/src/commands.ts#L84
+[fork-removals-cause]: ../packages/channel/src/viewerChannel.ts#L35
+[fork-removals-remove]: ../packages/viewer-bridge/src/commands.ts#L89
+[fork-focus]: ../packages/viewer-bridge/src/commands.ts#L117
 [fork-metrics]: ../packages/viewer-bridge/src/measurements.ts
 [fork-units]: ../packages/viewer-bridge/src/measurements.ts
-[fork-overlay]: ../packages/viewer-bridge/src/getCustomizationModule.ts
+[fork-overlay]: ../packages/viewer-bridge/src/ohif.ts#L170
 
 ## Questions (canon P-1..P-6)
 
@@ -70,12 +70,12 @@ the seam between two separately deployed apps.
 **P-3. Who issues which id.** The host issues `rowId`
 ([`crypto.randomUUID()`](../host-app/src/form/rowActions.ts#L21)) before anything is drawn, so an
 empty `Очікує` row can exist. The viewer issues `measurementUid` (the cornerstone annotation UID)
-and keeps [`uidToRowId`][fork-bridge-map]. Flipping it breaks two things: the form could not show a
+and the viewer end of the channel [remembers the armed row][fork-bridge-map] until its measurement is sent; the rows array on the host is the only `uid → row` map. Flipping it breaks two things: the form could not show a
 row before drawing, and OHIF's `_isValidMeasurement` rejects any foreign field, so a host id cannot
 be stored on a measurement ([A-8](decisions/A-8-id-correlation.md)).
 
 **P-4. Where we subscribe in OHIF.** [`measurementService.subscribe(MEASUREMENT_ADDED)`][fork-bridge-added]
-inside `createOrchestrator`, called from [`preRegistration`][fork-index], where OHIF hands an extension its
+inside `subscribeMeasurements`, called from [`preRegistration`][fork-index], where OHIF hands an extension its
 `servicesManager`. The service merges cornerstone's `ANNOTATION_ADDED` and `ANNOTATION_COMPLETED`
 into one event on completion and returns an unsubscribe handle; raw cornerstone events would fire
 on the first click.

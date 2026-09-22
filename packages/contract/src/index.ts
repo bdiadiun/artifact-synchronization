@@ -3,6 +3,7 @@
 
 export { CONTRACT_VERSION, METRIC_KEY_BY_TOOL, TOOL_NAME_VALUES } from './vocabulary';
 export type {
+  ArmedRow,
   MeasurementGeometry,
   Metric,
   MetricKey,

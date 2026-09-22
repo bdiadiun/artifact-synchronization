@@ -1,16 +1,15 @@
 // Leading + trailing, so the value a handle is released on is always the last one emitted.
 // Per key, so one annotation's drag cannot swallow another annotation's final value.
 
-import type { Disposable } from '@bdiadiun/scoring-channel';
-
-export interface ThrottledEmitter<T> extends Disposable {
+export interface ThrottledEmitter<T> {
   push: (key: string, value: T) => void;
   discard: (key: string) => void;
+  dispose: () => void;
 }
 
-export type Emit<T> = (key: string, value: T) => void;
+type Emit<T> = (key: string, value: T) => void;
 
-export interface KeyState<T> {
+interface KeyState<T> {
   lastEmitAt: number | null;
   timer: ReturnType<typeof setTimeout> | null;
   // Wrapped so a falsy value is distinguishable from "nothing pending".

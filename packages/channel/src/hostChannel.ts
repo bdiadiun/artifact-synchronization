@@ -5,7 +5,7 @@
 import { isViewerEvent } from '@bdiadiun/scoring-contract';
 import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
 import { createChannel } from './createChannel.js';
-import type { Channel } from './createChannel.props.js';
+import type { Channel } from './createChannel.js';
 
 export type HostChannel = Channel<ViewerEvent, HostCommand>;
 
@@ -21,7 +21,7 @@ export const createHostChannel = ({
   const channel = createChannel<ViewerEvent, HostCommand>({
     peer: { origin: viewerOrigin, getWindow: getViewerWindow },
     isIncoming: isViewerEvent,
-    holdUntil: 'VIEWER_READY',
+    gate: { opensOn: 'incoming', type: 'VIEWER_READY' },
   });
 
   let armedRowId: string | null = null;

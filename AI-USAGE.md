@@ -39,7 +39,9 @@ did, what was kept, what was rewritten, and how the author stays able to defend 
   assistant's own invariant script caught it and the rows were fixed.
 - The canon initially said the tool returns to "Pan/default". The research showed the default
   primary tool in the longitudinal mode is WindowLevel, so the decision became "restore the tool
-  that was active before arming" (A-8) rather than hardcoding a name.
+  that was active before arming" (A-8) rather than hardcoding a name. The minimal-bridge slice
+  (A-23) later replaced the snapshot with the fixed default, `WindowLevel`, once it was clear the
+  snapshot was the only reason the extension had to remember anything about the tool.
 - The contract was first wired as a Vite alias to a shared folder; it was reworked into an npm
   published package (`@bdiadiun/scoring-contract`, A-12 and A-15) so the dependency is explicit.
 - `VIEWER_READY` was planned to be sent from `preRegistration`; the implementation session found
@@ -51,7 +53,8 @@ did, what was kept, what was rewritten, and how the author stays able to defend 
 - Live update: the first version logged one warning per animation frame while a handle was dragged
   (about 40 per drag), because cornerstone has no stats on intermediate frames; the mapping was
   made quiet on that path. A one-shot correction after `MEASUREMENT_ADDED` was added when the
-  architect's review showed that stats can settle one frame after completion.
+  architect's review showed that stats can settle one frame after completion; A-23 removed it
+  again, because the live-update stream delivers that same settled value.
 - Deletion: the brief assumed a `remove(uid, source, details)` signature; the implementation
   session checked the pinned OHIF source, found a one-argument method, and used the real one. The
   deletion made in the viewer was first simulated through the service; it was redone through the

@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | none in progress; 57 `refactor: one channel API` merged (#69), fork on adapter 0.0.6 (Viewers#20), pin #70                                           |
-| Gate           | — (the browser scenario passed on the released packages: 8 of 8 behaviour checks, the ninth is OHIF's own prop-type warning)                         |
-| Last merged PR | #70 `chore: pin the fork at the adapter release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left |
-| Next slice     | 58 `refactor: one storage abstraction` (host only, sessionStorage behind one module + one hook); 59 the adapter question (A-20) for the author       |
+| Field          | Value                                                                                                                                                                         |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 58 `refactor: minimal bridge` (branch `refactor/minimal-bridge`, node F-64, decision A-23)                                                                                    |
+| Gate           | 2 — extension 23 files → 7, protocol in the channel; awaiting result approval                                                                                                 |
+| Last merged PR | #70 `chore: pin the fork at the adapter release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                          |
+| Next slice     | after the release: fork PR raising the adapter pin, then the browser scenario; 59 `refactor: one storage abstraction` (host only); the adapter question (A-20) for the author |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -30,7 +30,7 @@ not a log. Update it in every PR (same commit as the work it describes).
 - Fork branches: `scoring` (base, from v3.12.17), feature branches PR into it; fork PR #1 = bridge extension.
 - Study `1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1` has pixel spacing → areas arrive in mm² (verified with a headless ellipse).
 - Raw OHIF `areaUnit` on the demo study is `mm²` (U+00B2); the bridge normalises the first token to `mm2`/`px2`. The default display set is a CT topogram with large pixel spacing, so areas are in the hundreds of thousands of mm² (real, not a bug).
-- `cachedStats` is filled in cornerstone's render pass; with an instantaneous synthetic release the area in `MEASUREMENT_ADDED` can lag one frame. Human drags are fine; the S-5.1 UPDATED slice would correct it anyway.
+- `cachedStats` is filled in cornerstone's render pass; with an instantaneous synthetic release the area in `MEASUREMENT_ADDED` can lag one frame. Human drags are fine, and the S-5.1 UPDATED stream delivers the settled value (A-23 removed the separate correction timer).
 - `VIEWER_READY` is sent on the first `toolGroupService` VIEWPORT_ADDED, not in preRegistration (setToolActive is a silent no-op before a viewport exists).
 
 ## Contract duplication

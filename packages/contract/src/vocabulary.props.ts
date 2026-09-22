@@ -26,3 +26,10 @@ export interface MeasurementGeometry {
   points: number[][];
   label?: string;
 }
+
+// The row the host armed with ACTIVATE_TOOL and the request that armed it; both ends keep it to
+// correlate the command with the measurement that follows (A-8, A-10).
+export interface ArmedRow {
+  rowId: string;
+  requestId: string;
+}
