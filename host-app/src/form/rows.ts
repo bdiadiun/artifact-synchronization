@@ -1,7 +1,8 @@
 // Pure, side-effect-free reducer; `useScoringForm.ts` wires it to the channel's events.
 
 import type { Dispatch } from 'react';
-import type {
+import { z } from 'zod';
+import {
   MeasurementGeometry,
   Metrics,
   RestoreFailureReason,
@@ -29,18 +30,19 @@ export enum FormActionType {
   RestoreFailed = 'RESTORE_FAILED',
 }
 
-export interface Row {
-  rowId: string;
-  status: RowStatus;
-  toolName: ToolName;
-  metrics: Metrics | null;
-  measurementUid: string | null;
-  // A-14: kept so a restored row can be re-sent to the viewer; null until a measurement arrives.
-  geometry: MeasurementGeometry | null;
-  // A-14: null unless a RESTORE_MEASUREMENTS reply named this row as failed; the reason drives the
-  // marker `MeasurementRow` shows next to a value that has no annotation behind it.
-  restoreFailureReason: RestoreFailureReason | null;
-}
+// A-14: `geometry` is kept so a restored row can be re-sent to the viewer, and
+// `restoreFailureReason` marks a row the viewer refused, which `MeasurementRow` shows next to a
+// value that has no annotation behind it.
+export const Row = z.object({
+  rowId: z.string().min(1),
+  status: z.enum(RowStatus),
+  toolName: ToolName,
+  metrics: Metrics.nullable(),
+  measurementUid: z.string().min(1).nullable(),
+  geometry: MeasurementGeometry.nullable(),
+  restoreFailureReason: RestoreFailureReason.nullable(),
+});
+export type Row = z.infer<typeof Row>;
 
 // At most one row is `drawing` at a time (A-4), so the armed row is the drawing one and is not
 // mirrored anywhere: `findDrawingRow` reads it off the rows.

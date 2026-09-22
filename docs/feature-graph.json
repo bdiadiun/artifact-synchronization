@@ -655,7 +655,7 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
@@ -799,7 +799,7 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
@@ -920,7 +920,7 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
@@ -1004,7 +1004,7 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
@@ -1284,7 +1284,7 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
@@ -1405,14 +1405,10 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/rows.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/form/rows.ts"],
           "external": ["react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
@@ -1943,7 +1939,7 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
@@ -2113,11 +2109,7 @@
           "external": ["react"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/rows.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/form/rows.ts"],
           "external": ["react", "zod"]
         },
         "host-app/src/i18n.ts": {
@@ -2188,14 +2180,10 @@
       "imports": {
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/rows.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/form/rows.ts"],
           "external": ["react", "zod"]
         },
         "packages/contract/src/hostCommands.ts": {
@@ -2358,7 +2346,7 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         }
       }
     },
@@ -2471,11 +2459,7 @@
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/rows.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/form/rows.ts"],
           "external": ["react", "zod"]
         },
         "host-app/src/form/viewerEventHandlers.ts": {
@@ -3066,14 +3050,10 @@
         },
         "host-app/src/form/rows.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/form/rows.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/form/rows.ts"],
           "external": ["react", "zod"]
         },
         "host-app/src/form/totals.ts": {

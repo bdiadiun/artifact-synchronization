@@ -4,34 +4,21 @@
 
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
-import { MeasurementGeometry, Metrics, ToolName } from '@bdiadiun/scoring-contract';
 import { studyInstanceUid } from '@app/config';
-import { RowStatus, type Row } from './rows';
+import { Row } from './rows';
 
 // The fields A-14 asks to persist; `restoreFailureReason` is not among them, so every load starts
 // with a clean restore attempt rather than replaying a stale failure.
-export type StoredRow = Omit<Row, 'restoreFailureReason'>;
+export const StoredRow = Row.omit({ restoreFailureReason: true });
+export type StoredRow = z.infer<typeof StoredRow>;
 
-export interface StoredState {
-  studyInstanceUid: string;
-  rows: StoredRow[];
-}
+export const StoredState = z.object({
+  studyInstanceUid: z.string().min(1),
+  rows: z.array(StoredRow),
+});
+export type StoredState = z.infer<typeof StoredState>;
 
 const storageKey = (studyInstanceUid: string): string => `scoring-form:rows:${studyInstanceUid}`;
-
-const StoredRowSchema = z.object({
-  rowId: z.string().min(1),
-  status: z.enum(RowStatus),
-  toolName: ToolName,
-  metrics: Metrics.nullable(),
-  measurementUid: z.string().min(1).nullable(),
-  geometry: MeasurementGeometry.nullable(),
-});
-
-const StoredStateSchema = z.object({
-  studyInstanceUid: z.string().min(1),
-  rows: z.array(StoredRowSchema),
-});
 
 // Empty on anything but a validated match for this exact study: a missing key, a throw, malformed
 // JSON and another study's state all fall back to "nothing to restore" rather than a crash.
@@ -41,7 +28,7 @@ export const loadStoredRows = (studyInstanceUid: string): Row[] => {
     if (raw === null) {
       return [];
     }
-    const parsed = StoredStateSchema.safeParse(JSON.parse(raw));
+    const parsed = StoredState.safeParse(JSON.parse(raw));
     if (!parsed.success || parsed.data.studyInstanceUid !== studyInstanceUid) {
       return [];
     }

@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                               |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 60 `refactor: zod contract and layout` (branch `refactor/zod-contract-and-layout`, node F-66, decisions A-26 and A-27)                                                                              |
-| Gate           | 1 approved — the contract as zod schemas, every package and the app laid out by side or role; implementation in progress                                                                            |
-| Last merged PR | #77 `chore: pin the fork at the adapter release` (slice 59 closed: contract 0.0.13, channel 0.0.7, bridge 0.0.9, adapter 0.0.8, fork at ac786c8a)                                                   |
-| Next slice     | 61 the same plain-code / no-comments pass over the form (`rowActions`, `viewerEventHandlers`, `MeasurementRow`); 62 `refactor: one storage abstraction`; the adapter question (A-20) for the author |
+| Field          | Value                                                                                                                                                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 61 `refactor: boundaries as schemas` (branch `refactor/boundaries-as-schemas`, node F-67, decision A-28), stacked on slice 60 (F-66, A-26/A-27) whose PR #78 is superseded: one PR, one commit per group, one release |
+| Gate           | implementation — groups 1–3 committed (channel API, OHIF boundary, metric vocabulary); group 4 (Row schema, MeasurementRow) in progress; then docs, version bump, e2e on the linked tree, PR                          |
+| Last merged PR | #77 `chore: pin the fork at the adapter release` (slice 59 closed: contract 0.0.13, channel 0.0.7, bridge 0.0.9, adapter 0.0.8, fork at ac786c8a)                                                                     |
+| Next slice     | release + fork pin; 62 `refactor: one storage abstraction`; the video (F-13)                                                                                                                                          |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -73,3 +73,8 @@ not a log. Update it in every PR (same commit as the work it describes).
 1. Read `CLAUDE.md`, this file, then the nodes of `docs/feature-graph.json` for the current slice.
 2. Run `npm run check:graph`.
 3. Continue from "Gate" above. Do not re-derive decisions already in `docs/decisions/`.
+4. Before gate 2 of any slice that touches `packages/*`: every changed package has its version
+   raised in its own `package.json`, and every internal pin (channel → contract, bridge → contract
+   and channel, adapter → bridge, host-app → contract and channel) names the new numbers. Slice 60
+   forgot this and its PR #78 was superseded by the slice-61 PR, which carries both slices and one
+   bump.

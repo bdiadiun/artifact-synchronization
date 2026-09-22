@@ -4,30 +4,33 @@ import { t } from '@app/i18n';
 import { formatRowKind, formatRowMetric, formatRowStatus } from '@app/form/format';
 import { rowInteraction, rowStyle, styles, type MeasurementRowProps } from './MeasurementRow.props';
 
-// stopPropagation keeps a button click from also triggering the row's focus click. Module scope:
-// the row id and the action are its only inputs, so no component closure is needed.
-const createRowActionHandler =
-  (rowId: string, action: (rowId: string) => void) =>
-  (event: MouseEvent<HTMLButtonElement>): void => {
-    event.stopPropagation();
-    action(rowId);
-  };
+// stopPropagation keeps a button click from also triggering the row's focus click.
+const stopAndRun = (
+  event: MouseEvent<HTMLButtonElement>,
+  action: (rowId: string) => void,
+  rowId: string,
+): void => {
+  event.stopPropagation();
+  action(rowId);
+};
 
 // Native elements, minimal grey styling (X-3: no design work required).
-export const MeasurementRow = ({
-  row,
-  index,
-  onActivate,
-  onCancel,
-  onRemove,
-  onFocus,
-}: MeasurementRowProps): JSX.Element => {
+export const MeasurementRow = (props: MeasurementRowProps): JSX.Element => {
+  const { row, index, onActivate, onCancel, onRemove, onFocus } = props;
   const metricLabel = formatRowMetric(row);
   const focusable = row.status === RowStatus.Done;
 
-  const handleActivate = createRowActionHandler(row.rowId, onActivate);
-  const handleCancel = createRowActionHandler(row.rowId, onCancel);
-  const handleRemove = createRowActionHandler(row.rowId, onRemove);
+  const handleActivate = (event: MouseEvent<HTMLButtonElement>): void => {
+    stopAndRun(event, onActivate, row.rowId);
+  };
+
+  const handleCancel = (event: MouseEvent<HTMLButtonElement>): void => {
+    stopAndRun(event, onCancel, row.rowId);
+  };
+
+  const handleRemove = (event: MouseEvent<HTMLButtonElement>): void => {
+    stopAndRun(event, onRemove, row.rowId);
+  };
 
   // S-5.3: both are attached only while the row is focusable, so neither re-checks the status.
   const handleRowClick = (): void => {

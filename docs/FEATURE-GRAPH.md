@@ -457,7 +457,7 @@ Files:
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/__tests__/helpers.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
 
 ### F-08 Activate / deactivate tool from a row
@@ -498,7 +498,7 @@ Files:
 - `host-app/src/form/__tests__/format.test.ts` — internal: `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/__tests__/helpers.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
 
 ### F-11 Total area with unit handling
@@ -549,7 +549,7 @@ Files:
 - `docs/decisions/A-10-echo-guard.md`
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/__tests__/helpers.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`; external: `@bdiadiun/scoring-channel`
 - `packages/viewer-bridge/src/ohif/throttle.ts` — no imports
@@ -566,7 +566,7 @@ Files:
 - `host-app/src/components/__tests__/ScoringPanel.test.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/form/rows.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/__tests__/helpers.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `packages/contract/src/__tests__/hostCommands.test.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/__tests__/index.test.ts` — internal: `packages/contract/src/index.ts`; external: `vitest`
@@ -619,7 +619,7 @@ Files:
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/__tests__/totals.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/totals.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/form/__tests__/helpers.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/totals.ts`, `host-app/src/form/useScoringForm.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 
@@ -651,8 +651,8 @@ Files:
 - `host-app/src/form/__tests__/storage.test.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
 - `host-app/src/form/rowActions.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `react`, `zod`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
+- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`; external: `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
@@ -865,7 +865,7 @@ Files:
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/form/__tests__/rows.test.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 - `host-app/src/form/useScoringForm.ts` — internal: `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`, `host-app/src/form/viewerEventHandlers.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 
@@ -960,7 +960,7 @@ Files:
 
 - `ARCHITECTURE.md`
 - `host-app/src/App.tsx` — internal: `host-app/src/App.css`, `host-app/src/pages/ScoringPage.tsx`; external: `react`
-- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `react`, `zod`
+- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`; external: `react`, `zod`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`
 
@@ -988,8 +988,8 @@ Files:
 
 - `.github/workflows/publish-packages.yml`
 - `docs/decisions/A-15-publish-contract-package.md`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `react`, `zod`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
+- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`; external: `react`, `zod`
 - `packages/contract/package.json`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
@@ -1081,7 +1081,7 @@ Files:
 
 - `docs/CONVENTIONS.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
 
 ### F-49 The contract reads as four small modules
 
@@ -1135,7 +1135,7 @@ Files:
 - `host-app/src/__tests__/config.test.ts` — internal: `host-app/src/config.ts`; external: `vitest`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/form/__tests__/studyIsolation.test.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/form/storage.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `react`, `zod`
+- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`; external: `react`, `zod`
 - `host-app/src/form/viewerEventHandlers.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rowActions.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 
 ### F-53 A module is addressed by where it lives
@@ -1346,8 +1346,8 @@ Files:
 - `docs/notes/ohif-service-availability.md`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/form/format.ts`, `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/form/format.ts` — internal: `host-app/src/form/rows.ts`, `host-app/src/i18n.ts`, `packages/contract/src/index.ts`
-- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`; external: `react`, `zod`
+- `host-app/src/form/rows.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
+- `host-app/src/form/storage.ts` — internal: `host-app/src/config.ts`, `host-app/src/form/rows.ts`; external: `react`, `zod`
 - `host-app/src/form/totals.ts` — internal: `host-app/src/form/rows.ts`, `packages/contract/src/index.ts`
 - `packages/channel/src/host/hostChannel.ts` — internal: `packages/channel/src/host/outbox.ts`, `packages/channel/src/host/pendingAnswers.ts`, `packages/channel/src/shared/channelApi.ts`, `packages/channel/src/shared/peer.ts`, `packages/contract/src/index.ts`
 - `packages/channel/src/shared/channelApi.ts` — internal: `packages/contract/src/index.ts`
