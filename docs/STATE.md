@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                         |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 58 `refactor: minimal bridge` (branch `refactor/minimal-bridge`, node F-64, decision A-23)                                                                                    |
-| Gate           | 2 — extension 23 files → 7, protocol in the channel; awaiting result approval                                                                                                 |
-| Last merged PR | #70 `chore: pin the fork at the adapter release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                          |
-| Next slice     | after the release: fork PR raising the adapter pin, then the browser scenario; 59 `refactor: one storage abstraction` (host only); the adapter question (A-20) for the author |
+| Field          | Value                                                                                                                                                                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | none in progress; 58 `refactor: minimal bridge` merged (#72), fork on adapter 0.0.7 (Viewers#21), pin #73                                                                                                                              |
+| Gate           | — (the browser scenario passed on the released packages: 8 of 8 behaviour checks; the focus check now spies on `jumpToMeasurement` instead of a log line)                                                                              |
+| Last merged PR | #73 `chore: pin the fork at the adapter release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                                                                                   |
+| Next slice     | 59 `refactor: plain channel` (channel without the generic core, explicit guards in the contract, comments cut to what the code cannot say); then the same pass over the form; then storage; the adapter question (A-20) for the author |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -20,7 +20,7 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 - OHIF `master` needs Node >= 24 + pnpm 11; release `v3.12.17` needs Node >= 18 + yarn 1 → A-6, we base on `v3.12.17`.
 - Local toolchain: Node 22.13.1, npm 10.9.2; yarn/pnpm not installed (use corepack for yarn 1 in the fork).
-- `gh pr merge` is sometimes refused by the permission classifier ("Merge Without Review"); a retry from a fresh git-operator run after green CI has succeeded. Never work around a refusal.
+- `gh pr merge` is refused by the permission classifier ("Merge Without Review") — consistently since 2026-09-22, in both repositories. The git operator stops at the open, green PR and the author merges it. Never work around a refusal.
 - The `gh` token has the `workflow` scope since 2026-09-17 (needed to push `.github/workflows`).
 - Git pushes over HTTPS use `gh auth setup-git` as the credential helper.
 - GitHub default branch was the first pushed branch (`docs/canon-and-feature-graph`) until 2026-09-16; now `main`. A plain `git clone` therefore works.

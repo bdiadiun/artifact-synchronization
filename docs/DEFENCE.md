@@ -12,7 +12,7 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 | Origin checked          | [`event.origin !== peerOrigin`](../packages/channel/src/incomingMessages.ts#L27)                                                                            | [the same check, the viewer end of the channel][fork-bridge-origin]                                                                                    |
 | URL input validated     | [`study` parameter checked against a DICOM identifier, then `encodeURIComponent`](../host-app/src/config.ts)                                                | —                                                                                                                                                      |
 | Payload validated       | [`isViewerEvent`](../packages/channel/src/hostChannel.ts#L23)                                                                                               | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
-| Handshake               | [READY opens the outbox](../packages/channel/src/createChannel.ts#L47)                                                                                      | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`postViewerReady`][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post]  |
+| Handshake               | [READY opens the outbox](../packages/channel/src/createChannel.ts#L47)                                                                                      | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`announceReady`][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post]    |
 | Early commands          | [`queue.push(message)`](../packages/channel/src/outbox.ts#L65), [`open`](../packages/channel/src/outbox.ts#L70)                                             | —                                                                                                                                                      |
 | Row id / measurement id | [`crypto.randomUUID()` in `addRow`](../host-app/src/form/rowActions.ts#L21)                                                                                 | [`getArmed()` on the channel][fork-bridge-map]                                                                                                         |
 | Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L7)                                                                                                              | [fixed `DEFAULT_TOOL` after a measurement][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]          |
@@ -107,10 +107,10 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 
 **P-9. A protocol element is disabled (e.g. `VIEWER_READY`).** Symptoms: the
 [status line](../host-app/src/components/BridgeStatus.tsx#L6) stays at `очікує VIEWER_READY`, the
-queue count grows with each "Активувати", and the viewer console has no `VIEWER_READY sent`. Walk:
-[`postViewerReady`][fork-bridge-ready] → [VIEWPORT_ADDED subscription][fork-bridge-viewport] → host
+queue count grows with each "Активувати", and the viewer console has no `[channel] sent VIEWER_READY`. Walk:
+[VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`channel.announceReady`][fork-bridge-ready] → host
 [READY branch](../packages/channel/src/createChannel.ts#L47). If `ACTIVATE_TOOL` is disabled instead,
-the queue drains but the viewer logs no `armed row` and the tool stays WindowLevel.
+the queue drains but the viewer console has no `[channel] received ACTIVATE_TOOL` and the tool stays WindowLevel.
 
 ## Rehearsal checklist
 
@@ -124,7 +124,7 @@ the queue drains but the viewer logs no `armed row` and the tool stays WindowLev
 - [ ] Reload the page with two measurements: rows, values, totals and both annotations come back.
 - [ ] 2×2 layout: `OHIF 3.12.17` in every pane.
 - [ ] P-7 swap to `RectangleROI` in under 2 minutes.
-- [ ] P-9: comment out the `postToHost` call in `postViewerReady`, reload, diagnose aloud.
+- [ ] P-9: comment out the `channel.announceReady` call in `extension.ts`, reload, diagnose aloud.
 
 ## Video script (D-8, 2–4 min)
 
