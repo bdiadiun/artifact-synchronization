@@ -116,10 +116,6 @@ export const createCommands = (
       case 'RESTORE_MEASUREMENTS':
         restore.handleRestore(command);
         break;
-      default: {
-        const exhaustive: never = command;
-        return exhaustive;
-      }
     }
   };
 

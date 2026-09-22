@@ -217,9 +217,5 @@ export const reducer = (state: FormState, action: FormAction): FormState => {
       return clearMeasurement(state, action);
     case FormActionType.RestoreFailed:
       return markRestoreFailed(state, action);
-    default: {
-      const exhaustiveCheck: never = action;
-      return exhaustiveCheck;
-    }
   }
 };

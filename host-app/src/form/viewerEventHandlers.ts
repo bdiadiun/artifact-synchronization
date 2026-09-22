@@ -89,10 +89,6 @@ export const createViewerEventHandlers = (
           });
         }
         break;
-      default: {
-        const exhaustive: never = event;
-        return exhaustive;
-      }
     }
   };
 

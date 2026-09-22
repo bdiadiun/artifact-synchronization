@@ -47,12 +47,10 @@ and the linter disagree, fix the linter config in the same PR and say so.
 - **A factory is never called inside another call's argument list.** Declare the function or the
   value with a name above and pass it by name, so the call reads as a list of things that already
   exist. No `createX` for what is one variable or one function.
-- Exhaustiveness over a discriminated union is never left to discipline. Either a `switch` keeps a
-  `default` branch narrowing to `never`, or a registration map is written with a `satisfies` clause
-  against the union of keys, as the viewer adapter does; both fail the build when a case is added
-  and not handled.
-- A `switch` over an action, message or status type keeps its `default` branch narrowing to `never`,
-  so a new case added to the type fails the type check instead of being silently ignored.
+- Exhaustiveness over a discriminated union is the linter's job, not the code's:
+  `@typescript-eslint/switch-exhaustiveness-check` fails the build when a `switch` over a message,
+  action or status type misses a case, so a `switch` has no `default` branch and no
+  `const exhaustive: never = …` line (removed 2026-09-22: it duplicated the rule in three places).
 
 ## 3. Enums, literals and constants
 
