@@ -1,11 +1,11 @@
-// A-14: rows are persisted in sessionStorage per study, so a reload in the same tab restores them
-// and another tab or study never sees them. Every access is defensive: private mode, a full quota
-// or a cleared store throw or return nothing, and the form still has to render.
+// A-14: the rows are persisted per study, so a reload in the same tab restores them and another
+// tab or study never sees them.
 
 import { useEffect, useReducer, type Dispatch } from 'react';
 import { z } from 'zod';
 import { studyInstanceUid } from '@app/config';
 import { reducer, Row, type FormAction, type FormState } from './rows';
+import { useSessionStorage } from './useSessionStorage';
 
 // The fields A-14 asks to persist; `restoreFailureReason` is not among them, so every load starts
 // with a clean restore attempt rather than replaying a stale failure.
@@ -18,48 +18,35 @@ export const StoredState = z.object({
 });
 export type StoredState = z.infer<typeof StoredState>;
 
-const storageKey = (studyInstanceUid: string): string => `scoring-form:rows:${studyInstanceUid}`;
+export const storageKey = (studyInstanceUid: string): string =>
+  `scoring-form:rows:${studyInstanceUid}`;
 
-// Empty on anything but a validated match for this exact study: a missing key, a throw, malformed
-// JSON and another study's state all fall back to "nothing to restore" rather than a crash.
-export const loadStoredRows = (studyInstanceUid: string): Row[] => {
-  try {
-    const raw = window.sessionStorage.getItem(storageKey(studyInstanceUid));
-    if (raw === null) {
-      return [];
-    }
-    const parsed = StoredState.safeParse(JSON.parse(raw));
-    if (!parsed.success || parsed.data.studyInstanceUid !== studyInstanceUid) {
-      return [];
-    }
-    return parsed.data.rows.map((row) => ({ ...row, restoreFailureReason: null }));
-  } catch (error) {
-    console.warn('[form] failed to read stored form state', error);
+export const toStoredState = (studyInstanceUid: string, rows: readonly Row[]): StoredState => ({
+  studyInstanceUid,
+  rows: rows.map(({ restoreFailureReason: _restoreFailureReason, ...row }) => row),
+});
+
+// Rows only from a validated state of this exact study; anything else is "nothing to restore".
+export const fromStoredState = (value: unknown, studyInstanceUid: string): Row[] => {
+  const parsed = StoredState.safeParse(value);
+  if (!parsed.success || parsed.data.studyInstanceUid !== studyInstanceUid) {
     return [];
   }
+  return parsed.data.rows.map((row) => ({ ...row, restoreFailureReason: null }));
 };
 
-export const saveRows = (studyInstanceUid: string, rows: readonly Row[]): void => {
-  try {
-    const state: StoredState = {
-      studyInstanceUid,
-      rows: rows.map(({ restoreFailureReason: _restoreFailureReason, ...row }) => row),
-    };
-    window.sessionStorage.setItem(storageKey(studyInstanceUid), JSON.stringify(state));
-  } catch (error) {
-    console.warn('[form] failed to persist form state', error);
-  }
-};
-
-// The form's state: read from sessionStorage once, as the reducer's initial state, and written
-// back on every change. The study is resolved once per page load (A-19), so both go to one key.
+// The form's state: read from storage once, as the reducer's initial state, and written back on
+// every change. The study is resolved once per page load (A-19), so both go to one key.
 export const useStoredForm = (): [FormState, Dispatch<FormAction>] => {
   const study = studyInstanceUid();
-  const [state, dispatch] = useReducer(reducer, study, (uid) => ({ rows: loadStoredRows(uid) }));
+  const storage = useSessionStorage(storageKey(study));
+  const [state, dispatch] = useReducer(reducer, undefined, () => ({
+    rows: fromStoredState(storage.getStorage(), study),
+  }));
 
   useEffect(() => {
-    saveRows(study, state.rows);
-  }, [study, state.rows]);
+    storage.setStorage(toStoredState(study, state.rows));
+  }, [storage, study, state.rows]);
 
   return [state, dispatch];
 };

@@ -650,6 +650,7 @@
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
+            "host-app/src/form/useSessionStorage.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
@@ -661,7 +662,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -694,7 +694,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -790,6 +789,7 @@
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
+            "host-app/src/form/useSessionStorage.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
@@ -809,7 +809,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -921,6 +920,7 @@
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
+            "host-app/src/form/useSessionStorage.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
@@ -932,7 +932,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -1007,6 +1006,7 @@
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
+            "host-app/src/form/useSessionStorage.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
@@ -1018,7 +1018,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -1129,6 +1128,7 @@
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
+            "host-app/src/form/useSessionStorage.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
@@ -1136,7 +1136,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -1291,6 +1290,7 @@
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
+            "host-app/src/form/useSessionStorage.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
@@ -1302,7 +1302,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -1361,6 +1360,7 @@
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
         "host-app/src/form/useScoringForm.ts",
+        "host-app/src/form/useSessionStorage.ts",
         "host-app/src/form/viewerEventHandlers.ts",
         "host-app/src/i18n.ts",
         "packages/contract/src/hostCommands.ts",
@@ -1396,7 +1396,11 @@
           "external": ["react"]
         },
         "host-app/src/form/__tests__/storage.test.ts": {
-          "internal": ["host-app/src/form/rows.ts", "host-app/src/form/storage.ts"],
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/storage.ts",
+            "host-app/src/form/useSessionStorage.ts"
+          ],
           "external": ["vitest"]
         },
         "host-app/src/form/format.ts": {
@@ -1420,18 +1424,25 @@
           "external": ["react", "zod"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": ["zod"]
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/useSessionStorage.ts"
+          ],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
+          "external": ["react"]
+        },
+        "host-app/src/form/useSessionStorage.ts": {
+          "internal": [],
           "external": ["react"]
         },
         "host-app/src/form/viewerEventHandlers.ts": {
@@ -1717,6 +1728,7 @@
             "host-app/src/form/storage.ts",
             "host-app/src/form/totals.ts",
             "host-app/src/form/useScoringForm.ts",
+            "host-app/src/form/useSessionStorage.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@testing-library/react", "vitest"]
@@ -1957,7 +1969,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -2115,6 +2126,7 @@
         "ARCHITECTURE.md",
         "host-app/src/App.tsx",
         "host-app/src/form/storage.ts",
+        "host-app/src/form/useSessionStorage.ts",
         "host-app/src/i18n.ts",
         "packages/viewer-bridge/src/commands/handlers.ts"
       ],
@@ -2124,8 +2136,16 @@
           "external": ["react"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": ["zod"]
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/useSessionStorage.ts"
+          ],
+          "external": ["react", "zod"]
+        },
+        "host-app/src/form/useSessionStorage.ts": {
+          "internal": [],
+          "external": ["react"]
         },
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/index.ts"],
@@ -2185,6 +2205,7 @@
         "docs/decisions/A-15-publish-contract-package.md",
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
+        "host-app/src/form/useSessionStorage.ts",
         "packages/contract/package.json",
         "packages/contract/src/hostCommands.ts",
         "packages/contract/src/index.ts",
@@ -2198,8 +2219,16 @@
           "external": ["react", "zod"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": ["zod"]
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/useSessionStorage.ts"
+          ],
+          "external": ["react", "zod"]
+        },
+        "host-app/src/form/useSessionStorage.ts": {
+          "internal": [],
+          "external": ["react"]
         },
         "packages/contract/src/hostCommands.ts": {
           "internal": ["packages/contract/src/vocabulary.ts"],
@@ -2457,6 +2486,7 @@
         "host-app/src/__tests__/config.test.ts",
         "host-app/src/config.ts",
         "host-app/src/form/storage.ts",
+        "host-app/src/form/useSessionStorage.ts",
         "host-app/src/form/viewerEventHandlers.ts"
       ],
       "imports": {
@@ -2469,8 +2499,16 @@
           "external": []
         },
         "host-app/src/form/storage.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": ["zod"]
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/useSessionStorage.ts"
+          ],
+          "external": ["react", "zod"]
+        },
+        "host-app/src/form/useSessionStorage.ts": {
+          "internal": [],
+          "external": ["react"]
         },
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
@@ -2769,7 +2807,6 @@
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
             "host-app/src/channel/useHostChannel.ts",
-            "host-app/src/config.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
@@ -2976,6 +3013,7 @@
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
         "host-app/src/form/totals.ts",
+        "host-app/src/form/useSessionStorage.ts",
         "host-app/src/form/viewerEventHandlers.ts",
         "host-app/src/pages/ScoringPage.tsx",
         "packages/channel/src/channel.ts",
@@ -3035,12 +3073,20 @@
           "external": ["react", "zod"]
         },
         "host-app/src/form/storage.ts": {
-          "internal": ["host-app/src/form/rows.ts"],
-          "external": ["zod"]
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/form/useSessionStorage.ts"
+          ],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/totals.ts": {
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
           "external": []
+        },
+        "host-app/src/form/useSessionStorage.ts": {
+          "internal": [],
+          "external": ["react"]
         },
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [

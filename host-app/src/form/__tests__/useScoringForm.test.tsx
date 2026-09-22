@@ -14,7 +14,12 @@ import type {
 } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL, FALLBACK_STUDY_INSTANCE_UID } from '@app/config';
 import { RowStatus, type Row } from '@app/form/rows';
-import { saveRows } from '@app/form/storage';
+import { storageKey, toStoredState } from '@app/form/storage';
+import { writeSessionStorage } from '@app/form/useSessionStorage';
+
+const saveRows = (study: string, rows: Row[]): void => {
+  writeSessionStorage(storageKey(study), toStoredState(study, rows));
+};
 import { computeTotals } from '@app/form/totals';
 import { useScoringForm } from '@app/form/useScoringForm';
 import { createChannelHarness, disposeAllHarnessChannels, dispatchFromViewer } from './helpers';

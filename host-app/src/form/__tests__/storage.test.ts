@@ -1,6 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 import { RowStatus, type Row } from '@app/form/rows';
-import { loadStoredRows, saveRows } from '@app/form/storage';
+import { fromStoredState, storageKey, toStoredState } from '@app/form/storage';
+import { readSessionStorage, writeSessionStorage } from '@app/form/useSessionStorage';
+
+const saveRows = (study: string, rows: Row[]): void => {
+  writeSessionStorage(storageKey(study), toStoredState(study, rows));
+};
+
+const loadStoredRows = (study: string): Row[] =>
+  fromStoredState(readSessionStorage(storageKey(study)), study);
 
 const STUDY_A = '1.2.3';
 const STUDY_B = '9.9.9';
