@@ -573,6 +573,7 @@
       "imports": {
         "packages/viewer-bridge/src/extension.ts": {
           "internal": [
+            "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/commands/handlers.ts",
             "packages/viewer-bridge/src/events/measurements.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
@@ -654,17 +655,18 @@
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         }
       }
     },
@@ -690,12 +692,13 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         },
         "packages/viewer-bridge/src/commands/handlers.ts": {
           "internal": [
@@ -703,7 +706,7 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -729,7 +732,7 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "packages/viewer-bridge/src/events/measurements.ts": {
           "internal": [
@@ -738,7 +741,7 @@
             "packages/viewer-bridge/src/ohif/surface.ts",
             "packages/viewer-bridge/src/ohif/throttle.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -798,17 +801,18 @@
           "external": []
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         }
       }
     },
@@ -919,17 +923,18 @@
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         },
         "packages/viewer-bridge/src/events/measurements.ts": {
           "internal": [
@@ -938,7 +943,7 @@
             "packages/viewer-bridge/src/ohif/surface.ts",
             "packages/viewer-bridge/src/ohif/throttle.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "packages/viewer-bridge/src/ohif/throttle.ts": {
           "internal": [],
@@ -1003,17 +1008,18 @@
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         },
         "packages/contract/src/__tests__/hostCommands.test.ts": {
           "internal": [
@@ -1068,7 +1074,7 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -1124,12 +1130,13 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         },
         "packages/contract/src/__tests__/hostCommands.test.ts": {
           "internal": [
@@ -1184,7 +1191,7 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -1283,17 +1290,18 @@
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         },
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/index.ts"],
@@ -1314,6 +1322,7 @@
       "imports": {
         "packages/viewer-bridge/src/extension.ts": {
           "internal": [
+            "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/commands/handlers.ts",
             "packages/viewer-bridge/src/events/measurements.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
@@ -1404,8 +1413,8 @@
           "external": []
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/storage.ts": {
           "internal": ["host-app/src/config.ts", "host-app/src/form/rows.ts"],
@@ -1413,12 +1422,13 @@
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         },
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
@@ -1460,7 +1470,7 @@
             "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "@cornerstonejs/core", "@cornerstonejs/tools"]
+          "external": ["@cornerstonejs/core", "@cornerstonejs/tools"]
         },
         "scripts/eslint-fork-style.config.js": {
           "internal": [],
@@ -1871,7 +1881,7 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "packages/viewer-bridge/src/ohif/throttle.ts": {
           "internal": [],
@@ -1937,17 +1947,18 @@
           "external": []
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         },
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
@@ -2038,6 +2049,7 @@
             "host-app/src/components/BridgeStatus.tsx",
             "host-app/src/components/ScoringPanel.tsx",
             "host-app/src/components/ViewerFrame.tsx",
+            "host-app/src/form/rows.ts",
             "host-app/src/form/useScoringForm.ts"
           ],
           "external": ["react"]
@@ -2120,7 +2132,7 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -2177,8 +2189,8 @@
       ],
       "imports": {
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/storage.ts": {
           "internal": ["host-app/src/config.ts", "host-app/src/form/rows.ts"],
@@ -2261,7 +2273,7 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -2343,8 +2355,8 @@
           ]
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         }
       }
     },
@@ -2518,6 +2530,7 @@
       "imports": {
         "packages/viewer-bridge/src/extension.ts": {
           "internal": [
+            "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/commands/handlers.ts",
             "packages/viewer-bridge/src/events/measurements.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
@@ -2589,8 +2602,8 @@
         "docs/decisions/A-21-channel-and-exchange.md",
         "host-app/src/form/rowActions.ts",
         "packages/channel/package.json",
-        "packages/channel/src/host/hostChannel.ts",
-        "packages/channel/src/shared/peer.ts",
+        "packages/channel/src/channel.ts",
+        "packages/channel/src/peer.ts",
         "packages/contract/src/viewerEvents.ts"
       ],
       "imports": {
@@ -2602,15 +2615,11 @@
           ],
           "external": []
         },
-        "packages/channel/src/host/hostChannel.ts": {
-          "internal": [
-            "packages/channel/src/host/outbox.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
+        "packages/channel/src/channel.ts": {
+          "internal": ["packages/channel/src/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
-        "packages/channel/src/shared/peer.ts": {
+        "packages/channel/src/peer.ts": {
           "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
@@ -2720,7 +2729,7 @@
             "packages/viewer-bridge/src/ohif/surface.ts",
             "packages/viewer-bridge/src/ohif/throttle.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         }
       }
     },
@@ -2739,9 +2748,7 @@
         "host-app/src/channel/useHostChannel.ts",
         "host-app/src/form/useScoringForm.ts",
         "host-app/src/form/viewerEventHandlers.ts",
-        "packages/channel/src/host/hostChannel.ts",
-        "packages/channel/src/host/outbox.ts",
-        "packages/channel/src/viewer/viewerChannel.ts"
+        "packages/channel/src/channel.ts"
       ],
       "imports": {
         "eslint.config.js": {
@@ -2756,17 +2763,18 @@
           ]
         },
         "host-app/src/channel/useHostChannel.ts": {
-          "internal": ["host-app/src/config.ts"],
+          "internal": ["host-app/src/config.ts", "packages/contract/src/index.ts"],
           "external": ["@bdiadiun/scoring-channel", "react"]
         },
         "host-app/src/form/useScoringForm.ts": {
           "internal": [
+            "host-app/src/channel/useHostChannel.ts",
             "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "host-app/src/form/storage.ts",
             "host-app/src/form/viewerEventHandlers.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "react"]
+          "external": ["react"]
         },
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
@@ -2776,20 +2784,8 @@
           ],
           "external": []
         },
-        "packages/channel/src/host/hostChannel.ts": {
-          "internal": [
-            "packages/channel/src/host/outbox.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
-          "external": []
-        },
-        "packages/channel/src/host/outbox.ts": {
-          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
-          "external": []
-        },
-        "packages/channel/src/viewer/viewerChannel.ts": {
-          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
+        "packages/channel/src/channel.ts": {
+          "internal": ["packages/channel/src/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         }
       }
@@ -2805,7 +2801,7 @@
       "verify": "The extension is under 1 100 lines in seven files against 1 538 in 23; the full browser scenario passes unchanged on the released packages; a wrong reply shape and a missing command handler each fail the build; skipping the tool restore after a measurement, omitting causedBy in reply, or answering a gone removal with send each fails a named test.",
       "files": [
         "docs/decisions/A-23-minimal-bridge.md",
-        "packages/channel/src/viewer/viewerChannel.ts",
+        "packages/channel/src/channel.ts",
         "packages/contract/src/vocabulary.ts",
         "packages/viewer-bridge/src/commands/handlers.ts",
         "packages/viewer-bridge/src/commands/restore.ts",
@@ -2814,8 +2810,8 @@
         "packages/viewer-bridge/src/ohif/surface.ts"
       ],
       "imports": {
-        "packages/channel/src/viewer/viewerChannel.ts": {
-          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
+        "packages/channel/src/channel.ts": {
+          "internal": ["packages/channel/src/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/vocabulary.ts": {
@@ -2828,14 +2824,14 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "packages/viewer-bridge/src/commands/restore.ts": {
           "internal": [
             "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel", "@cornerstonejs/core", "@cornerstonejs/tools"]
+          "external": ["@cornerstonejs/core", "@cornerstonejs/tools"]
         },
         "packages/viewer-bridge/src/events/measurements.ts": {
           "internal": [
@@ -2844,10 +2840,11 @@
             "packages/viewer-bridge/src/ohif/surface.ts",
             "packages/viewer-bridge/src/ohif/throttle.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "packages/viewer-bridge/src/extension.ts": {
           "internal": [
+            "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/commands/handlers.ts",
             "packages/viewer-bridge/src/events/measurements.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
@@ -2855,8 +2852,8 @@
           "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/ohif/surface.ts": {
-          "internal": [],
-          "external": ["zod"]
+          "internal": ["packages/contract/src/index.ts"],
+          "external": ["@bdiadiun/scoring-channel", "zod"]
         }
       }
     },
@@ -2873,32 +2870,18 @@
         "docs/CONVENTIONS.md",
         "docs/decisions/A-24-plain-code.md",
         "docs/decisions/A-25-version-in-the-channel.md",
-        "packages/channel/src/host/hostChannel.ts",
-        "packages/channel/src/host/outbox.ts",
-        "packages/channel/src/shared/peer.ts",
-        "packages/channel/src/viewer/viewerChannel.ts",
+        "packages/channel/src/channel.ts",
+        "packages/channel/src/peer.ts",
         "packages/contract/src/hostCommands.ts",
         "packages/contract/src/viewerEvents.ts"
       ],
       "imports": {
-        "packages/channel/src/host/hostChannel.ts": {
-          "internal": [
-            "packages/channel/src/host/outbox.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
+        "packages/channel/src/channel.ts": {
+          "internal": ["packages/channel/src/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
-        "packages/channel/src/host/outbox.ts": {
-          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
-          "external": []
-        },
-        "packages/channel/src/shared/peer.ts": {
+        "packages/channel/src/peer.ts": {
           "internal": ["packages/contract/src/index.ts"],
-          "external": []
-        },
-        "packages/channel/src/viewer/viewerChannel.ts": {
-          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/hostCommands.ts": {
@@ -2986,8 +2969,7 @@
         "host-app/src/form/rows.ts",
         "host-app/src/form/storage.ts",
         "host-app/src/form/totals.ts",
-        "packages/channel/src/host/hostChannel.ts",
-        "packages/channel/src/viewer/viewerChannel.ts",
+        "packages/channel/src/channel.ts",
         "packages/contract/src/vocabulary.ts",
         "packages/viewer-bridge/src/commands/handlers.ts",
         "packages/viewer-bridge/src/events/measurements.ts",
@@ -3013,8 +2995,8 @@
           "external": []
         },
         "host-app/src/form/rows.ts": {
-          "internal": ["packages/contract/src/index.ts"],
-          "external": ["@bdiadiun/scoring-channel", "react", "zod"]
+          "internal": ["host-app/src/channel/useHostChannel.ts", "packages/contract/src/index.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/form/storage.ts": {
           "internal": ["host-app/src/config.ts", "host-app/src/form/rows.ts"],
@@ -3024,16 +3006,8 @@
           "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
           "external": []
         },
-        "packages/channel/src/host/hostChannel.ts": {
-          "internal": [
-            "packages/channel/src/host/outbox.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
-          "external": []
-        },
-        "packages/channel/src/viewer/viewerChannel.ts": {
-          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
+        "packages/channel/src/channel.ts": {
+          "internal": ["packages/channel/src/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/vocabulary.ts": {
@@ -3046,7 +3020,7 @@
             "packages/viewer-bridge/src/commands/restore.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "packages/viewer-bridge/src/events/measurements.ts": {
           "internal": [
@@ -3055,10 +3029,11 @@
             "packages/viewer-bridge/src/ohif/surface.ts",
             "packages/viewer-bridge/src/ohif/throttle.ts"
           ],
-          "external": ["@bdiadiun/scoring-channel"]
+          "external": []
         },
         "packages/viewer-bridge/src/extension.ts": {
           "internal": [
+            "packages/contract/src/index.ts",
             "packages/viewer-bridge/src/commands/handlers.ts",
             "packages/viewer-bridge/src/events/measurements.ts",
             "packages/viewer-bridge/src/ohif/surface.ts"
@@ -3066,8 +3041,8 @@
           "external": ["@bdiadiun/scoring-channel"]
         },
         "packages/viewer-bridge/src/ohif/surface.ts": {
-          "internal": [],
-          "external": ["zod"]
+          "internal": ["packages/contract/src/index.ts"],
+          "external": ["@bdiadiun/scoring-channel", "zod"]
         }
       }
     }

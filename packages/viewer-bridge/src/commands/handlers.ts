@@ -5,10 +5,10 @@ import type {
   HostCommand,
   RemoveMeasurementCommand,
 } from '@bdiadiun/scoring-contract';
-import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 
 import {
   LOG_PREFIX,
+  type ViewerChannel,
   type OhifCommandsManager,
   type OhifServices,
   type OhifToolGroupService,

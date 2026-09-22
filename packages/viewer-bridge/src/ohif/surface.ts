@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import type { HostCommand } from '@bdiadiun/scoring-contract';
+import type { Channel } from '@bdiadiun/scoring-channel';
+
+export type ViewerChannel = Channel<HostCommand>;
 
 export const LOG_PREFIX = '[scoring-bridge]';
 

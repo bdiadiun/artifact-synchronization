@@ -6,11 +6,11 @@ import {
   type Metrics,
   type Unit,
 } from '@bdiadiun/scoring-contract';
-import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 
 import type { ScoringCommands } from '../commands/handlers.js';
 import {
   LOG_PREFIX,
+  type ViewerChannel,
   OhifMeasurement,
   type OhifMeasurementEvent,
   type OhifMeasurementService,

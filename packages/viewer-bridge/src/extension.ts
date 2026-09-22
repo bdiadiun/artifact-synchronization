@@ -1,5 +1,5 @@
-import { createViewerChannel } from '@bdiadiun/scoring-channel';
-import type { ViewerChannel } from '@bdiadiun/scoring-channel';
+import { isHostCommand } from '@bdiadiun/scoring-contract';
+import { createChannel } from '@bdiadiun/scoring-channel';
 
 import { createCommands } from './commands/handlers.js';
 import { subscribeMeasurements } from './events/measurements.js';
@@ -13,6 +13,7 @@ import {
   type OhifServices,
   type OhifSubscription,
   type OhifToolGroupService,
+  type ViewerChannel,
 } from './ohif/surface.js';
 
 export const SCORING_BRIDGE_EXTENSION_ID = '@bdiadiun/ohif-extension-scoring-bridge';
@@ -59,7 +60,11 @@ const startBridge = (
   commandsManager: OhifCommandsManager,
   hostOrigin: string,
 ): (() => void) => {
-  const channel = createViewerChannel({ hostOrigin });
+  const channel = createChannel({
+    peerOrigin: hostOrigin,
+    getPeerWindow: () => (window.parent === window ? null : window.parent),
+    accept: isHostCommand,
+  });
   const commands = createCommands(services, commandsManager, channel);
 
   const unsubscribeMeasurements = subscribeMeasurements(
@@ -69,7 +74,7 @@ const startBridge = (
   );
   const unsubscribeAnnounce = announceOnViewport(services.toolGroupService, channel);
 
-  channel.onCommand(commands.handleCommand);
+  channel.onMessage(commands.handleCommand);
 
   const disposers = [
     commands.dispose,

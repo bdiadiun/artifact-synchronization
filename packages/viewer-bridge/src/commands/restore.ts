@@ -4,13 +4,17 @@ import type {
   RestoreMeasurementRequest,
   RestoreMeasurementsCommand,
 } from '@bdiadiun/scoring-contract';
-import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 import { annotation } from '@cornerstonejs/tools';
 import type { Annotation } from '@cornerstonejs/tools/types';
 import { triggerAnnotationRenderForViewportIds } from '@cornerstonejs/tools/utilities';
 import type { Types } from '@cornerstonejs/core';
 
-import { LOG_PREFIX, type OhifServices, type OhifSubscription } from '../ohif/surface.js';
+import {
+  LOG_PREFIX,
+  type OhifServices,
+  type OhifSubscription,
+  type ViewerChannel,
+} from '../ohif/surface.js';
 
 export interface RestoreCommands {
   handleRestore: (command: RestoreMeasurementsCommand) => void;

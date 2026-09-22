@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef } from 'react';
-import type { HostChannel } from '@bdiadiun/scoring-channel';
+import type { HostChannel } from '@app/channel/useHostChannel';
 import { reducer, type FormContext, type FormState, type Row } from './rows';
 import { createRowActions, type RowActions } from './rowActions';
 import { usePersistRows, useRestoredRows } from './storage';
@@ -34,7 +34,7 @@ export const useScoringForm = (channel: HostChannel | null): UseScoringFormResul
     const getContext = (): FormContext => contextRef.current;
     const handleViewerEvent = createViewerEventHandlers(getContext);
 
-    return channel.onEvent(handleViewerEvent);
+    return channel.onMessage(handleViewerEvent);
   }, [channel]);
 
   return { rows: state.rows, ...createRowActions(context) };

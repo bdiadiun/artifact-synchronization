@@ -8,7 +8,7 @@ import {
   RestoreFailureReason,
   ToolName,
 } from '@bdiadiun/scoring-contract';
-import type { HostChannel } from '@bdiadiun/scoring-channel';
+import type { HostChannel } from '@app/channel/useHostChannel';
 
 export enum RowStatus {
   Pending = 'pending',

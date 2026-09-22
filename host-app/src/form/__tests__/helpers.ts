@@ -3,8 +3,9 @@
 // helper to dispatch an incoming viewer message on the real jsdom `window`.
 
 import { vi } from 'vitest';
-import { createHostChannel, type HostChannel } from '@bdiadiun/scoring-channel';
-import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
+import { createChannel } from '@bdiadiun/scoring-channel';
+import { isViewerEvent, type HostCommand, type ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { HostChannel } from '@app/channel/useHostChannel';
 import { VIEWER_ORIGIN } from '@app/config';
 
 export interface FakeViewerWindow {
@@ -29,9 +30,11 @@ export const disposeAllHarnessChannels = (): void => {
 
 export const createChannelHarness = (): ChannelHarness => {
   const viewerWindow: FakeViewerWindow = { postMessage: vi.fn() };
-  const channel = createHostChannel({
-    viewerOrigin: VIEWER_ORIGIN,
-    getViewerWindow: () => viewerWindow as unknown as Window,
+  const channel = createChannel({
+    peerOrigin: VIEWER_ORIGIN,
+    getPeerWindow: () => viewerWindow as unknown as Window,
+    accept: isViewerEvent,
+    readyOn: 'VIEWER_READY',
   });
   createdChannels.push(channel);
 

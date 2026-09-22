@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { ViewerChannel } from '@bdiadiun/scoring-channel';
+import type { ViewerChannel } from '../../ohif/surface.js';
 
 import { subscribeMeasurements, toGeometry, toMetrics } from '../measurements.js';
 import type {
@@ -166,7 +166,9 @@ const listen = (): Listening => {
   const send = vi.fn().mockReturnValue(true);
   const channel: ViewerChannel = {
     send,
-    onCommand: vi.fn(),
+    onMessage: vi.fn(),
+    getState: vi.fn(),
+    subscribe: vi.fn(),
     dispose: vi.fn(),
   };
 

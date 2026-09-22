@@ -6,8 +6,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import { annotation } from '@cornerstonejs/tools';
 import { triggerAnnotationRenderForViewportIds } from '@cornerstonejs/tools/utilities';
-import { createViewerChannel } from '@bdiadiun/scoring-channel';
-import type { ViewerChannel } from '@bdiadiun/scoring-channel';
+import { isHostCommand } from '@bdiadiun/scoring-contract';
+import { createChannel } from '@bdiadiun/scoring-channel';
+import type { ViewerChannel } from '../../ohif/surface.js';
 import type {
   RestoreMeasurementRequest,
   RestoreMeasurementsCommand,
@@ -91,7 +92,11 @@ interface RestoreFixture {
 const connect = (): RestoreFixture => {
   const hostWindow = { postMessage: vi.fn() };
   vi.spyOn(window, 'parent', 'get').mockReturnValue(hostWindow as unknown as Window);
-  const channel = createViewerChannel({ hostOrigin: HOST_ORIGIN });
+  const channel = createChannel({
+    peerOrigin: HOST_ORIGIN,
+    getPeerWindow: () => window.parent,
+    accept: isHostCommand,
+  });
 
   return {
     channel,
