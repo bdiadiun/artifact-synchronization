@@ -33,25 +33,19 @@ export const createRowActions = ({ state, dispatch, channel }: FormContext): Row
     channel?.send({ type: 'DEACTIVATE_TOOL', rowId });
   };
 
-  // Behaviour depends on row status: `done` removes the real annotation in the viewer; `drawing`
-  // is cancelled first (nothing drawn yet); `pending` just drops the row.
+  // A drawing row is cancelled in the viewer first; a done row has its annotation removed there.
+  // The viewer's MEASUREMENT_REMOVED then comes back for a row that is already gone, and the
+  // reducer ignores a uid no row holds (A-30).
   const remove = (rowId: string): void => {
     const row = findRow(state.rows, rowId);
     if (row === undefined) {
       return;
     }
-    if (row.status === RowStatus.Done) {
-      if (row.measurementUid === null) {
-        return;
-      }
-      dispatch({ type: FormActionType.RemoveRow, rowId });
-      // The viewer's MEASUREMENT_REMOVED comes back for a row that is already gone, and the
-      // reducer ignores a uid no row holds (A-10).
-      channel?.send({ type: 'REMOVE_MEASUREMENT', measurementUid: row.measurementUid });
-      return;
-    }
     if (row.status === RowStatus.Drawing) {
       channel?.send({ type: 'DEACTIVATE_TOOL', rowId });
+    }
+    if (row.measurementUid !== null) {
+      channel?.send({ type: 'REMOVE_MEASUREMENT', measurementUid: row.measurementUid });
     }
     dispatch({ type: FormActionType.RemoveRow, rowId });
   };

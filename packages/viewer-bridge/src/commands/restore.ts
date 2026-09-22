@@ -66,20 +66,17 @@ const runRestore = (
   channel: ViewerChannel,
   command: RestoreMeasurementsCommand,
 ): void => {
+  const studyShown = showsStudy(services, command.studyInstanceUid);
   const restored: string[] = [];
-  const failed: RestoreFailure[] = showsStudy(services, command.studyInstanceUid)
-    ? []
-    : command.measurements.map(({ rowId }) => ({ rowId, reason: 'unknown-study' }));
+  const failed: RestoreFailure[] = [];
 
-  if (failed.length === 0) {
-    command.measurements.forEach((request) => {
-      const reason = restoreRow(services, request);
-      if (reason === null) {
-        restored.push(request.rowId);
-      } else {
-        failed.push({ rowId: request.rowId, reason });
-      }
-    });
+  for (const request of command.measurements) {
+    const reason = studyShown ? restoreRow(services, request) : 'unknown-study';
+    if (reason === null) {
+      restored.push(request.rowId);
+    } else {
+      failed.push({ rowId: request.rowId, reason });
+    }
   }
 
   const viewportId = services.viewportGridService.getActiveViewportId();
