@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                                                  |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | none in progress; 58 `refactor: minimal bridge` merged (#72), fork on adapter 0.0.7 (Viewers#21), pin #73                                                                                                                              |
-| Gate           | — (the browser scenario passed on the released packages: 8 of 8 behaviour checks; the focus check now spies on `jumpToMeasurement` instead of a log line)                                                                              |
-| Last merged PR | #73 `chore: pin the fork at the adapter release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                                                                                   |
-| Next slice     | 59 `refactor: plain channel` (channel without the generic core, explicit guards in the contract, comments cut to what the code cannot say); then the same pass over the form; then storage; the adapter question (A-20) for the author |
+| Field          | Value                                                                                                                                                                               |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 59 `refactor: plain channel` (branch `refactor/plain-channel`, node F-65, decision A-24)                                                                                            |
+| Gate           | 2 — channel without the generic core, guards as functions, comments cut; awaiting result approval                                                                                   |
+| Last merged PR | #73 `chore: pin the fork at the adapter release`; every mandatory requirement and all six bonus tasks are implemented; only the video (F-13) is left                                |
+| Next slice     | after the release: fork pin 0.0.8 + browser scenario; 60 the same plain-code pass over the form; 61 `refactor: one storage abstraction`; the adapter question (A-20) for the author |
 
 ## Open decisions (see CANON.md → Decisions)
 

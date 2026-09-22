@@ -12,7 +12,7 @@ host-app  http://localhost:5173                   viewer  http://localhost:3000 
 │  - rowId ↔ measurementUid    │  VIEWER_READY    │   commandsManager.run(setToolActive)│
 │                              │  MEASUREMENT_*   │   uid ↔ rowId map                  │
 └──────────────────────────────┘                  └────────────────────────────────────┘
-        @bdiadiun/scoring-contract  (types + guards, version: 1), published to npm
+        @bdiadiun/scoring-contract  (message bodies + guards), published to npm
               and depended on by both the host app and the viewer extension
 ```
 
@@ -21,8 +21,9 @@ host-app  http://localhost:5173                   viewer  http://localhost:3000 
 Source of truth: the published package `@bdiadiun/scoring-contract`, whose entry is
 [`packages/contract/src/index.ts`](packages/contract/src/index.ts); the vocabulary, the host
 commands, the viewer events and the primitive guards each have their own module behind it.
-Every message carries `version: 1`; receivers reject other versions and unknown types with a
-runtime guard (`isHostCommand`, `isViewerEvent`). Unknown extra fields are ignored so a `version`
+Every message carries `version: 1`, added by the channel when it posts and checked by the channel
+before the contract guard runs (A-25); the guards (`isHostCommand`, `isViewerEvent`) then reject
+unknown types and malformed bodies. Unknown extra fields are ignored so a `version`
 bump is needed only for breaking changes. Adding a message type (as the deletion bonus did) is
 additive and stays in version 1: both sides are updated in the same slice, and an older peer would
 simply reject the new type as unknown.

@@ -1,7 +1,7 @@
 // The host end's own behaviour on top of the generic channel (A-22): the queue held until
 // VIEWER_READY, and cancelling the armed row on dispose while the channel is still live (Q-1,
 // Q-5). Origin, the contract guard and the exchange mechanics are exercised once in
-// createChannel.test.ts and not repeated here.
+// channel.test.ts and not repeated here.
 //
 // Dropped from the old orchestrator suite, not ported: `lastEvent` and the notification count it
 // drove no longer exist (A-22); the false -> true `ready` flip the old suite counted on a second

@@ -324,6 +324,11 @@
       "title": "refactor: minimal bridge",
       "branch": "refactor/minimal-bridge",
       "pr": 72
+    },
+    {
+      "id": "59",
+      "title": "refactor: plain channel",
+      "branch": "refactor/plain-channel"
     }
   ],
   "nodes": [
@@ -522,7 +527,6 @@
         },
         "packages/contract/src/index.ts": {
           "internal": [
-            "packages/contract/src/answers.props.ts",
             "packages/contract/src/answers.ts",
             "packages/contract/src/hostCommands.props.ts",
             "packages/contract/src/hostCommands.ts",
@@ -1133,7 +1137,6 @@
         },
         "packages/contract/src/index.ts": {
           "internal": [
-            "packages/contract/src/answers.props.ts",
             "packages/contract/src/answers.ts",
             "packages/contract/src/hostCommands.props.ts",
             "packages/contract/src/hostCommands.ts",
@@ -1300,7 +1303,6 @@
         },
         "packages/contract/src/index.ts": {
           "internal": [
-            "packages/contract/src/answers.props.ts",
             "packages/contract/src/answers.ts",
             "packages/contract/src/hostCommands.props.ts",
             "packages/contract/src/hostCommands.ts",
@@ -1646,7 +1648,6 @@
         },
         "packages/contract/src/index.ts": {
           "internal": [
-            "packages/contract/src/answers.props.ts",
             "packages/contract/src/answers.ts",
             "packages/contract/src/hostCommands.props.ts",
             "packages/contract/src/hostCommands.ts",
@@ -2477,7 +2478,6 @@
         },
         "packages/contract/src/index.ts": {
           "internal": [
-            "packages/contract/src/answers.props.ts",
             "packages/contract/src/answers.ts",
             "packages/contract/src/hostCommands.props.ts",
             "packages/contract/src/hostCommands.ts",
@@ -2695,7 +2695,6 @@
         },
         "packages/contract/src/index.ts": {
           "internal": [
-            "packages/contract/src/answers.props.ts",
             "packages/contract/src/answers.ts",
             "packages/contract/src/hostCommands.props.ts",
             "packages/contract/src/hostCommands.ts",
@@ -2970,8 +2969,8 @@
         "docs/decisions/A-21-channel-and-exchange.md",
         "host-app/src/form/unanswered.ts",
         "packages/channel/package.json",
-        "packages/channel/src/createChannel.ts",
-        "packages/channel/src/incomingMessages.ts",
+        "packages/channel/src/hostChannel.ts",
+        "packages/channel/src/peer.ts",
         "packages/contract/src/answers.ts"
       ],
       "imports": {
@@ -2979,26 +2978,19 @@
           "internal": [],
           "external": []
         },
-        "packages/channel/src/createChannel.ts": {
+        "packages/channel/src/hostChannel.ts": {
           "internal": [
-            "packages/channel/src/buildMessage.ts",
-            "packages/channel/src/config.ts",
-            "packages/channel/src/disposers.ts",
-            "packages/channel/src/exchanges.ts",
-            "packages/channel/src/incomingMessages.ts",
-            "packages/channel/src/outbox.ts",
-            "packages/channel/src/pendingExchanges.ts",
+            "packages/channel/src/channelState.ts",
+            "packages/channel/src/hostOutbox.ts",
+            "packages/channel/src/messageHandlers.ts",
+            "packages/channel/src/peer.ts",
+            "packages/channel/src/pendingAnswers.ts",
             "packages/contract/src/index.ts"
           ],
           "external": []
         },
-        "packages/channel/src/incomingMessages.ts": {
-          "internal": [
-            "packages/channel/src/config.ts",
-            "packages/channel/src/disposers.ts",
-            "packages/channel/src/outbox.ts",
-            "packages/contract/src/index.ts"
-          ],
+        "packages/channel/src/peer.ts": {
+          "internal": ["packages/channel/src/config.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/answers.ts": {
@@ -3147,9 +3139,8 @@
         "host-app/src/hooks/useChannelState.ts",
         "host-app/src/hooks/useHostChannel.ts",
         "host-app/src/hooks/useScoringForm.ts",
-        "packages/channel/src/createChannel.ts",
         "packages/channel/src/hostChannel.ts",
-        "packages/channel/src/outbox.ts",
+        "packages/channel/src/hostOutbox.ts",
         "packages/channel/src/viewerChannel.ts"
       ],
       "imports": {
@@ -3193,31 +3184,30 @@
           ],
           "external": ["@bdiadiun/scoring-channel", "react"]
         },
-        "packages/channel/src/createChannel.ts": {
+        "packages/channel/src/hostChannel.ts": {
           "internal": [
-            "packages/channel/src/buildMessage.ts",
-            "packages/channel/src/config.ts",
-            "packages/channel/src/disposers.ts",
-            "packages/channel/src/exchanges.ts",
-            "packages/channel/src/incomingMessages.ts",
-            "packages/channel/src/outbox.ts",
-            "packages/channel/src/pendingExchanges.ts",
+            "packages/channel/src/channelState.ts",
+            "packages/channel/src/hostOutbox.ts",
+            "packages/channel/src/messageHandlers.ts",
+            "packages/channel/src/peer.ts",
+            "packages/channel/src/pendingAnswers.ts",
             "packages/contract/src/index.ts"
           ],
           "external": []
         },
-        "packages/channel/src/hostChannel.ts": {
-          "internal": ["packages/channel/src/createChannel.ts", "packages/contract/src/index.ts"],
-          "external": []
-        },
-        "packages/channel/src/outbox.ts": {
-          "internal": ["packages/channel/src/config.ts", "packages/contract/src/index.ts"],
+        "packages/channel/src/hostOutbox.ts": {
+          "internal": [
+            "packages/channel/src/channelState.ts",
+            "packages/channel/src/peer.ts",
+            "packages/contract/src/index.ts"
+          ],
           "external": []
         },
         "packages/channel/src/viewerChannel.ts": {
           "internal": [
-            "packages/channel/src/buildMessage.ts",
-            "packages/channel/src/createChannel.ts",
+            "packages/channel/src/channelState.ts",
+            "packages/channel/src/messageHandlers.ts",
+            "packages/channel/src/peer.ts",
             "packages/contract/src/index.ts"
           ],
           "external": []
@@ -3246,8 +3236,9 @@
       "imports": {
         "packages/channel/src/viewerChannel.ts": {
           "internal": [
-            "packages/channel/src/buildMessage.ts",
-            "packages/channel/src/createChannel.ts",
+            "packages/channel/src/channelState.ts",
+            "packages/channel/src/messageHandlers.ts",
+            "packages/channel/src/peer.ts",
             "packages/contract/src/index.ts"
           ],
           "external": []
@@ -3288,6 +3279,88 @@
         "packages/viewer-bridge/src/restore.ts": {
           "internal": ["packages/contract/src/index.ts", "packages/viewer-bridge/src/ohif.ts"],
           "external": ["@bdiadiun/scoring-channel", "@cornerstonejs/core", "@cornerstonejs/tools"]
+        }
+      }
+    },
+    {
+      "id": "F-65",
+      "name": "Plain code",
+      "description": "The channel's generic core, written once for both ends, needed six helper types, a curried factory and casts through unknown to type-check, and its author called it a skyscraper. Each end is now its own file with concrete types, sharing three plain functions; the thirty lines they have in common are duplicated on purpose. Contract guards are named functions with an exhaustive switch instead of tables. Comments in the three packages are cut to what the code cannot say, under a tenth of the lines, and the explanations worth keeping moved to the bridge-internals note. Nothing on the wire, in the state or in the order of events changes; all 308 tests passed without an edit. The contract version moved into the channel (A-25) and every comment left the packages: what they said lives in the bridge-internals note. No function is written inside a return object.",
+      "canon": ["A-13", "D-2", "Q-7"],
+      "dependsOn": ["F-64"],
+      "slice": "59",
+      "status": "review",
+      "verify": "All tests pass unchanged; no `as unknown as` remains in the packages; comment lines are under 10% of non-blank lines in channel, contract and bridge; removing a case from a guard's switch fails lint; the browser scenario passes on the linked working tree before the release.",
+      "files": [
+        "docs/CONVENTIONS.md",
+        "docs/decisions/A-24-plain-code.md",
+        "docs/decisions/A-25-version-in-the-channel.md",
+        "packages/channel/src/hostChannel.ts",
+        "packages/channel/src/hostOutbox.ts",
+        "packages/channel/src/peer.ts",
+        "packages/channel/src/pendingAnswers.ts",
+        "packages/channel/src/viewerChannel.ts",
+        "packages/contract/src/answers.ts",
+        "packages/contract/src/hostCommands.ts",
+        "packages/contract/src/viewerEvents.ts"
+      ],
+      "imports": {
+        "packages/channel/src/hostChannel.ts": {
+          "internal": [
+            "packages/channel/src/channelState.ts",
+            "packages/channel/src/hostOutbox.ts",
+            "packages/channel/src/messageHandlers.ts",
+            "packages/channel/src/peer.ts",
+            "packages/channel/src/pendingAnswers.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        },
+        "packages/channel/src/hostOutbox.ts": {
+          "internal": [
+            "packages/channel/src/channelState.ts",
+            "packages/channel/src/peer.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        },
+        "packages/channel/src/peer.ts": {
+          "internal": ["packages/channel/src/config.ts", "packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/channel/src/pendingAnswers.ts": {
+          "internal": ["packages/channel/src/config.ts", "packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/channel/src/viewerChannel.ts": {
+          "internal": [
+            "packages/channel/src/channelState.ts",
+            "packages/channel/src/messageHandlers.ts",
+            "packages/channel/src/peer.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        },
+        "packages/contract/src/answers.ts": {
+          "internal": [
+            "packages/contract/src/hostCommands.props.ts",
+            "packages/contract/src/viewerEvents.props.ts"
+          ],
+          "external": []
+        },
+        "packages/contract/src/hostCommands.ts": {
+          "internal": [
+            "packages/contract/src/hostCommands.props.ts",
+            "packages/contract/src/primitiveGuards.ts"
+          ],
+          "external": []
+        },
+        "packages/contract/src/viewerEvents.ts": {
+          "internal": [
+            "packages/contract/src/primitiveGuards.ts",
+            "packages/contract/src/viewerEvents.props.ts"
+          ],
+          "external": []
         }
       }
     }

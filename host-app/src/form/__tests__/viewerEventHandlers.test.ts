@@ -33,7 +33,6 @@ describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
     const handlers = createViewerEventHandlers({ getContext, restoredRows: [] });
 
     const event: MeasurementRemovedEvent = {
-      version: 1,
       type: 'MEASUREMENT_REMOVED',
       measurementUid: 'uid-1',
     };
@@ -50,7 +49,6 @@ describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
     const handlers = createViewerEventHandlers({ getContext, restoredRows: [] });
 
     const event: MeasurementRemovedEvent = {
-      version: 1,
       type: 'MEASUREMENT_REMOVED',
       measurementUid: 'uid-unknown',
     };
@@ -69,7 +67,6 @@ describe('createViewerEventHandlers MEASUREMENT_UPDATED', () => {
     const handlers = createViewerEventHandlers({ getContext, restoredRows: [] });
 
     const event: MeasurementUpdatedEvent = {
-      version: 1,
       type: 'MEASUREMENT_UPDATED',
       measurementUid: 'uid-1',
       toolName: 'EllipticalROI',
@@ -92,7 +89,6 @@ describe('createViewerEventHandlers MEASUREMENT_ADDED', () => {
     const handlers = createViewerEventHandlers({ getContext, restoredRows: [] });
 
     handlers.MEASUREMENT_ADDED?.({
-      version: 1,
       type: 'MEASUREMENT_ADDED',
       rowId: null,
       measurementUid: 'uid-2',

@@ -40,7 +40,6 @@ const findPostedRequestId = (posted: HostCommand[], type: HostCommand['type']): 
 };
 
 const viewerReady = (viewerVersion = '1.0.0'): ViewerReadyEvent => ({
-  version: 1,
   type: 'VIEWER_READY',
   viewerVersion,
 });
@@ -49,7 +48,6 @@ const measurementAdded = (
   rowId: string | null,
   overrides: Partial<MeasurementAddedEvent> = {},
 ): MeasurementAddedEvent => ({
-  version: 1,
   type: 'MEASUREMENT_ADDED',
   rowId,
   measurementUid: 'uid-1',
@@ -62,7 +60,6 @@ const measurementUpdated = (
   measurementUid: string,
   overrides: Partial<MeasurementUpdatedEvent> = {},
 ): MeasurementUpdatedEvent => ({
-  version: 1,
   type: 'MEASUREMENT_UPDATED',
   measurementUid,
   toolName: 'EllipticalROI',
@@ -74,7 +71,6 @@ const measurementRemoved = (
   measurementUid: string,
   overrides: Partial<MeasurementRemovedEvent> = {},
 ): MeasurementRemovedEvent => ({
-  version: 1,
   type: 'MEASUREMENT_REMOVED',
   measurementUid,
   ...overrides,
@@ -83,7 +79,6 @@ const measurementRemoved = (
 const measurementsRestored = (
   overrides: Partial<MeasurementsRestoredEvent> = {},
 ): MeasurementsRestoredEvent => ({
-  version: 1,
   type: 'MEASUREMENTS_RESTORED',
   restored: [],
   failed: [],

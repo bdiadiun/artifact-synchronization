@@ -43,6 +43,8 @@ export const createChannelHarness = (): ChannelHarness => {
   };
 };
 
-export const dispatchFromViewer = (data: ViewerEvent, origin = VIEWER_ORIGIN): void => {
-  window.dispatchEvent(new MessageEvent('message', { data, origin }));
+// The contract version lives on the wire, not in the message types (A-25), so it is stamped here
+// the way the viewer's channel stamps it; without it the host's channel drops the event.
+export const dispatchFromViewer = (event: ViewerEvent, origin = VIEWER_ORIGIN): void => {
+  window.dispatchEvent(new MessageEvent('message', { data: { version: 1, ...event }, origin }));
 };

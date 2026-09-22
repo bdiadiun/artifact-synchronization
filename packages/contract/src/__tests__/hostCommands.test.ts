@@ -11,7 +11,6 @@ import type { MeasurementGeometry } from '../vocabulary.props';
 import type { ViewerReadyEvent } from '../viewerEvents.props';
 
 const activateTool: ActivateToolCommand = {
-  version: 1,
   type: 'ACTIVATE_TOOL',
   requestId: 'req-1',
   rowId: 'row-1',
@@ -19,14 +18,12 @@ const activateTool: ActivateToolCommand = {
 };
 
 const deactivateTool: DeactivateToolCommand = {
-  version: 1,
   type: 'DEACTIVATE_TOOL',
   requestId: 'req-2',
   rowId: 'row-1',
 };
 
 const removeMeasurement: RemoveMeasurementCommand = {
-  version: 1,
   type: 'REMOVE_MEASUREMENT',
   requestId: 'req-3',
   rowId: 'row-1',
@@ -34,7 +31,6 @@ const removeMeasurement: RemoveMeasurementCommand = {
 };
 
 const focusMeasurement: FocusMeasurementCommand = {
-  version: 1,
   type: 'FOCUS_MEASUREMENT',
   requestId: 'req-4',
   rowId: 'row-1',
@@ -51,7 +47,6 @@ const geometry: MeasurementGeometry = {
 };
 
 const restoreMeasurements: RestoreMeasurementsCommand = {
-  version: 1,
   type: 'RESTORE_MEASUREMENTS',
   requestId: 'req-5',
   studyInstanceUid: 'study-1',
@@ -59,7 +54,6 @@ const restoreMeasurements: RestoreMeasurementsCommand = {
 };
 
 const viewerReady: ViewerReadyEvent = {
-  version: 1,
   type: 'VIEWER_READY',
   viewerVersion: '3.12.17',
 };
@@ -75,10 +69,6 @@ describe('isHostCommand', () => {
 
   it('rejects a viewer event', () => {
     expect(isHostCommand(viewerReady)).toBe(false);
-  });
-
-  it('rejects the wrong contract version', () => {
-    expect(isHostCommand({ ...activateTool, version: 2 })).toBe(false);
   });
 
   it('rejects an unknown type', () => {

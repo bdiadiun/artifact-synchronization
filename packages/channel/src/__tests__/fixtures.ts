@@ -93,13 +93,20 @@ export const createViewerChannelFixture = ({
   };
 };
 
-export const viewerReadyMessage = (viewerVersion = '1.0.0'): ViewerReadyEvent => ({
+// What a peer actually posts (A-25): a contract message plus the version the sending channel
+// stamps on it. The builders below produce incoming traffic, so they carry that version.
+export type WireMessage<TMessage> = TMessage & { version: number };
+
+export const viewerReadyMessage = (viewerVersion = '1.0.0'): WireMessage<ViewerReadyEvent> => ({
   version: 1,
   type: 'VIEWER_READY',
   viewerVersion,
 });
 
-export const activateToolMessage = (rowId: string, requestId = 'req-1'): ActivateToolCommand => ({
+export const activateToolMessage = (
+  rowId: string,
+  requestId = 'req-1',
+): WireMessage<ActivateToolCommand> => ({
   version: 1,
   type: 'ACTIVATE_TOOL',
   requestId,
@@ -110,7 +117,7 @@ export const activateToolMessage = (rowId: string, requestId = 'req-1'): Activat
 export const deactivateToolMessage = (
   rowId: string,
   requestId = 'req-2',
-): DeactivateToolCommand => ({
+): WireMessage<DeactivateToolCommand> => ({
   version: 1,
   type: 'DEACTIVATE_TOOL',
   requestId,
@@ -120,7 +127,7 @@ export const deactivateToolMessage = (
 export const measurementAddedMessage = (
   rowId: string | null,
   overrides: Partial<MeasurementAddedEvent> = {},
-): MeasurementAddedEvent => ({
+): WireMessage<MeasurementAddedEvent> => ({
   version: 1,
   type: 'MEASUREMENT_ADDED',
   rowId,
@@ -133,7 +140,7 @@ export const measurementAddedMessage = (
 export const measurementRemovedMessage = (
   measurementUid: string,
   overrides: Partial<MeasurementRemovedEvent> = {},
-): MeasurementRemovedEvent => ({
+): WireMessage<MeasurementRemovedEvent> => ({
   version: 1,
   type: 'MEASUREMENT_REMOVED',
   measurementUid,

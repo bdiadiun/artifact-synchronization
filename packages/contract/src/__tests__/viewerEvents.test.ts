@@ -11,7 +11,6 @@ import type { ActivateToolCommand } from '../hostCommands.props';
 import type { MeasurementGeometry } from '../vocabulary.props';
 
 const activateTool: ActivateToolCommand = {
-  version: 1,
   type: 'ACTIVATE_TOOL',
   requestId: 'req-1',
   rowId: 'row-1',
@@ -19,13 +18,11 @@ const activateTool: ActivateToolCommand = {
 };
 
 const viewerReady: ViewerReadyEvent = {
-  version: 1,
   type: 'VIEWER_READY',
   viewerVersion: '3.12.17',
 };
 
 const measurementAdded: MeasurementAddedEvent = {
-  version: 1,
   type: 'MEASUREMENT_ADDED',
   rowId: 'row-1',
   measurementUid: 'uid-1',
@@ -34,7 +31,6 @@ const measurementAdded: MeasurementAddedEvent = {
 };
 
 const measurementUpdated: MeasurementUpdatedEvent = {
-  version: 1,
   type: 'MEASUREMENT_UPDATED',
   measurementUid: 'uid-1',
   toolName: 'EllipticalROI',
@@ -43,7 +39,6 @@ const measurementUpdated: MeasurementUpdatedEvent = {
 };
 
 const measurementRemoved: MeasurementRemovedEvent = {
-  version: 1,
   type: 'MEASUREMENT_REMOVED',
   measurementUid: 'uid-1',
   causedBy: 'req-3',
@@ -59,7 +54,6 @@ const geometry: MeasurementGeometry = {
 };
 
 const measurementsRestored: MeasurementsRestoredEvent = {
-  version: 1,
   type: 'MEASUREMENTS_RESTORED',
   causedBy: 'req-5',
   restored: ['uid-1'],
@@ -89,10 +83,6 @@ describe('isViewerEvent', () => {
 
   it('rejects a host command', () => {
     expect(isViewerEvent(activateTool)).toBe(false);
-  });
-
-  it('rejects the wrong contract version', () => {
-    expect(isViewerEvent({ ...viewerReady, version: 0 })).toBe(false);
   });
 
   it('rejects an unknown type', () => {

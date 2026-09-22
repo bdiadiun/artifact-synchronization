@@ -1,6 +1,3 @@
-// Leading + trailing, so the value a handle is released on is always the last one emitted.
-// Per key, so one annotation's drag cannot swallow another annotation's final value.
-
 export interface ThrottledEmitter<T> {
   push: (key: string, value: T) => void;
   discard: (key: string) => void;
@@ -12,7 +9,6 @@ type Emit<T> = (key: string, value: T) => void;
 interface KeyState<T> {
   lastEmitAt: number | null;
   timer: ReturnType<typeof setTimeout> | null;
-  // Wrapped so a falsy value is distinguishable from "nothing pending".
   pending: { value: T } | null;
 }
 
@@ -70,30 +66,28 @@ export const createThrottledEmitter = <T>(
     emitPendingLater(key, state, intervalMs - elapsed);
   };
 
-  return {
-    push,
+  const discard = (key: string): void => {
+    const state = keys.get(key);
 
-    discard: (key: string): void => {
-      const state = keys.get(key);
+    if (!state) {
+      return;
+    }
 
-      if (!state) {
-        return;
-      }
+    stopTimer(state);
+    state.pending = null;
+    keys.delete(key);
+  };
 
+  const dispose = (): void => {
+    disposed = true;
+
+    for (const state of keys.values()) {
       stopTimer(state);
       state.pending = null;
-      keys.delete(key);
-    },
+    }
 
-    dispose: (): void => {
-      disposed = true;
-
-      for (const state of keys.values()) {
-        stopTimer(state);
-        state.pending = null;
-      }
-
-      keys.clear();
-    },
+    keys.clear();
   };
+
+  return { push, discard, dispose };
 };
