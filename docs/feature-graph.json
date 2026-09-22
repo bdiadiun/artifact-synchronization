@@ -322,7 +322,8 @@
     {
       "id": "58",
       "title": "refactor: minimal bridge",
-      "branch": "refactor/minimal-bridge"
+      "branch": "refactor/minimal-bridge",
+      "pr": 72
     }
   ],
   "nodes": [
@@ -3230,7 +3231,7 @@
       "canon": ["A-13", "C-4.3.6", "Q-1", "Q-3", "Q-4", "Q-5", "X-5"],
       "dependsOn": ["F-63"],
       "slice": "58",
-      "status": "review",
+      "status": "done",
       "verify": "The extension is under 1 100 lines in seven files against 1 538 in 23; the full browser scenario passes unchanged on the released packages; a wrong reply shape and a missing command handler each fail the build; skipping the tool restore after a measurement, omitting causedBy in reply, or answering a gone removal with send each fails a named test.",
       "files": [
         "docs/decisions/A-23-minimal-bridge.md",
