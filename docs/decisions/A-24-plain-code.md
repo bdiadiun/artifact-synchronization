@@ -18,7 +18,7 @@ comments that restated the code and three-line citations of OHIF above every cal
   `createViewerChannel` read top to bottom; what they share is three plain functions — posting to
   a peer, listening from a peer, waiting for answers. The thirty lines the two ends have in common
   are duplicated on purpose.
-- **No type exists only to make a signature type-check.** One generic on `send`, `on`, `onEach`,
+- **No type exists only to make a signature type-check.** One generic on `send`, `onEach`,
   `exchange` and `reply` gives the caller typed payloads and is the whole allowance; no type
   parameter is threaded through a shared core; no `as unknown as`. A cast that remains carries
   its one-line reason.

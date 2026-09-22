@@ -90,8 +90,10 @@ describe('the queue held until VIEWER_READY', () => {
     const { channel } = createHostChannelFixture();
     channel.send('ACTIVATE_TOOL', { rowId: 'row-1', toolName: 'EllipticalROI' });
     const stateSeenByHandler: { ready: boolean; queued: number }[] = [];
-    channel.on('VIEWER_READY', () => {
-      stateSeenByHandler.push(channel.getState());
+    channel.onEach({
+      VIEWER_READY: () => {
+        stateSeenByHandler.push(channel.getState());
+      },
     });
 
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
@@ -102,7 +104,7 @@ describe('the queue held until VIEWER_READY', () => {
   it('reaches the application handler again on a second VIEWER_READY (a viewer reload)', () => {
     const { channel } = createHostChannelFixture();
     const onReady = vi.fn();
-    channel.on('VIEWER_READY', onReady);
+    channel.onEach({ VIEWER_READY: onReady });
 
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);

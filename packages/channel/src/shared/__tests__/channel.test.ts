@@ -26,7 +26,7 @@ describe('origin (Q-2)', () => {
   it('reaches no handler for a message from any origin other than the configured peer, on the host end', () => {
     const { channel } = createHostChannelFixture();
     const onReady = vi.fn();
-    channel.on('VIEWER_READY', onReady);
+    channel.onEach({ VIEWER_READY: onReady });
 
     dispatchMessage(viewerReadyMessage(), 'http://evil.example');
 
@@ -36,7 +36,7 @@ describe('origin (Q-2)', () => {
   it('reaches the handler for a message from the configured peer origin, on the host end', () => {
     const { channel } = createHostChannelFixture();
     const onReady = vi.fn();
-    channel.on('VIEWER_READY', onReady);
+    channel.onEach({ VIEWER_READY: onReady });
 
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
 
@@ -65,7 +65,7 @@ describe('origin (Q-2)', () => {
   it('ignores a message from any origin other than the configured peer, on the viewer end', () => {
     const { channel } = createViewerChannelFixture();
     const onActivate = vi.fn();
-    channel.on('ACTIVATE_TOOL', onActivate);
+    channel.onEach({ ACTIVATE_TOOL: onActivate });
 
     dispatchMessage(activateToolMessage('row-1'), 'http://evil.example');
 
@@ -75,7 +75,7 @@ describe('origin (Q-2)', () => {
   it('reaches the handler for a message from the configured peer origin, on the viewer end', () => {
     const { channel } = createViewerChannelFixture();
     const onActivate = vi.fn();
-    channel.on('ACTIVATE_TOOL', onActivate);
+    channel.onEach({ ACTIVATE_TOOL: onActivate });
 
     dispatchMessage(activateToolMessage('row-1'), HOST_ORIGIN);
 
@@ -87,7 +87,7 @@ describe('the contract guard', () => {
   it('ignores a payload the guard rejects from the correct origin, on the host end', () => {
     const { channel } = createHostChannelFixture();
     const onReady = vi.fn();
-    channel.on('VIEWER_READY', onReady);
+    channel.onEach({ VIEWER_READY: onReady });
 
     dispatchMessage({ version: 1, type: 'NOT_A_REAL_EVENT' }, VIEWER_ORIGIN);
 
@@ -97,7 +97,7 @@ describe('the contract guard', () => {
   it('ignores a payload the guard rejects from the correct origin, on the viewer end', () => {
     const { channel } = createViewerChannelFixture();
     const onActivate = vi.fn();
-    channel.on('ACTIVATE_TOOL', onActivate);
+    channel.onEach({ ACTIVATE_TOOL: onActivate });
 
     dispatchMessage({ version: 1, type: 'ACTIVATE_TOOL' }, HOST_ORIGIN);
 
@@ -139,7 +139,7 @@ describe('the contract version on the wire (A-25)', () => {
   it('reaches no handler with a message of another contract version', () => {
     const { channel } = createHostChannelFixture();
     const onReady = vi.fn();
-    channel.on('VIEWER_READY', onReady);
+    channel.onEach({ VIEWER_READY: onReady });
 
     dispatchMessage({ ...viewerReadyMessage(), version: 2 }, VIEWER_ORIGIN);
 
@@ -167,7 +167,7 @@ describe('the contract version on the wire (A-25)', () => {
   it('logs an unknown contract version once however many messages carry it', () => {
     const debugLines = collectDebugLines();
     const { channel } = createHostChannelFixture();
-    channel.on('VIEWER_READY', vi.fn());
+    channel.onEach({ VIEWER_READY: vi.fn() });
 
     dispatchMessage({ ...viewerReadyMessage(), version: 2 }, VIEWER_ORIGIN);
     dispatchMessage({ ...viewerReadyMessage(), version: 2 }, VIEWER_ORIGIN);
@@ -179,7 +179,7 @@ describe('the contract version on the wire (A-25)', () => {
     const debugLines = collectDebugLines();
     const { channel } = createHostChannelFixture();
     const onReady = vi.fn();
-    channel.on('VIEWER_READY', onReady);
+    channel.onEach({ VIEWER_READY: onReady });
 
     dispatchMessage({ type: 'VIEWER_READY', viewerVersion: '1.0.0' }, VIEWER_ORIGIN);
 
@@ -225,8 +225,8 @@ describe('send', () => {
     const { channel } = createHostChannelFixture();
     const onAdded = vi.fn();
     const onUpdated = vi.fn();
-    channel.on('MEASUREMENT_ADDED', onAdded);
-    channel.on('MEASUREMENT_UPDATED', onUpdated);
+    channel.onEach({ MEASUREMENT_ADDED: onAdded });
+    channel.onEach({ MEASUREMENT_UPDATED: onUpdated });
 
     dispatchMessage(measurementAddedMessage('row-1'), VIEWER_ORIGIN);
 
@@ -254,6 +254,55 @@ describe('onEach', () => {
     expect(onReady).toHaveBeenCalledTimes(1);
     expect(onAdded).toHaveBeenCalledTimes(1);
   });
+
+  it('returns a function that stops the handlers, on the host end: a message after it reaches no handler', () => {
+    const { channel } = createHostChannelFixture();
+    const onReady = vi.fn();
+    const stop = channel.onEach({ VIEWER_READY: onReady });
+
+    stop();
+    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
+
+    expect(onReady).not.toHaveBeenCalled();
+  });
+
+  it('returns a function that stops the handlers, on the viewer end: a message after it reaches no handler', () => {
+    const { channel } = createViewerChannelFixture();
+    const onActivate = vi.fn();
+    const stop = channel.onEach({ ACTIVATE_TOOL: onActivate });
+
+    stop();
+    dispatchMessage(activateToolMessage('row-1'), HOST_ORIGIN);
+
+    expect(onActivate).not.toHaveBeenCalled();
+  });
+
+  it('delivers the same message to two separate registrations', () => {
+    const { channel } = createHostChannelFixture();
+    const first = vi.fn();
+    const second = vi.fn();
+    channel.onEach({ VIEWER_READY: first });
+    channel.onEach({ VIEWER_READY: second });
+
+    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
+
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(second).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops only the registration whose function was called', () => {
+    const { channel } = createHostChannelFixture();
+    const stopped = vi.fn();
+    const kept = vi.fn();
+    const stop = channel.onEach({ VIEWER_READY: stopped });
+    channel.onEach({ VIEWER_READY: kept });
+
+    stop();
+    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
+
+    expect(stopped).not.toHaveBeenCalled();
+    expect(kept).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('exchange', () => {
@@ -276,7 +325,7 @@ describe('exchange', () => {
     const { channel, posted } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
     const onRemoved = vi.fn();
-    channel.on('MEASUREMENT_REMOVED', onRemoved);
+    channel.onEach({ MEASUREMENT_REMOVED: onRemoved });
 
     const answer = channel.exchange('REMOVE_MEASUREMENT', {
       rowId: 'row-1',
@@ -318,7 +367,7 @@ describe('exchange', () => {
     const { channel, posted } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
     const onRemoved = vi.fn();
-    channel.on('MEASUREMENT_REMOVED', onRemoved);
+    channel.onEach({ MEASUREMENT_REMOVED: onRemoved });
 
     const answer = channel.exchange('REMOVE_MEASUREMENT', {
       rowId: 'row-1',
@@ -338,7 +387,7 @@ describe('exchange', () => {
     const { channel, posted } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
     const onRemoved = vi.fn();
-    channel.on('MEASUREMENT_REMOVED', onRemoved);
+    channel.onEach({ MEASUREMENT_REMOVED: onRemoved });
 
     const answer = channel.exchange('REMOVE_MEASUREMENT', {
       rowId: 'row-1',
@@ -358,7 +407,7 @@ describe('exchange', () => {
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
     const removeSpy = vi.spyOn(window, 'removeEventListener');
     const onReady = vi.fn();
-    channel.on('VIEWER_READY', onReady);
+    channel.onEach({ VIEWER_READY: onReady });
 
     const answer = channel.exchange('REMOVE_MEASUREMENT', {
       rowId: 'row-1',
@@ -376,20 +425,6 @@ describe('exchange', () => {
 });
 
 describe('the viewer channel, which holds nothing back', () => {
-  it('is not ready before it has announced itself', () => {
-    const { channel } = createViewerChannelFixture();
-
-    expect(channel.getState()).toEqual({ ready: false, queued: 0 });
-  });
-
-  it('becomes ready once its announcement has been delivered', () => {
-    const { channel } = createViewerChannelFixture();
-
-    channel.send('VIEWER_READY', { viewerVersion: '1.0.0' });
-
-    expect(channel.getState()).toEqual({ ready: true, queued: 0 });
-  });
-
   it('posts an event before the announcement rather than queuing it', () => {
     const { channel, hostWindow } = createViewerChannelFixture();
 
@@ -397,7 +432,15 @@ describe('the viewer channel, which holds nothing back', () => {
 
     expect(delivered).toBe(true);
     expect(hostWindow.postMessage).toHaveBeenCalledTimes(1);
-    expect(channel.getState().queued).toBe(0);
+  });
+
+  it('counts a VIEWER_READY it was asked to send as the announcement, so announceReady posts nothing more', () => {
+    const { channel, posted } = createViewerChannelFixture();
+    channel.send('VIEWER_READY', { viewerVersion: '1.0.0' });
+
+    channel.announceReady({ viewerVersion: '1.0.0' });
+
+    expect(posted()).toEqual([{ version: 1, type: 'VIEWER_READY', viewerVersion: '1.0.0' }]);
   });
 
   it('drops, without queuing, what it cannot deliver when the page is not framed', () => {
@@ -407,7 +450,6 @@ describe('the viewer channel, which holds nothing back', () => {
 
     expect(delivered).toBe(false);
     expect(hostWindow.postMessage).not.toHaveBeenCalled();
-    expect(channel.getState()).toEqual({ ready: false, queued: 0 });
   });
 });
 

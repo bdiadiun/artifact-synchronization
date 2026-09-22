@@ -67,14 +67,13 @@ describe('announcing the viewer (Q-1)', () => {
     expect(hostWindow.postMessage).toHaveBeenCalledTimes(1);
   });
 
-  it('stays unannounced and reports failure when the viewer is not framed', () => {
+  it('posts nothing and reports failure when the viewer is not framed', () => {
     const { channel, hostWindow } = createViewerChannelFixture({ framed: false });
 
     const announced = channel.announceReady({ viewerVersion: '3.12.17' });
 
     expect(announced).toBe(false);
     expect(hostWindow.postMessage).not.toHaveBeenCalled();
-    expect(channel.getState().ready).toBe(false);
   });
 
   it('announces on a later attempt when the first one found no host window', () => {
@@ -95,48 +94,11 @@ describe('announcing the viewer (Q-1)', () => {
   });
 });
 
-describe('state and subscription (Q-1)', () => {
-  it('reports not ready with nothing queued before the viewer announces itself', () => {
-    const { channel } = createViewerChannelFixture();
-
-    expect(channel.getState()).toEqual({ ready: false, queued: 0 });
-  });
-
-  it('reports ready with nothing queued once announceReady has delivered VIEWER_READY', () => {
-    const { channel } = createViewerChannelFixture();
-
-    channel.announceReady({ viewerVersion: '3.12.17' });
-
-    expect(channel.getState()).toEqual({ ready: true, queued: 0 });
-  });
-
-  it('notifies a subscriber when announceReady delivers VIEWER_READY', () => {
-    const { channel } = createViewerChannelFixture();
-    const listener = vi.fn();
-    channel.subscribe(listener);
-
-    channel.announceReady({ viewerVersion: '3.12.17' });
-
-    expect(listener).toHaveBeenCalledTimes(1);
-  });
-
-  it('stops notifying a subscriber once it has unsubscribed', () => {
-    const { channel } = createViewerChannelFixture();
-    const listener = vi.fn();
-    const unsubscribe = channel.subscribe(listener);
-    unsubscribe();
-
-    channel.announceReady({ viewerVersion: '3.12.17' });
-
-    expect(listener).not.toHaveBeenCalled();
-  });
-});
-
 describe('the row the host armed (A-8)', () => {
   it('is armed by ACTIVATE_TOOL before the application handlers run', () => {
     const { channel } = createViewerChannelFixture();
     const seen: unknown[] = [];
-    channel.on('ACTIVATE_TOOL', () => seen.push(channel.getArmed()));
+    channel.onEach({ ACTIVATE_TOOL: () => seen.push(channel.getArmed()) });
 
     dispatchMessage(activateToolMessage('row-1', 'req-1'), HOST_ORIGIN);
 

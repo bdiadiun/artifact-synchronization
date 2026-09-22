@@ -1,4 +1,4 @@
-import { createDisposerSet, createViewerChannel } from '@bdiadiun/scoring-channel';
+import { createViewerChannel } from '@bdiadiun/scoring-channel';
 import type { ViewerChannel } from '@bdiadiun/scoring-channel';
 
 import { createCommands } from './commands/handlers.js';
@@ -43,6 +43,16 @@ const announceOnViewport = (
   };
 };
 
+const disposeAll = (disposers: (() => void)[]): void => {
+  for (const dispose of disposers) {
+    try {
+      dispose();
+    } catch (error) {
+      console.warn(`${LOG_PREFIX} disposer failed`, error);
+    }
+  }
+};
+
 const startBridge = (
   services: OhifServices,
   commandsManager: OhifCommandsManager,
@@ -50,7 +60,6 @@ const startBridge = (
 ): (() => void) => {
   const channel = createViewerChannel({ hostOrigin });
   const commands = createCommands(services, commandsManager, channel);
-  const disposers = createDisposerSet({ logPrefix: LOG_PREFIX });
 
   const unsubscribeMeasurements = subscribeMeasurements(
     services.measurementService,
@@ -60,13 +69,17 @@ const startBridge = (
   const unsubscribeCommands = channel.onEach(commands.handlers);
   const unsubscribeAnnounce = announceOnViewport(services.toolGroupService, channel);
 
-  disposers.add(commands.dispose);
-  disposers.add(unsubscribeMeasurements);
-  disposers.add(unsubscribeCommands);
-  disposers.add(unsubscribeAnnounce);
-  disposers.add(channel.dispose);
+  const disposers = [
+    commands.dispose,
+    unsubscribeMeasurements,
+    unsubscribeCommands,
+    unsubscribeAnnounce,
+    channel.dispose,
+  ];
 
-  return disposers.dispose;
+  return () => {
+    disposeAll(disposers);
+  };
 };
 
 export const createScoringBridgeExtension = (

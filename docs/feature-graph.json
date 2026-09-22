@@ -334,6 +334,11 @@
       "id": "60",
       "title": "refactor: zod contract and layout",
       "branch": "refactor/zod-contract-and-layout"
+    },
+    {
+      "id": "61",
+      "title": "refactor: boundaries as schemas",
+      "branch": "refactor/boundaries-as-schemas"
     }
   ],
   "nodes": [
@@ -2701,12 +2706,7 @@
       "slice": "55",
       "status": "done",
       "verify": "The count falls from 121 files to 91 for the same 4546 lines and the same 253 cases; the orchestrator goes from twenty files to nine; a disposer that throws is shown not to strand the ones after it, and each root keeps its own order, the armed tool cancelled while the channel is still live.",
-      "files": [
-        ".claude/rules/host-app.md",
-        "docs/CONVENTIONS.md",
-        "eslint.config.js",
-        "packages/channel/src/shared/disposers.ts"
-      ],
+      "files": [".claude/rules/host-app.md", "docs/CONVENTIONS.md", "eslint.config.js"],
       "imports": {
         "eslint.config.js": {
           "internal": [],
@@ -2718,10 +2718,6 @@
             "globals",
             "typescript-eslint"
           ]
-        },
-        "packages/channel/src/shared/disposers.ts": {
-          "internal": ["packages/channel/src/shared/peer.ts"],
-          "external": []
         }
       }
     },
@@ -2736,7 +2732,6 @@
       "verify": "The full verification set is green with the same behaviour cases; a grep for each removed symbol finds nothing; every interface that lets go of a resource extends the one Disposable; the line count falls while no test of behaviour is deleted, only the cases that asserted removed diagnostics.",
       "files": [
         "host-app/src/form/rowActions.ts",
-        "packages/channel/src/shared/disposers.ts",
         "packages/contract/src/vocabulary.ts",
         "packages/viewer-bridge/src/events/measurements.ts"
       ],
@@ -2747,10 +2742,6 @@
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
-          "external": []
-        },
-        "packages/channel/src/shared/disposers.ts": {
-          "internal": ["packages/channel/src/shared/peer.ts"],
           "external": []
         },
         "packages/contract/src/vocabulary.ts": {
@@ -2832,11 +2823,7 @@
           "external": []
         },
         "packages/channel/src/host/outbox.ts": {
-          "internal": [
-            "packages/channel/src/shared/channelApi.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/channel/src/viewer/viewerChannel.ts": {
@@ -2952,11 +2939,7 @@
           "external": []
         },
         "packages/channel/src/host/outbox.ts": {
-          "internal": [
-            "packages/channel/src/shared/channelApi.ts",
-            "packages/channel/src/shared/peer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/channel/src/host/pendingAnswers.ts": {
@@ -2995,7 +2978,7 @@
       "canon": ["A-13", "D-2", "Q-7"],
       "dependsOn": ["F-65"],
       "slice": "60",
-      "status": "in-progress",
+      "status": "review",
       "verify": "All behaviour tests pass; a JSON round trip of every message still passes its guard and a message with a wrong field is refused; no .props.ts outside host-app/src/components; no file under twenty lines in packages/*/src and host-app/src except index.ts; the browser scenario passes on the linked working tree before the release.",
       "files": [
         "docs/decisions/A-26-zod-contract.md",
@@ -3040,6 +3023,123 @@
         "packages/contract/src/vocabulary.ts": {
           "internal": [],
           "external": ["zod"]
+        }
+      }
+    },
+    {
+      "id": "F-67",
+      "name": "Boundaries as schemas",
+      "description": "The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema in the extension, the form's Row is a schema the stored row is derived from, metric keys are an enum so no cast is needed to read a metric, and toMetrics reads the contract's tool-to-metric map. API without a caller is removed: channel.on, the viewer end's state, the disposer set, the hostOrigin option; OHIF services are typed as required with one start-up check. Curried factories left in the bridge and in MeasurementRow are plain functions.",
+      "canon": ["A-13", "D-2", "Q-7"],
+      "dependsOn": ["F-66"],
+      "slice": "61",
+      "status": "approved",
+      "verify": "All tests pass; no `.on(` call on a channel; no `as Partial<Metrics>` in host-app; no `typeof` guard beside a schema in the extension; a metric with an unknown key is refused by the guard; the browser scenario passes on the linked working tree.",
+      "files": [
+        "docs/decisions/A-28-boundaries-as-schemas.md",
+        "docs/notes/ohif-service-availability.md",
+        "host-app/src/components/MeasurementRow.tsx",
+        "host-app/src/form/format.ts",
+        "host-app/src/form/rows.ts",
+        "host-app/src/form/storage.ts",
+        "host-app/src/form/totals.ts",
+        "packages/channel/src/host/hostChannel.ts",
+        "packages/channel/src/shared/channelApi.ts",
+        "packages/channel/src/viewer/viewerChannel.ts",
+        "packages/contract/src/vocabulary.ts",
+        "packages/viewer-bridge/src/commands/handlers.ts",
+        "packages/viewer-bridge/src/events/measurements.ts",
+        "packages/viewer-bridge/src/extension.ts",
+        "packages/viewer-bridge/src/ohif/surface.ts"
+      ],
+      "imports": {
+        "host-app/src/components/MeasurementRow.tsx": {
+          "internal": [
+            "host-app/src/components/MeasurementRow.props.ts",
+            "host-app/src/form/format.ts",
+            "host-app/src/form/rows.ts",
+            "host-app/src/i18n.ts"
+          ],
+          "external": ["react"]
+        },
+        "host-app/src/form/format.ts": {
+          "internal": [
+            "host-app/src/form/rows.ts",
+            "host-app/src/i18n.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        },
+        "host-app/src/form/rows.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": ["@bdiadiun/scoring-channel", "react"]
+        },
+        "host-app/src/form/storage.ts": {
+          "internal": [
+            "host-app/src/config.ts",
+            "host-app/src/form/rows.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": ["react", "zod"]
+        },
+        "host-app/src/form/totals.ts": {
+          "internal": ["host-app/src/form/rows.ts", "packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/channel/src/host/hostChannel.ts": {
+          "internal": [
+            "packages/channel/src/host/outbox.ts",
+            "packages/channel/src/host/pendingAnswers.ts",
+            "packages/channel/src/shared/channelApi.ts",
+            "packages/channel/src/shared/peer.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        },
+        "packages/channel/src/shared/channelApi.ts": {
+          "internal": ["packages/contract/src/index.ts"],
+          "external": []
+        },
+        "packages/channel/src/viewer/viewerChannel.ts": {
+          "internal": [
+            "packages/channel/src/shared/channelApi.ts",
+            "packages/channel/src/shared/peer.ts",
+            "packages/contract/src/index.ts"
+          ],
+          "external": []
+        },
+        "packages/contract/src/vocabulary.ts": {
+          "internal": [],
+          "external": ["zod"]
+        },
+        "packages/viewer-bridge/src/commands/handlers.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/commands/restore.ts",
+            "packages/viewer-bridge/src/ohif/surface.ts"
+          ],
+          "external": ["@bdiadiun/scoring-channel"]
+        },
+        "packages/viewer-bridge/src/events/measurements.ts": {
+          "internal": [
+            "packages/contract/src/index.ts",
+            "packages/viewer-bridge/src/commands/handlers.ts",
+            "packages/viewer-bridge/src/ohif/surface.ts",
+            "packages/viewer-bridge/src/ohif/throttle.ts"
+          ],
+          "external": ["@bdiadiun/scoring-channel"]
+        },
+        "packages/viewer-bridge/src/extension.ts": {
+          "internal": [
+            "packages/viewer-bridge/src/commands/handlers.ts",
+            "packages/viewer-bridge/src/events/measurements.ts",
+            "packages/viewer-bridge/src/ohif/surface.ts"
+          ],
+          "external": ["@bdiadiun/scoring-channel"]
+        },
+        "packages/viewer-bridge/src/ohif/surface.ts": {
+          "internal": [],
+          "external": []
         }
       }
     }

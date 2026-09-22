@@ -489,4 +489,19 @@ describe('letting go when the page goes away (Q-5)', () => {
 
     expect(runCommand).not.toHaveBeenCalled();
   });
+
+  it('releases what is left, and reports the failure, when one unsubscribe throws', () => {
+    const { unsubscribes, runCommand } = startExtension();
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    unsubscribes.measurement.mockImplementation(() => {
+      throw new Error('this subscription refuses to let go');
+    });
+
+    window.dispatchEvent(new Event('pagehide'));
+    dispatchCommand(activateTool('row-1'));
+
+    expect(unsubscribes.viewport).toHaveBeenCalledTimes(1);
+    expect(runCommand).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalled();
+  });
 });

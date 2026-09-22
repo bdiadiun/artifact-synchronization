@@ -5,28 +5,23 @@ import type {
   HostCommand,
   ViewerEvent,
 } from '@bdiadiun/scoring-contract';
-import type { ChannelState, MessageHandlers } from '../shared/channelApi.js';
+import type { MessageHandlers, PayloadOf } from '../shared/channelApi.js';
 import { listenFrom } from '../shared/peer.js';
 import type { Peer } from '../shared/peer.js';
 import { createHostOutbox } from './outbox.js';
-import type { HostOutbox } from './outbox.js';
+import type { ChannelState, HostOutbox } from './outbox.js';
 import { createPendingAnswers } from './pendingAnswers.js';
 
 export type HostPayload<TType extends HostCommand['type']> = Omit<
-  Extract<HostCommand, { type: TType }>,
-  'type' | 'requestId'
+  PayloadOf<HostCommand, TType>,
+  'requestId'
 >;
 
-type EventHandler = (event: ViewerEvent) => void;
-type EventHandlers = Map<ViewerEvent['type'], Set<EventHandler>>;
+type EventHandlers = Partial<MessageHandlers<ViewerEvent>>;
 
 export interface HostChannel {
   send: <TType extends HostCommand['type']>(type: TType, payload: HostPayload<TType>) => boolean;
-  on: <TType extends ViewerEvent['type']>(
-    type: TType,
-    handler: (event: Extract<ViewerEvent, { type: TType }>) => void,
-  ) => () => void;
-  onEach: (handlers: Partial<MessageHandlers<ViewerEvent>>) => () => void;
+  onEach: (handlers: EventHandlers) => () => void;
   exchange: <TType extends HostCommand['type'] & AnsweredCommandType>(
     type: TType,
     payload: HostPayload<TType>,
@@ -41,38 +36,29 @@ export interface HostChannelOptions {
   getViewerWindow: () => Window | null;
 }
 
-const addHandler = (
+const callHandler = <TType extends ViewerEvent['type']>(
   handlers: EventHandlers,
-  type: ViewerEvent['type'],
-  handler: EventHandler,
-): (() => void) => {
-  const forType = handlers.get(type) ?? new Set<EventHandler>();
-  handlers.set(type, forType);
-  forType.add(handler);
-
-  return () => {
-    forType.delete(handler);
-  };
+  type: TType,
+  event: Extract<ViewerEvent, { type: TType }>,
+): void => {
+  handlers[type]?.(event);
 };
 
-const addEachHandler = (
-  handlers: EventHandlers,
-  eventHandlers: Partial<MessageHandlers<ViewerEvent>>,
-): (() => void) => {
-  const unsubscribes = Object.entries(eventHandlers).map(([type, handler]) =>
-    addHandler(handlers, type as ViewerEvent['type'], handler as EventHandler),
-  );
+const addHandlers = (handlerMaps: EventHandlers[], handlers: EventHandlers): (() => void) => {
+  handlerMaps.push(handlers);
 
   return () => {
-    for (const unsubscribe of unsubscribes) {
-      unsubscribe();
+    const index = handlerMaps.indexOf(handlers);
+
+    if (index !== -1) {
+      handlerMaps.splice(index, 1);
     }
   };
 };
 
-const dispatch = (handlers: EventHandlers, event: ViewerEvent): void => {
-  for (const handler of handlers.get(event.type) ?? []) {
-    handler(event);
+const dispatch = (handlerMaps: EventHandlers[], event: ViewerEvent): void => {
+  for (const handlers of handlerMaps) {
+    callHandler(handlers, event.type, event);
   }
 };
 
@@ -102,7 +88,7 @@ export const createHostChannel = ({
   const outbox = createHostOutbox(peer);
   const { getState, subscribe } = outbox;
   const pending = createPendingAnswers();
-  const handlers: EventHandlers = new Map();
+  const handlerMaps: EventHandlers[] = [];
   let armedRowId: string | null = null;
   let disposed = false;
 
@@ -117,13 +103,7 @@ export const createHostChannel = ({
     return outbox.send(type, payload, crypto.randomUUID());
   };
 
-  const on = <TType extends ViewerEvent['type']>(
-    type: TType,
-    handler: (event: Extract<ViewerEvent, { type: TType }>) => void,
-  ): (() => void) => addHandler(handlers, type, handler as EventHandler);
-
-  const onEach = (eventHandlers: Partial<MessageHandlers<ViewerEvent>>): (() => void) =>
-    addEachHandler(handlers, eventHandlers);
+  const onEach = (handlers: EventHandlers): (() => void) => addHandlers(handlerMaps, handlers);
 
   const exchange = <TType extends HostCommand['type'] & AnsweredCommandType>(
     type: TType,
@@ -143,7 +123,7 @@ export const createHostChannel = ({
     if (event.type === 'VIEWER_READY') {
       outbox.flush();
     }
-    dispatch(handlers, event);
+    dispatch(handlerMaps, event);
   };
 
   const stopListening = listenFrom(peer, isViewerEvent, handleEvent);
@@ -156,9 +136,9 @@ export const createHostChannel = ({
     cancelArmedRow(outbox, armedRowId);
     pending.rejectAll('the channel was disposed before the answer arrived');
     stopListening();
-    handlers.clear();
+    handlerMaps.length = 0;
     outbox.clear();
   };
 
-  return { send, on, onEach, exchange, getState, subscribe, dispose };
+  return { send, onEach, exchange, getState, subscribe, dispose };
 };

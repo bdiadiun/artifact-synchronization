@@ -1,8 +1,13 @@
 import type { HostCommand } from '@bdiadiun/scoring-contract';
-import { INITIAL_CHANNEL_STATE } from '../shared/channelApi.js';
-import type { ChannelState } from '../shared/channelApi.js';
 import { postTo } from '../shared/peer.js';
 import type { Peer } from '../shared/peer.js';
+
+export interface ChannelState {
+  ready: boolean;
+  queued: number;
+}
+
+export const INITIAL_CHANNEL_STATE: ChannelState = { ready: false, queued: 0 };
 
 export interface HostOutbox {
   send: (type: HostCommand['type'], payload: object, requestId: string) => boolean;
