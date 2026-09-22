@@ -86,18 +86,18 @@ my-react-app/
   two concepts the whole assignment is about, so a folder names a role instead (A-27): a hook lives
   beside what it connects, a helper beside its only caller.
 
-| Folder            | What is in it here                                                                                                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/assets/`     | Not created yet: the form uses native elements and no imagery (canon X-3).                                                                                                      |
-| `src/components/` | `ViewerFrame`, `ScoringPanel`, `MeasurementRow`, `TotalsFooter`, `BridgeStatus`, each with its `.props.ts`; other modules keep one only when it earns its place (A-13).         |
-| `src/pages/`      | `ScoringPage` — the single page: the viewer iframe on the left, the form panel on the right.                                                                                    |
-| `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                                                                  |
-| `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                                                                |
-| `src/utils/`      | Does not exist (A-27): `format` moved to `form/`, the row lookups into `form/rows.ts`.                                                                                          |
-| `src/hooks/`      | Does not exist (A-27): each hook lives beside what it connects.                                                                                                                 |
-| `src/channel/`    | `useHostChannel` and `useChannelState`, the React binding to the channel package; the channel itself is not in this app (A-22).                                                 |
-| `src/form/`       | The row model and everything around it: `rows` (types, reducer, lookups), `rowActions`, `viewerEventHandlers`, `storage` (load and save), `totals`, `format`, `useScoringForm`. |
-| `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                                                                             |
+| Folder            | What is in it here                                                                                                                                                                |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/assets/`     | Not created yet: the form uses native elements and no imagery (canon X-3).                                                                                                        |
+| `src/components/` | `ViewerFrame`, `ScoringPanel`, `MeasurementRow`, `TotalsFooter`, `BridgeStatus`, each with its `.props.ts`; other modules keep one only when it earns its place (A-13).           |
+| `src/pages/`      | `ScoringPage` — the single page: the viewer iframe on the left, the form panel on the right.                                                                                      |
+| `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                                                                    |
+| `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                                                                  |
+| `src/utils/`      | Does not exist (A-27): `format` moved to `form/`, the row lookups into `form/rows.ts`.                                                                                            |
+| `src/hooks/`      | Does not exist (A-27): each hook lives beside what it connects.                                                                                                                   |
+| `src/channel/`    | `useHostChannel` and `useChannelState`, the React binding to the channel package; the channel itself is not in this app (A-22).                                                   |
+| `src/form/`       | The row model and everything around it: `rows` (types, reducer, lookups), `rowActions`, `viewerEventHandlers`, `storage` (`useStoredForm`), `totals`, `format`, `useScoringForm`. |
+| `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                                                                               |
 
 Outside `host-app`, the repository keeps the packages, each laid out by side or role (A-27):
 `packages/contract` (the wire contract, four flat files), `packages/channel` (two files: `channel.ts`,

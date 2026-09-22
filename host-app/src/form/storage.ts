@@ -2,8 +2,10 @@
 // and another tab or study never sees them. Every access is defensive: private mode, a full quota
 // or a cleared store throw or return nothing, and the form still has to render.
 
+import { useEffect, useReducer, type Dispatch } from 'react';
 import { z } from 'zod';
-import { Row } from './rows';
+import { studyInstanceUid } from '@app/config';
+import { reducer, Row, type FormAction, type FormState } from './rows';
 
 // The fields A-14 asks to persist; `restoreFailureReason` is not among them, so every load starts
 // with a clean restore attempt rather than replaying a stale failure.
@@ -47,4 +49,17 @@ export const saveRows = (studyInstanceUid: string, rows: readonly Row[]): void =
   } catch (error) {
     console.warn('[form] failed to persist form state', error);
   }
+};
+
+// The form's state: read from sessionStorage once, as the reducer's initial state, and written
+// back on every change. The study is resolved once per page load (A-19), so both go to one key.
+export const useStoredForm = (): [FormState, Dispatch<FormAction>] => {
+  const study = studyInstanceUid();
+  const [state, dispatch] = useReducer(reducer, study, (uid) => ({ rows: loadStoredRows(uid) }));
+
+  useEffect(() => {
+    saveRows(study, state.rows);
+  }, [study, state.rows]);
+
+  return [state, dispatch];
 };
