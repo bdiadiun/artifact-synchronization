@@ -23,13 +23,12 @@ describe('the command handler the bridge registers', () => {
     const handle = vi.fn();
     channel.onCommand(handle);
 
-    dispatchMessage(activateToolMessage('row-1', 'req-1'), HOST_ORIGIN);
+    dispatchMessage(activateToolMessage('row-1'), HOST_ORIGIN);
     dispatchMessage(deactivateToolMessage('row-1'), HOST_ORIGIN);
 
     expect(handle).toHaveBeenCalledTimes(2);
     expect(handle).toHaveBeenNthCalledWith(1, {
       type: 'ACTIVATE_TOOL',
-      requestId: 'req-1',
       rowId: 'row-1',
       toolName: 'EllipticalROI',
       version: 1,
@@ -65,24 +64,15 @@ describe('the command handler the bridge registers', () => {
   });
 });
 
-describe('what the viewer end posts (A-10)', () => {
-  it('posts an answer with the causedBy the bridge put on it', () => {
+describe('what the viewer end posts', () => {
+  it('posts the event it was handed, unchanged but for the version', () => {
     const { channel, posted } = createViewerChannelFixture();
 
-    const delivered = channel.send({
-      type: 'MEASUREMENT_REMOVED',
-      measurementUid: 'uid-1',
-      causedBy: 'req-remove',
-    });
+    const delivered = channel.send({ type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1' });
 
     expect(delivered).toBe(true);
     expect(posted()).toEqual([
-      {
-        version: 1,
-        type: 'MEASUREMENT_REMOVED',
-        measurementUid: 'uid-1',
-        causedBy: 'req-remove',
-      },
+      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1' },
     ]);
   });
 

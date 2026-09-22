@@ -2,7 +2,11 @@
 // event to (A-29); useScoringForm.test.tsx covers the same wiring through a real channel.
 
 import { describe, expect, it, vi } from 'vitest';
-import type { MeasurementRemovedEvent, MeasurementUpdatedEvent } from '@bdiadiun/scoring-contract';
+import type {
+  MeasurementRemovedEvent,
+  MeasurementsRestoredEvent,
+  MeasurementUpdatedEvent,
+} from '@bdiadiun/scoring-contract';
 import { createViewerEventHandlers } from '@app/form/viewerEventHandlers';
 import { FormActionType, RowStatus, initialFormState } from '@app/form/rows';
 import type { FormContext } from '@app/form/rows';
@@ -29,7 +33,7 @@ const buildDeps = (
 describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
   it('clears the done row whose measurementUid matches the event', () => {
     const { dispatch, getContext } = buildDeps([doneRow]);
-    const handleEvent = createViewerEventHandlers({ getContext, restoredRows: [] });
+    const handleEvent = createViewerEventHandlers(getContext);
 
     const event: MeasurementRemovedEvent = {
       type: 'MEASUREMENT_REMOVED',
@@ -45,7 +49,7 @@ describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
 
   it('dispatches MeasurementCleared even for a measurementUid matching no row, leaving the reducer to ignore it', () => {
     const { dispatch, getContext } = buildDeps([]);
-    const handleEvent = createViewerEventHandlers({ getContext, restoredRows: [] });
+    const handleEvent = createViewerEventHandlers(getContext);
 
     const event: MeasurementRemovedEvent = {
       type: 'MEASUREMENT_REMOVED',
@@ -63,7 +67,7 @@ describe('createViewerEventHandlers MEASUREMENT_REMOVED', () => {
 describe('createViewerEventHandlers MEASUREMENT_UPDATED', () => {
   it('dispatches MeasurementUpdated with the event metrics, never sending anything back (Q-4)', () => {
     const { dispatch, getContext } = buildDeps([doneRow]);
-    const handleEvent = createViewerEventHandlers({ getContext, restoredRows: [] });
+    const handleEvent = createViewerEventHandlers(getContext);
 
     const event: MeasurementUpdatedEvent = {
       type: 'MEASUREMENT_UPDATED',
@@ -81,11 +85,32 @@ describe('createViewerEventHandlers MEASUREMENT_UPDATED', () => {
   });
 });
 
+describe('createViewerEventHandlers MEASUREMENTS_RESTORED', () => {
+  it('marks every row the viewer refused with the reason it gave', () => {
+    const { dispatch, getContext } = buildDeps([doneRow]);
+    const handleEvent = createViewerEventHandlers(getContext);
+
+    const event: MeasurementsRestoredEvent = {
+      type: 'MEASUREMENTS_RESTORED',
+      restored: ['uid-1'],
+      failed: [{ rowId: 'row-2', reason: 'invalid-geometry' }],
+    };
+    handleEvent(event);
+
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith({
+      type: FormActionType.RestoreFailed,
+      rowId: 'row-2',
+      reason: 'invalid-geometry',
+    });
+  });
+});
+
 describe('createViewerEventHandlers MEASUREMENT_ADDED', () => {
   it('logs and dispatches nothing for a measurement drawn with no armed row (A-8)', () => {
     const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => undefined);
     const { dispatch, getContext } = buildDeps([]);
-    const handleEvent = createViewerEventHandlers({ getContext, restoredRows: [] });
+    const handleEvent = createViewerEventHandlers(getContext);
 
     handleEvent({
       type: 'MEASUREMENT_ADDED',

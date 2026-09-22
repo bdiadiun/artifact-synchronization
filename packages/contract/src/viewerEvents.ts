@@ -14,7 +14,6 @@ export const MeasurementAddedEvent = z.object({
   measurementUid: z.string().min(1),
   toolName: z.string(),
   metrics: Metrics,
-  causedBy: z.string().optional(),
   geometry: MeasurementGeometry.optional(),
 });
 export type MeasurementAddedEvent = z.infer<typeof MeasurementAddedEvent>;
@@ -24,7 +23,6 @@ export const MeasurementUpdatedEvent = z.object({
   measurementUid: z.string().min(1),
   toolName: z.string(),
   metrics: Metrics,
-  causedBy: z.string().optional(),
   geometry: MeasurementGeometry.optional(),
 });
 export type MeasurementUpdatedEvent = z.infer<typeof MeasurementUpdatedEvent>;
@@ -32,7 +30,6 @@ export type MeasurementUpdatedEvent = z.infer<typeof MeasurementUpdatedEvent>;
 export const MeasurementRemovedEvent = z.object({
   type: z.literal('MEASUREMENT_REMOVED'),
   measurementUid: z.string().min(1),
-  causedBy: z.string().optional(),
 });
 export type MeasurementRemovedEvent = z.infer<typeof MeasurementRemovedEvent>;
 
@@ -52,7 +49,6 @@ export type RestoreFailure = z.infer<typeof RestoreFailure>;
 
 export const MeasurementsRestoredEvent = z.object({
   type: z.literal('MEASUREMENTS_RESTORED'),
-  causedBy: z.string().optional(),
   restored: z.array(z.string().min(1)),
   failed: z.array(RestoreFailure),
 });
@@ -71,13 +67,3 @@ export const isViewerEvent = (value: unknown): value is ViewerEvent =>
   ViewerEvent.safeParse(value).success;
 
 export type BridgeMessage = HostCommand | ViewerEvent;
-
-export const ANSWER_TYPE_BY_COMMAND = {
-  REMOVE_MEASUREMENT: 'MEASUREMENT_REMOVED',
-  RESTORE_MEASUREMENTS: 'MEASUREMENTS_RESTORED',
-} as const satisfies Partial<Record<HostCommand['type'], ViewerEvent['type']>>;
-
-export type AnsweredCommandType = keyof typeof ANSWER_TYPE_BY_COMMAND;
-
-export type AnswerTypeOf<TType extends AnsweredCommandType> =
-  (typeof ANSWER_TYPE_BY_COMMAND)[TType];

@@ -49,30 +49,24 @@ const ELLIPSE_GEOMETRY = {
   label: 'Lesion A',
 };
 
-const activateTool = (rowId: string, requestId = 'req-1'): HostCommand => ({
+const activateTool = (rowId: string): HostCommand => ({
   type: 'ACTIVATE_TOOL',
-  requestId,
   rowId,
   toolName: 'EllipticalROI',
 });
 
 const deactivateTool = (rowId: string): HostCommand => ({
   type: 'DEACTIVATE_TOOL',
-  requestId: 'req-2',
   rowId,
 });
 
-const removeMeasurement = (measurementUid: string, requestId = 'req-3'): HostCommand => ({
+const removeMeasurement = (measurementUid: string): HostCommand => ({
   type: 'REMOVE_MEASUREMENT',
-  requestId,
-  rowId: 'row-1',
   measurementUid,
 });
 
 const focusMeasurement = (measurementUid: string): HostCommand => ({
   type: 'FOCUS_MEASUREMENT',
-  requestId: 'req-4',
-  rowId: 'row-1',
   measurementUid,
 });
 
@@ -146,14 +140,6 @@ const startExtension = (): BridgeFixture => {
     },
     posted: () => hostWindow.postMessage.mock.calls.map(([message]) => message as ViewerEvent),
   };
-};
-
-const mockedRemoval = (fixture: BridgeFixture): void => {
-  const { measurementService, emit } = fixture;
-  (measurementService.getMeasurement as Mock).mockReturnValue(ellipse('uid-1'));
-  (measurementService.remove as Mock).mockImplementation((uid: string) => {
-    emit(EVENTS.MEASUREMENT_REMOVED, uid);
-  });
 };
 
 afterEach(() => {
@@ -317,9 +303,9 @@ describe('arming a row (C-4.3.4)', () => {
 });
 
 describe('a measurement the doctor drew (C-4.3.5, A-8)', () => {
-  it('posts it with the armed row, the request that armed it, its metrics and its geometry', () => {
+  it('posts it with the armed row, its metrics and its geometry', () => {
     const { emit, posted } = startExtension();
-    dispatchCommand(activateTool('row-1', 'req-1'));
+    dispatchCommand(activateTool('row-1'));
 
     emit(EVENTS.MEASUREMENT_ADDED, ellipse('uid-1'));
 
@@ -331,7 +317,6 @@ describe('a measurement the doctor drew (C-4.3.5, A-8)', () => {
         measurementUid: 'uid-1',
         toolName: 'EllipticalROI',
         metrics: { area: { value: 12.5, unit: 'mm2' } },
-        causedBy: 'req-1',
         geometry: ELLIPSE_GEOMETRY,
       },
     ]);
@@ -429,34 +414,28 @@ describe('updates while the doctor drags (S-5.1)', () => {
   });
 });
 
-describe('removing a measurement (A-10)', () => {
-  it('removes it, reports the deletion and then answers the command that asked for it', () => {
+describe('removing a measurement (A-30)', () => {
+  it('asks OHIF to remove it and sends nothing of its own', () => {
     const fixture = startExtension();
-    mockedRemoval(fixture);
+    (fixture.measurementService.getMeasurement as Mock).mockReturnValue(ellipse('uid-1'));
 
-    dispatchCommand(removeMeasurement('uid-1', 'req-3'));
+    dispatchCommand(removeMeasurement('uid-1'));
 
     expect(fixture.measurementService.remove).toHaveBeenCalledWith('uid-1');
-    expect(fixture.posted()).toEqual([
-      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1' },
-      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1', causedBy: 'req-3' },
-    ]);
+    expect(fixture.posted()).toEqual([]);
   });
 
-  it('answers a command for a measurement that is already gone without removing anything', () => {
+  it('removes nothing and sends nothing for a measurement that is already gone', () => {
     const fixture = startExtension();
-    vi.spyOn(console, 'debug').mockImplementation(() => undefined);
     (fixture.measurementService.getMeasurement as Mock).mockReturnValue(undefined);
 
-    dispatchCommand(removeMeasurement('uid-1', 'req-3'));
+    dispatchCommand(removeMeasurement('uid-1'));
 
     expect(fixture.measurementService.remove).not.toHaveBeenCalled();
-    expect(fixture.posted()).toEqual([
-      { version: 1, type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1', causedBy: 'req-3' },
-    ]);
+    expect(fixture.posted()).toEqual([]);
   });
 
-  it('reports a deletion made in the viewer as an event of its own, caused by nothing', () => {
+  it('reports a deletion OHIF announces as an event of its own', () => {
     const { emit, posted } = startExtension();
 
     emit(EVENTS.MEASUREMENT_REMOVED, 'uid-1');

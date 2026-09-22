@@ -116,19 +116,18 @@ const announceAdded = (
     return;
   }
 
-  const armed = commands.takeArmed();
+  const rowId = commands.takeArmed();
 
   channel.send({
     type: 'MEASUREMENT_ADDED',
-    rowId: armed?.rowId ?? null,
+    rowId,
     measurementUid: measurement.uid,
     toolName: measurement.toolName,
     metrics,
-    causedBy: armed?.requestId,
     geometry: toGeometry(measurement),
   });
 
-  if (armed) {
+  if (rowId !== null) {
     commands.restoreDefaultTool();
   }
 };

@@ -1,28 +1,13 @@
-import { ANSWER_TYPE_BY_COMMAND, isViewerEvent } from '@bdiadiun/scoring-contract';
-import type {
-  AnsweredCommandType,
-  AnswerTypeOf,
-  HostCommand,
-  ViewerEvent,
-} from '@bdiadiun/scoring-contract';
+import { isViewerEvent } from '@bdiadiun/scoring-contract';
+import type { HostCommand, ViewerEvent } from '@bdiadiun/scoring-contract';
 import { listenFrom } from '../shared/peer.js';
 import type { Peer } from '../shared/peer.js';
 import { createHostOutbox } from './outbox.js';
 import type { ChannelState, HostOutbox } from './outbox.js';
-import { createPendingAnswers } from './pendingAnswers.js';
-
-export type HostPayload<TType extends HostCommand['type']> = Omit<
-  Extract<HostCommand, { type: TType }>,
-  'type' | 'requestId'
->;
 
 export interface HostChannel {
   send: (command: HostCommand) => boolean;
   onEvent: (handle: (event: ViewerEvent) => void) => () => void;
-  exchange: <TType extends HostCommand['type'] & AnsweredCommandType>(
-    type: TType,
-    payload: HostPayload<TType>,
-  ) => Promise<Extract<ViewerEvent, { type: AnswerTypeOf<TType> }>>;
   getState: () => ChannelState;
   subscribe: (listener: () => void) => () => void;
   dispose: () => void;
@@ -34,9 +19,6 @@ export interface HostChannelOptions {
 }
 
 const ignoreEvent = (): void => undefined;
-
-const toCommand = (type: HostCommand['type'], requestId: string, payload: object): HostCommand =>
-  ({ type, requestId, ...payload }) as HostCommand;
 
 const armedRowAfter = (command: HostCommand, armedRowId: string | null): string | null => {
   if (command.type === 'ACTIVATE_TOOL') {
@@ -50,7 +32,7 @@ const armedRowAfter = (command: HostCommand, armedRowId: string | null): string 
 
 const cancelArmedRow = (outbox: HostOutbox, armedRowId: string | null): void => {
   if (armedRowId !== null && outbox.getState().ready) {
-    outbox.send({ type: 'DEACTIVATE_TOOL', requestId: crypto.randomUUID(), rowId: armedRowId });
+    outbox.send({ type: 'DEACTIVATE_TOOL', rowId: armedRowId });
   }
 };
 
@@ -61,7 +43,6 @@ export const createHostChannel = ({
   const peer: Peer = { origin: viewerOrigin, getWindow: getViewerWindow };
   const outbox = createHostOutbox(peer);
   const { getState, subscribe } = outbox;
-  const pending = createPendingAnswers();
   let handle: (event: ViewerEvent) => void = ignoreEvent;
   let armedRowId: string | null = null;
   let disposed = false;
@@ -82,21 +63,7 @@ export const createHostChannel = ({
     };
   };
 
-  const exchange = <TType extends HostCommand['type'] & AnsweredCommandType>(
-    type: TType,
-    payload: HostPayload<TType>,
-  ): Promise<Extract<ViewerEvent, { type: AnswerTypeOf<TType> }>> => {
-    const requestId = crypto.randomUUID();
-    const answer = pending.awaitAnswer(requestId, type, ANSWER_TYPE_BY_COMMAND[type]);
-
-    outbox.send(toCommand(type, requestId, payload));
-    return answer as Promise<Extract<ViewerEvent, { type: AnswerTypeOf<TType> }>>;
-  };
-
   const handleEvent = (event: ViewerEvent): void => {
-    if (pending.settle(event)) {
-      return;
-    }
     if (event.type === 'VIEWER_READY') {
       outbox.flush();
     }
@@ -111,11 +78,10 @@ export const createHostChannel = ({
     }
     disposed = true;
     cancelArmedRow(outbox, armedRowId);
-    pending.rejectAll('the channel was disposed before the answer arrived');
     stopListening();
     handle = ignoreEvent;
     outbox.clear();
   };
 
-  return { send, onEvent, exchange, getState, subscribe, dispose };
+  return { send, onEvent, getState, subscribe, dispose };
 };

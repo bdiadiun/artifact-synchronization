@@ -9,17 +9,10 @@ export interface Total {
   count: number;
 }
 
-// mm2 first (clinically meaningful when spacing is present), then px2, then anything else alphabetically.
-const UNIT_ORDER: readonly Unit[] = ['mm2', 'px2'];
+// mm2 first: clinically meaningful when the study carries pixel spacing.
+const UNIT_ORDER: readonly Unit[] = ['mm2', 'px2', 'mm', 'px'];
 
-const compareUnits = (a: Unit, b: Unit): number => {
-  const rankA = UNIT_ORDER.indexOf(a);
-  const rankB = UNIT_ORDER.indexOf(b);
-  if (rankA !== -1 || rankB !== -1) {
-    return (rankA === -1 ? UNIT_ORDER.length : rankA) - (rankB === -1 ? UNIT_ORDER.length : rankB);
-  }
-  return a.localeCompare(b);
-};
+const compareUnits = (a: Unit, b: Unit): number => UNIT_ORDER.indexOf(a) - UNIT_ORDER.indexOf(b);
 
 export const computeTotals = (rows: readonly Row[], metric: MetricKey): Total[] => {
   const groups = new Map<Unit, { value: number; count: number }>();

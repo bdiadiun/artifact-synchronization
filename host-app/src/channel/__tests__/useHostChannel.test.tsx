@@ -83,7 +83,6 @@ describe('useHostChannel', () => {
     act(() => {
       capturedRef.current?.channel?.send({
         type: 'ACTIVATE_TOOL',
-        requestId: 'req-1',
         rowId: 'row-1',
         toolName: 'EllipticalROI',
       });

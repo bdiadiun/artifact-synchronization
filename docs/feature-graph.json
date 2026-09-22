@@ -1423,7 +1423,6 @@
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
@@ -1953,7 +1952,6 @@
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2465,7 +2463,6 @@
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2608,7 +2605,6 @@
         "packages/channel/src/host/hostChannel.ts": {
           "internal": [
             "packages/channel/src/host/outbox.ts",
-            "packages/channel/src/host/pendingAnswers.ts",
             "packages/channel/src/shared/peer.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2775,7 +2771,6 @@
         "host-app/src/form/viewerEventHandlers.ts": {
           "internal": [
             "host-app/src/config.ts",
-            "host-app/src/form/rowActions.ts",
             "host-app/src/form/rows.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2784,7 +2779,6 @@
         "packages/channel/src/host/hostChannel.ts": {
           "internal": [
             "packages/channel/src/host/outbox.ts",
-            "packages/channel/src/host/pendingAnswers.ts",
             "packages/channel/src/shared/peer.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2881,7 +2875,6 @@
         "docs/decisions/A-25-version-in-the-channel.md",
         "packages/channel/src/host/hostChannel.ts",
         "packages/channel/src/host/outbox.ts",
-        "packages/channel/src/host/pendingAnswers.ts",
         "packages/channel/src/shared/peer.ts",
         "packages/channel/src/viewer/viewerChannel.ts",
         "packages/contract/src/hostCommands.ts",
@@ -2891,7 +2884,6 @@
         "packages/channel/src/host/hostChannel.ts": {
           "internal": [
             "packages/channel/src/host/outbox.ts",
-            "packages/channel/src/host/pendingAnswers.ts",
             "packages/channel/src/shared/peer.ts",
             "packages/contract/src/index.ts"
           ],
@@ -2899,10 +2891,6 @@
         },
         "packages/channel/src/host/outbox.ts": {
           "internal": ["packages/channel/src/shared/peer.ts", "packages/contract/src/index.ts"],
-          "external": []
-        },
-        "packages/channel/src/host/pendingAnswers.ts": {
-          "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
         "packages/channel/src/shared/peer.ts": {
@@ -3039,7 +3027,6 @@
         "packages/channel/src/host/hostChannel.ts": {
           "internal": [
             "packages/channel/src/host/outbox.ts",
-            "packages/channel/src/host/pendingAnswers.ts",
             "packages/channel/src/shared/peer.ts",
             "packages/contract/src/index.ts"
           ],

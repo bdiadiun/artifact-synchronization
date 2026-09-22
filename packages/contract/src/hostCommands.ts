@@ -3,7 +3,6 @@ import { MeasurementGeometry, ToolName } from './vocabulary.js';
 
 export const ActivateToolCommand = z.object({
   type: z.literal('ACTIVATE_TOOL'),
-  requestId: z.string().min(1),
   rowId: z.string().min(1),
   toolName: ToolName,
 });
@@ -11,23 +10,18 @@ export type ActivateToolCommand = z.infer<typeof ActivateToolCommand>;
 
 export const DeactivateToolCommand = z.object({
   type: z.literal('DEACTIVATE_TOOL'),
-  requestId: z.string().min(1),
   rowId: z.string().min(1),
 });
 export type DeactivateToolCommand = z.infer<typeof DeactivateToolCommand>;
 
 export const RemoveMeasurementCommand = z.object({
   type: z.literal('REMOVE_MEASUREMENT'),
-  requestId: z.string().min(1),
-  rowId: z.string().min(1),
   measurementUid: z.string().min(1),
 });
 export type RemoveMeasurementCommand = z.infer<typeof RemoveMeasurementCommand>;
 
 export const FocusMeasurementCommand = z.object({
   type: z.literal('FOCUS_MEASUREMENT'),
-  requestId: z.string().min(1),
-  rowId: z.string().min(1),
   measurementUid: z.string().min(1),
 });
 export type FocusMeasurementCommand = z.infer<typeof FocusMeasurementCommand>;
@@ -42,7 +36,6 @@ export type RestoreMeasurementRequest = z.infer<typeof RestoreMeasurementRequest
 
 export const RestoreMeasurementsCommand = z.object({
   type: z.literal('RESTORE_MEASUREMENTS'),
-  requestId: z.string().min(1),
   studyInstanceUid: z.string().min(1),
   measurements: z.array(RestoreMeasurementRequest),
 });

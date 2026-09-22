@@ -48,7 +48,6 @@ const restoreCommand = (
   studyInstanceUid = STUDY_UID,
 ): RestoreMeasurementsCommand => ({
   type: 'RESTORE_MEASUREMENTS',
-  requestId: 'req-restore',
   studyInstanceUid,
   measurements,
 });
@@ -107,7 +106,7 @@ afterEach(() => {
 });
 
 describe('restoring measurements (A-14)', () => {
-  it('answers with the rows it restored, caused by the command', () => {
+  it('answers with the rows it restored', () => {
     const { channel, posted } = connect();
     const restore = createRestore(servicesFor(createViewportGate(true)), channel);
 
@@ -119,7 +118,6 @@ describe('restoring measurements (A-14)', () => {
         type: 'MEASUREMENTS_RESTORED',
         restored: ['row-1'],
         failed: [],
-        causedBy: 'req-restore',
       },
     ]);
     channel.dispose();

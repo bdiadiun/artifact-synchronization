@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ActivateToolCommand, MeasurementRemovedEvent } from '@bdiadiun/scoring-contract';
-import { EXCHANGE_TIMEOUT_MS } from '../../host/pendingAnswers';
 import { LOG_PREFIX } from '../peer';
 import type { WireMessage } from './fixtures';
 import {
@@ -12,7 +11,6 @@ import {
   dispatchMessage,
   HOST_ORIGIN,
   measurementAddedMessage,
-  measurementRemovedMessage,
   VIEWER_ORIGIN,
   viewerReadyMessage,
 } from './fixtures';
@@ -42,25 +40,6 @@ describe('origin (Q-2)', () => {
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
 
     expect(onReady).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not settle a pending exchange with a message from a foreign origin', async () => {
-    const { channel, posted } = createHostChannelFixture();
-    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    const answer = channel.exchange('REMOVE_MEASUREMENT', {
-      rowId: 'row-1',
-      measurementUid: 'uid-1',
-    });
-    const requestId = (posted()[0] as { requestId: string }).requestId;
-    answer.catch(() => undefined);
-
-    dispatchMessage(
-      measurementRemovedMessage('uid-1', { causedBy: requestId }),
-      'http://evil.example',
-    );
-    dispatchMessage(measurementRemovedMessage('uid-1', { causedBy: requestId }), VIEWER_ORIGIN);
-
-    await expect(answer).resolves.toMatchObject({ causedBy: requestId });
   });
 
   it('ignores a message from any origin other than the configured peer, on the viewer end', () => {
@@ -147,24 +126,6 @@ describe('the contract version on the wire (A-25)', () => {
     expect(onReady).not.toHaveBeenCalled();
   });
 
-  it('settles no exchange with an answer of another contract version', async () => {
-    const { channel, posted } = createHostChannelFixture();
-    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    const answer = channel.exchange('REMOVE_MEASUREMENT', {
-      rowId: 'row-1',
-      measurementUid: 'uid-1',
-    });
-    const requestId = (posted()[0] as { requestId: string }).requestId;
-
-    dispatchMessage(
-      { ...measurementRemovedMessage('uid-2', { causedBy: requestId }), version: 2 },
-      VIEWER_ORIGIN,
-    );
-    dispatchMessage(measurementRemovedMessage('uid-1', { causedBy: requestId }), VIEWER_ORIGIN);
-
-    await expect(answer).resolves.toMatchObject({ measurementUid: 'uid-1' });
-  });
-
   it('logs an unknown contract version once however many messages carry it', () => {
     const debugLines = collectDebugLines();
     const { channel } = createHostChannelFixture();
@@ -190,21 +151,15 @@ describe('the contract version on the wire (A-25)', () => {
 });
 
 describe('send', () => {
-  it('posts the host command it was handed, with its request id, to the exact peer origin', () => {
+  it('posts the host command it was handed to the exact peer origin', () => {
     const { channel, viewerWindow, posted } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
 
-    const delivered = channel.send(activateToolCommand('row-1', 'req-7'));
+    const delivered = channel.send(activateToolCommand('row-1'));
 
     expect(delivered).toBe(true);
     expect(posted()).toEqual<[WireMessage<ActivateToolCommand>]>([
-      {
-        version: 1,
-        type: 'ACTIVATE_TOOL',
-        requestId: 'req-7',
-        rowId: 'row-1',
-        toolName: 'EllipticalROI',
-      },
+      { version: 1, type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' },
     ]);
     const [, targetOrigin] = viewerWindow.postMessage.mock.calls[0] as [unknown, string];
     expect(targetOrigin).toBe(VIEWER_ORIGIN);
@@ -267,122 +222,19 @@ describe('the one handler each end holds', () => {
   });
 });
 
-describe('exchange', () => {
-  it('resolves with the answer that carries its request id', () => {
-    const { channel, posted } = createHostChannelFixture();
-    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-
-    const answer = channel.exchange('REMOVE_MEASUREMENT', {
-      rowId: 'row-1',
-      measurementUid: 'uid-1',
-    });
-    const requestId = (posted()[0] as { requestId: string }).requestId;
-
-    dispatchMessage(measurementRemovedMessage('uid-1', { causedBy: requestId }), VIEWER_ORIGIN);
-
-    return expect(answer).resolves.toMatchObject({ causedBy: requestId });
-  });
-
-  it('is not confused by an answer carrying somebody else’s request id', async () => {
-    const { channel, posted } = createHostChannelFixture();
-    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    const onRemoved = vi.fn();
-    channel.onEvent(onRemoved);
-
-    const answer = channel.exchange('REMOVE_MEASUREMENT', {
-      rowId: 'row-1',
-      measurementUid: 'uid-1',
-    });
-    const requestId = (posted()[0] as { requestId: string }).requestId;
-
-    dispatchMessage(
-      measurementRemovedMessage('uid-9', { causedBy: 'somebody-elses-request' }),
-      VIEWER_ORIGIN,
-    );
-    // A message answering nobody's exchange falls through to the general handlers instead.
-    expect(onRemoved).toHaveBeenCalledTimes(1);
-
-    dispatchMessage(measurementRemovedMessage('uid-1', { causedBy: requestId }), VIEWER_ORIGIN);
-
-    await expect(answer).resolves.toMatchObject({ causedBy: requestId });
-  });
-
-  it('rejects, naming the request and the answer it waited for, when nothing answers before the timeout', async () => {
-    vi.useFakeTimers();
-    const { channel, posted } = createHostChannelFixture();
-    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-
-    const answer = channel.exchange('REMOVE_MEASUREMENT', {
-      rowId: 'row-1',
-      measurementUid: 'uid-1',
-    });
-    const requestId = (posted()[0] as { requestId: string }).requestId;
-
-    vi.advanceTimersByTime(EXCHANGE_TIMEOUT_MS);
-
-    await expect(answer).rejects.toThrow(
-      `REMOVE_MEASUREMENT ${requestId} was not answered with MEASUREMENT_REMOVED within ${String(EXCHANGE_TIMEOUT_MS)} ms`,
-    );
-  });
-
-  it('leaves nothing behind once settled: a later message with the same causedBy reaches the general handlers', async () => {
-    const { channel, posted } = createHostChannelFixture();
-    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    const onRemoved = vi.fn();
-    channel.onEvent(onRemoved);
-
-    const answer = channel.exchange('REMOVE_MEASUREMENT', {
-      rowId: 'row-1',
-      measurementUid: 'uid-1',
-    });
-    const requestId = (posted()[0] as { requestId: string }).requestId;
-    dispatchMessage(measurementRemovedMessage('uid-1', { causedBy: requestId }), VIEWER_ORIGIN);
-    await answer;
-
-    dispatchMessage(measurementRemovedMessage('uid-1', { causedBy: requestId }), VIEWER_ORIGIN);
-
-    expect(onRemoved).toHaveBeenCalledTimes(1);
-  });
-
-  it('leaves nothing behind once timed out: a later message with the same causedBy reaches the general handlers', async () => {
-    vi.useFakeTimers();
-    const { channel, posted } = createHostChannelFixture();
-    dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    const onRemoved = vi.fn();
-    channel.onEvent(onRemoved);
-
-    const answer = channel.exchange('REMOVE_MEASUREMENT', {
-      rowId: 'row-1',
-      measurementUid: 'uid-1',
-    });
-    const requestId = (posted()[0] as { requestId: string }).requestId;
-    answer.catch(() => undefined);
-    await vi.advanceTimersByTimeAsync(EXCHANGE_TIMEOUT_MS);
-
-    dispatchMessage(measurementRemovedMessage('uid-1', { causedBy: requestId }), VIEWER_ORIGIN);
-
-    expect(onRemoved).toHaveBeenCalledTimes(1);
-  });
-
-  it('dispose rejects what is still waiting and removes the message listener', async () => {
+describe('dispose', () => {
+  it('removes the message listener, so a later event reaches no handler', () => {
     const { channel } = createHostChannelFixture();
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
     const removeSpy = vi.spyOn(window, 'removeEventListener');
-    const onReady = vi.fn();
-    channel.onEvent(onReady);
-
-    const answer = channel.exchange('REMOVE_MEASUREMENT', {
-      rowId: 'row-1',
-      measurementUid: 'uid-1',
-    });
+    const handle = vi.fn();
+    channel.onEvent(handle);
 
     channel.dispose();
-
-    await expect(answer).rejects.toThrow('the channel was disposed before the answer arrived');
-    expect(removeSpy).toHaveBeenCalledWith('message', expect.any(Function));
-
     dispatchMessage(viewerReadyMessage(), VIEWER_ORIGIN);
-    expect(onReady).not.toHaveBeenCalled();
+
+    expect(removeSpy).toHaveBeenCalledWith('message', expect.any(Function));
+    expect(handle).not.toHaveBeenCalled();
   });
 });
 

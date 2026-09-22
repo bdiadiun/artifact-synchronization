@@ -1,5 +1,7 @@
 # A-22 — one channel API for both ends; the orchestrator package goes away
 
+> Superseded in part by [A-31](A-31-one-channel.md): one `createChannel` serves both ends instead of `createHostChannel` / `createViewerChannel`; the queue-until-ready is the `readyOn` option.
+
 Status: approved 2026-09-22. Canon: Q-1, Q-2, Q-3, Q-4, Q-5, Q-7, X-5. Supersedes
 [A-17](A-17-orchestrator-package.md) and the handler-registry part of
 [A-16](A-16-adapter-and-viewer-delivery.md). Builds on

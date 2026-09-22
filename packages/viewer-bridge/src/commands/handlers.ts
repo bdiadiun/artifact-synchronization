@@ -17,14 +17,9 @@ import { createRestore } from './restore.js';
 
 const DEFAULT_TOOL = 'WindowLevel';
 
-export interface ArmedRow {
-  rowId: string;
-  requestId: string;
-}
-
 export interface ScoringCommands {
   handleCommand: (command: HostCommand) => void;
-  takeArmed: () => ArmedRow | null;
+  takeArmed: () => string | null;
   restoreDefaultTool: () => void;
   dispose: () => void;
 }
@@ -53,24 +48,21 @@ const activateTool = (
 
 const removeMeasurement = (
   services: OhifServices,
-  channel: ViewerChannel,
-  { measurementUid, requestId }: RemoveMeasurementCommand,
+  { measurementUid }: RemoveMeasurementCommand,
 ): void => {
   if (services.measurementService.getMeasurement(measurementUid)) {
     services.measurementService.remove(measurementUid);
   }
-
-  channel.send({ type: 'MEASUREMENT_REMOVED', measurementUid, causedBy: requestId });
 };
 
 const focusMeasurement = (
   services: OhifServices,
-  { measurementUid, rowId }: FocusMeasurementCommand,
+  { measurementUid }: FocusMeasurementCommand,
 ): void => {
   const { measurementService, viewportGridService } = services;
 
   if (!measurementService.getMeasurement(measurementUid)) {
-    console.debug(`${LOG_PREFIX} ${measurementUid} (row ${rowId}) is unknown; nothing to focus`);
+    console.debug(`${LOG_PREFIX} ${measurementUid} is unknown; nothing to focus`);
     return;
   }
 
@@ -83,25 +75,25 @@ export const createCommands = (
   channel: ViewerChannel,
 ): ScoringCommands => {
   const restore = createRestore(services, channel);
-  let armed: ArmedRow | null = null;
+  let armed: string | null = null;
 
   const restoreDefaultTool = (): void => {
     activateTool(services.toolGroupService, commandsManager, DEFAULT_TOOL);
   };
 
-  const takeArmed = (): ArmedRow | null => {
+  const takeArmed = (): string | null => {
     const taken = armed;
     armed = null;
     return taken;
   };
 
-  const handleActivateTool = ({ rowId, requestId, toolName }: ActivateToolCommand): void => {
-    armed = { rowId, requestId };
+  const handleActivateTool = ({ rowId, toolName }: ActivateToolCommand): void => {
+    armed = rowId;
     activateTool(services.toolGroupService, commandsManager, toolName);
   };
 
   const handleDeactivateTool = ({ rowId }: DeactivateToolCommand): void => {
-    if (armed?.rowId === rowId) {
+    if (armed === rowId) {
       armed = null;
       restoreDefaultTool();
     }
@@ -116,7 +108,7 @@ export const createCommands = (
         handleDeactivateTool(command);
         break;
       case 'REMOVE_MEASUREMENT':
-        removeMeasurement(services, channel, command);
+        removeMeasurement(services, command);
         break;
       case 'FOCUS_MEASUREMENT':
         focusMeasurement(services, command);

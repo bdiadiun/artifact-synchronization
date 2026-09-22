@@ -12,39 +12,49 @@ import type {
 } from '@bdiadiun/scoring-contract';
 import { studyInstanceUid } from '@app/config';
 import { findDrawingRow, FormActionType, type FormContext, type Row } from './rows';
-import { activateTool, warnUnanswered } from './rowActions';
-
-export interface ViewerEventHandlersDeps {
-  // Read at call time, not at registration: the handlers are registered once per channel and have
-  // to see the state of the render that is current when an event arrives.
-  getContext: () => FormContext;
-  // Rows loaded from sessionStorage at mount (A-14); fixed for the session, independent of `state`.
-  restoredRows: readonly Row[];
-}
 
 // Only a row with both a stored uid and its geometry can be re-added in the viewer (A-14); a row
-// restored without geometry (older/corrupt storage) is silently left out rather than sent broken.
-const restorableMeasurements = (rows: readonly Row[]): RestoreMeasurementRequest[] =>
-  rows
-    .filter(
-      (row): row is Row & { measurementUid: string; geometry: NonNullable<Row['geometry']> } =>
-        row.measurementUid !== null && row.geometry !== null,
-    )
-    .map((row) => ({
-      rowId: row.rowId,
-      measurementUid: row.measurementUid,
-      toolName: row.toolName,
-      geometry: row.geometry,
-    }));
+// without geometry (older/corrupt storage) is silently left out rather than sent broken.
+const restorableMeasurements = (rows: readonly Row[]): RestoreMeasurementRequest[] => {
+  const measurements: RestoreMeasurementRequest[] = [];
 
-// A-14: a row the viewer refused is marked from the answer to our own request, which the exchange
-// hands back here; no reply of anyone else's can reach this code.
-const dispatchRestoreFailures = (context: FormContext, answer: MeasurementsRestoredEvent): void => {
-  for (const failure of answer.failed) {
-    context.dispatch({
-      type: FormActionType.RestoreFailed,
-      rowId: failure.rowId,
-      reason: failure.reason,
+  for (const row of rows) {
+    if (row.measurementUid !== null && row.geometry !== null) {
+      measurements.push({
+        rowId: row.rowId,
+        measurementUid: row.measurementUid,
+        toolName: row.toolName,
+        geometry: row.geometry,
+      });
+    }
+  }
+
+  return measurements;
+};
+
+// A-14: every READY is a viewer that has no annotations of ours yet, so the rows it does not know
+// about are offered again; a row it refuses comes back in MEASUREMENTS_RESTORED.
+const requestRestore = (context: FormContext): void => {
+  const measurements = restorableMeasurements(context.state.rows);
+  if (measurements.length === 0) {
+    return;
+  }
+  context.channel?.send({
+    type: 'RESTORE_MEASUREMENTS',
+    studyInstanceUid: studyInstanceUid(),
+    measurements,
+  });
+};
+
+// A later READY means the viewer reloaded and forgot the tool it was armed with, so the drawing
+// row is armed again.
+const rearmDrawingRow = (context: FormContext): void => {
+  const drawingRow = findDrawingRow(context.state.rows);
+  if (drawingRow !== undefined) {
+    context.channel?.send({
+      type: 'ACTIVATE_TOOL',
+      rowId: drawingRow.rowId,
+      toolName: drawingRow.toolName,
     });
   }
 };
@@ -73,8 +83,8 @@ const dispatchMeasurementUpdated = (context: FormContext, event: MeasurementUpda
   });
 };
 
-// The echo of our own REMOVE_MEASUREMENT never arrives here: it answers the exchange that asked for
-// it (A-10, A-21). What reaches this handler was deleted in the viewer.
+// A removal the form asked for reaches this handler as well; the row is already gone, and the
+// reducer ignores a uid no row holds (A-10).
 const dispatchMeasurementCleared = (context: FormContext, event: MeasurementRemovedEvent): void => {
   context.dispatch({
     type: FormActionType.MeasurementCleared,
@@ -82,43 +92,27 @@ const dispatchMeasurementCleared = (context: FormContext, event: MeasurementRemo
   });
 };
 
-const requestRestore = (context: FormContext, restoredRows: readonly Row[]): void => {
-  const measurements = restorableMeasurements(restoredRows);
-  if (measurements.length === 0) {
-    return;
+// A-14: a row the viewer refused to restore is marked, so the form can say the value has no
+// annotation behind it any more.
+const dispatchRestoreFailures = (context: FormContext, event: MeasurementsRestoredEvent): void => {
+  for (const failure of event.failed) {
+    context.dispatch({
+      type: FormActionType.RestoreFailed,
+      rowId: failure.rowId,
+      reason: failure.reason,
+    });
   }
-  void context.channel
-    ?.exchange('RESTORE_MEASUREMENTS', { studyInstanceUid: studyInstanceUid(), measurements })
-    .then((answer) => {
-      dispatchRestoreFailures(context, answer);
-    })
-    .catch(warnUnanswered);
 };
 
-export const createViewerEventHandlers = ({
-  getContext,
-  restoredRows,
-}: ViewerEventHandlersDeps): ((event: ViewerEvent) => void) => {
-  let readyCount = 0;
-
-  // The first READY is where a reloaded form asks for its annotations back (A-14); an early
-  // activation is still queued in the channel and flushes itself (A-9). A later READY means the
-  // viewer reloaded and forgot the tool it was armed with, so the drawing row is armed again.
+export const createViewerEventHandlers = (
+  getContext: () => FormContext,
+): ((event: ViewerEvent) => void) => {
   const handleViewerReady = (): void => {
-    readyCount += 1;
     const context = getContext();
-    if (readyCount === 1) {
-      requestRestore(context, restoredRows);
-      return;
-    }
-    const drawingRow = findDrawingRow(context.state.rows);
-    if (drawingRow !== undefined) {
-      context.channel?.send(activateTool(drawingRow.rowId, drawingRow.toolName));
-    }
+    requestRestore(context);
+    rearmDrawingRow(context);
   };
 
-  // Nothing for MEASUREMENTS_RESTORED: the exchange above consumes the answer to our own request,
-  // and no other reply concerns this session (A-21).
   return (event: ViewerEvent): void => {
     switch (event.type) {
       case 'VIEWER_READY':
@@ -134,6 +128,7 @@ export const createViewerEventHandlers = ({
         dispatchMeasurementCleared(getContext(), event);
         break;
       case 'MEASUREMENTS_RESTORED':
+        dispatchRestoreFailures(getContext(), event);
         break;
       default: {
         const exhaustive: never = event;

@@ -1,35 +1,9 @@
 // What each user-triggered row action does to state, dispatch and the channel. Mirrors
 // viewerEventHandlers.ts, which does the same job for the incoming half of the form.
 
-import type { HostCommand, ToolName } from '@bdiadiun/scoring-contract';
+import type { ToolName } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL } from '@app/config';
-import { findDrawingRow, findRow, FormActionType, RowStatus, type FormContext } from './rows';
-
-// An exchange rejects when the viewer never answered or the bridge went away mid-request (A-21).
-// Neither is recoverable here; both are worth seeing in the console.
-export const warnUnanswered = (error: unknown): void => {
-  console.warn('[form] a request to the viewer went unanswered', error);
-};
-
-export const activateTool = (rowId: string, toolName: ToolName): HostCommand => ({
-  type: 'ACTIVATE_TOOL',
-  requestId: crypto.randomUUID(),
-  rowId,
-  toolName,
-});
-
-const deactivateTool = (rowId: string): HostCommand => ({
-  type: 'DEACTIVATE_TOOL',
-  requestId: crypto.randomUUID(),
-  rowId,
-});
-
-const focusMeasurement = (rowId: string, measurementUid: string): HostCommand => ({
-  type: 'FOCUS_MEASUREMENT',
-  requestId: crypto.randomUUID(),
-  rowId,
-  measurementUid,
-});
+import { findRow, FormActionType, RowStatus, type FormContext } from './rows';
 
 export interface RowActions {
   addRow: (toolName?: ToolName) => void;
@@ -44,22 +18,19 @@ export const createRowActions = ({ state, dispatch, channel }: FormContext): Row
     dispatch({ type: FormActionType.AddRow, rowId: crypto.randomUUID(), toolName });
   };
 
+  // A-4: one row is armed at a time, and ACTIVATE_TOOL replaces the armed row on both sides, so no
+  // deactivation of the previous one is sent.
   const activate = (rowId: string): void => {
-    const drawingRow = findDrawingRow(state.rows);
     const targetRow = findRow(state.rows, rowId);
     dispatch({ type: FormActionType.ArmRow, rowId });
-    // Only one row can be armed at a time (A-4): deactivate the previous one first.
-    if (drawingRow !== undefined && drawingRow.rowId !== rowId) {
-      channel?.send(deactivateTool(drawingRow.rowId));
-    }
     if (targetRow !== undefined) {
-      channel?.send(activateTool(rowId, targetRow.toolName));
+      channel?.send({ type: 'ACTIVATE_TOOL', rowId, toolName: targetRow.toolName });
     }
   };
 
   const cancel = (rowId: string): void => {
     dispatch({ type: FormActionType.DisarmRow, rowId });
-    channel?.send(deactivateTool(rowId));
+    channel?.send({ type: 'DEACTIVATE_TOOL', rowId });
   };
 
   // Behaviour depends on row status: `done` removes the real annotation in the viewer; `drawing`
@@ -74,15 +45,13 @@ export const createRowActions = ({ state, dispatch, channel }: FormContext): Row
         return;
       }
       dispatch({ type: FormActionType.RemoveRow, rowId });
-      // A-21: MEASUREMENT_REMOVED answers this request and is consumed by the exchange, so our own
-      // echo never reaches the incoming handlers (A-10) and silence is reported instead of ignored.
-      void channel
-        ?.exchange('REMOVE_MEASUREMENT', { rowId, measurementUid: row.measurementUid })
-        .catch(warnUnanswered);
+      // The viewer's MEASUREMENT_REMOVED comes back for a row that is already gone, and the
+      // reducer ignores a uid no row holds (A-10).
+      channel?.send({ type: 'REMOVE_MEASUREMENT', measurementUid: row.measurementUid });
       return;
     }
     if (row.status === RowStatus.Drawing) {
-      channel?.send(deactivateTool(rowId));
+      channel?.send({ type: 'DEACTIVATE_TOOL', rowId });
     }
     dispatch({ type: FormActionType.RemoveRow, rowId });
   };
@@ -93,7 +62,7 @@ export const createRowActions = ({ state, dispatch, channel }: FormContext): Row
     if (row?.status !== RowStatus.Done || row.measurementUid === null) {
       return;
     }
-    channel?.send(focusMeasurement(rowId, row.measurementUid));
+    channel?.send({ type: 'FOCUS_MEASUREMENT', measurementUid: row.measurementUid });
   };
 
   return { addRow, activate, cancel, remove, focus };

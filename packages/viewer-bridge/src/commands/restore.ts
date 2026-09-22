@@ -84,12 +84,7 @@ const runRestore = (
     triggerAnnotationRenderForViewportIds([viewportId]);
   }
 
-  channel.send({
-    type: 'MEASUREMENTS_RESTORED',
-    restored,
-    failed,
-    causedBy: command.requestId,
-  });
+  channel.send({ type: 'MEASUREMENTS_RESTORED', restored, failed });
 };
 
 export const createRestore = (services: OhifServices, channel: ViewerChannel): RestoreCommands => {

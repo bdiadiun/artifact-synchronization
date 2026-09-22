@@ -12,7 +12,6 @@ import type { MeasurementGeometry } from '../vocabulary';
 
 const activateTool: ActivateToolCommand = {
   type: 'ACTIVATE_TOOL',
-  requestId: 'req-1',
   rowId: 'row-1',
   toolName: 'EllipticalROI',
 };
@@ -35,13 +34,11 @@ const measurementUpdated: MeasurementUpdatedEvent = {
   measurementUid: 'uid-1',
   toolName: 'EllipticalROI',
   metrics: { area: { value: 13.1, unit: 'mm2' } },
-  causedBy: 'req-1',
 };
 
 const measurementRemoved: MeasurementRemovedEvent = {
   type: 'MEASUREMENT_REMOVED',
   measurementUid: 'uid-1',
-  causedBy: 'req-3',
 };
 
 const geometry: MeasurementGeometry = {
@@ -55,7 +52,6 @@ const geometry: MeasurementGeometry = {
 
 const measurementsRestored: MeasurementsRestoredEvent = {
   type: 'MEASUREMENTS_RESTORED',
-  causedBy: 'req-5',
   restored: ['uid-1'],
   failed: [{ rowId: 'row-2', reason: 'unknown-study' }],
 };
@@ -120,17 +116,13 @@ describe('isViewerEvent', () => {
     expect(isViewerEvent(JSON.parse(JSON.stringify(measurementAdded)))).toBe(true);
   });
 
-  it('accepts a valid MEASUREMENT_REMOVED event with causedBy', () => {
+  it('accepts a valid MEASUREMENT_REMOVED event', () => {
     expect(isViewerEvent(measurementRemoved)).toBe(true);
   });
 
-  it('accepts a valid MEASUREMENT_REMOVED event without causedBy', () => {
-    const { causedBy: _causedBy, ...withoutCausedBy } = measurementRemoved;
-    expect(isViewerEvent(withoutCausedBy)).toBe(true);
-  });
-
-  it('rejects MEASUREMENT_REMOVED with a wrong-type causedBy', () => {
-    expect(isViewerEvent({ ...measurementRemoved, causedBy: 42 })).toBe(false);
+  it('rejects MEASUREMENT_REMOVED without a measurementUid', () => {
+    const { measurementUid: _measurementUid, ...withoutUid } = measurementRemoved;
+    expect(isViewerEvent(withoutUid)).toBe(false);
   });
 
   it('accepts MEASUREMENT_ADDED with geometry', () => {
@@ -147,13 +139,8 @@ describe('isViewerEvent', () => {
     );
   });
 
-  it('accepts a valid MEASUREMENTS_RESTORED event with causedBy', () => {
+  it('accepts a valid MEASUREMENTS_RESTORED event', () => {
     expect(isViewerEvent(measurementsRestored)).toBe(true);
-  });
-
-  it('accepts a valid MEASUREMENTS_RESTORED event without causedBy', () => {
-    const { causedBy: _causedBy, ...withoutCausedBy } = measurementsRestored;
-    expect(isViewerEvent(withoutCausedBy)).toBe(true);
   });
 
   it('rejects MEASUREMENTS_RESTORED with an unknown failure reason', () => {

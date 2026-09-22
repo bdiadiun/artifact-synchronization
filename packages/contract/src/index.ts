@@ -20,7 +20,6 @@ export {
 } from './hostCommands.js';
 
 export {
-  ANSWER_TYPE_BY_COMMAND,
   isViewerEvent,
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
@@ -31,4 +30,4 @@ export {
   ViewerEvent,
   ViewerReadyEvent,
 } from './viewerEvents.js';
-export type { AnsweredCommandType, AnswerTypeOf, BridgeMessage } from './viewerEvents.js';
+export type { BridgeMessage } from './viewerEvents.js';

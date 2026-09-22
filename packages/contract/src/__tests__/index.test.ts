@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import * as contract from '../index';
 
 const publishedNames = [
-  'ANSWER_TYPE_BY_COMMAND',
   'ActivateToolCommand',
   'DeactivateToolCommand',
   'FocusMeasurementCommand',

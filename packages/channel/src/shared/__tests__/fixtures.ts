@@ -103,36 +103,25 @@ export const viewerReadyMessage = (viewerVersion = '1.0.0'): WireMessage<ViewerR
   viewerVersion,
 });
 
-export const activateToolCommand = (rowId: string, requestId = 'req-1'): ActivateToolCommand => ({
+export const activateToolCommand = (rowId: string): ActivateToolCommand => ({
   type: 'ACTIVATE_TOOL',
-  requestId,
   rowId,
   toolName: 'EllipticalROI',
 });
 
-export const deactivateToolCommand = (
-  rowId: string,
-  requestId = 'req-2',
-): DeactivateToolCommand => ({
+export const deactivateToolCommand = (rowId: string): DeactivateToolCommand => ({
   type: 'DEACTIVATE_TOOL',
-  requestId,
   rowId,
 });
 
-export const activateToolMessage = (
-  rowId: string,
-  requestId = 'req-1',
-): WireMessage<ActivateToolCommand> => ({
+export const activateToolMessage = (rowId: string): WireMessage<ActivateToolCommand> => ({
   version: 1,
-  ...activateToolCommand(rowId, requestId),
+  ...activateToolCommand(rowId),
 });
 
-export const deactivateToolMessage = (
-  rowId: string,
-  requestId = 'req-2',
-): WireMessage<DeactivateToolCommand> => ({
+export const deactivateToolMessage = (rowId: string): WireMessage<DeactivateToolCommand> => ({
   version: 1,
-  ...deactivateToolCommand(rowId, requestId),
+  ...deactivateToolCommand(rowId),
 });
 
 export const measurementAddedMessage = (

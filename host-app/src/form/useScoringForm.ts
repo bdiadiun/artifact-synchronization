@@ -32,10 +32,10 @@ export const useScoringForm = (channel: HostChannel | null): UseScoringFormResul
       return undefined;
     }
     const getContext = (): FormContext => contextRef.current;
-    const handleViewerEvent = createViewerEventHandlers({ getContext, restoredRows });
+    const handleViewerEvent = createViewerEventHandlers(getContext);
 
     return channel.onEvent(handleViewerEvent);
-  }, [channel, restoredRows]);
+  }, [channel]);
 
   return { rows: state.rows, ...createRowActions(context) };
 };
