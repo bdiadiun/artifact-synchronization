@@ -10,7 +10,7 @@ not a log. Update it in every PR (same commit as the work it describes).
 | Current slice  | none open — slice 63 `refactor(channel): the end of the channel is a class` (#84, decision A-39) is merged, published (channel 0.0.9, scoring-viewer 0.1.1, ohif-extension-loader 0.1.1) and pinned in the fork; the README was verified by a clone run by its steps alone (#85); the video (D-8) is recorded |
 | Gate           | — (next slice starts at gate 1)                                                                                                                                                                                                                                                                               |
 | Last merged PR | `chore: pin the fork at the loader release 0.1.1` (slice 63 closed; fork at ecbcef22; before it #85 `docs: the README follows the repository` and #84)                                                                                                                                                        |
-| Next slice     | 64 `test: only the tests the assignment asks for` (sum, serialisation, reducer; the coverage that left with the old harnesses — channel, facade, hooks — decided there); the study-change decision (Follow-ups)                                                                                               |
+| Next slice     | none — the repository was submitted on 2026-09-23; this pin is the last planned change. Anything after it (the study-change decision in Follow-ups, more tests) is optional and would start at gate 1                                                                                                         |
 
 ## Open decisions (see CANON.md → Decisions)
 
