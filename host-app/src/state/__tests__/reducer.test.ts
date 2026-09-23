@@ -41,17 +41,17 @@ describe('rows reducer', () => {
     expect(state[0].toolName).toBe('Length');
   });
 
-  it('ARM_ROW sets the target row to drawing', () => {
+  it('ACTIVATE_TOOL sets the target row to drawing', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
 
     expect(isDrawing(state, 'row-1')).toBe(true);
   });
 
   it('arming row B disarms row A (only one row is drawing at a time, A-4)', () => {
     let state = addRows([], 'row-a', 'row-b');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-a' });
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-b' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-a', toolName: 'EllipticalROI' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-b', toolName: 'EllipticalROI' });
 
     expect(isDrawing(state, 'row-a')).toBe(false);
     expect(isDrawing(state, 'row-b')).toBe(true);
@@ -59,42 +59,50 @@ describe('rows reducer', () => {
 
   it('re-arming the already drawing row leaves state unchanged', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
-    const next = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
+    const next = reducer(state, {
+      type: 'ACTIVATE_TOOL',
+      rowId: 'row-1',
+      toolName: 'EllipticalROI',
+    });
 
     expect(next).toBe(state);
   });
 
-  it('ARM_ROW with an unknown rowId leaves state unchanged', () => {
+  it('ACTIVATE_TOOL with an unknown rowId leaves state unchanged', () => {
     const state = addRows([], 'row-1');
-    const next = reducer(state, { type: 'ARM_ROW', rowId: 'ghost' });
+    const next = reducer(state, {
+      type: 'ACTIVATE_TOOL',
+      rowId: 'ghost',
+      toolName: 'EllipticalROI',
+    });
     expect(next).toBe(state);
   });
 
-  it('DISARM_ROW returns a drawing row to pending', () => {
+  it('DEACTIVATE_TOOL returns a drawing row to pending', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
-    state = reducer(state, { type: 'DISARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
+    state = reducer(state, { type: 'DEACTIVATE_TOOL', rowId: 'row-1' });
 
     expect(isDrawing(state, 'row-1')).toBe(false);
     expect(state[0].status).toBe(RowStatus.Pending);
   });
 
-  it('DISARM_ROW on a pending (not drawing) row is a no-op', () => {
+  it('DEACTIVATE_TOOL on a pending (not drawing) row is a no-op', () => {
     const state = addRows([], 'row-1');
-    const next = reducer(state, { type: 'DISARM_ROW', rowId: 'row-1' });
+    const next = reducer(state, { type: 'DEACTIVATE_TOOL', rowId: 'row-1' });
     expect(next).toBe(state);
   });
 
-  it('DISARM_ROW with an unknown rowId leaves state unchanged', () => {
+  it('DEACTIVATE_TOOL with an unknown rowId leaves state unchanged', () => {
     const state = addRows([], 'row-1');
-    const next = reducer(state, { type: 'DISARM_ROW', rowId: 'ghost' });
+    const next = reducer(state, { type: 'DEACTIVATE_TOOL', rowId: 'ghost' });
     expect(next).toBe(state);
   });
 
   it('MEASUREMENT_RECEIVED applies to a drawing row: done, with metrics, uid and geometry', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
     const geometry = {
       frameOfReferenceUid: 'for-1',
       referencedImageId: 'image-1',
@@ -131,7 +139,7 @@ describe('rows reducer', () => {
 
   it('MEASUREMENT_RECEIVED for an already done row is ignored (no double-apply)', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
     state = reducer(state, {
       type: 'MEASUREMENT_ADDED',
       toolName: 'EllipticalROI',
@@ -163,7 +171,7 @@ describe('rows reducer', () => {
 
   it('MEASUREMENT_UPDATED replaces the metrics of the matching done row', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
     state = reducer(state, {
       type: 'MEASUREMENT_ADDED',
       toolName: 'EllipticalROI',
@@ -189,7 +197,7 @@ describe('rows reducer', () => {
 
   it('MEASUREMENT_UPDATED with an unknown measurementUid leaves state unchanged', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
     state = reducer(state, {
       type: 'MEASUREMENT_ADDED',
       toolName: 'EllipticalROI',
@@ -247,7 +255,7 @@ describe('rows reducer', () => {
 
   it('MEASUREMENT_CLEARED returns the done row matching the uid to pending, metrics and uid cleared', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
     state = reducer(state, {
       type: 'MEASUREMENT_ADDED',
       toolName: 'EllipticalROI',
@@ -283,7 +291,7 @@ describe('rows reducer', () => {
       rowId: 'row-1',
       toolName: 'Length',
     });
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'Length' });
     state = reducer(state, {
       type: 'MEASUREMENT_ADDED',
       toolName: 'EllipticalROI',
@@ -305,7 +313,7 @@ describe('rows reducer', () => {
 
   it('RESTORE_FAILED marks the row with the given reason and keeps its value', () => {
     let state = addRows([], 'row-1');
-    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'EllipticalROI' });
     state = reducer(state, {
       type: 'MEASUREMENT_ADDED',
       toolName: 'EllipticalROI',

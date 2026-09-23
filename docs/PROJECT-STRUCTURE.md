@@ -72,8 +72,7 @@ my-react-app/
 └── vite.config.ts
 ```
 
-`host-app` follows it, with one departure recorded in A-27: there is no `utils/` folder, and the
-folders it does not need yet do not exist.
+`host-app` follows it; the folders it does not need yet do not exist (A-27).
 
 - **`App.tsx` is not there**: with one page there is nothing to compose, so `main.tsx` renders
   `ScoringPage` directly; an `App` would be a one-line wrapper.
@@ -84,22 +83,23 @@ folders it does not need yet do not exist.
   `context/`, and so on. A folder kept alive by a placeholder file says nothing true about the code.
 
 - **Two folders the reference does not name, `state/` and `services/`, are the conventional names
-  for what a Redux-less React app still has: a reducer with its selectors and actions, and the two
-  modules that talk to the outside (the channel, `sessionStorage`). Nothing is invented: a reader
+  for what a Redux-less React app still has: a reducer with its selectors and actions, and the
+  module that talks to the outside (`sessionStorage`; the channel comes from its package's
+  `useChannel`, A-34). Nothing is invented: a reader
   from any React project finds each thing where they would look for it (A-27).
 
-| Folder            | What is in it here                                                                                                                                                                                                                                      |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/assets/`     | Not created yet: the form uses native elements and no imagery (canon X-3).                                                                                                                                                                              |
-| `src/components/` | `ViewerFrame`, `ScoringPanel`, `MeasurementRow`, `TotalsFooter`, `BridgeStatus`, each with its `.props.ts`; `ScoringPanel` owns the form (it calls `useScoringForm`) and shows the bridge status; the others render what they are given.                |
-| `src/pages/`      | `ScoringPage` — the single page, layout only: the viewer iframe on the left, the panel on the right.                                                                                                                                                    |
-| `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                                                                                                                                          |
-| `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                                                                                                                                        |
-| `src/utils/`      | `format` (values, statuses, kinds) and `totals` (per-unit sums): pure helpers over the row model.                                                                                                                                                       |
-| `src/hooks/`      | `useChannel()` (the channel's `{ ready, queued, announcements }`) and `useScoringForm(studyInstanceUid)` (`[rows, dispatch]`: the reducer read from storage, the viewer's events dispatched to it, the stored rows offered back on every announcement). |
-| `src/state/`      | `reducer` (`Row`, `RowStatus`, `FormAction`, the pure reducer), `selectors` (`findRow`, `findRowByUid`, `findDrawingRow`), `actions` (what each button does to its row, and `restoreViewer`).                                                           |
-| `src/services/`   | `channel` (the page's one channel instance) and `storage` (the stored-row schema and one sessionStorage key per study).                                                                                                                                 |
-| `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                                                                                                                                                     |
+| Folder            | What is in it here                                                                                                                                                                                                                                                                                       |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/assets/`     | Not created yet: the form uses native elements and no imagery (canon X-3).                                                                                                                                                                                                                               |
+| `src/components/` | `ViewerFrame`, `ScoringPanel`, `MeasurementRow`, `TotalsFooter`, `BridgeStatus`, each with its `.props.ts`; `ScoringPanel` owns the form (it calls `useScoringForm`) and shows the bridge status; the others render what they are given.                                                                 |
+| `src/pages/`      | `ScoringPage` — the single page, layout only: the viewer iframe on the left, the panel on the right.                                                                                                                                                                                                     |
+| `src/context/`    | Not created yet: the form's state lives in one reducer and is passed as props.                                                                                                                                                                                                                           |
+| `src/redux/`      | Not created yet: there is no store; `useReducer` holds the rows.                                                                                                                                                                                                                                         |
+| `src/utils/`      | `format` (values, statuses, kinds) and `totals` (per-unit sums): pure helpers over the row model.                                                                                                                                                                                                        |
+| `src/hooks/`      | `useScoringForm(studyInstanceUid)` (`[rows, dispatch, channel]`: the page's end of the channel from `useChannel(VIEWER_CHANNEL)`, the reducer read from storage, a `dispatch` that sends every command of the contract and reduces everything, the rows on screen offered back on every `VIEWER_READY`). |
+| `src/state/`      | `reducer` (`Row`, `RowStatus`, `FormAction` = the two local actions + every command + every event, the pure reducer), `selectors` (`findRow`, `findRowByUid`), `actions` (what each button dispatches, and `restoreViewer`).                                                                             |
+| `src/services/`   | `storage` (the stored-row schema and one sessionStorage key per study); the channel itself lives in the published package and is reached through its `useChannel` (A-34).                                                                                                                                |
+| `src/i18n.ts`     | Every user-visible string as `t.<key>`, Ukrainian per decision A-7.                                                                                                                                                                                                                                      |
 
 Outside `host-app`, the repository keeps the packages, each laid out by side or role (A-27):
 `packages/contract` (the wire contract, four flat files), `packages/channel` (two files: `channel.ts`,
@@ -111,8 +111,9 @@ maps every concern to the file that owns it.
 ## 3. Rules that follow from this
 
 - A new component goes to `components/` with its `.props.ts`; a new page to `pages/`; a hook to
-  `hooks/`; a helper beside the module it serves, never to a `utils/` folder (A-27). A folder the layout names but the repository does not have yet is created when its
-  first file arrives, under that exact name.
+  `hooks/`; a pure helper over the row model to `utils/`, anything else beside the module it
+  serves (A-27). A folder the layout names but the repository does not have yet is created when
+  its first file arrives, under that exact name.
 - Tests live in a `__tests__/` folder inside the folder of the code under test.
 - Instructions that apply only to one part of the repository belong in `.claude/rules/` with a
   `paths` glob, not in `CLAUDE.md`, which stays short.

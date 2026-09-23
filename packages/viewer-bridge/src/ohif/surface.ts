@@ -1,5 +1,4 @@
 import type { ComponentType, Context, ReactNode } from 'react';
-import { z } from 'zod';
 import type { HostCommand } from '@bdiadiun/scoring-contract';
 import type { Channel } from '@bdiadiun/scoring-channel';
 
@@ -10,20 +9,6 @@ export const LOG_PREFIX = '[scoring-bridge]';
 export interface OhifSubscription {
   unsubscribe: () => void;
 }
-
-export const StatsEntry = z.record(z.string(), z.unknown());
-export type StatsEntry = z.infer<typeof StatsEntry>;
-
-export const OhifMeasurement = z.object({
-  uid: z.string().min(1),
-  toolName: z.string(),
-  referencedImageId: z.string().optional(),
-  label: z.string().optional(),
-  metadata: z.object({ FrameOfReferenceUID: z.string().optional() }).nullish(),
-  points: z.array(z.array(z.number())).optional(),
-  data: z.record(z.string(), StatsEntry.optional()).nullish(),
-});
-export type OhifMeasurement = z.infer<typeof OhifMeasurement>;
 
 interface OhifMeasurementServiceEvents {
   MEASUREMENT_ADDED: string;
@@ -107,7 +92,7 @@ export interface ScoringBridgeAppConfig {
 
 export interface OhifContextModuleEntry {
   name: string;
-  context: Context<null>;
+  context: Context<ViewerChannel | null>;
   provider: ComponentType<{ children?: ReactNode }>;
 }
 

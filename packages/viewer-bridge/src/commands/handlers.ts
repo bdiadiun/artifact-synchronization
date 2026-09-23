@@ -1,5 +1,6 @@
 import type { HostCommand } from '@bdiadiun/scoring-contract';
-import type { Bridge, Ohif } from '../bridge.js';
+import type { Bridge } from '../bridge.js';
+import type { Ohif } from '../ohif/facade.js';
 import { LOG_PREFIX } from '../ohif/surface.js';
 import { holdsViewportData, runRestore } from './restore.js';
 

@@ -15,7 +15,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-02 | Page layout: iframe + form panel                                                                                                                  | C-4.1.3, C-4.2.2                                                | F-01             | 1     | done    | Page shows a full-height flexible iframe on the left pointing at `http://localhost:3000/viewer?StudyInstanceUIDs=…` and a form panel on the right.                                                                                                                                                                                                                                                                                                                                                        |
 | F-03 | Shared message contract                                                                                                                           | C-4.4.1, C-4.4.2, C-4.4.3, P-7, P-8, Q-7                        | F-00             | 2     | done    | Types for the five events with `version: 1`; runtime guard rejects malformed / wrong-version messages; unit tests for serialisation and validation pass (X-4).                                                                                                                                                                                                                                                                                                                                            |
 | F-04 | OHIF fork wired in                                                                                                                                | A-1, C-4.1.1, C-4.1.2, C-4.1.3, D-1                             | F-00             | 2     | done    | Fork added as checkout under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb.                                                                                                                                                                                                                                                                                                                                                                       |
-| F-05 | Viewer bridge extension: `preRegistration`, origin check, `VIEWER_READY`                                                                          | C-3.1, C-3.2, C-3.4, Q-2, Q-5                                   | F-03, F-04       | 2     | done    | Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).                                                                                                                                                                                                                                                                                                   |
+| F-05 | Viewer bridge extension: context module, origin check, `VIEWER_READY`                                                                             | C-3.1, C-3.2, C-3.4, Q-2, Q-5                                   | F-03, F-04       | 2     | done    | Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).                                                                                                                                                                                                                                                                                                   |
 | F-06 | Host bridge client: origin check, handshake, early-command queue, cleanup                                                                         | C-3.1, P-1, P-9, Q-1, Q-2, Q-5                                  | F-02, F-03       | 2     | done    | Clicking "Activate" before the iframe is ready queues the command; it is flushed after `VIEWER_READY`; listeners are removed on unmount (React StrictMode double-mount leaves one listener).                                                                                                                                                                                                                                                                                                              |
 | F-07 | Form rows: add, statuses, row IDs                                                                                                                 | C-4.3.1, C-4.3.2, C-4.3.7, Q-3                                  | F-02             | 3     | done    | "Add measurement" creates rows with unique IDs and status `Pending`; any number of rows can be added.                                                                                                                                                                                                                                                                                                                                                                                                     |
 | F-08 | Activate / deactivate tool from a row                                                                                                             | A-4, C-4.3.3, C-4.4.1, P-7, Q-3                                 | F-05, F-06, F-07 | 3     | done    | "Activate" switches the row to `Drawing…` and the viewer to `EllipticalROI`; cancel sends `DEACTIVATE_TOOL`, row returns to `Pending`, viewer returns to the default tool.                                                                                                                                                                                                                                                                                                                                |
@@ -128,7 +128,7 @@ graph TD
   F02["F-02 Page layout: iframe + form panel"]
   F03["F-03 Shared message contract"]
   F04["F-04 OHIF fork wired in"]
-  F05["F-05 Viewer bridge extension: preRegistration, origin check, VIEWER_READY"]
+  F05["F-05 Viewer bridge extension: context module, origin check, VIEWER_READY"]
   F06["F-06 Host bridge client: origin check, handshake, early-command queue, cleanup"]
   F07["F-07 Form rows: add, statuses, row IDs"]
   F08["F-08 Activate / deactivate tool from a row"]
@@ -359,7 +359,7 @@ Files:
 - `host-app/index.html`
 - `host-app/package.json`
 - `host-app/public/favicon.svg`
-- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/index.css`
 - `host-app/src/main.tsx` — internal: `host-app/src/index.css`, `host-app/src/pages/ScoringPage.tsx`; external: `react`, `react-dom`
@@ -378,7 +378,7 @@ Canon: C-4.1.3, C-4.2.2. Depends on: F-01. Slice 1, status `done`.
 Files:
 
 - `host-app/src/components/ScoringPanel.props.ts` — external: `react`
-- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/BridgeStatus.tsx`, `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/hooks/useChannel.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/utils/totals.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/BridgeStatus.tsx`, `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/utils/totals.ts`; external: `react`
 - `host-app/src/components/ViewerFrame.props.ts` — external: `react`
 - `host-app/src/components/ViewerFrame.tsx` — internal: `host-app/src/components/ViewerFrame.props.ts`, `host-app/src/config.ts`, `host-app/src/i18n.ts`; external: `react`
 - `host-app/src/main.tsx` — internal: `host-app/src/index.css`, `host-app/src/pages/ScoringPage.tsx`; external: `react`, `react-dom`
@@ -420,16 +420,20 @@ Files:
 - `viewer/platform/app/package.json`
 - `viewer/platform/app/pluginConfig.json`
 
-### F-05 Viewer bridge extension: `preRegistration`, origin check, `VIEWER_READY`
+### F-05 Viewer bridge extension: context module, origin check, `VIEWER_READY`
 
-The `scoring-bridge` OHIF extension obtains `servicesManager` and `commandsManager` in `preRegistration` and creates the bridge there. The bridge listens for `message` events, ignores any origin other than the configured host origin, and posts to the parent with an explicit `targetOrigin`. `VIEWER_READY` is sent on the first `VIEWPORT_ADDED`, because tool activation is a no-op before a viewport exists; all subscriptions are released on teardown.
+The `scoring-bridge` OHIF extension receives `servicesManager` and `commandsManager` in its `getContextModule` (the place OHIF gives an extension a React lifetime; C-3.4 read as A-33 records) and mounts the bridge as a provider around the mode (A-32). The bridge listens for `message` events, ignores any origin other than the configured host origin, and posts to the parent with an explicit `targetOrigin`. `VIEWER_READY` is sent at once when a viewport exists and otherwise on the first `VIEWPORT_ADDED`, because tool activation is a no-op before a viewport exists; one effect owns every subscription and releases it on unmount.
 
 Canon: C-3.1, C-3.2, C-3.4, Q-2, Q-5. Depends on: F-03, F-04. Slice 2, status `done`.
 
 Files:
 
 - `packages/viewer-bridge/package.json`
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
+- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
+- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
+- `packages/viewer-bridge/src/hooks/useScoringBridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/handlers.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
 - `packages/viewer-bridge/tsconfig.json`
 
 ### F-06 Host bridge client: origin check, handshake, early-command queue, cleanup
@@ -454,9 +458,9 @@ Files:
 
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/__tests__/helpers.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 
@@ -469,10 +473,9 @@ Canon: A-4, C-4.3.3, C-4.4.1, P-7, Q-3. Depends on: F-05, F-06, F-07. Slice 3, s
 Files:
 
 - `docs/decisions/A-4-cancelled-activation.md`
-- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
 
 ### F-09 Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool
 
@@ -484,8 +487,9 @@ Files:
 
 - `docs/decisions/A-11-units-and-metrics-payload.md`
 - `docs/decisions/A-8-id-correlation.md`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
+- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
 
 ### F-10 Row receives the value
 
@@ -496,9 +500,9 @@ Canon: C-4.3.5, C-4.3.6, Q-6. Depends on: F-09. Slice 4, status `done`.
 Files:
 
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/__tests__/helpers.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `host-app/src/utils/__tests__/format.test.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `vitest`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
@@ -548,12 +552,13 @@ Canon: P-6, Q-4, S-5.1. Depends on: F-11. Slice 7, status `done`.
 Files:
 
 - `docs/decisions/A-10-echo-guard.md`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/__tests__/helpers.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
-- `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`
+- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
+- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
 - `packages/viewer-bridge/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
 
 ### F-15 Bonus: two-way deletion
@@ -565,9 +570,9 @@ Canon: C-4.4.2, Q-4, S-5.2. Depends on: F-11. Slice 8, status `done`.
 Files:
 
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/__tests__/helpers.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `packages/contract/src/__tests__/hostCommands.test.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
@@ -578,7 +583,7 @@ Files:
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
 
 ### F-16 Bonus: focus annotation from row
 
@@ -589,9 +594,9 @@ Canon: C-4.4.2, S-5.3. Depends on: F-11. Slice 11, status `done`.
 Files:
 
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/__tests__/helpers.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `packages/contract/src/__tests__/hostCommands.test.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/__tests__/index.test.ts` — internal: `packages/contract/src/index.ts`; external: `vitest`
 - `packages/contract/src/__tests__/viewerEvents.test.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
@@ -600,7 +605,7 @@ Files:
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
 
 ### F-17 Bonus: Length row type with separate sum
 
@@ -613,13 +618,12 @@ Files:
 - `ARCHITECTURE.md`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/components/ScoringPanel.props.ts` — external: `react`
-- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/BridgeStatus.tsx`, `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/hooks/useChannel.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/utils/totals.ts`; external: `react`
+- `host-app/src/components/ScoringPanel.tsx` — internal: `host-app/src/components/BridgeStatus.tsx`, `host-app/src/components/MeasurementRow.tsx`, `host-app/src/components/ScoringPanel.props.ts`, `host-app/src/components/TotalsFooter.tsx`, `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/utils/totals.ts`; external: `react`
 - `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/components/TotalsFooter.tsx` — internal: `host-app/src/components/TotalsFooter.props.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/__tests__/helpers.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
@@ -633,7 +637,7 @@ Canon: S-5.5. Depends on: F-04. Slice 9, status `done`.
 
 Files:
 
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
+- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
 
 ### F-19 Bonus: state restore after reload
 
@@ -650,19 +654,19 @@ Files:
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/services/__tests__/storage.test.ts` — internal: `host-app/src/services/storage.ts`, `host-app/src/state/reducer.ts`; external: `vitest`
 - `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
-- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/channel.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `react`
+- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
+- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
 - `scripts/eslint-fork-style.config.js` — external: `typescript-eslint`
 
 ### F-20 Project tooling and state journal
@@ -771,7 +775,7 @@ Files:
 - `host-app/src/components/ScoringPanel.props.ts` — external: `react`
 - `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/components/ViewerFrame.props.ts` — external: `react`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/__tests__/helpers.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/pages/__tests__/ScoringPage.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/i18n.ts`, `host-app/src/pages/ScoringPage.tsx`; external: `@testing-library/react`, `vitest`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/utils/__tests__/format.test.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `vitest`
@@ -849,7 +853,7 @@ Files:
 - `ARCHITECTURE.md`
 - `docs/DEFENCE.md`
 - `docs/notes/bridge-internals.md`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
 - `packages/viewer-bridge/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
 
 ### F-33 Scoring form hook and reducer split
@@ -864,10 +868,10 @@ Files:
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
-- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/channel.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `react`
+- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
 
@@ -964,7 +968,7 @@ Files:
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/main.tsx` — internal: `host-app/src/index.css`, `host-app/src/pages/ScoringPage.tsx`; external: `react`, `react-dom`
 - `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
 
 ### F-40 Workflow ownership and the return-statement rule
 
@@ -1034,7 +1038,7 @@ Files:
 
 - `docs/decisions/A-16-adapter-and-viewer-delivery.md`
 - `docs/notes/ohif-packaging.md`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
 
 ### F-45 The viewer client becomes the orchestrator package
 
@@ -1135,9 +1139,9 @@ Files:
 
 - `docs/decisions/A-19-study-from-the-page-url.md`
 - `host-app/src/__tests__/config.test.ts` — internal: `host-app/src/config.ts`; external: `vitest`
-- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 - `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
-- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/channel.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `react`
+- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 
 ### F-53 A module is addressed by where it lives
 
@@ -1165,7 +1169,7 @@ Files:
 - `docs/notes/ohif-extension-composition.md`
 - `packages/contract/tsconfig.tests.json`
 - `packages/viewer-bridge/package.json`
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
+- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
 - `packages/viewer-bridge/src/index.ts` — internal: `packages/viewer-bridge/src/ScoringBridge.tsx`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/version.ts`
 - `packages/viewer-bridge/tsconfig.tests.json`
 
@@ -1204,9 +1208,9 @@ Canon: A-21, Q-1, Q-2, Q-3, Q-4, Q-7. Depends on: F-57. Slice 52, status `done`.
 Files:
 
 - `docs/decisions/A-21-channel-and-exchange.md`
-- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/channel.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `react`
+- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/channel/package.json`
-- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/channel/src/peer.ts` — internal: `packages/contract/src/index.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 
@@ -1261,9 +1265,10 @@ Canon: A-13, Q-5, Q-7, X-5. Depends on: F-61. Slice 56, status `done`.
 
 Files:
 
-- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/channel.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `react`
+- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`
+- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
+- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
 
 ### F-63 One channel API for both ends
 
@@ -1275,10 +1280,10 @@ Files:
 
 - `docs/decisions/A-22-one-channel-api.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
-- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/channel.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `react`
-- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
+- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`; external: `react`
 
 ### F-64 A minimal bridge
 
@@ -1289,13 +1294,14 @@ Canon: A-13, C-4.3.6, Q-1, Q-3, Q-4, Q-5, X-5. Depends on: F-63. Slice 58, statu
 Files:
 
 - `docs/decisions/A-23-minimal-bridge.md`
-- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
-- `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`
-- `packages/viewer-bridge/src/ohif/surface.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
+- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
+- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
+- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
+- `packages/viewer-bridge/src/ohif/surface.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 
 ### F-65 Plain code
 
@@ -1308,7 +1314,7 @@ Files:
 - `docs/CONVENTIONS.md`
 - `docs/decisions/A-24-plain-code.md`
 - `docs/decisions/A-25-version-in-the-channel.md`
-- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
+- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/channel/src/peer.ts` — internal: `packages/contract/src/index.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
@@ -1331,7 +1337,7 @@ Files:
 
 ### F-67 Boundaries as schemas, one channel
 
-The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed.
+The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed. The review of the working tree (A-33) then fixed what the shape had promised but not kept: `VIEWER_READY` is answered in the message handler with the rows on screen, `MEASUREMENT_UPDATED` keeps its geometry, a restore mark is cleared once it stops being true, one effect owns the viewer bridge, a standalone viewer has no peer, and the channel package is React-free (A-33). The author's design then made the two ends mirror each other (A-34): one `useChannel` in the channel package for both applications, `channel.on` and `ohif.on` as the one way to subscribe, the form's actions as the contract's commands, OHIF's events parsed and throttled at the boundary.
 
 Canon: A-13, D-2, Q-7. Depends on: F-66. Slice 61, status `review`.
 
@@ -1342,33 +1348,34 @@ Files:
 - `docs/decisions/A-30-no-request-answer.md`
 - `docs/decisions/A-31-one-channel.md`
 - `docs/decisions/A-32-react-bridge.md`
+- `docs/decisions/A-33-review-of-the-boundaries-refactor.md`
+- `docs/decisions/A-34-two-applications-one-channel-hook.md`
 - `docs/notes/ohif-service-availability.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
-- `host-app/src/hooks/useChannel.ts` — internal: `host-app/src/services/channel.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/hooks/useChannel.ts`, `host-app/src/services/channel.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`; external: `react`
+- `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/pages/ScoringPage.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/components/ViewerFrame.tsx`; external: `react`
-- `host-app/src/services/channel.ts` — internal: `host-app/src/config.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 - `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
-- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/channel.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `react`
+- `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `host-app/src/state/selectors.ts` — internal: `host-app/src/state/reducer.ts`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
 - `host-app/src/utils/totals.ts` — internal: `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`
-- `packages/channel/src/hooks.ts` — internal: `packages/channel/src/channel.ts`, `packages/contract/src/index.ts`; external: `react`
+- `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
+- `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/channel/src/peer.ts` — internal: `packages/contract/src/index.ts`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
 - `packages/viewer-adapter/src/extension.ts` — external: `@bdiadiun/ohif-extension-scoring-bridge`
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
-- `packages/viewer-bridge/src/events/announce.ts` — internal: `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/version.ts`
-- `packages/viewer-bridge/src/events/measurements.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`
-- `packages/viewer-bridge/src/events/metrics.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/hooks/useScoringBridge.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/events/announce.ts`, `packages/viewer-bridge/src/events/measurements.ts`; external: `react`
-- `packages/viewer-bridge/src/ohif/surface.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`, `zod`
+- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
+- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
+- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
+- `packages/viewer-bridge/src/hooks/useScoringBridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/handlers.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
+- `packages/viewer-bridge/src/ohif/metrics.ts` — internal: `packages/contract/src/index.ts`; external: `zod`
+- `packages/viewer-bridge/src/ohif/surface.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `packages/viewer-bridge/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
 - `packages/viewer-bridge/src/ohif/version.ts` — internal: `packages/viewer-bridge/src/ohif/surface.ts`
 - `scripts/viewer.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`

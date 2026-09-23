@@ -3,7 +3,6 @@ import { DEFAULT_TOOL, getStudyInstance, LENGTH_TOOL } from '@app/config';
 import { t } from '@app/i18n';
 import { addRow } from '@app/state/actions';
 import { computeTotals } from '@app/utils/totals';
-import { useChannel } from '@app/hooks/useChannel';
 import { useScoringForm } from '@app/hooks/useScoringForm';
 import { BridgeStatus } from './BridgeStatus';
 import { MeasurementRow } from './MeasurementRow';
@@ -11,8 +10,7 @@ import { TotalsFooter } from './TotalsFooter';
 import { styles } from './ScoringPanel.props';
 
 export const ScoringPanel = (): JSX.Element => {
-  const [rows, dispatch] = useScoringForm(getStudyInstance());
-  const channelState = useChannel();
+  const [rows, dispatch, channel] = useScoringForm(getStudyInstance());
   const areaTotals = useMemo(() => computeTotals(rows, 'area'), [rows]);
   const lengthTotals = useMemo(() => computeTotals(rows, 'length'), [rows]);
 
@@ -25,7 +23,7 @@ export const ScoringPanel = (): JSX.Element => {
 
   return (
     <div style={styles.panel}>
-      <BridgeStatus state={channelState} />
+      <BridgeStatus state={channel.getState()} />
       <h1 style={styles.title}>{t.appTitle}</h1>
       <button type="button" onClick={handleAddAreaRow}>
         {t.addMeasurement}

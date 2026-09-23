@@ -6,13 +6,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import type {
+  HostCommand,
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
   MeasurementsRestoredEvent,
   MeasurementUpdatedEvent,
+  ViewerEvent,
   ViewerReadyEvent,
 } from '@bdiadiun/scoring-contract';
-import { DEFAULT_TOOL, FALLBACK_STUDY_INSTANCE_UID } from '@app/config';
+import { DEFAULT_TOOL, FALLBACK_STUDY_INSTANCE_UID, VIEWER_ORIGIN } from '@app/config';
 import { RowStatus, type Row } from '@app/state/reducer';
 import { setStorage } from '@app/services/storage';
 
@@ -30,11 +32,34 @@ const rowById = (rows: readonly Row[], rowId: string): Row => {
   }
   return row;
 };
-import {
-  createChannelHarness,
-  disposeAllHarnessChannels,
-  dispatchFromViewer,
-} from '@app/hooks/__tests__/helpers';
+
+interface ChannelHarness {
+  posted: () => HostCommand[];
+  clearPosted: () => void;
+}
+
+const disposeAllHarnessChannels = (): void => {
+  vi.restoreAllMocks();
+};
+
+const createChannelHarness = (): ChannelHarness => {
+  const spy = vi.spyOn(window, 'postMessage').mockImplementation(() => undefined);
+
+  return {
+    posted: (): HostCommand[] => spy.mock.calls.map(([message]) => message as HostCommand),
+    clearPosted: (): void => {
+      spy.mockClear();
+    },
+  };
+};
+
+// The contract version lives on the wire, not in the message types (A-25), so it is stamped here
+// the way the viewer's channel stamps it; without it the host's channel drops the event.
+const dispatchFromViewer = (event: ViewerEvent, origin = VIEWER_ORIGIN): void => {
+  window.dispatchEvent(
+    new MessageEvent('message', { data: { version: 1, ...event }, origin, source: window }),
+  );
+};
 
 afterEach(() => {
   cleanup();
@@ -200,7 +225,7 @@ describe('useScoringForm outgoing commands', () => {
     });
 
     act(() => {
-      focusRow(rowById(result.current[0], rowId));
+      focusRow(result.current[1], rowById(result.current[0], rowId));
     });
 
     expect(posted()).toContainEqual(
@@ -218,7 +243,7 @@ describe('useScoringForm outgoing commands', () => {
     const rowId = result.current[0][0].rowId;
 
     act(() => {
-      focusRow(rowById(result.current[0], rowId));
+      focusRow(result.current[1], rowById(result.current[0], rowId));
     });
 
     expect(posted()).toHaveLength(0);

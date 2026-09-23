@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { MeasurementUpdatedEvent } from '@bdiadiun/scoring-contract';
 
 import { createThrottledEmitter } from '../throttle.js';
 
 const INTERVAL_MS = 100;
 
-const event = (key: string, version: number): ViewerEvent => ({
+const event = (key: string, version: number): MeasurementUpdatedEvent => ({
   type: 'MEASUREMENT_UPDATED',
   measurementUid: key,
   toolName: 'EllipticalROI',
@@ -84,18 +84,5 @@ describe('createThrottledEmitter', () => {
 
     expect(emit).toHaveBeenCalledTimes(1);
     expect(emit).toHaveBeenCalledWith(event('a', 1));
-  });
-
-  it('stops emitting after dispose even when a timer was pending', () => {
-    const emit = vi.fn();
-    const emitter = createThrottledEmitter(INTERVAL_MS, emit);
-
-    emitter.push('a', event('a', 1));
-    emitter.push('a', event('a', 2));
-    emitter.dispose();
-    vi.advanceTimersByTime(INTERVAL_MS);
-    emitter.push('a', event('a', 3));
-
-    expect(emit).toHaveBeenCalledTimes(1);
   });
 });

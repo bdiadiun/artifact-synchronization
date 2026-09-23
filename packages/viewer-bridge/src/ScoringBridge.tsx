@@ -1,29 +1,18 @@
 import { createContext, type JSX, type ReactNode } from 'react';
-import type { Ohif } from './bridge.js';
 import { useScoringBridge } from './hooks/useScoringBridge.js';
+import { createOhif } from './ohif/facade.js';
 import {
   LOG_PREFIX,
   type OhifContextModuleEntry,
   type OhifExtensionParams,
   type OhifServices,
+  type ViewerChannel,
 } from './ohif/surface.js';
 
-const ScoringBridgeContext = createContext<null>(null);
+const ScoringBridgeContext = createContext<ViewerChannel | null>(null);
 
 const hasCornerstoneServices = (services: Partial<OhifServices>): services is OhifServices =>
   services.toolGroupService !== undefined && services.cornerstoneViewportService !== undefined;
-
-interface ScoringBridgeProps {
-  hostOrigin: string;
-  ohif: Ohif;
-  children?: ReactNode;
-}
-
-const ScoringBridge = ({ hostOrigin, ohif, children }: ScoringBridgeProps): JSX.Element => {
-  useScoringBridge(hostOrigin, ohif);
-
-  return <>{children}</>;
-};
 
 export const getContextModule = ({
   appConfig,
@@ -47,12 +36,14 @@ export const getContextModule = ({
     return [];
   }
 
-  const ohif: Ohif = { services, commandsManager };
-  const provider = ({ children }: { children?: ReactNode }): JSX.Element => (
-    <ScoringBridge hostOrigin={hostOrigin} ohif={ohif}>
-      {children}
-    </ScoringBridge>
-  );
+  const ohif = createOhif(services, commandsManager);
+  const ScoringBridge = ({ children }: { children?: ReactNode }): JSX.Element => {
+    const channel = useScoringBridge(hostOrigin, ohif);
 
-  return [{ name: 'ScoringBridge', context: ScoringBridgeContext, provider }];
+    return (
+      <ScoringBridgeContext.Provider value={channel}>{children}</ScoringBridgeContext.Provider>
+    );
+  };
+
+  return [{ name: 'ScoringBridge', context: ScoringBridgeContext, provider: ScoringBridge }];
 };

@@ -18,8 +18,10 @@ long; the file list did not say what belonged to what, and the author found it i
   (`channel.ts`, `storage.ts` — the two things that talk to the outside), `utils/` (`format.ts`,
   `totals.ts`). (Amended twice on 2026-09-22: a first version invented `form/` and dissolved
   `hooks/` and `utils/`; the author prefers the standard names and places.)
-- **No file under twenty lines**, except where the standard layout names it (`selectors.ts`): a
-  constant, a type or a one-function module joins its owner.
+- **No file under twenty lines**, except a package `index.ts`, `main.tsx`, a component's
+  `.props.ts` and a file the standard layout names (`hooks/useChannel.ts`, `state/selectors.ts`,
+  `services/channel.ts`, a page): a constant, a type or a one-function module joins its owner.
+  (Wording aligned with CONVENTIONS §5 on 2026-09-23, [A-33](A-33-review-of-the-boundaries-refactor.md).)
 - **`index.ts` is a package's public entry only**; no barrel inside a folder.
 - **`.props.ts` exists only beside a React component.**
 - Tests keep living in a `__tests__/` folder beside the code they test and move with it.

@@ -28,13 +28,13 @@ export const MeasurementRow = ({ row, index, dispatch }: MeasurementRowProps): J
 
   // S-5.3: both are attached only while the row is focusable, so neither re-checks the status.
   const handleRowClick = (): void => {
-    focusRow(row);
+    focusRow(dispatch, row);
   };
 
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      focusRow(row);
+      focusRow(dispatch, row);
     }
   };
 

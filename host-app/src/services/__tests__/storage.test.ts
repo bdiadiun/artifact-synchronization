@@ -27,7 +27,10 @@ const doneRow = (overrides: Partial<Row> = {}): Row => ({
 });
 
 const storeRows = (uuid: string, rows: unknown[]): void => {
-  window.sessionStorage.setItem(`scoring-form:rows:${uuid}`, JSON.stringify({ uuid, rows }));
+  window.sessionStorage.setItem(
+    `scoring-form:rows:${uuid}`,
+    JSON.stringify({ studyInstanceUid: uuid, rows }),
+  );
 };
 
 describe('saveRows / loadStoredRows', () => {

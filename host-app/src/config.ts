@@ -1,7 +1,18 @@
-import type { ToolName } from '@bdiadiun/scoring-contract';
+import { isViewerEvent, type ToolName, type ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { Channel, ChannelOptions } from '@bdiadiun/scoring-channel';
 
 // The only origin accepted for incoming viewer messages (A-2).
 export const VIEWER_ORIGIN = 'http://localhost:3000';
+
+// The viewer is the page's one peer: every `useChannel` call names it with this, and the channel
+// holds commands back until the viewer's own VIEWER_READY names its window.
+export const VIEWER_CHANNEL: ChannelOptions<ViewerEvent> = {
+  peerOrigin: VIEWER_ORIGIN,
+  accept: isViewerEvent,
+  readyOn: 'VIEWER_READY',
+};
+
+export type HostChannel = Channel<ViewerEvent>;
 
 // Single edit point for the ellipse -> RectangleROI live change (P-7).
 export const DEFAULT_TOOL: ToolName = 'EllipticalROI';

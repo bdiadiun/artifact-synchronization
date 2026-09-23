@@ -28,7 +28,7 @@ const isWindow = (source: MessageEventSource | null): source is Window =>
 export const listenFrom = <TMessage extends BridgeMessage>(
   peerOrigin: string,
   accept: (value: unknown) => value is TMessage,
-  onMessage: (message: TMessage, source: Window | null) => void,
+  deliver: (message: TMessage, source: Window | null) => void,
 ): (() => void) => {
   const loggedOrigins = new Set<string>();
   const loggedVersions = new Set<unknown>();
@@ -58,7 +58,7 @@ export const listenFrom = <TMessage extends BridgeMessage>(
     }
 
     console.debug(`${LOG_PREFIX} received ${event.data.type}`, event.data);
-    onMessage(event.data, isWindow(event.source) ? event.source : null);
+    deliver(event.data, isWindow(event.source) ? event.source : null);
   };
 
   window.addEventListener('message', handleMessage);

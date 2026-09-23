@@ -5,7 +5,6 @@ declare const process: { env: { VERSION_NUMBER?: string } };
 
 export const VIEWER_VERSION = process.env.VERSION_NUMBER ?? 'unknown';
 
-// S-5.5: the version in the corner of every viewport, appended to OHIF's own overlay items.
 const versionOverlayItem: OverlayItemCustomization = {
   id: 'scoringBridgeVersion',
   inheritsFrom: 'ohif.overlayItem',

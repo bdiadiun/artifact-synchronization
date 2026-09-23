@@ -7,6 +7,7 @@ import {
   Metrics,
   RestoreFailureReason,
   ToolName,
+  type HostCommand,
   type MeasurementAddedEvent,
   type MeasurementRemovedEvent,
   type MeasurementsRestoredEvent,
@@ -34,14 +35,13 @@ export const Row = z.object({
 });
 export type Row = z.infer<typeof Row>;
 
-// What changes the rows: the four things a button does, and every event the viewer sends — the
-// wire events are dispatched as they are, so this reducer is the one place that says what an
-// event means for the form.
+// What changes the rows: the two local actions, every command the form sends and every event the
+// viewer sends — commands and events go through as they are, so this reducer is the one place that
+// says what each of them means for the form.
 export type FormAction =
   | { type: 'ADD_ROW'; rowId: string; toolName: ToolName }
-  | { type: 'ARM_ROW'; rowId: string }
-  | { type: 'DISARM_ROW'; rowId: string }
   | { type: 'REMOVE_ROW'; rowId: string }
+  | HostCommand
   | ViewerEvent;
 
 type ActionOf<T extends FormAction['type']> = Extract<FormAction, { type: T }>;
@@ -64,7 +64,7 @@ const addRow = (rows: Row[], action: ActionOf<'ADD_ROW'>): Row[] => [
 
 // Only one row is armed at a time (A-4): the target starts drawing, any other drawing row goes
 // back to pending. Arming the row that already draws changes nothing.
-const armRow = (rows: Row[], action: ActionOf<'ARM_ROW'>): Row[] => {
+const armRow = (rows: Row[], action: ActionOf<'ACTIVATE_TOOL'>): Row[] => {
   const target = findRow(rows, action.rowId);
   if (target === undefined || target.status === RowStatus.Drawing) {
     return rows;
@@ -77,7 +77,7 @@ const armRow = (rows: Row[], action: ActionOf<'ARM_ROW'>): Row[] => {
   });
 };
 
-const disarmRow = (rows: Row[], action: ActionOf<'DISARM_ROW'>): Row[] =>
+const disarmRow = (rows: Row[], action: ActionOf<'DEACTIVATE_TOOL'>): Row[] =>
   findRow(rows, action.rowId)?.status === RowStatus.Drawing
     ? replaceRow(rows, action.rowId, { status: RowStatus.Pending })
     : rows;
@@ -98,13 +98,17 @@ const receiveMeasurement = (rows: Row[], event: MeasurementAddedEvent): Row[] =>
     metrics: event.metrics,
     measurementUid: event.measurementUid,
     geometry: event.geometry ?? null,
+    restoreFailureReason: null,
   });
 };
 
 const updateMeasurement = (rows: Row[], event: MeasurementUpdatedEvent): Row[] => {
   const target = findRowByUid(rows, event.measurementUid);
   return target?.status === RowStatus.Done
-    ? replaceRow(rows, target.rowId, { metrics: event.metrics })
+    ? replaceRow(rows, target.rowId, {
+        metrics: event.metrics,
+        geometry: event.geometry ?? target.geometry,
+      })
     : rows;
 };
 
@@ -118,31 +122,34 @@ const clearMeasurement = (rows: Row[], event: MeasurementRemovedEvent): Row[] =>
         status: RowStatus.Pending,
         metrics: null,
         measurementUid: null,
+        restoreFailureReason: null,
       })
     : rows;
 };
 
-// A-14: a row the viewer refused to restore is marked, so the form can say the value has no
-// annotation behind it any more.
-const markRestoreFailures = (rows: Row[], event: MeasurementsRestoredEvent): Row[] =>
-  event.failed.reduce((current, failure) => {
-    const target = findRow(current, failure.rowId);
-    if (target === undefined || target.restoreFailureReason === failure.reason) {
-      return current;
-    }
-    return replaceRow(current, failure.rowId, { restoreFailureReason: failure.reason });
+// A-14: the viewer's answer to a restore, row by row — a row it rebuilt loses its mark, a row it
+// refused keeps one, so the form can say the value has no annotation behind it any more.
+const markRestoreOutcome = (rows: Row[], event: MeasurementsRestoredEvent): Row[] => {
+  const outcomes = [...event.restored.map((rowId) => ({ rowId, reason: null })), ...event.failed];
+
+  return outcomes.reduce((current, { rowId, reason }) => {
+    const target = findRow(current, rowId);
+    return target === undefined || target.restoreFailureReason === reason
+      ? current
+      : replaceRow(current, rowId, { restoreFailureReason: reason });
   }, rows);
+};
 
 export const reducer = (rows: Row[], action: FormAction): Row[] => {
   switch (action.type) {
     case 'ADD_ROW':
       return addRow(rows, action);
-    case 'ARM_ROW':
-      return armRow(rows, action);
-    case 'DISARM_ROW':
-      return disarmRow(rows, action);
     case 'REMOVE_ROW':
       return removeRow(rows, action);
+    case 'ACTIVATE_TOOL':
+      return armRow(rows, action);
+    case 'DEACTIVATE_TOOL':
+      return disarmRow(rows, action);
     case 'MEASUREMENT_ADDED':
       return receiveMeasurement(rows, action);
     case 'MEASUREMENT_UPDATED':
@@ -150,7 +157,10 @@ export const reducer = (rows: Row[], action: FormAction): Row[] => {
     case 'MEASUREMENT_REMOVED':
       return clearMeasurement(rows, action);
     case 'MEASUREMENTS_RESTORED':
-      return markRestoreFailures(rows, action);
+      return markRestoreOutcome(rows, action);
+    case 'REMOVE_MEASUREMENT':
+    case 'FOCUS_MEASUREMENT':
+    case 'RESTORE_MEASUREMENTS':
     case 'VIEWER_READY':
       return rows;
   }

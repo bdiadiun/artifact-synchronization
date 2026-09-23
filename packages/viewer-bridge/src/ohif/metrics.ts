@@ -1,7 +1,3 @@
-// What OHIF's measurement object means for the host: the metric the row's tool produces, read
-// from cachedStats with its unit normalised to the contract's vocabulary, and the geometry the
-// form persists to rebuild the annotation later (A-14).
-
 import {
   MeasurementGeometry,
   METRIC_KEY_BY_TOOL,
@@ -10,7 +6,21 @@ import {
   type Metrics,
   type Unit,
 } from '@bdiadiun/scoring-contract';
-import { OhifMeasurement, type OhifMeasurementEvent, type StatsEntry } from '../ohif/surface.js';
+import { z } from 'zod';
+
+export const StatsEntry = z.record(z.string(), z.unknown());
+export type StatsEntry = z.infer<typeof StatsEntry>;
+
+export const OhifMeasurement = z.object({
+  uid: z.string().min(1),
+  toolName: z.string(),
+  referencedImageId: z.string().optional(),
+  label: z.string().optional(),
+  metadata: z.object({ FrameOfReferenceUID: z.string().optional() }).nullish(),
+  points: z.array(z.array(z.number())).optional(),
+  data: z.record(z.string(), StatsEntry.optional()).nullish(),
+});
+export type OhifMeasurement = z.infer<typeof OhifMeasurement>;
 
 const AREA_UNITS: Record<string, Unit | undefined> = {
   'mm²': 'mm2',
@@ -90,9 +100,7 @@ interface Measured {
   geometry: MeasurementGeometry | undefined;
 }
 
-// Null when the event carries no measurement object or a measurement whose tool the form has no
-// metric for.
-export const measure = ({ measurement }: OhifMeasurementEvent): Measured | null => {
+export const measure = ({ measurement }: { measurement: unknown }): Measured | null => {
   const parsed = OhifMeasurement.safeParse(measurement).data;
   const metrics = parsed === undefined ? null : toMetrics(parsed);
 

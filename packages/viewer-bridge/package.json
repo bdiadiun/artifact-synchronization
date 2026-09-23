@@ -1,7 +1,7 @@
 {
   "name": "@bdiadiun/ohif-extension-scoring-bridge",
   "version": "0.0.10",
-  "description": "OHIF extension acting as a postMessage bridge between the viewer and an embedding scoring form",
+  "description": "the OHIF-side scoring application, packaged as an OHIF extension: it talks to OHIF and speaks the scoring contract over the channel",
   "license": "MIT",
   "repository": {
     "type": "git",

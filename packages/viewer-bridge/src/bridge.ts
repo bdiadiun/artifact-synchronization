@@ -1,24 +1,16 @@
-import { isHostCommand, type RestoreMeasurementsCommand } from '@bdiadiun/scoring-contract';
-import { createChannel } from '@bdiadiun/scoring-channel';
-import type { OhifCommandsManager, OhifServices, ViewerChannel } from './ohif/surface.js';
-
-export interface Ohif {
-  services: OhifServices;
-  commandsManager: OhifCommandsManager;
-}
+import type { RestoreMeasurementsCommand } from '@bdiadiun/scoring-contract';
+import type { ViewerChannel } from './ohif/surface.js';
 
 export interface Bridge {
   channel: ViewerChannel;
   armedRowId: string | null;
   pendingRestore: RestoreMeasurementsCommand | null;
+  announced: boolean;
 }
 
-export const createBridge = (hostOrigin: string): Bridge => ({
-  channel: createChannel({
-    peerOrigin: hostOrigin,
-    accept: isHostCommand,
-    peerWindow: window.parent,
-  }),
+export const createBridge = (channel: ViewerChannel): Bridge => ({
+  channel,
   armedRowId: null,
   pendingRestore: null,
+  announced: false,
 });

@@ -15,30 +15,36 @@ the detail; these seven sentences are the shape, and a change that breaks one of
 even when the linter is green.
 
 1. **A hook returns what its name promises, or it does not exist.** `useScoringForm(study)` →
-   `[rows, dispatch]`; `useChannel()` → `{ ready, queued, announcements }`. A hook that returns
+   `[rows, dispatch, channel]`; `useChannel(options)` → the channel; `useScoringBridge(hostOrigin,
+ohif)` → the channel it provides. A hook that returns
    nothing is a hidden effect (the former `usePersistRows(rows)`, `useMessages(channel, handle)`):
    write the effect where it happens instead.
 2. **An effect is written where it happens, and it has its pair.** Whatever the effect
-   subscribes, its cleanup unsubscribes, in the same effect — `channel.onMessage(dispatch)`,
-   `subscribeMeasurements(...)`, `announceOnViewport(...)`. No disposer lists, no "latest value"
+   subscribes, its cleanup unsubscribes, in the same effect — `channel.on(handler)` on both
+   sides, `ohif.on(handler)` in the OHIF-side application. No disposer lists, no "latest value"
    refs, no `pagehide` standing in for unmount.
 3. **State is the data, not a wrapper around it.** The reducer runs over `Row[]`, not
-   `{ rows }`; the channel's state is three fields. No `FormState`, no `FormContext`, no "slot"
+   `{ rows }`; the channel's state is two fields, `{ ready, queued }`. No `FormState`, no `FormContext`, no "slot"
    objects made to carry one value.
-4. **An outside event is an action.** The viewer's events go into the reducer as they are
-   (`FormAction = UserAction | ViewerEvent`), so there is no translation layer between the wire and
-   the state. The one event that needs a reaction, `VIEWER_READY`, is a count in the channel's
-   state that an effect reacts to — not a branch in a handler.
+4. **A message of the contract is an action, in both directions.** The viewer's events go into
+   the reducer as they are, and what a button does is a command of the contract:
+   `FormAction = ADD_ROW | REMOVE_ROW | HostCommand | ViewerEvent`, and the form's `dispatch`
+   sends every command through the channel before it reduces (A-34). No translation layer between
+   the wire and the state. The one event that needs a reaction, `VIEWER_READY`, gets it where it
+   arrives: the handler dispatches the restore commands with the rows on screen, then the event
+   itself. The handler is re-registered whenever the rows change, so it never reads a stale value
+   through a ref or a re-read of storage (A-33). On the other side the same: `ohif.on` delivers
+   OHIF's events already in the contract's shape, and `handleOhif` sends them.
 5. **A function takes exactly what it needs and does one thing.** `activateRow(dispatch, row)`,
-   `offerRowsToViewer(channel, study, rows)`, `getStorage(uuid)`. At most three inputs, no
+   `restoreViewer(dispatch, study, rows)`, `getStorage(studyInstanceUid)`. At most three inputs, no
    dependency bags, no factory that returns a function.
 6. **A boundary is a schema; a guarantee is a tool's.** Everything foreign — the wire, OHIF's
    measurement object, `sessionStorage` — passes through one zod schema once. What the linter or
    React already guarantees (an exhaustive `switch`, a cleanup) is not written again in code.
-7. **A component renders; a hook owns.** `ScoringPanel` calls two hooks and renders;
+7. **A component renders; a hook owns.** `ScoringPanel` calls one hook and renders;
    `MeasurementRow` calls `activateRow(dispatch, row)` from its own button; the page is layout
-   only. On the viewer side the same: `ScoringBridge` renders its children and
-   `useScoringBridge` owns the channel, the commands and the subscriptions.
+   only. On the viewer side the same: the provider renders its children around the channel
+   `useScoringBridge` returns, and the hook owns the channel, the commands and the OHIF events.
 
 ## 1. Language and tooling
 
@@ -74,7 +80,7 @@ even when the linter is green.
   React component props are exempt, and so is a signature a third party dictates (OHIF's
   extension parameters).
 - **No function inside a `return` object.** A factory declares every method above, with a name,
-  and returns a list of names: `return { send, onMessage, dispose };`. The return then reads as
+  and returns a list of names: `return { services, commandsManager, on };`. The return then reads as
   the file's table of contents and each method can be found by its name. (The same rule for
   components is in §6.)
 - **A factory is never called inside another call's argument list.** Declare the function or the
@@ -112,7 +118,7 @@ even when the linter is green.
 | Thing                                | Style                                                                        | Example                                                                        |
 | ------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createChannel`, `useChannel`                                                  |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createOhif`, `useChannel`                                                     |
 | Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                             |
 | Files: types and styles              | `.props.ts` next to a React component, and nowhere else (A-27)               | `TotalsFooter.props.ts`                                                        |
 | Files: everything else               | kebab-case or camelCase, one concept per file                                | `host-channel.ts` / `hostChannel.ts` (keep the existing style within a folder) |
@@ -161,7 +167,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   (`ohif.ts`). A type used by one file is declared in that file without `export`; a package's
   `index.ts` exports what another package or the application uses and nothing else.
 - **The channel is transport, the extension is what a message means** (A-29, A-31). The channel
-  knows origin, version, the guard, `send`, one `onMessage` handler and the queue until `readyOn`;
+  knows origin, version, the guard, `send`, one `on` handler and the queue until `readyOn`;
   it never reads a field of a message. The armed row, announcing once and everything OHIF live in
   the extension; the form's state lives in the form.
 - Never reach into another package's internals; the contract package is consumed through its
@@ -180,7 +186,8 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   `commands/`, `events/`, `ohif/`; application: the conventional React layout — `components/`,
   `pages/`, `hooks/`, `state/` (reducer, selectors, actions), `services/` (channel, storage),
   `utils/` (format, totals). No file under twenty lines (a constant, a type or a one-function module joins its owner), except a
-  package `index.ts`, `main.tsx` and a component's `.props.ts`. Tests move with the code they test.
+  package `index.ts`, `main.tsx`, a component's `.props.ts` and a file the standard layout names
+  (`state/selectors.ts`, a page; A-33, A-34). Tests move with the code they test.
 - **No code for a caller that does not exist.** A default every caller overrides, an export only a
   test imports, a counter nothing displays and a branch a guard upstream makes unreachable are
   removed, not kept "for later"; a one-line function that only renames an expression is inlined.
@@ -275,7 +282,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 
 - Test files live in a `__tests__/` folder inside the folder of the code they test:
   `host-app/src/state/__tests__/reducer.test.ts` tests `host-app/src/state/reducer.ts` and imports it as
-  `../rows`. One test file per module under test; shared test helpers go to
+  `@app/state/reducer`. One test file per module under test; shared test helpers go to
   `__tests__/helpers.ts` in the same folder.
 
 - Vitest. Targeted tests only (X-4): pure logic (reducers, totals, throttle, contract schemas) and

@@ -11,7 +11,6 @@ import {
   readFileSync,
   renameSync,
   rmSync,
-  mkdirSync,
   symlinkSync,
   writeFileSync,
 } from 'node:fs';
@@ -125,29 +124,6 @@ const LINKED_PACKAGES = {
 };
 const SCOPE_DIR = 'node_modules/@bdiadiun';
 const KEEP_SUFFIX = '.installed';
-// A linked package resolves `react` from its real path, i.e. from this repository's root, which
-// would put a second React into the viewer; these links make it find the viewer's own copy.
-const PEERS_FROM_VIEWER = ['react', 'react-dom'];
-
-const linkPeers = (folder) => {
-  const packageModules = join(ROOT, 'packages', folder, 'node_modules');
-  mkdirSync(packageModules, { recursive: true });
-  for (const peer of PEERS_FROM_VIEWER) {
-    const target = join(packageModules, peer);
-    if (!lstatSync(target, { throwIfNoEntry: false })) {
-      symlinkSync(join(viewerDir, 'node_modules', peer), target);
-    }
-  }
-};
-
-const unlinkPeers = (folder) => {
-  for (const peer of PEERS_FROM_VIEWER) {
-    const target = join(ROOT, 'packages', folder, 'node_modules', peer);
-    if (lstatSync(target, { throwIfNoEntry: false })?.isSymbolicLink()) {
-      rmSync(target);
-    }
-  }
-};
 
 const runLink = () => {
   requireCheckout();
@@ -161,7 +137,6 @@ const runLink = () => {
       renameSync(target, `${target}${KEEP_SUFFIX}`);
     }
     symlinkSync(join(ROOT, 'packages', folder), target);
-    linkPeers(folder);
     console.log(`${name} -> packages/${folder}`);
   }
   console.log('Linked. Run `npm run viewer:unlink` before pinning a release.');
@@ -169,8 +144,7 @@ const runLink = () => {
 
 const runUnlink = () => {
   requireCheckout();
-  for (const [name, folder] of Object.entries(LINKED_PACKAGES)) {
-    unlinkPeers(folder);
+  for (const name of Object.keys(LINKED_PACKAGES)) {
     const target = join(viewerDir, SCOPE_DIR, name);
     if (!lstatSync(target, { throwIfNoEntry: false })?.isSymbolicLink()) {
       continue;

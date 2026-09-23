@@ -1,31 +1,35 @@
 import { useEffect, useState } from 'react';
-import { createBridge, type Ohif } from '../bridge.js';
+import { isHostCommand } from '@bdiadiun/scoring-contract';
+import { useChannel } from '@bdiadiun/scoring-channel';
+import { createBridge } from '../bridge.js';
 import { handleCommand } from '../commands/handlers.js';
-import { subscribeViewportData } from '../commands/restore.js';
-import { announceOnViewport } from '../events/announce.js';
-import { subscribeMeasurements } from '../events/measurements.js';
+import { handleOhif } from '../events/handlers.js';
+import type { Ohif } from '../ohif/facade.js';
+import type { ViewerChannel } from '../ohif/surface.js';
 
-// The bridge's lifetime is this hook's: the channel and the two pieces of state are created once
-// per mount, and every subscription below is released by its effect's cleanup (Q-5).
-export const useScoringBridge = (hostOrigin: string, ohif: Ohif): void => {
-  const [bridge] = useState(() => createBridge(hostOrigin));
-
-  useEffect(() => bridge.channel.dispose, [bridge]);
+export const useScoringBridge = (hostOrigin: string, ohif: Ohif): ViewerChannel => {
+  const channel = useChannel({
+    peerOrigin: hostOrigin,
+    accept: isHostCommand,
+    peerWindow: window.parent === window ? undefined : window.parent,
+  });
+  const [bridge] = useState(() => createBridge(channel));
 
   useEffect(
     () =>
-      bridge.channel.onMessage((command) => {
+      channel.on((command) => {
         handleCommand(ohif, bridge, command);
+      }),
+    [channel, ohif, bridge],
+  );
+
+  useEffect(
+    () =>
+      ohif.on((event) => {
+        handleOhif(ohif, bridge, event);
       }),
     [ohif, bridge],
   );
 
-  useEffect(() => subscribeMeasurements(ohif, bridge), [ohif, bridge]);
-
-  useEffect(() => subscribeViewportData(ohif, bridge), [ohif, bridge]);
-
-  useEffect(
-    () => announceOnViewport(ohif.services.toolGroupService, bridge.channel),
-    [ohif, bridge],
-  );
+  return channel;
 };

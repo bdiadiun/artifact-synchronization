@@ -1,3 +1,2 @@
-export { createChannel } from './channel.js';
-export type { Channel, ChannelState } from './channel.js';
-export { useChannelState } from './hooks.js';
+export { useChannel } from './channel.js';
+export type { Channel, ChannelOptions, ChannelState } from './channel.js';
