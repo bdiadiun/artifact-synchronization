@@ -101,9 +101,7 @@ const JS_SUFFIX = '.js';
 const TS_SOURCE_EXTENSIONS = ['.ts', '.tsx'];
 
 const typeScriptSourceCandidates = (base) =>
-  base.endsWith(JS_SUFFIX)
-    ? TS_SOURCE_EXTENSIONS.map((ext) => `${base.slice(0, -JS_SUFFIX.length)}${ext}`)
-    : [];
+  base.endsWith(JS_SUFFIX) ? TS_SOURCE_EXTENSIONS.map((ext) => `${base.slice(0, -JS_SUFFIX.length)}${ext}`) : [];
 
 const resolveModule = (base) => {
   const candidates = [
@@ -121,9 +119,7 @@ const resolveRelative = (fromFile, specifier) =>
   resolveModule(posix.normalize(posix.join(posix.dirname(fromFile), withoutQuery(specifier))));
 
 const resolveAppAlias = (specifier) =>
-  resolveModule(
-    posix.normalize(posix.join(APP_ALIAS_ROOT, withoutQuery(specifier).slice(APP_ALIAS.length))),
-  );
+  resolveModule(posix.normalize(posix.join(APP_ALIAS_ROOT, withoutQuery(specifier).slice(APP_ALIAS.length))));
 
 const packageName = (specifier) => {
   if (specifier.startsWith('node:')) return specifier;
@@ -188,8 +184,7 @@ const serialiseGraph = (graph) => `${JSON.stringify(graph, null, 2)}\n`;
 
 const cell = (text) => String(text).replace(/\|/g, '\\|').replace(/\n/g, ' ');
 const tableRow = (cells) => `| ${cells.map(cell).join(' | ')} |`;
-const table = (header, rows) =>
-  [tableRow(header), tableRow(header.map(() => '---')), ...rows.map(tableRow)].join('\n');
+const table = (header, rows) => [tableRow(header), tableRow(header.map(() => '---')), ...rows.map(tableRow)].join('\n');
 const listOrDash = (values) => (values.length === 0 ? '—' : values.join(', '));
 const code = (text) => `\`${text}\``;
 const mermaidId = (nodeId) => nodeId.replace('-', '');
@@ -249,9 +244,7 @@ const mermaidDiagram = (graph) =>
     'graph TD',
     ...graph.nodes.map((node) => `  ${mermaidId(node.id)}["${mermaidLabel(node)}"]`),
     '',
-    ...graph.nodes.flatMap((node) =>
-      node.dependsOn.map((dep) => `  ${mermaidId(dep)} --> ${mermaidId(node.id)}`),
-    ),
+    ...graph.nodes.flatMap((node) => node.dependsOn.map((dep) => `  ${mermaidId(dep)} --> ${mermaidId(node.id)}`)),
     '```',
   ].join('\n');
 
@@ -312,9 +305,7 @@ const importsShapeErrors = (imports, where) => {
         !Array.isArray(entry.external) ||
         ![...entry.internal, ...entry.external].every(isString),
     )
-    .map(
-      ([file]) => `${where}.imports["${file}"] must be { internal: string[], external: string[] }`,
-    );
+    .map(([file]) => `${where}.imports["${file}"] must be { internal: string[], external: string[] }`);
 };
 
 const nodeShapeErrors = (node, index) => {
@@ -367,8 +358,7 @@ const unknownCanonProblems = (graph, body) => {
   );
 };
 
-const emptyCanonProblems = (graph) =>
-  graph.nodes.filter((node) => node.canon.length === 0).map((node) => node.id);
+const emptyCanonProblems = (graph) => graph.nodes.filter((node) => node.canon.length === 0).map((node) => node.id);
 
 const missingDependencyProblems = (graph) => {
   const known = new Set(graph.nodes.map((node) => node.id));
@@ -402,9 +392,7 @@ const cycleProblems = (graph) => {
 };
 
 const statusProblems = (graph) =>
-  graph.nodes
-    .filter((node) => !STATUSES.includes(node.status))
-    .map((node) => `${node.id}=${node.status}`);
+  graph.nodes.filter((node) => !STATUSES.includes(node.status)).map((node) => `${node.id}=${node.status}`);
 
 // A node in progress or done needs done dependencies; a node in review accepts review or done.
 const gatingProblems = (graph) => {
@@ -415,9 +403,7 @@ const gatingProblems = (graph) => {
       .filter((dep) => statusById.has(dep))
       .filter((dep) => {
         const depStatus = statusById.get(dep);
-        return node.status === 'review'
-          ? depStatus !== 'review' && depStatus !== 'done'
-          : depStatus !== 'done';
+        return node.status === 'review' ? depStatus !== 'review' && depStatus !== 'done' : depStatus !== 'done';
       })
       .map((dep) => `${node.id} (${node.status}) depends on ${dep} (${statusById.get(dep)})`);
   });
@@ -427,23 +413,17 @@ const nodeFiles = (graph) => graph.nodes.flatMap((node) => node.files);
 
 const missingFileProblems = (graph) =>
   graph.nodes.flatMap((node) =>
-    node.files
-      .filter((file) => !isFile(file) && !isSkippedViewerPath(file))
-      .map((file) => `${node.id}: ${file}`),
+    node.files.filter((file) => !isFile(file) && !isSkippedViewerPath(file)).map((file) => `${node.id}: ${file}`),
   );
 
 const skippedLabel = (skipped) => (skipped === 0 ? '' : ` (${skipped} skipped: ${VIEWER_HINT})`);
 
 const plannedWithFilesProblems = (graph) =>
-  graph.nodes
-    .filter((node) => node.status === 'planned' && node.files.length > 0)
-    .map((node) => node.id);
+  graph.nodes.filter((node) => node.status === 'planned' && node.files.length > 0).map((node) => node.id);
 
 const unknownSliceProblems = (graph) => {
   const known = new Set(graph.slices.map((slice) => slice.id));
-  return graph.nodes
-    .filter((node) => !known.has(node.slice))
-    .map((node) => `${node.id}: ${node.slice}`);
+  return graph.nodes.filter((node) => !known.has(node.slice)).map((node) => `${node.id}: ${node.slice}`);
 };
 
 const unresolvedImportProblems = (normalised) =>
@@ -475,8 +455,7 @@ const runCheck = () => {
   } catch (error) {
     record(`${GRAPH_JSON} parses as JSON`, [error.message]);
   }
-  if (graph !== undefined)
-    record(`${GRAPH_JSON} matches the expected shape`, graphShapeErrors(graph));
+  if (graph !== undefined) record(`${GRAPH_JSON} matches the expected shape`, graphShapeErrors(graph));
 
   if (results.every((result) => result.ok)) {
     const body = canonBody();
@@ -522,9 +501,7 @@ const runBuild = () => {
   writeFileSync(join(ROOT, GRAPH_MD), generateMarkdown(normalised, canonBody()));
   runPrettier(['--write', GRAPH_JSON, GRAPH_MD]);
   const files = normalised.nodes.reduce((sum, node) => sum + node.files.length, 0);
-  console.log(
-    `nodes: ${normalised.nodes.length}, slices: ${normalised.slices.length}, files: ${files}`,
-  );
+  console.log(`nodes: ${normalised.nodes.length}, slices: ${normalised.slices.length}, files: ${files}`);
   console.log(`written: ${GRAPH_JSON}, ${GRAPH_MD}`);
 };
 

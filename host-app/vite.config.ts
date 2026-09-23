@@ -25,6 +25,6 @@ export default defineConfig({
     // The published packages live outside host-app, so their tests are collected here as well.
     // The pattern covers every package rather than naming them: a package left off a list is
     // merged with tests nobody runs, and three packages in a row were.
-    include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/*/src/**/*.test.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}', '../packages/*/src/**/*.test.{ts,tsx}'],
   },
 });

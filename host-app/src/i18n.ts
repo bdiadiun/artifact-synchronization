@@ -1,5 +1,3 @@
-// User-visible strings are Ukrainian per decision A-7; code and comments stay in English.
-// `t` is the single place these strings live; a real i18n library is out of scope (X-3).
 import type { RestoreFailureReason } from '@bdiadiun/scoring-contract';
 
 export const t = {
@@ -27,15 +25,12 @@ export const t = {
   emptyValue: '—',
   rowNumberPrefix: '#',
   focusHint: 'клік — показати в переглядачі',
-  // A-14: shown on a row whose annotation could not be rebuilt after a reload.
   restoreFailed: 'анотацію не відновлено',
   restoreFailureReason: {
     'already-present': 'анотація вже існує',
     'unknown-study': 'інше дослідження',
-    'invalid-geometry': 'некоректна геометрія',
     'viewer-error': 'помилка переглядача',
   } satisfies Record<RestoreFailureReason, string>,
-  // Ukrainian noun agreement for "вимірювання": 1 and 2-4 keep that form, 5+/11-14 take "вимірювань".
   measurementsCount: (n: number): string => {
     const lastTwo = n % 100;
     const lastOne = n % 10;

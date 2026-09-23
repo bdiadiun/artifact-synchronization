@@ -1,5 +1,7 @@
 # A-10 — Echo-loop protection
 
+> Superseded by [A-30](A-30-no-request-answer.md): the echo guard is a rule on each side (the form never sends in reaction to an event; the extension never sends in reaction to a command), not `requestId` → `causedBy`.
+
 Status: approved 2026-09-16. Canon: Q-4, P-6.
 
 ## Context

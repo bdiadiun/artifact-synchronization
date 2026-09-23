@@ -1,5 +1,7 @@
 # A-8 — ID correlation: host issues `rowId`, viewer issues `measurementUid`
 
+> Narrowed by [A-30](A-30-no-request-answer.md): the only correlation is `rowId` ↔ `measurementUid`, carried together by `MEASUREMENT_ADDED`; there is no `requestId`.
+
 Status: approved 2026-09-16. Canon: Q-3, C-4.3.5, C-4.3.6, P-3.
 
 ## Context

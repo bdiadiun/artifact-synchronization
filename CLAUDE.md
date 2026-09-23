@@ -160,8 +160,9 @@ Indicative slice order (the minimum from the canon; refined in the graph): 0. `d
   are queued, not dropped.
 - **ID correlation**, **echo-loop protection**, **unit handling (mm² vs px²)** are deliberate
   decisions, recorded in `ARCHITECTURE.md` before or together with the implementation.
-- **Cleanup**: every subscription / `addEventListener` has a paired unsubscribe; an armed tool
-  state is cancelled on unmount.
+- **Cleanup**: every subscription / `addEventListener` has a paired unsubscribe in the same
+  effect; an armed tool state never outlives its owner (the page's channel, the bridge's effect —
+  A-31, A-32).
 - TypeScript in `strict` mode; no `any` without a justifying comment. Style, naming, enums and
   function conventions: `docs/CONVENTIONS.md`.
 - Changes in the OHIF fork are minimal and concentrated in our extension; the OHIF UI is not reworked.

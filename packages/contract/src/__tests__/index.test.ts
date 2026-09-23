@@ -1,17 +1,48 @@
 import { describe, expect, it } from 'vitest';
 import * as contract from '../index';
 
+const publishedNames = [
+  'ActivateToolCommand',
+  'DeactivateToolCommand',
+  'FocusMeasurementCommand',
+  'HostCommand',
+  'METRIC_KEY_BY_TOOL',
+  'MeasurementAddedEvent',
+  'MeasurementGeometry',
+  'MeasurementRemovedEvent',
+  'MeasurementUpdatedEvent',
+  'MeasurementsRestoredEvent',
+  'Metric',
+  'MetricKey',
+  'Metrics',
+  'RemoveMeasurementCommand',
+  'RestoreFailure',
+  'RestoreFailureReason',
+  'RestoreMeasurementRequest',
+  'RestoreMeasurementsCommand',
+  'ToolName',
+  'Unit',
+  'ViewerEvent',
+  'ViewerReadyEvent',
+  'isHostCommand',
+  'isViewerEvent',
+];
+
 describe('package entry', () => {
-  it('exports every value the rest of the repository imports from @bdiadiun/scoring-contract', () => {
-    expect(typeof contract.METRIC_KEY_BY_TOOL).toBe('object');
-    expect(Array.isArray(contract.TOOL_NAME_VALUES)).toBe(true);
-    expect(typeof contract.isRecord).toBe('function');
-    expect(typeof contract.isNonEmptyString).toBe('function');
-    expect(typeof contract.isToolName).toBe('function');
-    expect(typeof contract.isMeasurementGeometry).toBe('function');
-    expect(Array.isArray(contract.HOST_COMMAND_TYPES)).toBe(true);
+  it('publishes exactly the schemas and guards its consumers import, and nothing else', () => {
+    expect(Object.keys(contract).sort()).toEqual([...publishedNames].sort());
+  });
+
+  it('publishes both guards as functions', () => {
     expect(typeof contract.isHostCommand).toBe('function');
-    expect(Array.isArray(contract.VIEWER_EVENT_TYPES)).toBe(true);
     expect(typeof contract.isViewerEvent).toBe('function');
+  });
+
+  it('publishes the metric key of every tool name', () => {
+    expect(contract.METRIC_KEY_BY_TOOL).toEqual({
+      EllipticalROI: 'area',
+      RectangleROI: 'area',
+      Length: 'length',
+    });
   });
 });

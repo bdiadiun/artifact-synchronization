@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import { App } from './App.tsx';
+import { ScoringPage } from '@app/pages/ScoringPage';
 
 const rootElement = document.getElementById('root');
 if (rootElement === null) {
@@ -10,6 +10,6 @@ if (rootElement === null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <ScoringPage />
   </StrictMode>,
 );

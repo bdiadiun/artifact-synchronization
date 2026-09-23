@@ -1,43 +1,37 @@
 import type { JSX, KeyboardEvent, MouseEvent } from 'react';
-import { RowStatus } from '@app/form/rows';
+import { RowStatus } from '@app/models/row';
 import { t } from '@app/i18n';
 import { formatRowKind, formatRowMetric, formatRowStatus } from '@app/utils/format';
+import { activateRow, cancelRow, focusRow, removeRow } from '@app/state/actions';
 import { rowInteraction, rowStyle, styles, type MeasurementRowProps } from './MeasurementRow.props';
 
-// stopPropagation keeps a button click from also triggering the row's focus click. Module scope:
-// the row id and the action are its only inputs, so no component closure is needed.
-const createRowActionHandler =
-  (rowId: string, action: (rowId: string) => void) =>
-  (event: MouseEvent<HTMLButtonElement>): void => {
-    event.stopPropagation();
-    action(rowId);
-  };
-
-// Native elements, minimal grey styling (X-3: no design work required).
-export const MeasurementRow = ({
-  row,
-  index,
-  onActivate,
-  onCancel,
-  onRemove,
-  onFocus,
-}: MeasurementRowProps): JSX.Element => {
+export const MeasurementRow = ({ row, index, dispatch }: MeasurementRowProps): JSX.Element => {
   const metricLabel = formatRowMetric(row);
   const focusable = row.status === RowStatus.Done;
 
-  const handleActivate = createRowActionHandler(row.rowId, onActivate);
-  const handleCancel = createRowActionHandler(row.rowId, onCancel);
-  const handleRemove = createRowActionHandler(row.rowId, onRemove);
+  const handleActivate = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.stopPropagation();
+    activateRow(dispatch, row);
+  };
 
-  // S-5.3: both are attached only while the row is focusable, so neither re-checks the status.
+  const handleCancel = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.stopPropagation();
+    cancelRow(dispatch, row);
+  };
+
+  const handleRemove = (event: MouseEvent<HTMLButtonElement>): void => {
+    event.stopPropagation();
+    removeRow(dispatch, row);
+  };
+
   const handleRowClick = (): void => {
-    onFocus(row.rowId);
+    focusRow(dispatch, row);
   };
 
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      onFocus(row.rowId);
+      focusRow(dispatch, row);
     }
   };
 
@@ -68,7 +62,6 @@ export const MeasurementRow = ({
           {t.cancel}
         </button>
       )}
-      {/* S-5.2: available for every status; useScoringForm.remove decides what to send. */}
       <button type="button" onClick={handleRemove}>
         {t.remove}
       </button>

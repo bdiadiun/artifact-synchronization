@@ -1,34 +1,29 @@
 import { useMemo, type JSX } from 'react';
-import { DEFAULT_TOOL, LENGTH_TOOL } from '@app/config';
+import { DEFAULT_TOOL, getStudyInstance, LENGTH_TOOL } from '@app/config';
 import { t } from '@app/i18n';
-import { computeTotals } from '@app/form/totals';
+import { addRow } from '@app/state/actions';
+import { computeTotals } from '@app/utils/totals';
+import { useScoringForm } from '@app/hooks/useScoringForm';
+import { BridgeStatus } from './BridgeStatus';
 import { MeasurementRow } from './MeasurementRow';
 import { TotalsFooter } from './TotalsFooter';
-import { styles, type ScoringPanelProps } from './ScoringPanel.props';
+import { styles } from './ScoringPanel.props';
 
-export const ScoringPanel = ({
-  rows,
-  addRow,
-  activate,
-  cancel,
-  remove,
-  focus,
-}: ScoringPanelProps): JSX.Element => {
-  // Recomputed whenever `rows` changes so the footer always reflects the current row set
-  // (C-4.3.8: "recalculated automatically"). Area and length are summed separately (S-5.4) and
-  // never mixed: each metric gets its own TotalsFooter below.
+export const ScoringPanel = (): JSX.Element => {
+  const [rows, dispatch, channel] = useScoringForm(getStudyInstance());
   const areaTotals = useMemo(() => computeTotals(rows, 'area'), [rows]);
   const lengthTotals = useMemo(() => computeTotals(rows, 'length'), [rows]);
 
   const handleAddAreaRow = (): void => {
-    addRow(DEFAULT_TOOL);
+    addRow(dispatch, DEFAULT_TOOL);
   };
   const handleAddLengthRow = (): void => {
-    addRow(LENGTH_TOOL);
+    addRow(dispatch, LENGTH_TOOL);
   };
 
   return (
     <div style={styles.panel}>
+      <BridgeStatus state={channel.getState()} />
       <h1 style={styles.title}>{t.appTitle}</h1>
       <button type="button" onClick={handleAddAreaRow}>
         {t.addMeasurement}
@@ -41,15 +36,7 @@ export const ScoringPanel = ({
       ) : (
         <div style={styles.rows}>
           {rows.map((row, index) => (
-            <MeasurementRow
-              key={row.rowId}
-              row={row}
-              index={index}
-              onActivate={activate}
-              onCancel={cancel}
-              onRemove={remove}
-              onFocus={focus}
-            />
+            <MeasurementRow key={row.rowId} row={row} index={index} dispatch={dispatch} />
           ))}
         </div>
       )}

@@ -1,39 +1,33 @@
 import { describe, expect, it } from 'vitest';
-import { isHostCommand } from '../hostCommands';
-import type {
-  ActivateToolCommand,
-  DeactivateToolCommand,
-  FocusMeasurementCommand,
-  RemoveMeasurementCommand,
-  RestoreMeasurementsCommand,
-} from '../hostCommands.props';
-import type { MeasurementGeometry } from '../vocabulary.props';
-import type { ViewerReadyEvent } from '../viewerEvents.props';
+import {
+  isHostCommand,
+  type ActivateToolCommand,
+  type DeactivateToolCommand,
+  type FocusMeasurementCommand,
+  type RemoveMeasurementCommand,
+  type RestoreMeasurementsCommand,
+} from '../hostCommands';
+import type { MeasurementGeometry } from '../vocabulary';
+import type { ViewerReadyEvent } from '../viewerEvents';
 
 const activateTool: ActivateToolCommand = {
   type: 'ACTIVATE_TOOL',
-  requestId: 'req-1',
   rowId: 'row-1',
   toolName: 'EllipticalROI',
 };
 
 const deactivateTool: DeactivateToolCommand = {
   type: 'DEACTIVATE_TOOL',
-  requestId: 'req-2',
   rowId: 'row-1',
 };
 
 const removeMeasurement: RemoveMeasurementCommand = {
   type: 'REMOVE_MEASUREMENT',
-  requestId: 'req-3',
-  rowId: 'row-1',
   measurementUid: 'uid-1',
 };
 
 const focusMeasurement: FocusMeasurementCommand = {
   type: 'FOCUS_MEASUREMENT',
-  requestId: 'req-4',
-  rowId: 'row-1',
   measurementUid: 'uid-1',
 };
 
@@ -48,7 +42,6 @@ const geometry: MeasurementGeometry = {
 
 const restoreMeasurements: RestoreMeasurementsCommand = {
   type: 'RESTORE_MEASUREMENTS',
-  requestId: 'req-5',
   studyInstanceUid: 'study-1',
   measurements: [{ rowId: 'row-1', measurementUid: 'uid-1', toolName: 'EllipticalROI', geometry }],
 };
@@ -81,7 +74,7 @@ describe('isHostCommand', () => {
   });
 
   it('rejects a command with a wrong field type', () => {
-    expect(isHostCommand({ ...activateTool, requestId: 42 })).toBe(false);
+    expect(isHostCommand({ ...activateTool, rowId: 42 })).toBe(false);
   });
 
   it('rejects an invalid tool name', () => {
@@ -90,6 +83,10 @@ describe('isHostCommand', () => {
 
   it('accepts an unknown extra field (forward compatibility)', () => {
     expect(isHostCommand({ ...activateTool, extra: 'ignored' })).toBe(true);
+  });
+
+  it('accepts the version key the channel stamps on the wire', () => {
+    expect(isHostCommand({ ...activateTool, version: 1 })).toBe(true);
   });
 
   it('survives a JSON round-trip', () => {
@@ -133,9 +130,7 @@ describe('isHostCommand', () => {
 
   it('rejects a restore request without geometry', () => {
     const { geometry: _geometry, ...requestWithoutGeometry } = restoreMeasurements.measurements[0];
-    expect(isHostCommand({ ...restoreMeasurements, measurements: [requestWithoutGeometry] })).toBe(
-      false,
-    );
+    expect(isHostCommand({ ...restoreMeasurements, measurements: [requestWithoutGeometry] })).toBe(false);
   });
 
   it('survives a JSON round-trip for RESTORE_MEASUREMENTS', () => {

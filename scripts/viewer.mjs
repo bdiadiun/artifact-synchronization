@@ -5,15 +5,7 @@
 // Usage: node scripts/viewer.mjs setup | dev | require | link | unlink
 
 import { spawnSync } from 'node:child_process';
-import {
-  existsSync,
-  lstatSync,
-  readFileSync,
-  renameSync,
-  rmSync,
-  symlinkSync,
-  writeFileSync,
-} from 'node:fs';
+import { existsSync, lstatSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -44,8 +36,7 @@ const run = (command, args, cwd, env = {}) => {
     stdio: 'inherit',
   });
   if (result.error !== undefined) fail(`${command} could not be started: ${result.error.message}`);
-  if (result.status !== 0)
-    fail(`\`${command} ${args.join(' ')}\` failed (status ${result.status}).`);
+  if (result.status !== 0) fail(`\`${command} ${args.join(' ')}\` failed (status ${result.status}).`);
 };
 
 const capture = (command, args, cwd) => {
@@ -71,9 +62,7 @@ const cloneViewer = () => {
 const reportCommit = () => {
   const head = capture('git', ['rev-parse', 'HEAD'], viewerDir);
   if (head === pin.commit) return;
-  console.warn(
-    `Warning: ${pin.directory}/ is at ${head ?? 'an unknown commit'}, not the pinned ${pin.commit}.`,
-  );
+  console.warn(`Warning: ${pin.directory}/ is at ${head ?? 'an unknown commit'}, not the pinned ${pin.commit}.`);
 };
 
 const installViewer = () => {

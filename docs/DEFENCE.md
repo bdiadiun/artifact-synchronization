@@ -6,59 +6,57 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 
 ## The protocol in one screen
 
-| Concern                 | Host-app                                                                                                                                                    | Viewer extension                                                                                                                                       |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Origin configured       | [`VIEWER_ORIGIN`](../host-app/src/config.ts#L4)                                                                                                             | [`HOST_ORIGIN`][fork-config]                                                                                                                           |
-| Origin checked          | [`event.origin !== peer.origin`](../packages/channel/src/peer.ts#L36)                                                                                       | [the same check, the viewer end of the channel][fork-bridge-origin]                                                                                    |
-| URL input validated     | [`study` parameter checked against a DICOM identifier, then `encodeURIComponent`](../host-app/src/config.ts)                                                | —                                                                                                                                                      |
-| Payload validated       | [`isViewerEvent`](../packages/channel/src/hostChannel.ts#L135)                                                                                              | [`isHostCommand`][fork-commands-guard]                                                                                                                 |
-| Handshake               | [READY flushes the outbox](../packages/channel/src/hostChannel.ts#L129)                                                                                     | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`announceReady`][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post]    |
-| Early commands          | [`queued.push(command)`](../packages/channel/src/hostOutbox.ts#L44), [`flush`](../packages/channel/src/hostOutbox.ts#L49)                                   | —                                                                                                                                                      |
-| Row id / measurement id | [`crypto.randomUUID()` in `addRow`](../host-app/src/form/rowActions.ts#L21)                                                                                 | [`getArmed()` on the channel][fork-bridge-map]                                                                                                         |
-| Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L7)                                                                                                              | [fixed `DEFAULT_TOOL` after a measurement][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]          |
-| Measurement delivered   | [`rowId === null` ignored](../host-app/src/form/viewerEventHandlers.ts#L94)                                                                                 | [`MEASUREMENT_ADDED` subscription][fork-bridge-added], [posted][fork-bridge-added-post], [`toMetrics`][fork-metrics], [unit normalisation][fork-units] |
-| Live update (S-5.1)     | reducer `MeasurementUpdated` in [`rows.ts`](../host-app/src/form/rows.ts#L19)                                                                               | [throttled emitter][fork-bridge-throttle], [`UPDATE_INTERVAL_MS`][fork-bridge-interval]                                                                |
-| Deletion (S-5.2)        | [own echo consumed by the exchange](../host-app/src/form/rowActions.ts#L57)                                                                                 | [`pendingRemovals`][fork-removals-map], [`measurementService.remove`][fork-removals-remove], [`MEASUREMENT_REMOVED` subscription][fork-bridge-removed] |
-| Second tool (S-5.4)     | [`LENGTH_TOOL`](../host-app/src/config.ts), row's own `toolName` in `ACTIVATE_TOOL`, separate totals per metric                                             | reuses `toMetrics` `Length` mapping                                                                                                                    |
-| State restore (S-5.6)   | [`storage.ts`](../host-app/src/form/storage.ts), restore request in `viewerEventHandlers.ts`                                                                | `restore.ts` (readiness gate, re-add with the original uid), `geometry.ts`                                                                             |
-| Focus (S-5.3)           | clickable Done row in `MeasurementRow.tsx`                                                                                                                  | [`jumpToMeasurement`][fork-focus]                                                                                                                      |
-| Version overlay (S-5.5) | —                                                                                                                                                           | [`viewportOverlay.bottomRight`][fork-overlay]                                                                                                          |
-| State and totals        | [`RowStatus`](../host-app/src/form/rows.ts#L8), [`FormActionType`](../host-app/src/form/rows.ts#L14), [`computeTotals`](../host-app/src/form/totals.ts#L24) | —                                                                                                                                                      |
-| Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                            | log prefix `[scoring-bridge]` in the viewer console                                                                                                    |
-| Entry point             | [`useHostChannel`](../host-app/src/hooks/useHostChannel.ts)                                                                                                 | [`preRegistration`][fork-index]                                                                                                                        |
+| Concern                 | Host-app                                                                                                                                                                                             | Viewer extension                                                                                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Origin configured       | [`VIEWER_ORIGIN`](../host-app/src/config.ts#L5)                                                                                                                                                      | [`HOST_ORIGIN`][fork-config]                                                                                                                                 |
+| Origin checked          | [`event.origin !== peerOrigin`](../packages/channel/src/peer.ts#L37)                                                                                                                                 | [the same check, the viewer end of the channel][fork-bridge-origin]                                                                                          |
+| URL input validated     | [`study` parameter checked against a DICOM identifier, then `encodeURIComponent`](../host-app/src/config.ts)                                                                                         | —                                                                                                                                                            |
+| Payload validated       | [`accept: isViewerEvent`](../host-app/src/config.ts#L9)                                                                                                                                              | [`isHostCommand`][fork-commands-guard]                                                                                                                       |
+| Handshake               | [`readyOn` flushes the queue](../packages/channel/src/channel.ts#L50)                                                                                                                                | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`VIEWER_READY` sent once][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post] |
+| Early commands          | [`queued.push(message)`](../packages/channel/src/channel.ts#L45), [`open`](../packages/channel/src/channel.ts#L50)                                                                                   | —                                                                                                                                                            |
+| Row id / measurement id | [`crypto.randomUUID()` in `RowModel.create`](../host-app/src/models/row.ts#L35)                                                                                                                      | [`bridge.armedRowId = rowId`][fork-bridge-map], [taken by the next measurement][fork-bridge-take]                                                            |
+| Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L18)                                                                                                                                                      | [fixed `DEFAULT_TOOL` after a measurement][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]                |
+| Measurement delivered   | [`rowId === null` changes nothing](../host-app/src/state/reducer.ts#L91)                                                                                                                             | [`MEASUREMENT_ADDED` subscription][fork-bridge-added], [posted][fork-bridge-added-post], [`toMetrics`][fork-metrics], [unit normalisation][fork-units]       |
+| Live update (S-5.1)     | reducer `MEASUREMENT_UPDATED` in [`reducer.ts`](../host-app/src/state/reducer.ts#L105)                                                                                                               | [throttled emitter][fork-bridge-throttle], [`UPDATE_INTERVAL_MS`][fork-bridge-interval]                                                                      |
+| Deletion (S-5.2)        | [fire-and-forget `REMOVE_MEASUREMENT`](../host-app/src/state/actions.ts#L31), reducer ignores an unknown uid ([`clearMeasurement`](../host-app/src/state/reducer.ts#L118))                           | [`measurementService.remove`][fork-removals-remove], [`MEASUREMENT_REMOVED` subscription][fork-bridge-removed]                                               |
+| Second tool (S-5.4)     | [`LENGTH_TOOL`](../host-app/src/config.ts), row's own `toolName` in `ACTIVATE_TOOL`, separate totals per metric                                                                                      | reuses `toMetrics` `Length` mapping                                                                                                                          |
+| State restore (S-5.6)   | [`useStoredRows.ts`](../host-app/src/hooks/useStoredRows.ts) over [`storage.ts`](../host-app/src/services/storage.ts), [`restoreViewer`](../host-app/src/state/actions.ts#L64) on every announcement | `restore.ts` (readiness gate, re-add with the original uid), `ohif/metrics.ts` (`toGeometry`)                                                                |
+| Focus (S-5.3)           | clickable Done row in `MeasurementRow.tsx`                                                                                                                                                           | [`jumpToMeasurement`][fork-focus]                                                                                                                            |
+| Version overlay (S-5.5) | —                                                                                                                                                                                                    | [`viewportOverlay.bottomRight`][fork-overlay]                                                                                                                |
+| State and totals        | [`RowStatus`](../host-app/src/state/reducer.ts#L18), [`FormAction`](../host-app/src/state/reducer.ts#L41), [`computeTotals`](../host-app/src/utils/totals.ts#L17)                                    | —                                                                                                                                                            |
+| Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                                                                     | log prefix `[scoring-bridge]` in the viewer console                                                                                                          |
+| Entry point             | [`useScoringForm.ts`](../host-app/src/hooks/useScoringForm.ts) (`useChannel`, `channel.on` in an effect whose cleanup detaches it, Q-5)                                                              | [`getContextModule` → provider → `useScoringBridge`][fork-index]                                                                                             |
 
-[fork-config]: ../packages/viewer-bridge/src/extension.ts
-[fork-index]: ../packages/viewer-bridge/src/extension.ts
-[fork-bridge-origin]: ../packages/channel/src/peer.ts#L36
-[fork-bridge-post]: ../packages/channel/src/peer.ts#L19
-[fork-bridge-ready]: ../packages/channel/src/viewerChannel.ts#L164
-[fork-bridge-viewport]: ../packages/viewer-bridge/src/extension.ts#L46
-[fork-bridge-map]: ../packages/channel/src/viewerChannel.ts#L47
-[fork-bridge-added]: ../packages/viewer-bridge/src/measurements.ts#L239
-[fork-bridge-added-post]: ../packages/viewer-bridge/src/measurements.ts#L149
-[fork-bridge-throttle]: ../packages/viewer-bridge/src/throttle.ts
-[fork-bridge-interval]: ../packages/viewer-bridge/src/measurements.ts#L47
-[fork-bridge-removed]: ../packages/viewer-bridge/src/measurements.ts#L234
-[fork-commands-guard]: ../packages/channel/src/viewerChannel.ts#L155
-[fork-commands-snapshot]: ../packages/viewer-bridge/src/commands.ts#L20
-[fork-commands-active]: ../packages/viewer-bridge/src/commands.ts
-[fork-commands-disarm]: ../packages/viewer-bridge/src/commands.ts
-[fork-commands-idempotent]: ../packages/viewer-bridge/src/commands.ts
-[fork-removals-map]: ../packages/viewer-bridge/src/commands.ts#L84
-[fork-removals-cause]: ../packages/channel/src/viewerChannel.ts#L49
-[fork-removals-remove]: ../packages/viewer-bridge/src/commands.ts#L89
-[fork-focus]: ../packages/viewer-bridge/src/commands.ts#L117
-[fork-metrics]: ../packages/viewer-bridge/src/measurements.ts
-[fork-units]: ../packages/viewer-bridge/src/measurements.ts
-[fork-overlay]: ../packages/viewer-bridge/src/ohif.ts#L170
+[fork-config]: ../packages/viewer-bridge/src/ScoringBridge.tsx#L22
+[fork-index]: ../packages/viewer-bridge/src/hooks/useScoringBridge.ts
+[fork-bridge-origin]: ../packages/channel/src/peer.ts#L37
+[fork-bridge-post]: ../packages/channel/src/peer.ts#L17
+[fork-bridge-ready]: ../packages/viewer-bridge/src/events/handlers.ts#L22
+[fork-bridge-viewport]: ../packages/viewer-bridge/src/ohif/facade.ts#L84
+[fork-bridge-map]: ../packages/viewer-bridge/src/commands/handlers.ts#L41
+[fork-bridge-take]: ../packages/viewer-bridge/src/events/handlers.ts#L9
+[fork-bridge-added]: ../packages/viewer-bridge/src/ohif/facade.ts#L81
+[fork-bridge-added-post]: ../packages/viewer-bridge/src/events/handlers.ts#L11
+[fork-bridge-throttle]: ../packages/viewer-bridge/src/ohif/throttle.ts
+[fork-bridge-interval]: ../packages/viewer-bridge/src/ohif/facade.ts#L17
+[fork-bridge-removed]: ../packages/viewer-bridge/src/ohif/facade.ts#L83
+[fork-commands-guard]: ../packages/viewer-bridge/src/hooks/useScoringBridge.ts#L13
+[fork-commands-snapshot]: ../packages/viewer-bridge/src/commands/handlers.ts#L7
+[fork-commands-active]: ../packages/viewer-bridge/src/commands/handlers.ts
+[fork-commands-disarm]: ../packages/viewer-bridge/src/commands/handlers.ts#L44
+[fork-removals-remove]: ../packages/viewer-bridge/src/commands/handlers.ts#L52
+[fork-focus]: ../packages/viewer-bridge/src/commands/handlers.ts#L35
+[fork-metrics]: ../packages/viewer-bridge/src/ohif/metrics.ts
+[fork-units]: ../packages/viewer-bridge/src/ohif/metrics.ts#L25
+[fork-overlay]: ../packages/viewer-bridge/src/ohif/version.ts#L18
 
 ## Questions (canon P-1..P-6)
 
 **P-1. The iframe loads slower than the user clicks.** "Активувати" calls `send`; while `ready` is
-false the command goes to [`queued.push(command)`](../packages/channel/src/hostOutbox.ts#L44) and
+false the command goes to [`queued.push(message)`](../packages/channel/src/channel.ts#L45) and
 the status line shows `у черзі: N`. The viewer announces `VIEWER_READY` only after
 [the first viewport joins a tool group][fork-bridge-viewport], because `setToolActive` is a silent
-no-op before that. The host then [flushes the queue in order](../packages/channel/src/hostOutbox.ts#L49).
+no-op before that. The host then [flushes the queue in order](../packages/channel/src/channel.ts#L50).
 Demo: stop the viewer, click "Активувати", start the viewer, watch the counter drain.
 
 **P-2. Why `postMessage`.** The two apps have different origins, and `postMessage` is the only
@@ -68,15 +66,15 @@ receiver can verify. On one origin we could call into `iframe.contentWindow` dir
 the seam between two separately deployed apps.
 
 **P-3. Who issues which id.** The host issues `rowId`
-([`crypto.randomUUID()`](../host-app/src/form/rowActions.ts#L21)) before anything is drawn, so an
+([`crypto.randomUUID()`](../host-app/src/state/actions.ts#L12)) before anything is drawn, so an
 empty `Очікує` row can exist. The viewer issues `measurementUid` (the cornerstone annotation UID)
-and the viewer end of the channel [remembers the armed row][fork-bridge-map] until its measurement is sent; the rows array on the host is the only `uid → row` map. Flipping it breaks two things: the form could not show a
+and the extension [remembers the armed row][fork-bridge-map] until the next measurement [takes it][fork-bridge-take]; the rows array on the host is the only `uid → row` map. Flipping it breaks two things: the form could not show a
 row before drawing, and OHIF's `_isValidMeasurement` rejects any foreign field, so a host id cannot
 be stored on a measurement ([A-8](decisions/A-8-id-correlation.md)).
 
 **P-4. Where we subscribe in OHIF.** [`measurementService.subscribe(MEASUREMENT_ADDED)`][fork-bridge-added]
-inside `subscribeMeasurements`, called from [`preRegistration`][fork-index], where OHIF hands an extension its
-`servicesManager`. The service merges cornerstone's `ANNOTATION_ADDED` and `ANNOTATION_COMPLETED`
+inside `ohif.on`, run by an effect of [`useScoringBridge`][fork-index] with the
+`servicesManager` OHIF hands the extension at registration. The service merges cornerstone's `ANNOTATION_ADDED` and `ANNOTATION_COMPLETED`
 into one event on completion and returns an unsubscribe handle; raw cornerstone events would fire
 on the first click.
 
@@ -85,36 +83,39 @@ on the first click.
 
 **P-6. Where an infinite loop could arise.** OHIF re-broadcasts events when a measurement is
 changed or removed through the service. The mandatory flow never sends a command in reaction to a
-measurement event (a hook test asserts `send` is not called). The only mutating command is
-deletion: the viewer [parks the request id][fork-removals-cause] and returns it as `causedBy`; the
-host [ignores its own echo](../host-app/src/form/useScoringForm.ts#L182). Commands are also
-idempotent ([same row already armed][fork-commands-idempotent]).
+measurement event: every viewer event is [dispatched to the reducer as it is](../host-app/src/hooks/useScoringForm.ts#L19),
+and a reducer cannot send (A-30); the one command sent in reaction to an event is the restore on
+`VIEWER_READY`, which is a handshake, not a measurement. The only mutating command is deletion: the
+form drops the row and sends `REMOVE_MEASUREMENT`; OHIF's own `MEASUREMENT_REMOVED` comes back for
+a uid no row holds and the reducer [returns the same state](../host-app/src/state/reducer.ts#L114).
+Nothing is sent, so nothing can bounce.
 
 ## Live changes (P-7..P-9)
 
-**P-7. Ellipse → `RectangleROI`.** Change [`DEFAULT_TOOL`](../host-app/src/config.ts#L7). Nothing
+**P-7. Ellipse → `RectangleROI`.** Change [`DEFAULT_TOOL`](../host-app/src/config.ts#L18). Nothing
 else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.hasTool`, and
 [`toMetrics`][fork-metrics] already maps `RectangleROI`, which has the same stats shape.
 
 **P-8. One more field through the whole chain (e.g. mean intensity).**
 
-1. Extension: in [`toMetrics`][fork-metrics] add `mean: { value: stats.mean, unit: … }`; if a new
-   unit is needed, extend `Unit` in [`packages/contract/src/vocabulary.props.ts`](../packages/contract/src/vocabulary.props.ts)
-   then publish the package and raise its pinned version in the extension.
-2. Host: `MeasurementRow` already renders the first non-area metric; to show both, map over the
-   metrics object.
-3. Optional: add `'mean'` to `MetricKey` in the contract and call `computeTotals(rows, 'mean')`.
+1. Contract: add `'mean'` to the `MetricKey` enum in
+   [`packages/contract/src/vocabulary.ts`](../packages/contract/src/vocabulary.ts) (and a unit to
+   `Unit` if a new one is needed) — one line each, since A-28 the vocabulary is the only place a
+   metric is named; then publish the package and raise its pinned version in the extension.
+2. Extension: one more row in `METRIC_SPECS` of [`ohif/metrics.ts`][fork-metrics] (the stats field and its unit table), the way `area` is read.
+3. Host: `MeasurementRow` already renders the first non-area metric; to show both, map over the
+   metrics object; `computeTotals(rows, 'mean')` gives the total.
 
 **P-9. A protocol element is disabled (e.g. `VIEWER_READY`).** Symptoms: the
 [status line](../host-app/src/components/BridgeStatus.tsx#L6) stays at `очікує VIEWER_READY`, the
 queue count grows with each "Активувати", and the viewer console has no `[channel] sent VIEWER_READY`. Walk:
-[VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`channel.announceReady`][fork-bridge-ready] → host
-[READY branch](../packages/channel/src/hostChannel.ts#L129). If `ACTIVATE_TOOL` is disabled instead,
+[VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`VIEWER_READY` sent once][fork-bridge-ready] → host
+[`readyOn` branch](../packages/channel/src/channel.ts#L88). If `ACTIVATE_TOOL` is disabled instead,
 the queue drains but the viewer console has no `[channel] received ACTIVATE_TOOL` and the tool stays WindowLevel.
 
 ## Rehearsal checklist
 
-- [ ] Both apps start from a clean clone by README only.
+- [ ] Both apps start from a clean clone by README only (`npm run viewer:link` first until the release is pinned in the fork).
 - [ ] Three measurements in a row, total updates.
 - [ ] Cancel: "Активувати", then "Скасувати" → row `Очікує`, tool back to WindowLevel.
 - [ ] Drag an ellipse handle: the row value and total change while dragging.
@@ -124,18 +125,44 @@ the queue drains but the viewer console has no `[channel] received ACTIVATE_TOOL
 - [ ] Reload the page with two measurements: rows, values, totals and both annotations come back.
 - [ ] 2×2 layout: `OHIF 3.12.17` in every pane.
 - [ ] P-7 swap to `RectangleROI` in under 2 minutes.
-- [ ] P-9: comment out the `channel.announceReady` call in `extension.ts`, reload, diagnose aloud.
+- [ ] P-9: comment out the `bridge.channel.send(event)` of the `VIEWER_READY` case in `events/handlers.ts`, reload, diagnose aloud.
 
 ## Video script (D-8, 2–4 min)
 
-| Time      | What to show                                                                                                                                        | What to say                                                                                                                                                                  |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0:00–0:25 | Terminal 1: `cd viewer && OHIF_OPEN=false yarn --cwd platform/app dev`. Terminal 2: `npm run dev --workspace host-app`. Open http://localhost:5173. | Two apps, two ports, one channel. The status line turns to `готовий` after `VIEWER_READY`.                                                                                   |
-| 0:25–1:15 | "Додати вимірювання" three times. For each row: "Активувати", draw an ellipse. Point at the value, the unit and "Разом".                            | Row ids come from the form, measurement ids from OHIF; the tool returns to the previous one.                                                                                 |
-| 1:15–1:35 | Add a fourth row, "Активувати", then "Скасувати". Point at the OHIF toolbar.                                                                        | Cancel sends `DEACTIVATE_TOOL`; the row stays as `Очікує`.                                                                                                                   |
-| 1:50–2:10 | Drag a handle of one ellipse.                                                                                                                       | Live update, throttled to one message per 100 ms; the form never writes back, so no loop.                                                                                    |
-| 1:35–1:50 | Click "Додати довжину", activate it, draw a line across the image. Point at the two totals.                                                         | The row carries its own tool, so the same command activates the ruler; areas and lengths are summed separately and units are never mixed.                                    |
-| 2:10–2:35 | "Видалити" on one row; then delete another annotation in OHIF's measurements panel.                                                                 | Deletion in both directions; the viewer tags our own echo with `causedBy`.                                                                                                   |
-| 2:35–2:55 | Click a Done row after scrolling the viewer away.                                                                                                   | Focus: OHIF jumps to the image and selects the annotation.                                                                                                                   |
-| 2:55–3:10 | Reload the page (F5) and wait a moment.                                                                                                             | The form persists rows and the annotation geometry per tab and per study; the viewer rebuilds the annotations with their original ids, so the correlation survives a reload. |
-| 3:10–3:25 | Switch the layout to 2×2.                                                                                                                           | OHIF version from `version.txt`, injected at build time, in every viewport.                                                                                                  |
+Read while recording. Steps and labels are as on screen; the narration is in the video's language,
+Ukrainian, the way the form's strings are (A-7) — everything else here stays English.
+
+**Before recording (off camera).** `npm run viewer:link` (until the release is pinned in the fork the
+viewer must run the working-tree packages, or the published contract rejects every command);
+`npm run viewer:dev` and wait for "compiled successfully"; `npm run dev --workspace host-app`. Open
+the host's and the viewer's consoles in separate windows. Clear the host's sessionStorage
+(DevTools → Application) so the form starts empty. Dismiss OHIF's "investigational use" banner and
+answer "No" to "Track measurements?" once, before the take.
+
+| Time      | What to show                                                                                                                    | Narration                                                                                                                                                                                                                                                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0:00–0:20 | Two terminals with the running servers; open http://localhost:5173. Point at the status line before and after the viewer loads. | «Два застосунки на різних портах: форма на 5173, OHIF на 3000 в iframe. Спілкуються лише через postMessage з явним origin. Статус зверху — "очікує VIEWER_READY": форма нічого не шле, поки viewer не оголосить готовність. Ось він завантажився — "готовий, у черзі: 0".»                                                            |
+| 0:20–1:20 | "Додати вимірювання" → "Активувати" → draw an ellipse; three times. Point at the value, the unit and "Разом (3 вимірювання)".   | «Кожен рядок отримує свій rowId ще до малювання. "Активувати" шле ACTIVATE_TOOL з іменем інструмента, viewer вмикає еліпс, а після вимірювання повертається до WindowLevel. Площа приходить у MEASUREMENT_ADDED разом із uid анотації — це єдина кореляція між сторонами. "Разом" — сума лише в mm²; px² до mm² ніколи не додається.» |
+| 1:20–1:40 | "Додати вимірювання" → "Активувати" → "Скасувати". Point at the OHIF toolbar.                                                   | «Передумав: DEACTIVATE_TOOL, рядок повертається в "Очікує", інструмент — до WindowLevel. Рядок лишається, його можна активувати знову.»                                                                                                                                                                                               |
+| 1:40–2:00 | Hover an ellipse, grab a handle, drag it slowly.                                                                                | «Живе оновлення: значення і сума міняються під час руху. Viewer проріджує MEASUREMENT_UPDATED до десяти на секунду; форма у відповідь нічого не шле, тому петлі немає.»                                                                                                                                                               |
+| 2:00–2:20 | "Додати довжину" → "Активувати" → draw a line. Point at "Разом довжина".                                                        | «Другий інструмент їде тим самим полем toolName. Довжини сумуються окремо від площ.»                                                                                                                                                                                                                                                  |
+| 2:20–2:35 | Pan the image away, then click a "Готово" row.                                                                                  | «Клік по рядку — FOCUS_MEASUREMENT: viewer стрибає до анотації і виділяє її.»                                                                                                                                                                                                                                                         |
+| 2:35–3:00 | "Видалити" on one row; then right-click another ellipse in the viewer → "Delete measurement".                                   | «Видалення в обидва боки: з форми — анотація зникає у viewer-і; з viewer-а — рядок повертається в "Очікує", як сказано в завданні.»                                                                                                                                                                                                   |
+| 3:00–3:15 | Switch the layout to 2×2 (toolbar grid button).                                                                                 | «OHIF 3.12.17 у кожній панелі — версія з package.json, підставлена webpack-ом під час збірки.»                                                                                                                                                                                                                                        |
+| 3:15–3:35 | Press F5; wait for the viewer; point at the rows, the totals and the redrawn annotations.                                       | «Після перезавантаження рядки й суми на місці, а viewer отримує RESTORE_MEASUREMENTS і перемальовує анотації з тими самими uid. Значення підтверджує сам viewer, сховищу не довіряємо.»                                                                                                                                               |
+| 3:35–3:50 | The host console: `[channel] received …` / `sent …` lines.                                                                      | «Весь протокол видно в консолі: перевірка origin, версія контракту, черга до VIEWER_READY. Контракт — zod-схеми в окремому пакеті, спільному для обох сторін.»                                                                                                                                                                        |
+
+Tips: draw small ellipses right after "Активувати" and narrate over the actions, not between them.
+If a step goes wrong, stop, press F5 and retake only that step — the state survives a reload.
+
+## Known console noise (not ours)
+
+Two warnings appear in the viewer's console in the development build of OHIF 3.12.17 and are
+unrelated to the extension; a message of ours always starts with `[channel]` or `[scoring-bridge]`.
+
+- `Warning: Failed prop type: Invalid prop `config`supplied to`App`, expected one of type [function]` — OHIF's
+  own `App.propTypes` (`platform/app/src/App.tsx`), once per viewer load.
+- `Warning: React does not recognize the `evaluateProps` prop on a DOM element` — OHIF's toolbar
+  (`ToolbarService` adds the field to every button, `extensions/default` spreads it onto a `div`).
+  `ScoringBridge` shows in that component stack only because our provider wraps the mode (A-32),
+  like every other context-module provider.

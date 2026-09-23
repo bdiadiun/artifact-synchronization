@@ -33,18 +33,7 @@
     "node": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "name",
-        "description",
-        "canon",
-        "dependsOn",
-        "slice",
-        "status",
-        "verify",
-        "files",
-        "imports"
-      ],
+      "required": ["id", "name", "description", "canon", "dependsOn", "slice", "status", "verify", "files", "imports"],
       "properties": {
         "id": { "type": "string", "pattern": "^F-\\d{2,}$" },
         "name": { "type": "string", "minLength": 1 },

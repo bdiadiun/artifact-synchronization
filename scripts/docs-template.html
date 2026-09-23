@@ -344,18 +344,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 
 <div class="topbar">
-  <strong>Scoring Bridge Docs</strong
-  ><button id="navToggle" type="button" aria-expanded="true">Contents</button>
+  <strong>Scoring Bridge Docs</strong><button id="navToggle" type="button" aria-expanded="true">Contents</button>
 </div>
 <div class="shell">
   <nav id="nav" aria-label="Documents">
     <p class="brand">Scoring Bridge Docs</p>
-    <input
-      id="search"
-      type="search"
-      placeholder="Find text or an ID, e.g. C-4.3.5"
-      aria-label="Find in documents"
-    />
+    <input id="search" type="search" placeholder="Find text or an ID, e.g. C-4.3.5" aria-label="Find in documents" />
     <div id="navlist"></div>
     <p style="font-size: 12px; color: var(--muted); margin-top: 20px">
       IDs in the text are links. Press <kbd>/</kbd> to search.
@@ -438,16 +432,12 @@
     el.querySelectorAll('tr').forEach((tr) => {
       const c = tr.querySelector('td');
       if (!c) return;
-      const m = c.textContent
-        .trim()
-        .match(/^(C-\d+(?:\.\d+)+|Q-\d+|S-5\.\d|D-\d+|X-\d+|P-\d+|A-\d+|F-\d\d)$/);
+      const m = c.textContent.trim().match(/^(C-\d+(?:\.\d+)+|Q-\d+|S-5\.\d|D-\d+|X-\d+|P-\d+|A-\d+|F-\d\d)$/);
       if (m) tr.id = m[1];
     });
     linkIds(el);
     window.renderMermaid && window.renderMermaid(el);
-    document
-      .querySelectorAll('nav a')
-      .forEach((a) => a.classList.toggle('active', a.dataset.path === path));
+    document.querySelectorAll('nav a').forEach((a) => a.classList.toggle('active', a.dataset.path === path));
     document.title = d.title + ' · Scoring Bridge Docs';
   };
   const resolve = (from, rel) => {
@@ -463,9 +453,7 @@
   const linkIds = (root) => {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: (n) =>
-        n.parentElement.closest('code, pre, a, h1')
-          ? NodeFilter.FILTER_REJECT
-          : NodeFilter.FILTER_ACCEPT,
+        n.parentElement.closest('code, pre, a, h1') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
     });
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
@@ -484,8 +472,7 @@
         a.className = 'id';
         a.textContent = m[1];
         const home = homeOf(m[1]);
-        a.href =
-          '#doc=' + encodeURIComponent(home.path) + (home.anchor ? '&id=' + home.anchor : '');
+        a.href = '#doc=' + encodeURIComponent(home.path) + (home.anchor ? '&id=' + home.anchor : '');
         a.title = describe(m[1]) || m[1];
         a.addEventListener('mouseenter', () => showPanel(m[1]));
         frag.appendChild(a);
@@ -498,8 +485,7 @@
   const showPanel = (id) => {
     const t = describe(id);
     if (!t) return;
-    document.getElementById('idbody').innerHTML =
-      '<b>' + id + '</b> — ' + escapeHtml(t).slice(0, 400);
+    document.getElementById('idbody').innerHTML = '<b>' + id + '</b> — ' + escapeHtml(t).slice(0, 400);
     document.getElementById('idpanel').hidden = false;
   };
   const escapeHtml = (s) => {
@@ -519,14 +505,7 @@
         '</h2>' +
         DOCS.filter((d) => d.group === g)
           .map(
-            (d) =>
-              '<a href="#doc=' +
-              encodeURIComponent(d.path) +
-              '" data-path="' +
-              d.path +
-              '">' +
-              d.title +
-              '</a>',
+            (d) => '<a href="#doc=' + encodeURIComponent(d.path) + '" data-path="' + d.path + '">' + d.title + '</a>',
           )
           .join('') +
         '</div>',

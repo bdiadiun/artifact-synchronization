@@ -1,5 +1,7 @@
 # A-21 — one channel package, with `send`, `on` and `exchange`
 
+> Superseded by [A-29](A-29-channel-is-transport.md) and [A-30](A-30-no-request-answer.md): the channel has `send`, `onEach` and, on the host end, the queue; there is no `on` and no `exchange`.
+
 Status: approved 2026-09-21. Canon: Q-1, Q-2, Q-3, Q-4, Q-7. Related:
 [A-15](A-15-publish-contract-package.md), [A-17](A-17-orchestrator-package.md),
 [A-20](A-20-three-layers.md).

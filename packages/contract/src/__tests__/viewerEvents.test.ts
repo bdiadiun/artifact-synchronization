@@ -1,18 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { isViewerEvent } from '../viewerEvents';
-import type {
-  MeasurementAddedEvent,
-  MeasurementRemovedEvent,
-  MeasurementsRestoredEvent,
-  MeasurementUpdatedEvent,
-  ViewerReadyEvent,
-} from '../viewerEvents.props';
-import type { ActivateToolCommand } from '../hostCommands.props';
-import type { MeasurementGeometry } from '../vocabulary.props';
+import {
+  isViewerEvent,
+  type MeasurementAddedEvent,
+  type MeasurementRemovedEvent,
+  type MeasurementsRestoredEvent,
+  type MeasurementUpdatedEvent,
+  type ViewerReadyEvent,
+} from '../viewerEvents';
+import type { ActivateToolCommand } from '../hostCommands';
+import type { MeasurementGeometry } from '../vocabulary';
 
 const activateTool: ActivateToolCommand = {
   type: 'ACTIVATE_TOOL',
-  requestId: 'req-1',
   rowId: 'row-1',
   toolName: 'EllipticalROI',
 };
@@ -35,13 +34,11 @@ const measurementUpdated: MeasurementUpdatedEvent = {
   measurementUid: 'uid-1',
   toolName: 'EllipticalROI',
   metrics: { area: { value: 13.1, unit: 'mm2' } },
-  causedBy: 'req-1',
 };
 
 const measurementRemoved: MeasurementRemovedEvent = {
   type: 'MEASUREMENT_REMOVED',
   measurementUid: 'uid-1',
-  causedBy: 'req-3',
 };
 
 const geometry: MeasurementGeometry = {
@@ -55,7 +52,6 @@ const geometry: MeasurementGeometry = {
 
 const measurementsRestored: MeasurementsRestoredEvent = {
   type: 'MEASUREMENTS_RESTORED',
-  causedBy: 'req-5',
   restored: ['uid-1'],
   failed: [{ rowId: 'row-2', reason: 'unknown-study' }],
 };
@@ -77,10 +73,6 @@ describe('isViewerEvent', () => {
     expect(isViewerEvent({ ...measurementAdded, rowId: null })).toBe(true);
   });
 
-  it('rejects MEASUREMENT_UPDATED with a null rowId (rowId does not exist on this event)', () => {
-    expect(isViewerEvent({ ...measurementUpdated, rowId: null })).toBe(false);
-  });
-
   it('rejects a host command', () => {
     expect(isViewerEvent(activateTool)).toBe(false);
   });
@@ -90,15 +82,15 @@ describe('isViewerEvent', () => {
   });
 
   it('rejects a non-finite metric value', () => {
-    expect(
-      isViewerEvent({ ...measurementAdded, metrics: { area: { value: Infinity, unit: 'mm2' } } }),
-    ).toBe(false);
+    expect(isViewerEvent({ ...measurementAdded, metrics: { area: { value: Infinity, unit: 'mm2' } } })).toBe(false);
+  });
+
+  it('rejects a metric under a key the vocabulary does not name', () => {
+    expect(isViewerEvent({ ...measurementAdded, metrics: { mean: { value: 40, unit: 'mm' } } })).toBe(false);
   });
 
   it('rejects a bad unit', () => {
-    expect(
-      isViewerEvent({ ...measurementAdded, metrics: { area: { value: 1, unit: 'cm2' } } }),
-    ).toBe(false);
+    expect(isViewerEvent({ ...measurementAdded, metrics: { area: { value: 1, unit: 'cm2' } } })).toBe(false);
   });
 
   it('rejects a missing required field', () => {
@@ -110,21 +102,21 @@ describe('isViewerEvent', () => {
     expect(isViewerEvent({ ...measurementAdded, extra: 'ignored' })).toBe(true);
   });
 
+  it('accepts the version key the channel stamps on the wire', () => {
+    expect(isViewerEvent({ ...measurementAdded, version: 1 })).toBe(true);
+  });
+
   it('survives a JSON round-trip', () => {
     expect(isViewerEvent(JSON.parse(JSON.stringify(measurementAdded)))).toBe(true);
   });
 
-  it('accepts a valid MEASUREMENT_REMOVED event with causedBy', () => {
+  it('accepts a valid MEASUREMENT_REMOVED event', () => {
     expect(isViewerEvent(measurementRemoved)).toBe(true);
   });
 
-  it('accepts a valid MEASUREMENT_REMOVED event without causedBy', () => {
-    const { causedBy: _causedBy, ...withoutCausedBy } = measurementRemoved;
-    expect(isViewerEvent(withoutCausedBy)).toBe(true);
-  });
-
-  it('rejects MEASUREMENT_REMOVED with a wrong-type causedBy', () => {
-    expect(isViewerEvent({ ...measurementRemoved, causedBy: 42 })).toBe(false);
+  it('rejects MEASUREMENT_REMOVED without a measurementUid', () => {
+    const { measurementUid: _measurementUid, ...withoutUid } = measurementRemoved;
+    expect(isViewerEvent(withoutUid)).toBe(false);
   });
 
   it('accepts MEASUREMENT_ADDED with geometry', () => {
@@ -136,18 +128,11 @@ describe('isViewerEvent', () => {
   });
 
   it('rejects MEASUREMENT_UPDATED with invalid geometry', () => {
-    expect(isViewerEvent({ ...measurementUpdated, geometry: { ...geometry, points: [] } })).toBe(
-      false,
-    );
+    expect(isViewerEvent({ ...measurementUpdated, geometry: { ...geometry, points: [] } })).toBe(false);
   });
 
-  it('accepts a valid MEASUREMENTS_RESTORED event with causedBy', () => {
+  it('accepts a valid MEASUREMENTS_RESTORED event', () => {
     expect(isViewerEvent(measurementsRestored)).toBe(true);
-  });
-
-  it('accepts a valid MEASUREMENTS_RESTORED event without causedBy', () => {
-    const { causedBy: _causedBy, ...withoutCausedBy } = measurementsRestored;
-    expect(isViewerEvent(withoutCausedBy)).toBe(true);
   });
 
   it('rejects MEASUREMENTS_RESTORED with an unknown failure reason', () => {

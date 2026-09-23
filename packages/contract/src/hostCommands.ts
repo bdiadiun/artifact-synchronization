@@ -1,62 +1,53 @@
-import type { HostCommand } from './hostCommands.props';
-import {
-  isMeasurementGeometry,
-  isNonEmptyString,
-  isOneOf,
-  isRecord,
-  isToolName,
-} from './primitiveGuards';
+import { z } from 'zod';
+import { MeasurementGeometry, ToolName } from './vocabulary.js';
 
-export const HOST_COMMAND_TYPES: readonly HostCommand['type'][] = [
-  'ACTIVATE_TOOL',
-  'DEACTIVATE_TOOL',
-  'REMOVE_MEASUREMENT',
-  'FOCUS_MEASUREMENT',
-  'RESTORE_MEASUREMENTS',
-];
+export const ActivateToolCommand = z.object({
+  type: z.literal('ACTIVATE_TOOL'),
+  rowId: z.string().min(1),
+  toolName: ToolName,
+});
+export type ActivateToolCommand = z.infer<typeof ActivateToolCommand>;
 
-const isHostCommandType = isOneOf(HOST_COMMAND_TYPES);
+export const DeactivateToolCommand = z.object({
+  type: z.literal('DEACTIVATE_TOOL'),
+  rowId: z.string().min(1),
+});
+export type DeactivateToolCommand = z.infer<typeof DeactivateToolCommand>;
 
-const isActivateToolCommand = (value: Record<string, unknown>): boolean =>
-  isNonEmptyString(value.requestId) && isNonEmptyString(value.rowId) && isToolName(value.toolName);
+export const RemoveMeasurementCommand = z.object({
+  type: z.literal('REMOVE_MEASUREMENT'),
+  measurementUid: z.string().min(1),
+});
+export type RemoveMeasurementCommand = z.infer<typeof RemoveMeasurementCommand>;
 
-const isDeactivateToolCommand = (value: Record<string, unknown>): boolean =>
-  isNonEmptyString(value.requestId) && isNonEmptyString(value.rowId);
+export const FocusMeasurementCommand = z.object({
+  type: z.literal('FOCUS_MEASUREMENT'),
+  measurementUid: z.string().min(1),
+});
+export type FocusMeasurementCommand = z.infer<typeof FocusMeasurementCommand>;
 
-const isMeasurementCommand = (value: Record<string, unknown>): boolean =>
-  isNonEmptyString(value.requestId) &&
-  isNonEmptyString(value.rowId) &&
-  isNonEmptyString(value.measurementUid);
+export const RestoreMeasurementRequest = z.object({
+  rowId: z.string().min(1),
+  measurementUid: z.string().min(1),
+  toolName: ToolName,
+  geometry: MeasurementGeometry,
+});
+export type RestoreMeasurementRequest = z.infer<typeof RestoreMeasurementRequest>;
 
-const isRestoreMeasurementRequest = (value: unknown): boolean =>
-  isRecord(value) &&
-  isNonEmptyString(value.rowId) &&
-  isNonEmptyString(value.measurementUid) &&
-  isToolName(value.toolName) &&
-  isMeasurementGeometry(value.geometry);
+export const RestoreMeasurementsCommand = z.object({
+  type: z.literal('RESTORE_MEASUREMENTS'),
+  studyInstanceUid: z.string().min(1),
+  measurements: z.array(RestoreMeasurementRequest),
+});
+export type RestoreMeasurementsCommand = z.infer<typeof RestoreMeasurementsCommand>;
 
-const isRestoreMeasurementsCommand = (value: Record<string, unknown>): boolean =>
-  isNonEmptyString(value.requestId) &&
-  isNonEmptyString(value.studyInstanceUid) &&
-  Array.isArray(value.measurements) &&
-  value.measurements.every(isRestoreMeasurementRequest);
+export const HostCommand = z.discriminatedUnion('type', [
+  ActivateToolCommand,
+  DeactivateToolCommand,
+  RemoveMeasurementCommand,
+  FocusMeasurementCommand,
+  RestoreMeasurementsCommand,
+]);
+export type HostCommand = z.infer<typeof HostCommand>;
 
-export const isHostCommand = (value: unknown): value is HostCommand => {
-  if (!isRecord(value) || !isHostCommandType(value.type)) {
-    return false;
-  }
-
-  switch (value.type) {
-    case 'ACTIVATE_TOOL':
-      return isActivateToolCommand(value);
-    case 'DEACTIVATE_TOOL':
-      return isDeactivateToolCommand(value);
-    case 'REMOVE_MEASUREMENT':
-    case 'FOCUS_MEASUREMENT':
-      return isMeasurementCommand(value);
-    case 'RESTORE_MEASUREMENTS':
-      return isRestoreMeasurementsCommand(value);
-    default:
-      return false;
-  }
-};
+export const isHostCommand = (value: unknown): value is HostCommand => HostCommand.safeParse(value).success;

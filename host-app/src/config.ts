@@ -1,28 +1,29 @@
-import type { ToolName } from '@bdiadiun/scoring-contract';
+import { isViewerEvent, type ToolName, type ViewerEvent } from '@bdiadiun/scoring-contract';
+import type { Channel, ChannelOptions } from '@bdiadiun/scoring-channel';
 
-// The only origin accepted for incoming viewer messages (A-2).
 export const VIEWER_ORIGIN = 'http://localhost:3000';
 
-// Single edit point for the ellipse -> RectangleROI live change (P-7).
+export const VIEWER_CHANNEL: ChannelOptions<ViewerEvent> = {
+  peerOrigin: VIEWER_ORIGIN,
+  accept: isViewerEvent,
+  readyOn: 'VIEWER_READY',
+};
+
+export type HostChannel = Channel<ViewerEvent>;
+
 export const DEFAULT_TOOL: ToolName = 'EllipticalROI';
 
 export const LENGTH_TOOL: ToolName = 'Length';
 
-// Used whenever the form's own URL names no study, or names one that is not a valid UID.
 export const FALLBACK_STUDY_INSTANCE_UID = '1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1';
 
-// The query parameter of the form's own page that selects the study to open.
 const STUDY_PARAM = 'study';
 
-// DICOM UID grammar: dot-separated numeric components, at most 64 characters (PS3.5 §9.1).
 const UID_PATTERN = /^\d+(?:\.\d+)*$/;
 const UID_MAX_LENGTH = 64;
 
-const isStudyInstanceUid = (value: string): boolean =>
-  value.length <= UID_MAX_LENGTH && UID_PATTERN.test(value);
+const isStudyInstanceUid = (value: string): boolean => value.length <= UID_MAX_LENGTH && UID_PATTERN.test(value);
 
-// The study ends up inside the viewer iframe `src`, so anything but a UID is rejected rather than
-// escaped: a free-form value could append its own query parameters or repoint the path.
 const readStudyFromLocation = (): string => {
   const requested = new URLSearchParams(window.location.search).get(STUDY_PARAM);
   if (requested === null) {
@@ -35,14 +36,12 @@ const readStudyFromLocation = (): string => {
   return requested;
 };
 
-// Resolved once per page load and cached, so the viewer URL, the storage key and the restore
-// command cannot disagree about which study the session belongs to.
 let resolvedStudyInstanceUid: string | null = null;
 
-export const studyInstanceUid = (): string => {
+export const getStudyInstance = (): string => {
   resolvedStudyInstanceUid ??= readStudyFromLocation();
   return resolvedStudyInstanceUid;
 };
 
 export const viewerUrl = (): string =>
-  `${VIEWER_ORIGIN}/viewer?StudyInstanceUIDs=${encodeURIComponent(studyInstanceUid())}`;
+  `${VIEWER_ORIGIN}/viewer?StudyInstanceUIDs=${encodeURIComponent(getStudyInstance())}`;

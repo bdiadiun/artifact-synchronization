@@ -1,41 +1,41 @@
-import { useEffect, useReducer, useRef } from 'react';
-import type { HostChannel } from '@bdiadiun/scoring-channel';
-import { reducer, type FormState, type Row } from '@app/form/rows';
-import type { FormContext } from '@app/form/rows.props';
-import { createRowActions, type RowActions } from '@app/form/rowActions';
-import { createViewerEventHandlers } from '@app/form/viewerEventHandlers';
-import { usePersistRows } from './usePersistRows';
-import { useRestoredRows } from './useRestoredRows';
+import { useCallback, useEffect, useReducer, type Dispatch } from 'react';
+import { isHostCommand } from '@bdiadiun/scoring-contract';
+import { useChannel } from '@bdiadiun/scoring-channel';
+import { VIEWER_CHANNEL, type HostChannel } from '@app/config';
+import type { Row } from '@app/models/row';
+import { reducer, type FormAction } from '@app/state/reducer';
+import { restoreViewer } from '@app/state/actions';
+import { useStoredRows } from './useStoredRows';
 
-export interface UseScoringFormResult extends RowActions {
-  rows: Row[];
-}
+export const useScoringForm = (studyInstanceUid: string): [Row[], Dispatch<FormAction>, HostChannel] => {
+  const channel = useChannel(VIEWER_CHANNEL);
+  const [storedRows, saveRows] = useStoredRows(studyInstanceUid);
+  const [rows, reduce] = useReducer(reducer, storedRows);
 
-// A-14: reducer stays pure, so restore reads sessionStorage once here, before the first render,
-// and seeds the reducer's initial state instead of dispatching an action.
-const buildInitialState = (rows: Row[]): FormState => ({ rows });
-
-export const useScoringForm = (channel: HostChannel | null): UseScoringFormResult => {
-  const restoredRows = useRestoredRows();
-  const [state, dispatch] = useReducer(reducer, restoredRows, buildInitialState);
-  usePersistRows(state.rows);
-
-  const context: FormContext = { state, dispatch, channel };
-
-  // The handlers below are registered once per channel, so they read the latest committed context
-  // through this ref instead of being taken out and registered again on every render.
-  const contextRef = useRef(context);
-  useEffect(() => {
-    contextRef.current = context;
-  });
+  const dispatch = useCallback(
+    (action: FormAction): void => {
+      if (isHostCommand(action)) {
+        channel.send(action);
+      }
+      reduce(action);
+    },
+    [channel],
+  );
 
   useEffect(() => {
-    if (channel === null) {
-      return undefined;
-    }
-    const getContext = (): FormContext => contextRef.current;
-    return channel.onEach(createViewerEventHandlers({ getContext, restoredRows }));
-  }, [channel, restoredRows]);
+    saveRows(rows);
+  }, [saveRows, rows]);
 
-  return { rows: state.rows, ...createRowActions(context) };
+  useEffect(
+    () =>
+      channel.on((event) => {
+        if (event.type === 'VIEWER_READY') {
+          restoreViewer(dispatch, studyInstanceUid, rows);
+        }
+        dispatch(event);
+      }),
+    [channel, dispatch, studyInstanceUid, rows],
+  );
+
+  return [rows, dispatch, channel];
 };

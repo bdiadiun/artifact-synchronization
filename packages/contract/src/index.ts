@@ -1,41 +1,18 @@
-export { METRIC_KEY_BY_TOOL, TOOL_NAME_VALUES } from './vocabulary';
-export type {
-  ArmedRow,
-  MeasurementGeometry,
-  Metric,
-  MetricKey,
-  Metrics,
-  ToolName,
-  Unit,
-} from './vocabulary.props';
-
-export { ANSWER_TYPE_BY_COMMAND } from './answers';
-export type { AnsweredCommandType, AnswerTypeOf } from './answers';
+export { MeasurementGeometry, METRIC_KEY_BY_TOOL, Metric, MetricKey, Metrics, ToolName, Unit } from './vocabulary.js';
 
 export {
-  isFiniteNumber,
-  isMeasurementGeometry,
-  isMetrics,
-  isNonEmptyString,
-  isOneOf,
-  isRecord,
-  isToolName,
-} from './primitiveGuards';
-
-export { HOST_COMMAND_TYPES, isHostCommand } from './hostCommands';
-export type {
   ActivateToolCommand,
   DeactivateToolCommand,
   FocusMeasurementCommand,
   HostCommand,
+  isHostCommand,
   RemoveMeasurementCommand,
   RestoreMeasurementRequest,
   RestoreMeasurementsCommand,
-} from './hostCommands.props';
+} from './hostCommands.js';
 
-export { isViewerEvent, VIEWER_EVENT_TYPES } from './viewerEvents';
-export type {
-  BridgeMessage,
+export {
+  isViewerEvent,
   MeasurementAddedEvent,
   MeasurementRemovedEvent,
   MeasurementsRestoredEvent,
@@ -44,4 +21,5 @@ export type {
   RestoreFailureReason,
   ViewerEvent,
   ViewerReadyEvent,
-} from './viewerEvents.props';
+} from './viewerEvents.js';
+export type { BridgeMessage } from './viewerEvents.js';

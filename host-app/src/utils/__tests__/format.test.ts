@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { formatMetric, formatRowKind, formatRowMetric, formatRowStatus } from '@app/utils/format';
-import { RowStatus, type Row } from '@app/form/rows';
+import { RowStatus, type Row } from '@app/models/row';
 import { t } from '@app/i18n';
 
 describe('formatMetric', () => {
@@ -60,9 +60,9 @@ describe('formatRowMetric', () => {
   });
 
   it('falls back to the first metric, keyed, when the tool metric is missing', () => {
-    const fallback = row({ metrics: { perimeter: { value: 40, unit: 'mm' } } });
+    const fallback = row({ toolName: 'Length', metrics: { area: { value: 40, unit: 'mm2' } } });
 
-    expect(formatRowMetric(fallback)).toBe('perimeter: 40.0 mm');
+    expect(formatRowMetric(fallback)).toBe('area: 40.0 mm²');
   });
 
   it('returns null for an empty metrics payload', () => {
