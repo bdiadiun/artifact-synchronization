@@ -9,17 +9,8 @@ import type { Annotation } from '@cornerstonejs/tools/types';
 import { triggerAnnotationRenderForViewportIds } from '@cornerstonejs/tools/utilities';
 import type { Types } from '@cornerstonejs/core';
 
-import {
-  LOG_PREFIX,
-  type OhifServices,
-  type OhifSubscription,
-  type ViewerChannel,
-} from '../ohif/surface.js';
-
-export interface RestoreCommands {
-  handleRestore: (command: RestoreMeasurementsCommand) => void;
-  dispose: () => void;
-}
+import type { Bridge, Ohif } from '../bridge.js';
+import { LOG_PREFIX, type OhifServices, type ViewerChannel } from '../ohif/surface.js';
 
 const toAnnotation = ({
   measurementUid,
@@ -61,7 +52,7 @@ const showsStudy = (services: OhifServices, studyInstanceUid: string): boolean =
     .getActiveDisplaySets()
     .some((displaySet) => displaySet.StudyInstanceUID === studyInstanceUid);
 
-const runRestore = (
+export const runRestore = (
   services: OhifServices,
   channel: ViewerChannel,
   command: RestoreMeasurementsCommand,
@@ -88,40 +79,29 @@ const runRestore = (
   channel.send({ type: 'MEASUREMENTS_RESTORED', restored, failed });
 };
 
-export const createRestore = (services: OhifServices, channel: ViewerChannel): RestoreCommands => {
-  const { cornerstoneViewportService, viewportGridService } = services;
-  let gate: OhifSubscription | null = null;
+// Annotations can only be added once the active viewport holds image data; a RESTORE that arrives
+// earlier waits in `bridge.pendingRestore` for the next VIEWPORT_DATA_CHANGED.
+export const holdsViewportData = (services: OhifServices): boolean => {
+  const viewportId = services.viewportGridService.getActiveViewportId();
+  return Boolean(
+    viewportId && services.cornerstoneViewportService.getCornerstoneViewport(viewportId),
+  );
+};
 
-  const holdsData = (): boolean => {
-    const viewportId = viewportGridService.getActiveViewportId();
-    return Boolean(viewportId && cornerstoneViewportService.getCornerstoneViewport(viewportId));
+export const subscribeViewportData = (ohif: Ohif, bridge: Bridge): (() => void) => {
+  const { cornerstoneViewportService } = ohif.services;
+  const subscription = cornerstoneViewportService.subscribe(
+    cornerstoneViewportService.EVENTS.VIEWPORT_DATA_CHANGED,
+    () => {
+      const command = bridge.pendingRestore;
+      if (command !== null && holdsViewportData(ohif.services)) {
+        bridge.pendingRestore = null;
+        runRestore(ohif.services, bridge.channel, command);
+      }
+    },
+  );
+
+  return (): void => {
+    subscription.unsubscribe();
   };
-
-  const whenReady = (run: () => void): void => {
-    if (holdsData()) {
-      run();
-      return;
-    }
-
-    gate = cornerstoneViewportService.subscribe(
-      cornerstoneViewportService.EVENTS.VIEWPORT_DATA_CHANGED,
-      () => {
-        gate?.unsubscribe();
-        gate = null;
-        run();
-      },
-    );
-  };
-
-  const handleRestore = (command: RestoreMeasurementsCommand): void => {
-    whenReady(() => {
-      runRestore(services, channel, command);
-    });
-  };
-
-  const dispose = (): void => {
-    gate?.unsubscribe();
-  };
-
-  return { handleRestore, dispose };
 };

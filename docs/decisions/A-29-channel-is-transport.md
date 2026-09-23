@@ -33,9 +33,11 @@ not read in one pass, and a bridge that still had to ask the channel for its own
      exchange consumes the second. The pending-removal map that suppressed the first is gone.
   2. Activating a row while another is drawing sends only `ACTIVATE_TOOL`; the viewer's armed
      row is replaced, the reducer already re-arms. No `DEACTIVATE_TOOL` for the previous row.
-  3. Every `VIEWER_READY`, not only the first, restores the current rows that carry a uid and a
-     geometry, then re-arms the drawing row. A viewer that reloads mid-session gets its
-     annotations back; the `readyCount` and the separate "restored at mount" list are gone.
+  3. Every `VIEWER_READY`, not only the first, restores the rows stored for the study that carry
+     a uid and a geometry, then re-arms the drawing row. The form reacts to the channel's
+     `announcements` count with an effect and reads what it persisted (A-14), so a page reload and
+     a viewer reload restore through one path; the `readyCount` and the separate "restored at
+     mount" list are gone.
 
 ## Why this way
 

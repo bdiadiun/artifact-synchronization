@@ -33,12 +33,7 @@ export const MeasurementRemovedEvent = z.object({
 });
 export type MeasurementRemovedEvent = z.infer<typeof MeasurementRemovedEvent>;
 
-export const RestoreFailureReason = z.enum([
-  'already-present',
-  'unknown-study',
-  'invalid-geometry',
-  'viewer-error',
-]);
+export const RestoreFailureReason = z.enum(['already-present', 'unknown-study', 'viewer-error']);
 export type RestoreFailureReason = z.infer<typeof RestoreFailureReason>;
 
 export const RestoreFailure = z.object({

@@ -1,19 +1,16 @@
-import type { CSSProperties } from 'react';
-import type { Row } from '@app/form/rows';
+import type { CSSProperties, Dispatch } from 'react';
+import type { FormAction, Row } from '@app/state/reducer';
 import { t } from '@app/i18n';
 
 export interface MeasurementRowProps {
   row: Row;
   index: number;
-  onActivate: (rowId: string) => void;
-  onCancel: (rowId: string) => void;
-  onRemove: (rowId: string) => void;
-  onFocus: (rowId: string) => void;
+  dispatch: Dispatch<FormAction>;
 }
 
 // The attributes that turn the row div into a button, or nothing at all (S-5.3: only a `done` row
 // has an annotation to focus).
-export interface RowInteraction {
+interface RowInteraction {
   role?: 'button';
   tabIndex?: number;
   'aria-label'?: string;

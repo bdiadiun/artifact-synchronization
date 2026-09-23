@@ -32,7 +32,6 @@ export const t = {
   restoreFailureReason: {
     'already-present': 'анотація вже існує',
     'unknown-study': 'інше дослідження',
-    'invalid-geometry': 'некоректна геометрія',
     'viewer-error': 'помилка переглядача',
   } satisfies Record<RestoreFailureReason, string>,
   // Ukrainian noun agreement for "вимірювання": 1 and 2-4 keep that form, 5+/11-14 take "вимірювань".

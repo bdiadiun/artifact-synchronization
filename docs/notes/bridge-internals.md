@@ -3,25 +3,31 @@
 Implementation details of the bridge that are deliberate but not visible from the code alone.
 Decisions live in [`docs/decisions/`](../decisions/); OHIF behaviour we rely on is in
 [`ohif-bridge-api.md`](ohif-bridge-api.md). File names below refer to
-`packages/viewer-bridge/src/` unless a path is given. The extension is six modules, laid out by
-role (A-27): `extension.ts` (composition root, announces `VIEWER_READY` once), `commands/handlers.ts`
-(one `switch` over the commands, the armed row), `commands/restore.ts`, `events/measurements.ts`,
-`ohif/surface.ts` and `ohif/throttle.ts`. The channel is transport only (A-29, A-31).
+`packages/viewer-bridge/src/` unless a path is given. The extension is a React layer (A-32):
+`ScoringBridge.tsx` (the context-module provider OHIF mounts around the mode),
+`bridge.ts` (the bridge as data: channel, armed row, pending restore), `hooks/useScoringBridge.ts`
+(the lifecycle: one effect per subscription, each with its cleanup), `commands/handlers.ts`
+(`handleCommand`: one `switch` over the commands), `commands/restore.ts`, `events/measurements.ts`,
+`events/announce.ts`, `ohif/surface.ts` and `ohif/throttle.ts`. The channel is transport only (A-29, A-31).
 
 ## Lifecycle
 
-- **Disposed on `pagehide`, not `onModeExit`** (`extension.ts`). The bridge must outlive OHIF mode
-  changes, because the host keeps talking to the same iframe, and extensions have no unregister
-  hook. The page lifetime is the only correct scope.
-- **`dispose()` returns to the default tool first** (`extension.ts`). `WindowLevel` is activated
-  before the listeners and subscriptions go away, so closing the viewer never leaves the ellipse
-  tool armed (A-23: no snapshot of the previous tool any more).
+- **Mounted and unmounted by OHIF** (`ScoringBridge.tsx`, A-32). `Mode.tsx` composes every
+  extension's context-module provider around the mode (`createCombinedContextProvider`), so the
+  bridge lives as long as the mode: a study change remounts it, which creates a new channel and
+  announces `VIEWER_READY` again — the host then offers its rows back (A-29). Every subscription
+  is an effect whose cleanup unsubscribes. Leaving the mode tears the viewports and their tool
+  group down, so no tool is left to restore.
+- **The announcement does not depend on effect order** (`events/announce.ts`). A provider's
+  effects run after its children's, so the first viewport can exist before the bridge subscribes:
+  when a tool group already exists `VIEWER_READY` goes out at once, otherwise on the first
+  `VIEWPORT_ADDED`.
 - **The OHIF services are required, not optional** (A-28, `ohif-service-availability.md`). The
   three core services exist before any extension runs; `toolGroupService` and
   `cornerstoneViewportService` are registered by `@ohif/extension-cornerstone`, which
-  `pluginConfig.json` lists before our adapter. `extension.ts` checks the two cornerstone services
-  once at `preRegistration` and refuses to start without them; no other "service unavailable"
-  branch exists.
+  `pluginConfig.json` lists before our adapter. `getContextModule` checks the two cornerstone
+  services once, at registration, and returns no provider without them; no other "service
+  unavailable" branch exists.
 - **OHIF's measurement object is parsed once** by the `OhifMeasurement` schema in `ohif/surface.ts`
   when a measurement event arrives; `toMetrics` and `toGeometry` work on the parsed value. An event
   whose payload is not a measurement (a bare uid string, no uid) is ignored with one warning.
@@ -53,13 +59,13 @@ role (A-27): `extension.ts` (composition root, announces `VIEWER_READY` once), `
 
 - **No separate `uid → rowId` map on the host** (`host-app/src/form/useScoringForm.ts`). A `done`
   row stores its own `measurementUid`, and `MEASUREMENT_ADDED` carries `rowId`, so the rows array
-  is the map. The viewer keeps no map either: `commands/handlers.ts` remembers only the armed
-  `rowId` (A-29), which the next `MEASUREMENT_ADDED` takes.
+  is the map. The viewer keeps no map either: `bridge.armedRowId` (A-29) is set by
+  `ACTIVATE_TOOL` and taken by the next `MEASUREMENT_ADDED`.
 
 ## Details moved out of the code (A-24)
 
-- **Announce once** (`extension.ts`): the first `VIEWPORT_ADDED` unsubscribes and sends
-  `VIEWER_READY`; a viewer reload starts a new extension instance, which announces again.
+- **Announce once** (`events/announce.ts`): the first `VIEWPORT_ADDED` unsubscribes and sends
+  `VIEWER_READY`; a mode remount mounts a new bridge, which announces again.
 - **Removal goes through OHIF** (`commands/handlers.ts`): `measurementService.remove` (the
   `removeMeasurement` command only wraps that call, `commandsModule.ts:746-751`) fires OHIF's
   `MEASUREMENT_REMOVED`, which the subscription in `events/measurements.ts` forwards.
@@ -90,10 +96,11 @@ role (A-27): `extension.ts` (composition root, announces `VIEWER_READY` once), `
 - REMOVE for a uid the service no longer holds is answered at once (`MeasurementService.ts:675-680` returns silently; A-10); for a present uid the command is parked before `remove()` because the service broadcasts `MEASUREMENT_REMOVED` synchronously (`:674-689`), and cornerstone erases the drawing on that event (`initMeasurementService.ts:501-522`).
 - FOCUS: an unknown uid is an ordinary race, not the error `jumpToMeasurement` would warn about (`MeasurementService.ts:741-745`); the measurement panel makes the same call (`commandsModule.ts:739-744`).
 
-`extension.ts`
+`ScoringBridge.tsx`, `events/announce.ts`
 
 - `setToolActive` is a silent no-op until a viewport has a tool group (`commandsModule.ts:1050-1055`), so `VIEWER_READY` is announced on `toolGroupService` `VIEWPORT_ADDED` (A-9).
 - OHIF's generated loader imports the default export of the package named in `pluginConfig.json` (`writePluginImportsFile.js:89-94`), so the configured extension is the default export.
+- `getContextModule` is called once at registration with `{ appConfig, servicesManager, commandsManager }` (`ExtensionManager.ts:463-469`); `getModulesByType('contextModule')` returns every registered extension's entries and `Mode.tsx:377-393` composes their `provider`s.
 
 `events/measurements.ts`
 
@@ -104,7 +111,7 @@ role (A-27): `extension.ts` (composition root, announces `VIEWER_READY` once), `
 
 `ohif/surface.ts`
 
-- `window.config` reaches every extension through `preRegistration` (`ExtensionManager.ts:276-286`); the manager reads `id`, `preRegistration` and the module getters it finds (`:260-273`, `:297-341`), awaits the hook (`:277`), and `registerExtension` is public and re-entrant (`:251-286`), which is how the adapter registers its children.
+- `window.config` reaches every extension as `appConfig`, both in `preRegistration` (`ExtensionManager.ts:276-286`) and in every module getter (`:463-469`); the manager reads `id`, `preRegistration` and the module getters it finds (`:260-273`, `:297-341`), awaits the hook (`:277`), and `registerExtension` is public and re-entrant (`:251-286`), which is how the adapter registers its children.
 - `getToolGroup()` without an id resolves the active viewport's group (`ToolGroupService.ts:73-104`).
 - The version overlay uses `contentF`, not `label`, because the overlay renders one text node (`CustomizableViewportOverlay.tsx:380-397`); `$push` appends to cornerstone's list because customizations merge in registration order (`CustomizationService.ts:118-131, 381-397`).
 - `process.env.VERSION_NUMBER` is replaced by OHIF's webpack at build time (`.webpack/webpack.base.js:32,46`); `process` never exists in the browser, so the expression is written exactly as DefinePlugin matches it.

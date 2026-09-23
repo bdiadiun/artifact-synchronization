@@ -9,7 +9,10 @@ You implement exactly what the brief asks, in the files it names, and nothing el
 
 Before writing code
 
-- Read `CLAUDE.md` and `docs/CONVENTIONS.md` in full, then `docs/PROJECT-STRUCTURE.md` for where a
+- Read `CLAUDE.md` and `docs/CONVENTIONS.md` in full — its §0 is the shape every change must keep:
+  a hook returns what its name promises, an effect is written where it happens with its cleanup,
+  state is the data, an outside event is an action, a function takes at most three inputs, a
+  boundary is a schema, a component renders while a hook owns — then `docs/PROJECT-STRUCTURE.md` for where a
   new file belongs, then the files the brief lists. The path-scoped rules in `.claude/rules/` apply
   to whatever you touch.
 - Read the decision records the brief cites; do not re-open decided questions. If the brief

@@ -1,14 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import { RowStatus, type Row } from '@app/form/rows';
-import { fromStoredState, storageKey, toStoredState } from '@app/form/storage';
-import { readSessionStorage, writeSessionStorage } from '@app/form/useSessionStorage';
+import { RowStatus, type Row } from '@app/state/reducer';
+import { getStorage, setStorage } from '@app/services/storage';
 
 const saveRows = (study: string, rows: Row[]): void => {
-  writeSessionStorage(storageKey(study), toStoredState(study, rows));
+  setStorage(study, rows);
 };
 
-const loadStoredRows = (study: string): Row[] =>
-  fromStoredState(readSessionStorage(storageKey(study)), study);
+const loadStoredRows = (study: string): Row[] => getStorage(study);
 
 const STUDY_A = '1.2.3';
 const STUDY_B = '9.9.9';
@@ -28,11 +26,8 @@ const doneRow = (overrides: Partial<Row> = {}): Row => ({
   ...overrides,
 });
 
-const storeRows = (studyInstanceUid: string, rows: unknown[]): void => {
-  window.sessionStorage.setItem(
-    `scoring-form:rows:${studyInstanceUid}`,
-    JSON.stringify({ studyInstanceUid, rows }),
-  );
+const storeRows = (uuid: string, rows: unknown[]): void => {
+  window.sessionStorage.setItem(`scoring-form:rows:${uuid}`, JSON.stringify({ uuid, rows }));
 };
 
 describe('saveRows / loadStoredRows', () => {

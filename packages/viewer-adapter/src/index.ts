@@ -1,5 +1,3 @@
-import { createScoringAdapterExtension } from './extension.js';
+export { scoringAdapterExtension, SCORING_ADAPTER_EXTENSION_ID } from './extension.js';
 
-export { createScoringAdapterExtension, SCORING_ADAPTER_EXTENSION_ID } from './extension.js';
-
-export default createScoringAdapterExtension();
+export { scoringAdapterExtension as default } from './extension.js';

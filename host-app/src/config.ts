@@ -35,14 +35,14 @@ const readStudyFromLocation = (): string => {
   return requested;
 };
 
-// Resolved once per page load and cached, so the viewer URL, the storage key and the restore
-// command cannot disagree about which study the session belongs to.
+// Read once per page load: the page has no routing, so the study cannot change while it is open,
+// and a rejected `study` parameter is reported once rather than on every render.
 let resolvedStudyInstanceUid: string | null = null;
 
-export const studyInstanceUid = (): string => {
+export const getStudyInstance = (): string => {
   resolvedStudyInstanceUid ??= readStudyFromLocation();
   return resolvedStudyInstanceUid;
 };
 
 export const viewerUrl = (): string =>
-  `${VIEWER_ORIGIN}/viewer?StudyInstanceUIDs=${encodeURIComponent(studyInstanceUid())}`;
+  `${VIEWER_ORIGIN}/viewer?StudyInstanceUIDs=${encodeURIComponent(getStudyInstance())}`;

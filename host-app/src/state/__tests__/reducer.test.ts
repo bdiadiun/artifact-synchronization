@@ -1,123 +1,115 @@
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@bdiadiun/scoring-contract';
-import {
-  FormActionType,
-  RowStatus,
-  findRow,
-  findRowByUid,
-  initialFormState,
-  reducer,
-  type FormState,
-  type Row,
-} from '@app/form/rows';
+import { RowStatus, reducer, type Row } from '@app/state/reducer';
+import { findRow, findRowByUid } from '@app/state/selectors';
 
 const metrics: Metrics = { area: { value: 124.5, unit: 'mm2' } };
 
-const addRows = (state: FormState, ...rowIds: string[]): FormState =>
+const addRows = (state: Row[], ...rowIds: string[]): Row[] =>
   rowIds.reduce(
-    (acc, rowId) => reducer(acc, { type: FormActionType.AddRow, rowId, toolName: 'EllipticalROI' }),
+    (acc, rowId) => reducer(acc, { type: 'ADD_ROW', rowId, toolName: 'EllipticalROI' }),
     state,
   );
 
-const isDrawing = (state: FormState, rowId: string): boolean =>
-  state.rows.find((row) => row.rowId === rowId)?.status === RowStatus.Drawing;
+const isDrawing = (state: Row[], rowId: string): boolean =>
+  state.find((row) => row.rowId === rowId)?.status === RowStatus.Drawing;
 
 describe('rows reducer', () => {
   it('ADD_ROW appends a pending row', () => {
-    const state = reducer(initialFormState, {
-      type: FormActionType.AddRow,
+    const state = reducer([], {
+      type: 'ADD_ROW',
       rowId: 'row-1',
       toolName: 'EllipticalROI',
     });
 
-    expect(state.rows).toHaveLength(1);
-    expect(state.rows[0]).toMatchObject({
+    expect(state).toHaveLength(1);
+    expect(state[0]).toMatchObject({
       rowId: 'row-1',
       status: RowStatus.Pending,
       metrics: null,
       measurementUid: null,
-      geometry: null,
       restoreFailureReason: null,
     });
   });
 
   it('ADD_ROW keeps the given toolName on the new row', () => {
-    const state = reducer(initialFormState, {
-      type: FormActionType.AddRow,
+    const state = reducer([], {
+      type: 'ADD_ROW',
       rowId: 'row-1',
       toolName: 'Length',
     });
-    expect(state.rows[0].toolName).toBe('Length');
+    expect(state[0].toolName).toBe('Length');
   });
 
   it('ARM_ROW sets the target row to drawing', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
 
     expect(isDrawing(state, 'row-1')).toBe(true);
   });
 
   it('arming row B disarms row A (only one row is drawing at a time, A-4)', () => {
-    let state = addRows(initialFormState, 'row-a', 'row-b');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-a' });
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-b' });
+    let state = addRows([], 'row-a', 'row-b');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-a' });
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-b' });
 
     expect(isDrawing(state, 'row-a')).toBe(false);
     expect(isDrawing(state, 'row-b')).toBe(true);
   });
 
   it('re-arming the already drawing row leaves state unchanged', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
-    const next = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    const next = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
 
     expect(next).toBe(state);
   });
 
   it('ARM_ROW with an unknown rowId leaves state unchanged', () => {
-    const state = addRows(initialFormState, 'row-1');
-    const next = reducer(state, { type: FormActionType.ArmRow, rowId: 'ghost' });
+    const state = addRows([], 'row-1');
+    const next = reducer(state, { type: 'ARM_ROW', rowId: 'ghost' });
     expect(next).toBe(state);
   });
 
   it('DISARM_ROW returns a drawing row to pending', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
-    state = reducer(state, { type: FormActionType.DisarmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
+    state = reducer(state, { type: 'DISARM_ROW', rowId: 'row-1' });
 
     expect(isDrawing(state, 'row-1')).toBe(false);
-    expect(state.rows[0].status).toBe(RowStatus.Pending);
+    expect(state[0].status).toBe(RowStatus.Pending);
   });
 
   it('DISARM_ROW on a pending (not drawing) row is a no-op', () => {
-    const state = addRows(initialFormState, 'row-1');
-    const next = reducer(state, { type: FormActionType.DisarmRow, rowId: 'row-1' });
+    const state = addRows([], 'row-1');
+    const next = reducer(state, { type: 'DISARM_ROW', rowId: 'row-1' });
     expect(next).toBe(state);
   });
 
   it('DISARM_ROW with an unknown rowId leaves state unchanged', () => {
-    const state = addRows(initialFormState, 'row-1');
-    const next = reducer(state, { type: FormActionType.DisarmRow, rowId: 'ghost' });
+    const state = addRows([], 'row-1');
+    const next = reducer(state, { type: 'DISARM_ROW', rowId: 'ghost' });
     expect(next).toBe(state);
   });
 
   it('MEASUREMENT_RECEIVED applies to a drawing row: done, with metrics, uid and geometry', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
     const geometry = {
       frameOfReferenceUid: 'for-1',
       referencedImageId: 'image-1',
       points: [[1, 2, 3]],
     };
     state = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
       geometry,
     });
 
-    expect(state.rows[0]).toMatchObject({
+    expect(state[0]).toMatchObject({
       status: RowStatus.Done,
       metrics,
       measurementUid: 'uid-1',
@@ -126,68 +118,69 @@ describe('rows reducer', () => {
   });
 
   it('MEASUREMENT_RECEIVED for a pending (not drawing) row is ignored', () => {
-    const state = addRows(initialFormState, 'row-1');
+    const state = addRows([], 'row-1');
     const next = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
-      geometry: null,
     });
     expect(next).toBe(state);
   });
 
   it('MEASUREMENT_RECEIVED for an already done row is ignored (no double-apply)', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
     state = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
-      geometry: null,
     });
     const next = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-2',
       metrics: { area: { value: 1, unit: 'px2' } },
-      geometry: null,
     });
     expect(next).toBe(state);
   });
 
   it('MEASUREMENT_RECEIVED with an unknown rowId leaves state unchanged', () => {
-    const state = addRows(initialFormState, 'row-1');
+    const state = addRows([], 'row-1');
     const next = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'ghost',
       measurementUid: 'uid-1',
       metrics,
-      geometry: null,
     });
     expect(next).toBe(state);
   });
 
   it('MEASUREMENT_UPDATED replaces the metrics of the matching done row', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
     state = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
-      geometry: null,
     });
 
     const updatedMetrics: Metrics = { area: { value: 200, unit: 'mm2' } };
     const next = reducer(state, {
-      type: FormActionType.MeasurementUpdated,
+      type: 'MEASUREMENT_UPDATED',
+      toolName: 'EllipticalROI',
       measurementUid: 'uid-1',
       metrics: updatedMetrics,
     });
 
-    expect(next.rows[0]).toMatchObject({
+    expect(next[0]).toMatchObject({
       status: RowStatus.Done,
       metrics: updatedMetrics,
       measurementUid: 'uid-1',
@@ -195,18 +188,19 @@ describe('rows reducer', () => {
   });
 
   it('MEASUREMENT_UPDATED with an unknown measurementUid leaves state unchanged', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
     state = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
-      geometry: null,
     });
 
     const next = reducer(state, {
-      type: FormActionType.MeasurementUpdated,
+      type: 'MEASUREMENT_UPDATED',
+      toolName: 'EllipticalROI',
       measurementUid: 'ghost',
       metrics: { area: { value: 999, unit: 'mm2' } },
     });
@@ -217,22 +211,21 @@ describe('rows reducer', () => {
     // A row is only ever `pending` with a `measurementUid` in a contrived/defensive scenario
     // (normally uid is set exactly when status becomes `done`), but the reducer must still refuse
     // to update anything but a `done` row - checked directly by constructing that state.
-    const state: FormState = {
-      rows: [
-        {
-          rowId: 'row-1',
-          status: RowStatus.Pending,
-          toolName: 'EllipticalROI',
-          metrics: null,
-          measurementUid: 'uid-1',
-          geometry: null,
-          restoreFailureReason: null,
-        },
-      ],
-    };
+    const state: Row[] = [
+      {
+        rowId: 'row-1',
+        status: RowStatus.Pending,
+        toolName: 'EllipticalROI',
+        metrics: null,
+        measurementUid: 'uid-1',
+        geometry: null,
+        restoreFailureReason: null,
+      },
+    ];
 
     const next = reducer(state, {
-      type: FormActionType.MeasurementUpdated,
+      type: 'MEASUREMENT_UPDATED',
+      toolName: 'EllipticalROI',
       measurementUid: 'uid-1',
       metrics,
     });
@@ -240,35 +233,35 @@ describe('rows reducer', () => {
   });
 
   it('REMOVE_ROW drops the named row and leaves the others', () => {
-    let state = addRows(initialFormState, 'row-1', 'row-2');
-    state = reducer(state, { type: FormActionType.RemoveRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1', 'row-2');
+    state = reducer(state, { type: 'REMOVE_ROW', rowId: 'row-1' });
 
-    expect(state.rows.map((row) => row.rowId)).toEqual(['row-2']);
+    expect(state.map((row) => row.rowId)).toEqual(['row-2']);
   });
 
   it('REMOVE_ROW with an unknown rowId leaves state unchanged', () => {
-    const state = addRows(initialFormState, 'row-1');
-    const next = reducer(state, { type: FormActionType.RemoveRow, rowId: 'ghost' });
+    const state = addRows([], 'row-1');
+    const next = reducer(state, { type: 'REMOVE_ROW', rowId: 'ghost' });
     expect(next).toBe(state);
   });
 
   it('MEASUREMENT_CLEARED returns the done row matching the uid to pending, metrics and uid cleared', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
     state = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
-      geometry: null,
     });
 
     const next = reducer(state, {
-      type: FormActionType.MeasurementCleared,
+      type: 'MEASUREMENT_REMOVED',
       measurementUid: 'uid-1',
     });
 
-    expect(next.rows[0]).toMatchObject({
+    expect(next[0]).toMatchObject({
       status: RowStatus.Pending,
       metrics: null,
       measurementUid: null,
@@ -276,85 +269,85 @@ describe('rows reducer', () => {
   });
 
   it('MEASUREMENT_CLEARED for an unknown measurementUid leaves state unchanged', () => {
-    const state = addRows(initialFormState, 'row-1');
+    const state = addRows([], 'row-1');
     const next = reducer(state, {
-      type: FormActionType.MeasurementCleared,
+      type: 'MEASUREMENT_REMOVED',
       measurementUid: 'ghost',
     });
     expect(next).toBe(state);
   });
 
   it('a row keeps its own toolName through arm/measure/clear (re-arm uses the same tool)', () => {
-    let state = reducer(initialFormState, {
-      type: FormActionType.AddRow,
+    let state = reducer([], {
+      type: 'ADD_ROW',
       rowId: 'row-1',
       toolName: 'Length',
     });
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
     state = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics: { length: { value: 12, unit: 'mm' } },
-      geometry: null,
     });
-    state = reducer(state, { type: FormActionType.MeasurementCleared, measurementUid: 'uid-1' });
+    state = reducer(state, { type: 'MEASUREMENT_REMOVED', measurementUid: 'uid-1' });
 
-    expect(state.rows[0].toolName).toBe('Length');
+    expect(state[0].toolName).toBe('Length');
   });
 
   it('rows are unlimited: adding 50 rows keeps them all pending', () => {
     const rowIds = Array.from({ length: 50 }, (_, i) => `row-${String(i)}`);
-    const state = addRows(initialFormState, ...rowIds);
-    expect(state.rows).toHaveLength(50);
-    expect(state.rows.every((row) => row.status === RowStatus.Pending)).toBe(true);
+    const state = addRows([], ...rowIds);
+    expect(state).toHaveLength(50);
+    expect(state.every((row) => row.status === RowStatus.Pending)).toBe(true);
   });
 
   it('RESTORE_FAILED marks the row with the given reason and keeps its value', () => {
-    let state = addRows(initialFormState, 'row-1');
-    state = reducer(state, { type: FormActionType.ArmRow, rowId: 'row-1' });
+    let state = addRows([], 'row-1');
+    state = reducer(state, { type: 'ARM_ROW', rowId: 'row-1' });
     state = reducer(state, {
-      type: FormActionType.MeasurementReceived,
+      type: 'MEASUREMENT_ADDED',
+      toolName: 'EllipticalROI',
       rowId: 'row-1',
       measurementUid: 'uid-1',
       metrics,
-      geometry: null,
     });
 
     const next = reducer(state, {
-      type: FormActionType.RestoreFailed,
-      rowId: 'row-1',
-      reason: 'invalid-geometry',
+      type: 'MEASUREMENTS_RESTORED',
+      restored: [],
+      failed: [{ rowId: 'row-1', reason: 'viewer-error' }],
     });
 
-    expect(next.rows[0]).toMatchObject({
+    expect(next[0]).toMatchObject({
       status: RowStatus.Done,
       metrics,
-      restoreFailureReason: 'invalid-geometry',
+      restoreFailureReason: 'viewer-error',
     });
   });
 
   it('RESTORE_FAILED with an unknown rowId leaves state unchanged', () => {
-    const state = addRows(initialFormState, 'row-1');
+    const state = addRows([], 'row-1');
     const next = reducer(state, {
-      type: FormActionType.RestoreFailed,
-      rowId: 'ghost',
-      reason: 'unknown-study',
+      type: 'MEASUREMENTS_RESTORED',
+      restored: [],
+      failed: [{ rowId: 'ghost', reason: 'unknown-study' }],
     });
     expect(next).toBe(state);
   });
 
   it('RESTORE_FAILED twice with the same reason is a no-op the second time', () => {
-    let state = addRows(initialFormState, 'row-1');
+    let state = addRows([], 'row-1');
     state = reducer(state, {
-      type: FormActionType.RestoreFailed,
-      rowId: 'row-1',
-      reason: 'viewer-error',
+      type: 'MEASUREMENTS_RESTORED',
+      restored: [],
+      failed: [{ rowId: 'row-1', reason: 'viewer-error' }],
     });
     const next = reducer(state, {
-      type: FormActionType.RestoreFailed,
-      rowId: 'row-1',
-      reason: 'viewer-error',
+      type: 'MEASUREMENTS_RESTORED',
+      restored: [],
+      failed: [{ rowId: 'row-1', reason: 'viewer-error' }],
     });
     expect(next).toBe(state);
   });

@@ -15,7 +15,9 @@ import type {
   ViewerEvent,
 } from '@bdiadiun/scoring-contract';
 
-import { createRestore } from '../restore.js';
+import type { Bridge, Ohif } from '../../bridge.js';
+import { handleCommand } from '../handlers.js';
+import { subscribeViewportData } from '../restore.js';
 import type { OhifServices, OhifSubscription } from '../../ohif/surface.js';
 import { createServices, STUDY_UID, VIEWPORT_ID } from '../../__tests__/helpers.js';
 
@@ -26,6 +28,18 @@ vi.mock('@cornerstonejs/tools', () => ({
 vi.mock('@cornerstonejs/tools/utilities', () => ({
   triggerAnnotationRenderForViewportIds: vi.fn(),
 }));
+
+// The bridge as the hook builds it: a channel plus the two pieces of state, subscribed to
+// VIEWPORT_DATA_CHANGED the way `useScoringBridge` does.
+const bridgeFor = (
+  services: OhifServices,
+  channel: ViewerChannel,
+): { ohif: Ohif; bridge: Bridge; unsubscribe: () => void } => {
+  const ohif: Ohif = { services, commandsManager: { runCommand: vi.fn() } };
+  const bridge: Bridge = { channel, armedRowId: null, pendingRestore: null };
+  const unsubscribe = subscribeViewportData(ohif, bridge);
+  return { ohif, bridge, unsubscribe };
+};
 
 const HOST_ORIGIN = 'http://localhost:5173';
 
@@ -94,7 +108,7 @@ const connect = (): RestoreFixture => {
   vi.spyOn(window, 'parent', 'get').mockReturnValue(hostWindow as unknown as Window);
   const channel = createChannel({
     peerOrigin: HOST_ORIGIN,
-    getPeerWindow: () => window.parent,
+    peerWindow: window.parent,
     accept: isHostCommand,
   });
 
@@ -113,9 +127,9 @@ afterEach(() => {
 describe('restoring measurements (A-14)', () => {
   it('answers with the rows it restored', () => {
     const { channel, posted } = connect();
-    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
+    const { ohif, bridge } = bridgeFor(servicesFor(createViewportGate(true)), channel);
 
-    restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
+    handleCommand(ohif, bridge, restoreCommand([request('row-1', 'uid-1')]));
 
     expect(posted()).toEqual([
       {
@@ -130,9 +144,9 @@ describe('restoring measurements (A-14)', () => {
 
   it('adds the annotation under the frame of reference the host persisted', () => {
     const { channel } = connect();
-    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
+    const { ohif, bridge } = bridgeFor(servicesFor(createViewportGate(true)), channel);
 
-    restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
+    handleCommand(ohif, bridge, restoreCommand([request('row-1', 'uid-1')]));
 
     expect(annotation.state.addAnnotation).toHaveBeenCalledWith(
       {
@@ -161,9 +175,9 @@ describe('restoring measurements (A-14)', () => {
 
   it('renders the active viewport once something was restored', () => {
     const { channel } = connect();
-    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
+    const { ohif, bridge } = bridgeFor(servicesFor(createViewportGate(true)), channel);
 
-    restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
+    handleCommand(ohif, bridge, restoreCommand([request('row-1', 'uid-1')]));
 
     expect(triggerAnnotationRenderForViewportIds).toHaveBeenCalledWith([VIEWPORT_ID]);
     channel.dispose();
@@ -171,9 +185,9 @@ describe('restoring measurements (A-14)', () => {
 
   it('fails every row with unknown-study when the viewer shows a different study', () => {
     const { channel, posted } = connect();
-    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
+    const { ohif, bridge } = bridgeFor(servicesFor(createViewportGate(true)), channel);
 
-    restore.handleRestore(restoreCommand([request('row-1', 'uid-1')], 'another-study'));
+    handleCommand(ohif, bridge, restoreCommand([request('row-1', 'uid-1')], 'another-study'));
 
     expect(posted()[0]).toMatchObject({
       restored: [],
@@ -185,9 +199,9 @@ describe('restoring measurements (A-14)', () => {
 
   it('fails a row whose measurement the viewer already holds', () => {
     const { channel, posted } = connect();
-    const restore = createRestore(servicesFor(createViewportGate(true), ['uid-1']), channel);
+    const { ohif, bridge } = bridgeFor(servicesFor(createViewportGate(true), ['uid-1']), channel);
 
-    restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
+    handleCommand(ohif, bridge, restoreCommand([request('row-1', 'uid-1')]));
 
     expect(posted()[0]).toMatchObject({
       restored: [],
@@ -203,9 +217,9 @@ describe('restoring measurements (A-14)', () => {
     vi.mocked(annotation.state.addAnnotation).mockImplementation(() => {
       throw new Error('no enabled element');
     });
-    const restore = createRestore(servicesFor(createViewportGate(true)), channel);
+    const { ohif, bridge } = bridgeFor(servicesFor(createViewportGate(true)), channel);
 
-    restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
+    handleCommand(ohif, bridge, restoreCommand([request('row-1', 'uid-1')]));
 
     expect(posted()[0]).toMatchObject({
       restored: [],
@@ -219,9 +233,9 @@ describe('waiting for the viewport to hold data', () => {
   it('restores nothing until the viewport reports its data', () => {
     const { channel, posted } = connect();
     const gate = createViewportGate(false);
-    const restore = createRestore(servicesFor(gate), channel);
+    const { ohif, bridge } = bridgeFor(servicesFor(gate), channel);
 
-    restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
+    handleCommand(ohif, bridge, restoreCommand([request('row-1', 'uid-1')]));
 
     expect(posted()).toEqual([]);
 
@@ -231,17 +245,17 @@ describe('waiting for the viewport to hold data', () => {
     });
 
     expect(posted()[0]).toMatchObject({ restored: ['row-1'] });
-    expect(gate.unsubscribe).toHaveBeenCalledTimes(1);
+    expect(bridge.pendingRestore).toBeNull();
     channel.dispose();
   });
 
-  it('releases a gate still waiting when it is disposed', () => {
+  it('releases the viewport subscription when the bridge unmounts', () => {
     const { channel, posted } = connect();
     const gate = createViewportGate(false);
-    const restore = createRestore(servicesFor(gate), channel);
-    restore.handleRestore(restoreCommand([request('row-1', 'uid-1')]));
+    const { ohif, bridge, unsubscribe } = bridgeFor(servicesFor(gate), channel);
+    handleCommand(ohif, bridge, restoreCommand([request('row-1', 'uid-1')]));
 
-    restore.dispose();
+    unsubscribe();
 
     expect(gate.unsubscribe).toHaveBeenCalledTimes(1);
     expect(posted()).toEqual([]);

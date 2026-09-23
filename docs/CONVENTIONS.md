@@ -7,6 +7,39 @@ review. Every agent brief points here; a slice does not reach gate 2 with lint o
 Precedence: this file → `eslint.config.js` / `.prettierrc.json` → personal habit. If a rule here
 and the linter disagree, fix the linter config in the same PR and say so.
 
+## 0. How this code is written
+
+Plain React, no framework of our own: data instead of wrappers, effects instead of lifecycle
+managers, schemas instead of guards, and every file readable in one pass. The sections below are
+the detail; these seven sentences are the shape, and a change that breaks one of them is wrong
+even when the linter is green.
+
+1. **A hook returns what its name promises, or it does not exist.** `useScoringForm(study)` →
+   `[rows, dispatch]`; `useChannel()` → `{ ready, queued, announcements }`. A hook that returns
+   nothing is a hidden effect (the former `usePersistRows(rows)`, `useMessages(channel, handle)`):
+   write the effect where it happens instead.
+2. **An effect is written where it happens, and it has its pair.** Whatever the effect
+   subscribes, its cleanup unsubscribes, in the same effect — `channel.onMessage(dispatch)`,
+   `subscribeMeasurements(...)`, `announceOnViewport(...)`. No disposer lists, no "latest value"
+   refs, no `pagehide` standing in for unmount.
+3. **State is the data, not a wrapper around it.** The reducer runs over `Row[]`, not
+   `{ rows }`; the channel's state is three fields. No `FormState`, no `FormContext`, no "slot"
+   objects made to carry one value.
+4. **An outside event is an action.** The viewer's events go into the reducer as they are
+   (`FormAction = UserAction | ViewerEvent`), so there is no translation layer between the wire and
+   the state. The one event that needs a reaction, `VIEWER_READY`, is a count in the channel's
+   state that an effect reacts to — not a branch in a handler.
+5. **A function takes exactly what it needs and does one thing.** `activateRow(dispatch, row)`,
+   `offerRowsToViewer(channel, study, rows)`, `getStorage(uuid)`. At most three inputs, no
+   dependency bags, no factory that returns a function.
+6. **A boundary is a schema; a guarantee is a tool's.** Everything foreign — the wire, OHIF's
+   measurement object, `sessionStorage` — passes through one zod schema once. What the linter or
+   React already guarantees (an exhaustive `switch`, a cleanup) is not written again in code.
+7. **A component renders; a hook owns.** `ScoringPanel` calls two hooks and renders;
+   `MeasurementRow` calls `activateRow(dispatch, row)` from its own button; the page is layout
+   only. On the viewer side the same: `ScoringBridge` renders its children and
+   `useScoringBridge` owns the channel, the commands and the subscriptions.
+
 ## 1. Language and tooling
 
 - TypeScript `strict` everywhere. No `any`; when an external type is genuinely unknown, use
@@ -54,12 +87,17 @@ and the linter disagree, fix the linter config in the same PR and say so.
 
 ## 3. Enums, literals and constants
 
-- Application state uses **string enums**: row status, reducer action types, bridge states, UI
-  modes. Members are PascalCase, values are the lowercase or SCREAMING_CASE string they represent.
+- Application state uses **string enums** where a value is compared or stored: row status.
   ```ts
-  export enum RowStatus { Pending = 'pending', Drawing = 'drawing', Done = 'done' }
-  export enum FormActionType { AddRow = 'ADD_ROW', ArmRow = 'ARM_ROW', … }
+  export enum RowStatus {
+    Pending = 'pending',
+    Drawing = 'drawing',
+    Done = 'done',
+  }
   ```
+  Reducer actions are string-literal `type`s, like the wire messages, because the viewer's events
+  are dispatched to the reducer as they are (`FormAction = UserAction | ViewerEvent`); an enum
+  would force a translation layer between the two.
 - Numeric enums are forbidden (lint rule). Do not use `const enum`.
 - The **wire contract** (`packages/contract`) keeps string-literal union types (`type: 'ACTIVATE_TOOL'`)
   and `as const` tuples: it is the serialised format, copied into the OHIF fork, and stays free of
@@ -74,11 +112,11 @@ and the linter disagree, fix the linter config in the same PR and say so.
 | Thing                                | Style                                                                        | Example                                                                        |
 | ------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | Types, interfaces, enums, components | PascalCase                                                                   | `MeasurementRow`, `BridgeState`                                                |
-| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createChannel`, `useScoringForm`                                              |
+| Variables, functions, hooks          | camelCase; hooks start with `use`                                            | `createChannel`, `useChannel`                                                  |
 | Files: components                    | PascalCase `.tsx`                                                            | `TotalsFooter.tsx`                                                             |
 | Files: types and styles              | `.props.ts` next to a React component, and nowhere else (A-27)               | `TotalsFooter.props.ts`                                                        |
 | Files: everything else               | kebab-case or camelCase, one concept per file                                | `host-channel.ts` / `hostChannel.ts` (keep the existing style within a folder) |
-| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)` | `form/__tests__/rows.test.ts`                                                  |
+| Tests                                | `__tests__/` folder inside the folder of the code under test, `*.test.ts(x)` | `state/__tests__/reducer.test.ts`                                              |
 | Booleans                             | `is`/`has`/`can`/`should` prefix                                             | `isReady`, `hasMetrics`                                                        |
 | Event handlers                       | `on<Event>` for props, `handle<Event>` for implementations                   | `onRemove` / `handleRemove`                                                    |
 | Interfaces for props                 | `<Component>Props`                                                           | `ScoringPanelProps`                                                            |
@@ -98,9 +136,9 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - Split by role, not by size: the bridge is messaging, handshake and the measurement stream; a
   hook is user actions or event synchronisation, not both. A factory that does more than three
   things is two factories and a composition root that wires them.
-- A composition root (`extension.ts`, `App`, a top-level hook) only creates and connects; it holds
+- A composition root (`ScoringBridge.tsx`, `main.tsx`, a top-level hook) only creates and connects; it holds
   no branching logic of its own.
-- Repeated lookups become named selectors (`findRow`, `findRowByUid`) instead of inline `find`
+- Repeated lookups become named selectors (`findRow`, `findRowByUid` in `state/selectors.ts`) instead of inline `find`
   calls scattered through a module.
 - Never use a mutable placeholder to break a circular dependency
   (`let forget = () => undefined` reassigned later). Pass the dependency explicitly, or move the
@@ -132,16 +170,16 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   schema or a constant, search the packages for one that already says it: `MessageHandlers` and
   `ChannelState` belong to the channel, every message and vocabulary schema (`ToolName`, `Metrics`,
   `MeasurementGeometry`) to the contract, the initial channel state to the channel. The application
-  extends or picks from those (`extends RowActions`, `Metrics.nullable()` in the stored-row schema)
+  extends or picks from those (`Row.omit(...)` and `Metrics.nullable()` in the stored-row schema)
   instead of listing the members again.
 - **The contract is zod schemas (A-26).** A message is one `z.object`; the two directions are
   `z.discriminatedUnion('type', …)`; a type is `z.infer` of the schema of the same name; a guard is
   `safeParse(value).success`. No hand-written `isRecord` / `isNonEmptyString` guards anywhere: a
   consumer that must check a shape builds a schema from the contract's.
 - **A folder names a side or a role (A-27).** Channel: two files, no folder; extension:
-  `commands/`, `events/`, `ohif/`; application: `channel/`, `form/`, `components/`, `pages/`. No
-  `hooks/` or `utils/`: a hook lives beside what it connects, a helper beside its only caller. No
-  file under twenty lines (a constant, a type or a one-function module joins its owner), except a
+  `commands/`, `events/`, `ohif/`; application: the conventional React layout — `components/`,
+  `pages/`, `hooks/`, `state/` (reducer, selectors, actions), `services/` (channel, storage),
+  `utils/` (format, totals). No file under twenty lines (a constant, a type or a one-function module joins its owner), except a
   package `index.ts`, `main.tsx` and a component's `.props.ts`. Tests move with the code they test.
 - **No code for a caller that does not exist.** A default every caller overrides, an export only a
   test imports, a counter nothing displays and a branch a guard upstream makes unreachable are
@@ -160,14 +198,14 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   is fine.
 - **A component always has a sibling `{Name}.props.ts`** holding its props, its other types and its
   `styles`; the `.tsx` keeps only rendering. **No other module has one** (A-27): a module's types
-  live in the module, beside the code that uses them (`Row`, `FormState`, `FormAction` and
-  `FormContext` are in `form/rows.ts`). An `enum` is a value rather than a type and stays with its
+  live in the module, beside the code that uses them (`Row` and `FormAction` are
+  in `state/reducer.ts`). An `enum` is a value rather than a type and stays with its
   code.
 
   ```ts
   // MeasurementRow.props.ts
   import type { CSSProperties } from 'react';
-  import type { Row } from '../form/rows';
+  import type { Row } from '@app/state/reducer';
 
   export interface MeasurementRowProps {
     row: Row;
@@ -194,7 +232,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   `.props.ts` file (lint rule). A style that depends on state is a small function in the same file,
   e.g. `rowStyle(focusable)` returning `styles.row` merged with `styles.rowClickable`. A component without props or styles does not need the file.
 - Types shared by several modules live with the module that owns them (e.g. `Row` in
-  `form/rows.ts`) and are imported from there rather than copied.
+  `state/reducer.ts`) and are imported from there rather than copied.
 - No function is created inside the `return` statement. Every function a component renders with is
   declared in the component body with a name, above the `return`, and the returned JSX mentions it
   by that name. The one exception is the callback of a list render, `rows.map(...)`, because
@@ -236,7 +274,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 ## 9. Tests
 
 - Test files live in a `__tests__/` folder inside the folder of the code they test:
-  `host-app/src/form/__tests__/rows.test.ts` tests `host-app/src/form/rows.ts` and imports it as
+  `host-app/src/state/__tests__/reducer.test.ts` tests `host-app/src/state/reducer.ts` and imports it as
   `../rows`. One test file per module under test; shared test helpers go to
   `__tests__/helpers.ts` in the same folder.
 

@@ -34,7 +34,8 @@
     "zod": "4.6.5"
   },
   "peerDependencies": {
-    "@cornerstonejs/tools": "^4.15.29"
+    "@cornerstonejs/tools": "^4.15.29",
+    "react": ">=18"
   },
   "devDependencies": {
     "@cornerstonejs/tools": "4.15.29"

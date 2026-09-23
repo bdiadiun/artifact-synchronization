@@ -12,10 +12,14 @@ long; the file list did not say what belonged to what, and the author found it i
 
 - **A folder is a side or a role**: the channel has `host/`, `viewer/`, `shared/`; the viewer
   extension has `commands/` (host → OHIF), `events/` (OHIF → host), `ohif/` (the OHIF surface, the
-  throttle, the overlay); the host application has `channel/` (React ↔ channel), `form/` (rows,
-  actions, events, storage, totals, formatting, the form hook), `components/`, `pages/`. `hooks/`
-  and `utils/` are gone: a hook lives beside what it connects, a helper beside its only caller.
-- **No file under twenty lines**: a constant, a type or a one-function module joins its owner.
+  throttle, the overlay); the host application follows the conventional React layout, so a reader from any React
+  project finds things where they expect them: `components/`, `pages/`, `hooks/` (`useChannel`,
+  `useScoringForm`), `state/` (`reducer.ts`, `selectors.ts`, `actions.ts`), `services/`
+  (`channel.ts`, `storage.ts` — the two things that talk to the outside), `utils/` (`format.ts`,
+  `totals.ts`). (Amended twice on 2026-09-22: a first version invented `form/` and dissolved
+  `hooks/` and `utils/`; the author prefers the standard names and places.)
+- **No file under twenty lines**, except where the standard layout names it (`selectors.ts`): a
+  constant, a type or a one-function module joins its owner.
 - **`index.ts` is a package's public entry only**; no barrel inside a folder.
 - **`.props.ts` exists only beside a React component.**
 - Tests keep living in a `__tests__/` folder beside the code they test and move with it.

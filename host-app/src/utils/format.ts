@@ -5,7 +5,7 @@ import {
   type Unit,
 } from '@bdiadiun/scoring-contract';
 import { t } from '@app/i18n';
-import { RowStatus, type Row } from './rows';
+import { RowStatus, type Row } from '@app/state/reducer';
 
 const UNIT_LABELS: Record<Unit, string> = {
   mm2: 'mm²',

@@ -22,19 +22,19 @@ afterEach(() => {
   window.history.pushState({}, '', 'http://localhost:3000/');
 });
 
-describe('studyInstanceUid', () => {
+describe('getStudyInstance', () => {
   it('resolves to the fallback when the page URL has no study parameter', async () => {
     setStudyParam(null);
-    const { studyInstanceUid, FALLBACK_STUDY_INSTANCE_UID } = await loadConfig();
+    const { getStudyInstance, FALLBACK_STUDY_INSTANCE_UID } = await loadConfig();
 
-    expect(studyInstanceUid()).toBe(FALLBACK_STUDY_INSTANCE_UID);
+    expect(getStudyInstance()).toBe(FALLBACK_STUDY_INSTANCE_UID);
   });
 
   it('resolves to the study parameter when it is a valid study instance UID', async () => {
     setStudyParam('1.2.840.10008.1.1');
-    const { studyInstanceUid } = await loadConfig();
+    const { getStudyInstance } = await loadConfig();
 
-    expect(studyInstanceUid()).toBe('1.2.840.10008.1.1');
+    expect(getStudyInstance()).toBe('1.2.840.10008.1.1');
   });
 
   it.each([
@@ -47,19 +47,19 @@ describe('studyInstanceUid', () => {
     ['a value longer than sixty-four characters', '1'.repeat(65)],
   ])('falls back to the configured study when the parameter is %s', async (_label, value) => {
     setStudyParam(value);
-    const { studyInstanceUid, FALLBACK_STUDY_INSTANCE_UID } = await loadConfig();
+    const { getStudyInstance, FALLBACK_STUDY_INSTANCE_UID } = await loadConfig();
 
-    expect(studyInstanceUid()).toBe(FALLBACK_STUDY_INSTANCE_UID);
+    expect(getStudyInstance()).toBe(FALLBACK_STUDY_INSTANCE_UID);
   });
 
   it('logs exactly one warning for a rejected parameter no matter how many times it is read', async () => {
     setStudyParam('abc');
-    const { studyInstanceUid } = await loadConfig();
+    const { getStudyInstance } = await loadConfig();
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
 
-    const first = studyInstanceUid();
-    const second = studyInstanceUid();
-    const third = studyInstanceUid();
+    const first = getStudyInstance();
+    const second = getStudyInstance();
+    const third = getStudyInstance();
 
     expect(first).toBe(second);
     expect(second).toBe(third);

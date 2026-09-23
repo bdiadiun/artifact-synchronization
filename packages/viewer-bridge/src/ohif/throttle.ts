@@ -1,6 +1,6 @@
 import type { ViewerEvent } from '@bdiadiun/scoring-contract';
 
-export interface ThrottledEmitter {
+interface ThrottledEmitter {
   push: (key: string, event: ViewerEvent) => void;
   discard: (key: string) => void;
   dispose: () => void;

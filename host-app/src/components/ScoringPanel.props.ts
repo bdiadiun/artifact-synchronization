@@ -1,10 +1,4 @@
 import type { CSSProperties } from 'react';
-import type { Row } from '@app/form/rows';
-import type { RowActions } from '@app/form/rowActions';
-
-export interface ScoringPanelProps extends RowActions {
-  rows: Row[];
-}
 
 export const styles = {
   panel: {

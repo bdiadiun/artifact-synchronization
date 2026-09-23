@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ViewerChannel } from '../../ohif/surface.js';
 
-import { subscribeMeasurements, toGeometry, toMetrics } from '../measurements.js';
+import { subscribeMeasurements } from '../measurements.js';
+import { toGeometry, toMetrics } from '../metrics.js';
+import { createServices } from '../../__tests__/helpers.js';
 import type {
   OhifMeasurement,
   OhifMeasurementEvent,
@@ -183,12 +185,11 @@ const listen = (): Listening => {
     jumpToMeasurement: vi.fn(),
   };
 
-  stops.push(
-    subscribeMeasurements(measurementService, channel, {
-      takeArmed: () => null,
-      restoreDefaultTool: vi.fn(),
-    }),
-  );
+  const ohif = {
+    services: createServices({ measurementService }),
+    commandsManager: { runCommand: vi.fn() },
+  };
+  stops.push(subscribeMeasurements(ohif, { channel, armedRowId: null, pendingRestore: null }));
 
   return {
     emit: (eventName, measurement) => {

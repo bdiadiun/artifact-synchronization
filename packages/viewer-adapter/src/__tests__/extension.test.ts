@@ -5,7 +5,7 @@ import type {
   OhifExtensionParams,
 } from '@bdiadiun/ohif-extension-scoring-bridge';
 
-import { createScoringAdapterExtension, SCORING_ADAPTER_EXTENSION_ID } from '../extension.js';
+import { scoringAdapterExtension, SCORING_ADAPTER_EXTENSION_ID } from '../extension.js';
 
 const baseParams = (extensionManager?: OhifExtensionManager): OhifExtensionParams => ({
   servicesManager: { services: {} },
@@ -17,9 +17,9 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('createScoringAdapterExtension', () => {
+describe('scoringAdapterExtension', () => {
   it('carries the package name as its own id', () => {
-    const extension = createScoringAdapterExtension();
+    const extension = scoringAdapterExtension;
 
     expect(extension.id).toBe('@bdiadiun/ohif-extension-scoring-adapter');
     expect(extension.id).toBe(SCORING_ADAPTER_EXTENSION_ID);
@@ -27,9 +27,9 @@ describe('createScoringAdapterExtension', () => {
 
   it('reports a missing extension manager instead of registering anything', async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    const extension = createScoringAdapterExtension();
+    const extension = scoringAdapterExtension;
 
-    await extension.preRegistration(baseParams(undefined));
+    await extension.preRegistration?.(baseParams(undefined));
 
     expect(errorSpy).toHaveBeenCalledWith(
       expect.stringContaining('no extension manager was passed'),
@@ -38,9 +38,9 @@ describe('createScoringAdapterExtension', () => {
 
   it('registers exactly one child, the bridge, through the extension manager it is handed', async () => {
     const manager: OhifExtensionManager = { registerExtension: vi.fn() };
-    const extension = createScoringAdapterExtension();
+    const extension = scoringAdapterExtension;
 
-    await extension.preRegistration(baseParams(manager));
+    await extension.preRegistration?.(baseParams(manager));
 
     expect(manager.registerExtension).toHaveBeenCalledTimes(1);
     expect(manager.registerExtension).toHaveBeenCalledWith(
@@ -53,9 +53,9 @@ describe('createScoringAdapterExtension', () => {
     const manager: OhifExtensionManager = {
       registerExtension: vi.fn().mockRejectedValue(new Error('the viewer refused the extension')),
     };
-    const extension = createScoringAdapterExtension();
+    const extension = scoringAdapterExtension;
 
-    await expect(extension.preRegistration(baseParams(manager))).resolves.toBeUndefined();
+    await expect(extension.preRegistration?.(baseParams(manager))).resolves.toBeUndefined();
 
     expect(errorSpy).toHaveBeenCalledWith(
       expect.stringContaining(SCORING_BRIDGE_EXTENSION_ID),

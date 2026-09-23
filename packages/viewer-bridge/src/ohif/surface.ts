@@ -1,3 +1,4 @@
+import type { ComponentType, Context, ReactNode } from 'react';
 import { z } from 'zod';
 import type { HostCommand } from '@bdiadiun/scoring-contract';
 import type { Channel } from '@bdiadiun/scoring-channel';
@@ -24,7 +25,7 @@ export const OhifMeasurement = z.object({
 });
 export type OhifMeasurement = z.infer<typeof OhifMeasurement>;
 
-export interface OhifMeasurementServiceEvents {
+interface OhifMeasurementServiceEvents {
   MEASUREMENT_ADDED: string;
   MEASUREMENT_UPDATED: string;
   MEASUREMENT_REMOVED: string;
@@ -45,12 +46,12 @@ export interface OhifMeasurementService {
   jumpToMeasurement: (viewportId: string, measurementUid: string) => void;
 }
 
-export interface OhifToolGroup {
+interface OhifToolGroup {
   id: string;
   hasTool: (toolName: string) => boolean;
 }
 
-export interface OhifToolGroupServiceEvents {
+interface OhifToolGroupServiceEvents {
   VIEWPORT_ADDED: string;
 }
 
@@ -60,25 +61,25 @@ export interface OhifToolGroupService {
   getToolGroup: () => OhifToolGroup | undefined;
 }
 
-export interface OhifCornerstoneViewportServiceEvents {
+interface OhifCornerstoneViewportServiceEvents {
   VIEWPORT_DATA_CHANGED: string;
 }
 
-export interface OhifCornerstoneViewportService {
+interface OhifCornerstoneViewportService {
   EVENTS: OhifCornerstoneViewportServiceEvents;
   subscribe: (eventName: string, handler: () => void) => OhifSubscription;
   getCornerstoneViewport: (viewportId: string) => object | null | undefined;
 }
 
-export interface OhifViewportGridService {
+interface OhifViewportGridService {
   getActiveViewportId: () => string;
 }
 
-export interface OhifDisplaySet {
+interface OhifDisplaySet {
   StudyInstanceUID: string;
 }
 
-export interface OhifDisplaySetService {
+interface OhifDisplaySetService {
   getActiveDisplaySets: () => OhifDisplaySet[];
 }
 
@@ -90,7 +91,7 @@ export interface OhifServices {
   displaySetService: OhifDisplaySetService;
 }
 
-export interface OhifServicesManager {
+interface OhifServicesManager {
   services: Partial<OhifServices>;
 }
 
@@ -104,14 +105,17 @@ export interface ScoringBridgeAppConfig {
   };
 }
 
-export interface OhifExtension {
-  id: string;
-  preRegistration: (params: OhifExtensionParams) => void;
-  getCustomizationModule?: () => CustomizationModuleEntry[];
+export interface OhifContextModuleEntry {
+  name: string;
+  context: Context<null>;
+  provider: ComponentType<{ children?: ReactNode }>;
 }
 
-export interface OhifAsyncExtension extends Omit<OhifExtension, 'preRegistration'> {
-  preRegistration: (params: OhifExtensionParams) => Promise<void>;
+export interface OhifExtension {
+  id: string;
+  preRegistration?: (params: OhifExtensionParams) => void | Promise<void>;
+  getContextModule?: (params: OhifExtensionParams) => OhifContextModuleEntry[];
+  getCustomizationModule?: () => CustomizationModuleEntry[];
 }
 
 export interface OhifExtensionManager {
@@ -136,32 +140,3 @@ export interface CustomizationModuleEntry {
   name: string;
   value: Record<string, { $push: OverlayItemCustomization[] }>;
 }
-
-// OHIF's webpack replaces this exact expression at build time (webpack.base.js:32,46).
-declare const process: { env: { VERSION_NUMBER?: string } };
-
-export const readViewerVersion = (): string | undefined => process.env.VERSION_NUMBER;
-
-const VERSION_NUMBER = readViewerVersion() ?? '';
-
-const VERSION_OVERLAY_CUSTOMIZATION_ID = 'viewportOverlay.bottomRight';
-
-const versionOverlayText = (): string | null => (VERSION_NUMBER ? `OHIF ${VERSION_NUMBER}` : null);
-
-const versionOverlayItem: OverlayItemCustomization = {
-  id: 'scoringBridgeVersion',
-  inheritsFrom: 'ohif.overlayItem',
-  title: 'OHIF viewer version',
-  contentF: versionOverlayText,
-};
-
-export const getCustomizationModule = (): CustomizationModuleEntry[] => [
-  {
-    name: 'default',
-    value: {
-      [VERSION_OVERLAY_CUSTOMIZATION_ID]: {
-        $push: [versionOverlayItem],
-      },
-    },
-  },
-];
