@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                                                                                                                                                                |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | 62 `refactor: name the packages after their roles` (branch `refactor/name-the-packages-after-their-roles`, node F-67, decision A-38): `packages/viewer-bridge` → `packages/scoring-viewer` (`@bdiadiun/ohif-extension-scoring-viewer` 0.1.0), `packages/viewer-adapter` → `packages/ohif-extension-loader` (`@bdiadiun/ohif-extension-loader` 0.1.0) |
-| Gate           | 2 — code, docs and graph renamed; verify green; the browser scenario on the linked tree runs with the fork's `pluginConfig.json` and dependency pointed at the loader (the fork PR that follows the publish). After the merge: publish under the new names, fork PR (entry + dependency + yarn.lock), then the pin                                   |
-| Last merged PR | `chore: pin the fork at the adapter release` (slice 61 closed: contract 0.0.14, channel 0.0.8, bridge 0.0.10, adapter 0.0.9, fork at b31fe175; before it #80 `chore: build the package graph once, from the root` and #79)                                                                                                                           |
-| Next slice     | after the fork pin: 63 `test: only the tests the assignment asks for`; the study-change decision (Follow-ups); the video (F-13)                                                                                                                                                                                                                      |
+| Field          | Value                                                                                                                                                                                                                             |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | none open — slice 62 `refactor: name the packages after their roles` (#82, decision A-38) is merged, published under the new names and pinned in the fork                                                                         |
+| Gate           | — (next slice starts at gate 1)                                                                                                                                                                                                   |
+| Last merged PR | `chore: pin the fork at the loader release` (slice 62 closed: contract 0.0.14, channel 0.0.8, scoring-viewer 0.1.0, ohif-extension-loader 0.1.0, fork at f9a46226; before it #82)                                                 |
+| Next slice     | 63 `test: only the tests the assignment asks for` (sum, serialisation, reducer; the coverage that left with the old harnesses — channel, facade, hooks — decided there); the study-change decision (Follow-ups); the video (F-13) |
 
 ## Open decisions (see CANON.md → Decisions)
 
@@ -27,7 +27,7 @@ not a log. Update it in every PR (same commit as the work it describes).
 - GitHub default branch was the first pushed branch (`docs/canon-and-feature-graph`) until 2026-09-16; now `main`. A plain `git clone` therefore works.
 - OHIF facts (measurement shape, events, tool activation) are in `docs/notes/ohif-api.md`; do not re-research.
 - corepack 0.30 is available; yarn 1 for the fork comes from corepack, no global install.
-- Browser runs use `npm run viewer:link` (symlinks the four packages into the fork; `viewer:unlink` restores). It links nothing else: the fork's webpack resolves `react` from its own `node_modules` for a symlinked package (A-32, amended), and a `react` symlink under `packages/*/node_modules` would make the host application load two Reacts. Publish and pin only after the scenario passed on the linked tree.
+- Browser runs use `npm run viewer:link` (symlinks the four packages into the fork under their current names; `viewer:unlink` restores). It links nothing else: the fork's webpack resolves `react` from its own `node_modules` for a symlinked package (A-32, amended), and a `react` symlink under `packages/*/node_modules` would make the host application load two Reacts. Publish and pin only after the scenario passed on the linked tree.
 - Viewer dev server: `OHIF_OPEN=false yarn --cwd platform/app dev` inside `viewer/` (root `yarn dev` picks up `bun.lock` and fails; without `OHIF_OPEN=false` webpack opens a browser tab on the user's machine on every start).
 - Fork branches: `scoring` (base, from v3.12.17), feature branches PR into it; fork PR #1 = bridge extension.
 - Study `1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1` has pixel spacing → areas arrive in mm² (verified with a headless ellipse).
