@@ -98,9 +98,10 @@ live here and in [`docs/decisions/`](../decisions/). File names refer to `host-a
 
 ## `utils/`
 
-- `format.ts`: a row shows the metric matching its own tool (S-5.4); if that key is absent, the
-  first metric in the payload is shown with its key (P-8), so a metric type added later is visible
-  instead of silently dropped.
+- `format.ts`: a row shows the metrics its tool lists in `METRIC_KEYS_BY_TOOL`, in that order,
+  joined by `·` (A-40); the first key of the list is the row's own metric — it names the row
+  kind (S-5.4) and it is the key the totals are asked for — so a metric added to a list later is
+  shown on the row without entering a total by accident (P-8).
 - `totals.ts`: per-unit sums for the footer (A-11); mm² and px² are never added together, and mm²
   comes first because it is the clinically meaningful unit when the study carries pixel spacing.
 

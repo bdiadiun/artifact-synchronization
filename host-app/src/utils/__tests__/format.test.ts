@@ -59,12 +59,6 @@ describe('formatRowMetric', () => {
     expect(formatRowMetric(row({ metrics: null }))).toBeNull();
   });
 
-  it('falls back to the first metric, keyed, when the tool metric is missing', () => {
-    const fallback = row({ toolName: 'Length', metrics: { area: { value: 40, unit: 'mm2' } } });
-
-    expect(formatRowMetric(fallback)).toBe('area: 40.0 mm²');
-  });
-
   it('returns null for an empty metrics payload', () => {
     expect(formatRowMetric(row({ metrics: {} }))).toBeNull();
   });

@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/scoring-contract",
-  "version": "0.0.14",
+  "version": "0.1.0",
   "description": "postMessage contract shared by the scoring form and the OHIF-side scoring application",
   "license": "MIT",
   "repository": {

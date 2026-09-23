@@ -20,7 +20,7 @@ a `hostOrigin` option threaded through two packages that the fork never passes, 
   form. No hand-written `typeof` / `Array.isArray` chains beside a schema.
 - **A shape is declared once and derived from**: `StoredRow` is `Row.omit(...)`; `MetricKey` is a
   `z.enum` and `Metrics` a `partialRecord` over it, so the form reads a metric without a cast;
-  `toMetrics` reads the tool → metric key map instead of repeating it in a `switch`.
+  `toMetrics` reads the tool → metric keys list (A-40) instead of repeating it in a `switch`.
 - **An API exists only for a caller that exists**: `on`, the viewer end's state, the disposer set
   and the `hostOrigin` option are removed. The OHIF services the bridge uses are typed as required
   (see `docs/notes/ohif-service-availability.md`); one check at start-up replaces the eight

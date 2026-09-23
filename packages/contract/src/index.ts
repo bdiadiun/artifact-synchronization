@@ -1,4 +1,4 @@
-export { MeasurementGeometry, METRIC_KEY_BY_TOOL, Metric, MetricKey, Metrics, ToolName, Unit } from './vocabulary.js';
+export { MeasurementGeometry, METRIC_KEYS_BY_TOOL, Metric, MetricKey, Metrics, ToolName, Unit } from './vocabulary.js';
 
 export {
   ActivateToolCommand,

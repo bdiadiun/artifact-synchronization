@@ -86,11 +86,14 @@ events), `ohif/facade.ts` (`createOhif`: OHIF's events in the contract's shape, 
   `UPDATE_INTERVAL_MS`), so a dragged handle reaches the form live but not on every frame
   (S-5.1); a removal drops the update still pending for that uid, and the facade's unsubscribe
   clears every timer.
-- **What OHIF's measurement object means for the host** (`ohif/metrics.ts`): the metric the
-  row's tool produces, read from `cachedStats` with its unit normalised to the contract's
-  vocabulary, and the geometry the form persists to rebuild the annotation later (A-14).
-  `measure` is `null` when the event carries no measurement object or a measurement whose tool
-  the form has no metric for.
+- **What OHIF's measurement object means for the host** (`ohif/metrics.ts`): the metrics the
+  tool yields (`METRIC_KEYS_BY_TOOL`, A-40), each read from the `cachedStats` entry of the
+  referenced image — the value under the metric's key, the unit under the field `UNIT_FIELD`
+  names for it, spelled the way `UNITS` maps to the contract's vocabulary — and the geometry the
+  form persists to rebuild the annotation later (A-14). `measure` is `null` when the event
+  carries no measurement object, a tool the contract does not name, or stats with none of the
+  tool's metrics (cornerstone fills `cachedStats` in its render pass, so the first event can be
+  empty; the update stream delivers the value).
 - **A restore waits for viewport data** (`commands/restore.ts`, `holdsViewportData`): annotations
   can only be added once the active viewport holds image data; a `RESTORE_MEASUREMENTS` that
   arrives earlier waits in `session.pendingRestore` for the next `VIEWPORT_DATA_CHANGED`.
