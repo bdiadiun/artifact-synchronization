@@ -2,9 +2,10 @@
 // command that goes with it), and what a viewer that has just announced itself is given back.
 
 import type { Dispatch } from 'react';
-import type { RestoreMeasurementRequest, ToolName } from '@bdiadiun/scoring-contract';
+import type { ToolName } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL } from '@app/config';
-import { RowStatus, type FormAction, type Row } from './reducer';
+import { RowModel, RowStatus, type Row } from '@app/models/row';
+import type { FormAction } from './reducer';
 
 export const addRow = (dispatch: Dispatch<FormAction>, toolName: ToolName = DEFAULT_TOOL): void => {
   dispatch({ type: 'ADD_ROW', rowId: crypto.randomUUID(), toolName });
@@ -43,26 +44,8 @@ export const focusRow = (dispatch: Dispatch<FormAction>, row: Row): void => {
 // Every VIEWER_READY is a viewer that has none of our annotations yet, so the rows it can rebuild
 // are offered again (A-14, S-5.6) and the row that was drawing is armed again: at most one row is
 // `drawing` at a time (A-4), so the armed row is read off the rows rather than mirrored anywhere.
-// Only a row with both a stored uid and its geometry can be re-added in the viewer.
-const restorableMeasurements = (rows: readonly Row[]): RestoreMeasurementRequest[] => {
-  const measurements: RestoreMeasurementRequest[] = [];
-
-  for (const row of rows) {
-    if (row.measurementUid !== null && row.geometry !== null) {
-      measurements.push({
-        rowId: row.rowId,
-        measurementUid: row.measurementUid,
-        toolName: row.toolName,
-        geometry: row.geometry,
-      });
-    }
-  }
-
-  return measurements;
-};
-
 export const restoreViewer = (dispatch: Dispatch<FormAction>, studyInstanceUid: string, rows: readonly Row[]): void => {
-  const measurements = restorableMeasurements(rows);
+  const measurements = rows.map(RowModel.toRestoreRequest).filter((request) => request !== null);
   if (measurements.length > 0) {
     dispatch({
       type: 'RESTORE_MEASUREMENTS',

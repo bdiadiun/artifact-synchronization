@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { formatMetric, formatRowKind, formatRowMetric, formatRowStatus } from '@app/utils/format';
-import { RowStatus, type Row } from '@app/state/reducer';
+import { RowStatus, type Row } from '@app/models/row';
 import { t } from '@app/i18n';
 
 describe('formatMetric', () => {

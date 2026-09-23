@@ -1,39 +1,16 @@
 // Pure, side-effect-free reducer over the rows; `hooks/useScoringForm.ts` wires it to the channel.
 
-import { z } from 'zod';
-import { findRow, findRowByUid } from './selectors';
-import {
-  MeasurementGeometry,
-  Metrics,
-  RestoreFailureReason,
+import type {
+  HostCommand,
+  MeasurementAddedEvent,
+  MeasurementRemovedEvent,
+  MeasurementsRestoredEvent,
+  MeasurementUpdatedEvent,
   ToolName,
-  type HostCommand,
-  type MeasurementAddedEvent,
-  type MeasurementRemovedEvent,
-  type MeasurementsRestoredEvent,
-  type MeasurementUpdatedEvent,
-  type ViewerEvent,
+  ViewerEvent,
 } from '@bdiadiun/scoring-contract';
-
-export enum RowStatus {
-  Pending = 'pending',
-  Drawing = 'drawing',
-  Done = 'done',
-}
-
-// A-14: `geometry` is kept so a restored row can be re-sent to the viewer, and
-// `restoreFailureReason` marks a row the viewer refused, which `MeasurementRow` shows next to a
-// value that has no annotation behind it.
-export const Row = z.object({
-  rowId: z.string().min(1),
-  status: z.enum(RowStatus),
-  toolName: ToolName,
-  metrics: Metrics.nullable(),
-  measurementUid: z.string().min(1).nullable(),
-  geometry: MeasurementGeometry.nullable(),
-  restoreFailureReason: RestoreFailureReason.nullable(),
-});
-export type Row = z.infer<typeof Row>;
+import { RowModel, RowStatus, type Row } from '@app/models/row';
+import { findRow, findRowByUid } from './selectors';
 
 // What changes the rows: the two local actions, every command the form sends and every event the
 // viewer sends — commands and events go through as they are, so this reducer is the one place that
@@ -51,15 +28,7 @@ const replaceRow = (rows: Row[], rowId: string, patch: Partial<Row>): Row[] =>
 
 const addRow = (rows: Row[], action: ActionOf<'ADD_ROW'>): Row[] => [
   ...rows,
-  {
-    rowId: action.rowId,
-    status: RowStatus.Pending,
-    toolName: action.toolName,
-    metrics: null,
-    measurementUid: null,
-    geometry: null,
-    restoreFailureReason: null,
-  },
+  RowModel.create(action.rowId, action.toolName),
 ];
 
 // Only one row is armed at a time (A-4): the target starts drawing, any other drawing row goes

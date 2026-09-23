@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@bdiadiun/scoring-contract';
-import { RowStatus, reducer, type Row } from '@app/state/reducer';
+import { RowStatus, type Row } from '@app/models/row';
+import { reducer } from '@app/state/reducer';
 import { findRow, findRowByUid } from '@app/state/selectors';
 
 const metrics: Metrics = { area: { value: 124.5, unit: 'mm2' } };

@@ -1,4 +1,4 @@
-import type { Row } from './reducer';
+import type { Row } from '@app/models/row';
 
 export const findRow = (rows: readonly Row[], rowId: string): Row | undefined =>
   rows.find((row) => row.rowId === rowId);

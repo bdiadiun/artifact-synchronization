@@ -1,5 +1,6 @@
 import type { CSSProperties, Dispatch } from 'react';
-import type { FormAction, Row } from '@app/state/reducer';
+import type { FormAction } from '@app/state/reducer';
+import type { Row } from '@app/models/row';
 import { t } from '@app/i18n';
 
 export interface MeasurementRowProps {

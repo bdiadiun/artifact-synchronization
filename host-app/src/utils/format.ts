@@ -1,6 +1,6 @@
 import { METRIC_KEY_BY_TOOL, type Metric, type MetricKey, type Unit } from '@bdiadiun/scoring-contract';
 import { t } from '@app/i18n';
-import { RowStatus, type Row } from '@app/state/reducer';
+import { RowStatus, type Row } from '@app/models/row';
 
 const UNIT_LABELS: Record<Unit, string> = {
   mm2: 'mm²',

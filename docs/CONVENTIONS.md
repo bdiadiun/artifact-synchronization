@@ -185,8 +185,8 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   consumer that must check a shape builds a schema from the contract's.
 - **A folder names a side or a role (A-27).** Channel: two files, no folder; extension:
   `commands/`, `events/`, `ohif/`; application: the conventional React layout — `components/`,
-  `pages/`, `hooks/`, `state/` (reducer, selectors, actions), `services/` (channel, storage),
-  `utils/` (format, totals). No file under twenty lines (a constant, a type or a one-function module joins its owner), except a
+  `pages/`, `hooks/`, `models/` (the row, A-36), `state/` (reducer, selectors, actions), `services/` (storage,
+  stored rows), `utils/` (format, totals). No file under twenty lines (a constant, a type or a one-function module joins its owner), except a
   package `index.ts`, `main.tsx`, a component's `.props.ts` and a file the standard layout names
   (`state/selectors.ts`, a page; A-33, A-34). Tests move with the code they test.
 - **No code for a caller that does not exist.** A default every caller overrides, an export only a
@@ -206,9 +206,9 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   is fine.
 - **A component always has a sibling `{Name}.props.ts`** holding its props, its other types and its
   `styles`; the `.tsx` keeps only rendering. **No other module has one** (A-27): a module's types
-  live in the module, beside the code that uses them (`Row` and `FormAction` are
-  in `state/reducer.ts`). An `enum` is a value rather than a type and stays with its
-  code.
+  live in the module, beside the code that uses them (`FormAction` is in `state/reducer.ts`; the row itself —
+  `Row`, `RowStatus` and `RowModel`, its API as one named object — is the model in `models/row.ts`, A-36). An `enum` is a value rather than a type and
+  stays with its code.
 
   ```ts
   // MeasurementRow.props.ts
@@ -240,7 +240,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   `.props.ts` file (lint rule). A style that depends on state is a small function in the same file,
   e.g. `rowStyle(focusable)` returning `styles.row` merged with `styles.rowClickable`. A component without props or styles does not need the file.
 - Types shared by several modules live with the module that owns them (e.g. `Row` in
-  `state/reducer.ts`) and are imported from there rather than copied.
+  `models/row.ts`) and are imported from there rather than copied.
 - No function is created inside the `return` statement. Every function a component renders with is
   declared in the component body with a name, above the `return`, and the returned JSX mentions it
   by that name. The one exception is the callback of a list render, `rows.map(...)`, because

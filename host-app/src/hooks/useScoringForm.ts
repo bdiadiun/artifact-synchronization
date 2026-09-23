@@ -2,8 +2,9 @@ import { useCallback, useEffect, useReducer, type Dispatch } from 'react';
 import { isHostCommand } from '@bdiadiun/scoring-contract';
 import { useChannel } from '@bdiadiun/scoring-channel';
 import { VIEWER_CHANNEL, type HostChannel } from '@app/config';
-import { reducer, type FormAction, type Row } from '@app/state/reducer';
-import { loadRows, saveRows } from '@app/state/storedRows';
+import type { Row } from '@app/models/row';
+import { reducer, type FormAction } from '@app/state/reducer';
+import { loadRows, saveRows } from '@app/services/storedRows';
 import { restoreViewer } from '@app/state/actions';
 
 // The form for one study, and the page's end of the channel. Its rows are read from storage once,

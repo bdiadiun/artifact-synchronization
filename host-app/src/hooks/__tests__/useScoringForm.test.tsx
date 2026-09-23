@@ -15,8 +15,8 @@ import type {
   ViewerReadyEvent,
 } from '@bdiadiun/scoring-contract';
 import { DEFAULT_TOOL, FALLBACK_STUDY_INSTANCE_UID, VIEWER_ORIGIN } from '@app/config';
-import { RowStatus, type Row } from '@app/state/reducer';
-import { saveRows } from '@app/state/storedRows';
+import { RowStatus, type Row } from '@app/models/row';
+import { saveRows } from '@app/services/storedRows';
 import { computeTotals } from '@app/utils/totals';
 import { useScoringForm } from '@app/hooks/useScoringForm';
 import { activateRow, addRow, cancelRow, focusRow, removeRow } from '@app/state/actions';

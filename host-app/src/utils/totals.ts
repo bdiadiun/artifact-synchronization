@@ -1,7 +1,7 @@
 // Per-unit sums for the form footer (A-11). mm² and px² are never added together.
 
 import type { MetricKey, Unit } from '@bdiadiun/scoring-contract';
-import { RowStatus, type Row } from '@app/state/reducer';
+import { RowStatus, type Row } from '@app/models/row';
 
 export interface Total {
   unit: Unit;

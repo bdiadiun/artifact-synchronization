@@ -1,5 +1,5 @@
 import type { JSX, KeyboardEvent, MouseEvent } from 'react';
-import { RowStatus } from '@app/state/reducer';
+import { RowStatus } from '@app/models/row';
 import { t } from '@app/i18n';
 import { formatRowKind, formatRowMetric, formatRowStatus } from '@app/utils/format';
 import { activateRow, cancelRow, focusRow, removeRow } from '@app/state/actions';
