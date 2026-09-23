@@ -6,7 +6,7 @@ const publishedNames = [
   'DeactivateToolCommand',
   'FocusMeasurementCommand',
   'HostCommand',
-  'METRIC_KEY_BY_TOOL',
+  'METRIC_KEYS_BY_TOOL',
   'MeasurementAddedEvent',
   'MeasurementGeometry',
   'MeasurementRemovedEvent',
@@ -39,10 +39,10 @@ describe('package entry', () => {
   });
 
   it('publishes the metric key of every tool name', () => {
-    expect(contract.METRIC_KEY_BY_TOOL).toEqual({
-      EllipticalROI: 'area',
-      RectangleROI: 'area',
-      Length: 'length',
+    expect(contract.METRIC_KEYS_BY_TOOL).toEqual({
+      EllipticalROI: ['area'],
+      RectangleROI: ['area'],
+      Length: ['length'],
     });
   });
 });

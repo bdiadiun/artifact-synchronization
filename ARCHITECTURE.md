@@ -44,8 +44,9 @@ simply reject the new type as unknown.
 | viewer → host | `MEASUREMENTS_RESTORED` | `restored[]` (row ids), `failed[]` (`rowId`, `reason`)                                                   | After a restore: the form marks each failed row. Reasons: `already-present`, `unknown-study`, `viewer-error`. Bonus S-5.6.                                                                                                                                                                                                                                                                                                                                    |
 
 `metrics` is a partial record over the metric keys `'area' | 'length'` (A-28: a key outside the
-vocabulary is refused); `unit` is `'mm2' | 'px2' | 'mm' | 'px'` and is copied from OHIF's
-`cachedStats`, never inferred.
+vocabulary is refused); which keys a tool yields, and in which order, is `METRIC_KEYS_BY_TOOL`
+(A-40: a list per tool, its first entry the row's own metric); `unit` is `'mm2' | 'px2' | 'mm' | 'px'`
+and is copied from OHIF's `cachedStats`, never inferred.
 The measurement events also carry an optional `geometry` (frame of reference, referenced image and
 handle points): the form persists it so the viewer can rebuild the annotation after a reload (A-14).
 
@@ -122,6 +123,7 @@ Full records live in [`docs/decisions/`](docs/decisions/); the canon index is in
 | Stored rows      | `hooks/useStoredRows(study)` → `[storedRows, save]` over the storage service; `useScoringForm` composes it with `useReducer` and saves on every change; `RowModel.create(toolName)` issues the row id (A-8 stays with the host).                                                                                                                                                                                                                                                                                          | A-37            |
 | Names            | `packages/scoring-viewer` is the OHIF-side scoring application (`@bdiadiun/ohif-extension-scoring-viewer`), `packages/ohif-extension-loader` the fork's one entry (`@bdiadiun/ohif-extension-loader`); the contract and the channel keep their names.                                                                                                                                                                                                                                                                     | A-38            |
 | Channel end      | `class ChannelEnd` — private fields for the queue, the peer, the state, the handler and the listener lease; arrow-function methods `send`, `on`, `getState`, `subscribe`, `listen`; one instance per window.                                                                                                                                                                                                                                                                                                              | A-39            |
+| Metrics per tool | `METRIC_KEYS_BY_TOOL` lists the metrics a tool yields, first the row's own (label, total); the extension reads them through two flat tables — `UNITS` (cornerstone spelling → contract unit) and `UNIT_FIELD` (where each metric's unit lives in `cachedStats`) — so a new metric is a table row, not code (A-40).                                                                                                                                                                                                        |
 
 ## Where things are
 

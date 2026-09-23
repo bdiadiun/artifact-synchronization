@@ -1,4 +1,4 @@
-import { METRIC_KEY_BY_TOOL, type Metric, type MetricKey, type Unit } from '@bdiadiun/scoring-contract';
+import { METRIC_KEYS_BY_TOOL, type Metric, type MetricKey, type Unit } from '@bdiadiun/scoring-contract';
 import { t } from '@app/i18n';
 import { RowStatus, type Row } from '@app/models/row';
 
@@ -24,20 +24,18 @@ export const formatMetric = (metric: Metric): string => `${metric.value.toFixed(
 
 export const formatRowStatus = (status: RowStatus): string => STATUS_LABELS[status];
 
-export const formatRowKind = (row: Row): string => KIND_LABELS[METRIC_KEY_BY_TOOL[row.toolName]];
+export const formatRowKind = (row: Row): string => KIND_LABELS[METRIC_KEYS_BY_TOOL[row.toolName][0]];
 
 export const formatRowMetric = (row: Row): string | null => {
   if (row.status !== RowStatus.Done || row.metrics === null) {
     return null;
   }
-  const own = row.metrics[METRIC_KEY_BY_TOOL[row.toolName]];
-  if (own !== undefined) {
-    return formatMetric(own);
-  }
-  const firstEntry = Object.entries(row.metrics).at(0);
-  if (firstEntry === undefined) {
-    return null;
-  }
-  const [key, metric] = firstEntry;
-  return `${key}: ${formatMetric(metric)}`;
+  const metrics = row.metrics;
+  const parts = METRIC_KEYS_BY_TOOL[row.toolName].flatMap((key) => {
+    const metric = metrics[key];
+
+    return metric === undefined ? [] : [formatMetric(metric)];
+  });
+
+  return parts.length > 0 ? parts.join(' · ') : null;
 };

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   MeasurementGeometry,
-  METRIC_KEY_BY_TOOL,
+  METRIC_KEYS_BY_TOOL,
   Metric,
   Metrics,
   ToolName,
@@ -9,10 +9,10 @@ import {
   type MetricKey,
 } from '../vocabulary';
 
-const expectedMetricKeyByTool: Record<ToolName, MetricKey> = {
-  EllipticalROI: 'area',
-  RectangleROI: 'area',
-  Length: 'length',
+const expectedMetricKeysByTool: Record<ToolName, readonly MetricKey[]> = {
+  EllipticalROI: ['area'],
+  RectangleROI: ['area'],
+  Length: ['length'],
 };
 
 const geometry: MeasurementGeometry = {
@@ -25,8 +25,8 @@ const geometry: MeasurementGeometry = {
 };
 
 describe('ToolName', () => {
-  it.each(ToolName.options)('maps %s to its metric key', (toolName) => {
-    expect(METRIC_KEY_BY_TOOL[toolName]).toBe(expectedMetricKeyByTool[toolName]);
+  it.each(ToolName.options)('maps %s to its metric keys', (toolName) => {
+    expect(METRIC_KEYS_BY_TOOL[toolName]).toEqual(expectedMetricKeysByTool[toolName]);
   });
 
   it('accepts a known tool name', () => {

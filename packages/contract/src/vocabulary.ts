@@ -28,8 +28,8 @@ export const MeasurementGeometry = z.object({
 });
 export type MeasurementGeometry = z.infer<typeof MeasurementGeometry>;
 
-export const METRIC_KEY_BY_TOOL = {
-  EllipticalROI: 'area',
-  RectangleROI: 'area',
-  Length: 'length',
-} as const satisfies Record<ToolName, MetricKey>;
+export const METRIC_KEYS_BY_TOOL = {
+  EllipticalROI: ['area'],
+  RectangleROI: ['area'],
+  Length: ['length'],
+} as const satisfies Record<ToolName, readonly MetricKey[]>;

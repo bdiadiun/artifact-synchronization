@@ -107,12 +107,17 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
 **P-8. One more field through the whole chain (e.g. mean intensity).**
 
 1. Contract: add `'mean'` to the `MetricKey` enum in
-   [`packages/contract/src/vocabulary.ts`](../packages/contract/src/vocabulary.ts) (and a unit to
-   `Unit` if a new one is needed) — one line each, since A-28 the vocabulary is the only place a
-   metric is named; then publish the package and raise its pinned version in the extension.
-2. Extension: one more row in `METRIC_SPECS` of [`ohif/metrics.ts`][fork-metrics] (the stats field and its unit table), the way `area` is read.
-3. Host: `MeasurementRow` already renders the first non-area metric; to show both, map over the
-   metrics object; `computeTotals(rows, 'mean')` gives the total.
+   [`packages/contract/src/vocabulary.ts`](../packages/contract/src/vocabulary.ts) (and `'hu'` to
+   `Unit`, since cornerstone reports the mean in the modality's unit), then append `'mean'` to the
+   ellipse's and the rectangle's lists in `METRIC_KEYS_BY_TOOL` (A-40) — three lines, since A-28
+   the vocabulary is the only place a metric is named; then publish the package and raise its
+   pinned version in the extension.
+2. Extension: two table rows in [`ohif/metrics.ts`][fork-metrics] — `mean: 'modalityUnit'` in
+   `UNIT_FIELD` (the compiler demands it once the key exists) and `HU: 'hu'` in `UNITS`; `toMetrics`
+   walks the tool's list and does not change.
+3. Host: `UNIT_LABELS` gains `hu: 'HU'` (the compiler demands it); the row already shows every
+   metric of its tool's list, so `357116.6 mm² · -13.5 HU` appears with no component change. No
+   total: a mean is not additive, and the totals are asked for by key.
 
 **P-9. A protocol element is disabled (e.g. `VIEWER_READY`).** Symptoms: the
 [status line](../host-app/src/components/BridgeStatus.tsx#L6) stays at `очікує VIEWER_READY`, the

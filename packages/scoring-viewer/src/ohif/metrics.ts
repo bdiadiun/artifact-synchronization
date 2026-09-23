@@ -1,7 +1,8 @@
 import {
   MeasurementGeometry,
-  METRIC_KEY_BY_TOOL,
+  METRIC_KEYS_BY_TOOL,
   ToolName,
+  type Metric,
   type MetricKey,
   type Metrics,
   type Unit,
@@ -22,67 +23,61 @@ export const OhifMeasurement = z.object({
 });
 export type OhifMeasurement = z.infer<typeof OhifMeasurement>;
 
-const AREA_UNITS: Record<string, Unit | undefined> = {
+interface Measured {
+  measurementUid: string;
+  toolName: string;
+  metrics: Metrics;
+  geometry: MeasurementGeometry | undefined;
+}
+
+const UNITS: Record<string, Unit | undefined> = {
   'mm²': 'mm2',
   mm2: 'mm2',
   'px²': 'px2',
   px2: 'px2',
   'pixels²': 'px2',
   pixels2: 'px2',
-};
-
-const LENGTH_UNITS: Record<string, Unit | undefined> = {
   mm: 'mm',
   px: 'px',
   pixels: 'px',
 };
 
-const METRIC_SPECS = {
-  area: { unitField: 'areaUnit', units: AREA_UNITS },
-  length: { unitField: 'unit', units: LENGTH_UNITS },
-} satisfies Record<MetricKey, { unitField: string; units: Record<string, Unit | undefined> }>;
-
-const baseUnitToken = (raw: string): string => raw.trim().split(/\s+/)[0] ?? '';
-
-const normaliseUnit = (raw: unknown, table: Record<string, Unit | undefined>): Unit | null => {
-  if (typeof raw !== 'string' || raw.trim().length === 0) {
-    return null;
-  }
-
-  return table[baseUnitToken(raw)] ?? null;
+const UNIT_FIELD: Record<MetricKey, string> = {
+  area: 'areaUnit',
+  length: 'unit',
 };
 
-const finiteAt = (entry: StatsEntry | undefined, key: string): number | null => {
-  const value = entry?.[key];
+const firstToken = (raw: string): string => raw.trim().split(/\s+/)[0] ?? '';
 
-  return typeof value === 'number' && Number.isFinite(value) ? value : null;
-};
-
-const findStatsEntry = (measurement: OhifMeasurement, key: string): StatsEntry | undefined => {
+const statsOf = (measurement: OhifMeasurement): StatsEntry | undefined => {
   const data = measurement.data ?? {};
-  const preferred = data[`imageId:${measurement.referencedImageId ?? ''}`];
-  const entries = [preferred, ...Object.values(data)];
 
-  return entries.find((entry) => finiteAt(entry, key) !== null);
+  return data[`imageId:${measurement.referencedImageId ?? ''}`] ?? Object.values(data)[0];
 };
 
-const readMetrics = (measurement: OhifMeasurement, key: MetricKey): Metrics | null => {
-  const { unitField, units } = METRIC_SPECS[key];
-  const stats = findStatsEntry(measurement, key);
-  const value = finiteAt(stats, key);
-  const unit = normaliseUnit(stats?.[unitField], units);
+const readMetric = (stats: StatsEntry, key: MetricKey): Metric | null => {
+  const value = stats[key];
+  const raw = stats[UNIT_FIELD[key]];
+  const unit = typeof raw === 'string' ? UNITS[firstToken(raw)] : undefined;
 
-  if (value === null || unit === null) {
-    return null;
-  }
-
-  return { [key]: { value, unit } };
+  return typeof value === 'number' && Number.isFinite(value) && unit !== undefined ? { value, unit } : null;
 };
 
 export const toMetrics = (measurement: OhifMeasurement): Metrics | null => {
   const toolName = ToolName.safeParse(measurement.toolName);
+  const stats = statsOf(measurement);
+  if (!toolName.success || stats === undefined) {
+    return null;
+  }
+  const metrics: Metrics = {};
+  for (const key of METRIC_KEYS_BY_TOOL[toolName.data]) {
+    const metric = readMetric(stats, key);
+    if (metric !== null) {
+      metrics[key] = metric;
+    }
+  }
 
-  return toolName.success ? readMetrics(measurement, METRIC_KEY_BY_TOOL[toolName.data]) : null;
+  return Object.keys(metrics).length > 0 ? metrics : null;
 };
 
 export const toGeometry = (measurement: OhifMeasurement): MeasurementGeometry | undefined =>
@@ -92,13 +87,6 @@ export const toGeometry = (measurement: OhifMeasurement): MeasurementGeometry | 
     points: measurement.points,
     label: measurement.label,
   }).data;
-
-interface Measured {
-  measurementUid: string;
-  toolName: string;
-  metrics: Metrics;
-  geometry: MeasurementGeometry | undefined;
-}
 
 export const measure = ({ measurement }: { measurement: unknown }): Measured | null => {
   const parsed = OhifMeasurement.safeParse(measurement).data;

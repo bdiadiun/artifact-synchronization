@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/scoring-channel",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "typed postMessage channel for the scoring contract: origin-checked delivery, guarded intake, and one useChannel for both applications",
   "license": "MIT",
   "repository": {
@@ -28,7 +28,7 @@
     "typecheck": "tsc -p tsconfig.tests.json"
   },
   "dependencies": {
-    "@bdiadiun/scoring-contract": "0.0.14"
+    "@bdiadiun/scoring-contract": "0.1.0"
   },
   "peerDependencies": {
     "react": ">=18"
