@@ -26,7 +26,7 @@ form. They run on separate ports and talk only over `window.postMessage`.
 ```sh
 git clone https://github.com/bdiadiun/artifact-synchronization.git
 cd artifact-synchronization
-npm ci
+npm ci                  # installs every workspace and builds the four packages (root `prepare`)
 ```
 
 ### 1. Viewer (port 3000)
@@ -44,8 +44,9 @@ repository was tested against. The folder is ignored by git and is not part of t
 Wait for "compiled successfully", then check http://localhost:3000/viewer?StudyInstanceUIDs=1.3.6.1.4.1.25403.345050719074.3824.20170125113417.1
 opens a study. Notes:
 
-- `viewer:link` makes the viewer run the packages of this working tree instead of the released
-  ones (symlinks into the fork's `node_modules`); `viewer:unlink` restores the installed copies.
+- The fork installs the released packages from npm, so a plain run needs no linking. `viewer:link`
+  makes the viewer run the packages of this working tree instead (symlinks into the fork's
+  `node_modules`); `viewer:unlink` restores the installed copies.
 - `viewer:dev` runs the server from `platform/app` with the browser tab suppressed. Running
   `yarn dev` at the viewer root instead does not work: that script picks up a `bun.lock` and
   requires bun.
@@ -56,7 +57,6 @@ opens a study. Notes:
 ### 2. Host app (port 5173), in a second terminal
 
 ```sh
-npm install             # installs host-app and every package (npm workspaces)
 npm run dev --workspace host-app
 ```
 
@@ -70,7 +70,7 @@ turns to "готовий" once the viewer has sent `VIEWER_READY`.
 1. "Додати вимірювання" creates a row with status "Очікує".
 2. "Активувати" arms the ellipse tool in the viewer (row → "Малювання…"). "Скасувати" returns it to "Очікує".
 3. Draw an ellipse on the image. The row shows the area (e.g. `124.5 mm²`), status "Готово", and the
-   viewer returns to the tool that was active before. On the first ellipse OHIF asks "Track
+   viewer returns to WindowLevel, its default tool. On the first ellipse OHIF asks "Track
    measurements for this series?"; either answer works.
 4. "Разом" at the bottom sums the areas per unit (mm² and px² are never added together).
 
@@ -82,8 +82,13 @@ turns to "готовий" once the viewer has sent `VIEWER_READY`.
   "Очікує".
 - **Focus.** Click a "Готово" row (or press Enter on it): the viewer jumps to that image and
   selects the annotation.
+- **Second tool.** "Додати довжину" adds a row for the Length tool; draw a line and it lands in that
+  row in mm. "Разом довжина" sums lengths separately from areas.
 - **Version on every viewport.** Bottom-right corner of each viewport shows `OHIF 3.12.17`, injected
   at build time; switch to a 2×2 layout to see it in every pane.
+- **State restore.** Reload the page: the rows, the values and the totals come back from the tab's
+  sessionStorage, and the viewer rebuilds the annotations with their original ids; a row whose
+  annotation could not be rebuilt says so. Reloading only the viewer restores the same way.
 
 ## Known behaviour
 
@@ -94,10 +99,13 @@ turns to "готовий" once the viewer has sent `VIEWER_READY`.
 - If the viewer fails to load a study, no `VIEWER_READY` is sent and commands stay queued (the
   status line shows the count).
 - First run of `yarn install` in `viewer/` can take several minutes; the webpack dev build a minute more.
+- Open both apps through `localhost`, not `127.0.0.1` or another port: each side accepts messages
+  only from the other's configured origin, and a mismatch leaves the status line at
+  "очікує VIEWER_READY" (see ARCHITECTURE "Known behaviour").
 
 ## Scripts (repository root)
 
-- `npm run lint`, `npm run typecheck`, `npm run test` — the form and the three packages.
+- `npm run lint`, `npm run typecheck`, `npm run test` — the form and the four packages.
 - `npm run format:check` — Prettier check across the repository.
 - `npm run check:graph` — feature-graph invariants.
 - `npm run docs:build` — builds `docs/site/index.html`, a single-page reader of all project documents with clickable requirement IDs.
