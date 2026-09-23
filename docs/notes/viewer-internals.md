@@ -2,12 +2,12 @@
 
 Implementation details of the bridge that are deliberate but not visible from the code alone.
 Decisions live in [`docs/decisions/`](../decisions/); OHIF behaviour we rely on is in
-[`ohif-bridge-api.md`](ohif-bridge-api.md). File names below refer to
-`packages/viewer-bridge/src/` unless a path is given. The package is the OHIF-side application,
-the form's peer, written as a React layer (A-32, A-34): `ScoringBridge.tsx` (`getContextModule`:
+[`ohif-api.md`](ohif-api.md). File names below refer to
+`packages/scoring-viewer/src/` unless a path is given. The package is the OHIF-side application,
+the form's peer, written as a React layer (A-32, A-34): `ScoringViewer.tsx` (`getContextModule`:
 the provider OHIF mounts around the mode, which runs the hook and offers the channel through the
-context), `bridge.ts` (the per-mount data: channel, armed row, pending restore, announced),
-`hooks/useScoringBridge.ts` (`useChannel`, then two effects: `channel.on` → `handleCommand`,
+context), `session.ts` (the per-mount data: channel, armed row, pending restore, announced),
+`hooks/useScoringViewer.ts` (`useChannel`, then two effects: `channel.on` → `handleCommand`,
 `ohif.on` → `handleOhif`), `commands/handlers.ts` (`handleCommand`: one `switch` over the
 commands), `commands/restore.ts`, `events/handlers.ts` (`handleOhif`: one `switch` over OHIF's
 events), `ohif/facade.ts` (`createOhif`: OHIF's events in the contract's shape, throttled),
@@ -16,7 +16,7 @@ events), `ohif/facade.ts` (`createOhif`: OHIF's events in the contract's shape, 
 
 ## Lifecycle
 
-- **Mounted and unmounted by OHIF** (`ScoringBridge.tsx`, A-32). `Mode.tsx` composes every
+- **Mounted and unmounted by OHIF** (`ScoringViewer.tsx`, A-32). `Mode.tsx` composes every
   extension's context-module provider around the mode (`createCombinedContextProvider`), so the
   application lives as long as the mode: a study change remounts it, which creates new per-mount
   data and announces `VIEWER_READY` again — the host then offers its rows back (A-29). The channel
@@ -26,13 +26,13 @@ events), `ohif/facade.ts` (`createOhif`: OHIF's events in the contract's shape, 
   never leaves a mounted application with a dead channel; the queue and `{ ready, queued }` live
   on. Leaving the mode tears the viewports and their tool group down, so no tool is left to
   restore.
-- **A viewer opened outside the iframe has no peer** (`bridge.ts`): `window.parent` is passed to
+- **A viewer opened outside the iframe has no peer** (`session.ts`): `window.parent` is passed to
   the channel only when it differs from `window`; otherwise `postTo` finds no window, logs once and
   queues, instead of posting to the viewer's own window with a target origin the browser refuses.
 - **The announcement does not depend on effect order** (`ohif/facade.ts`, `events/handlers.ts`).
   A provider's effects run after its children's, so the first viewport can exist before the
   application subscribes: `ohif.on` delivers `VIEWER_READY` at once when a tool group already
-  exists and on every `VIEWPORT_ADDED`; `handleOhif` sends it once per mount (`bridge.announced`),
+  exists and on every `VIEWPORT_ADDED`; `handleOhif` sends it once per mount (`session.announced`),
   so a layout with several viewports announces once.
 - **The OHIF services are required, not optional** (A-28, `ohif-service-availability.md`). The
   three core services exist before any extension runs; `toolGroupService` and
@@ -72,14 +72,14 @@ events), `ohif/facade.ts` (`createOhif`: OHIF's events in the contract's shape, 
 
 - **No separate `uid → rowId` map on the host** (`host-app/src/hooks/useScoringForm.ts`). A `done`
   row stores its own `measurementUid`, and `MEASUREMENT_ADDED` carries `rowId`, so the rows array
-  is the map. The viewer keeps no map either: `bridge.armedRowId` (A-29) is set by
+  is the map. The viewer keeps no map either: `session.armedRowId` (A-29) is set by
   `ACTIVATE_TOOL` and taken by the next `MEASUREMENT_ADDED`.
 
 ## Details moved out of the code (A-24)
 
 - **Announce once** (`events/handlers.ts`): `ohif.on` delivers `VIEWER_READY` for every viewport
   and once at subscription when a tool group already exists; `handleOhif` sends the first per
-  mount (`bridge.announced`); a mode remount mounts new per-mount data, which announces again.
+  mount (`session.announced`); a mode remount mounts new per-mount data, which announces again.
 - **Every measurement OHIF announces goes to the host** (`events/handlers.ts`); the one drawn
   while a row was armed carries that row's id and hands the viewer back to the default tool
   (A-8, A-23). Updates are throttled per measurement in the facade (`ohif/facade.ts`,
@@ -93,10 +93,10 @@ events), `ohif/facade.ts` (`createOhif`: OHIF's events in the contract's shape, 
   the form has no metric for.
 - **A restore waits for viewport data** (`commands/restore.ts`, `holdsViewportData`): annotations
   can only be added once the active viewport holds image data; a `RESTORE_MEASUREMENTS` that
-  arrives earlier waits in `bridge.pendingRestore` for the next `VIEWPORT_DATA_CHANGED`.
+  arrives earlier waits in `session.pendingRestore` for the next `VIEWPORT_DATA_CHANGED`.
 - **The version overlay item** (`ohif/version.ts`) is S-5.5: the viewer version in the corner of
   every viewport, appended to OHIF's own overlay items.
-- **The adapter is the one package the fork lists** (`packages/viewer-adapter/src/extension.ts`,
+- **The adapter is the one package the fork lists** (`packages/ohif-extension-loader/src/extension.ts`,
   A-20); its `preRegistration` registers the bridge extension itself.
 - **Removal goes through OHIF** (`commands/handlers.ts`): `measurementService.remove` (the
   `removeMeasurement` command only wraps that call, `commandsModule.ts:746-751`) fires OHIF's
@@ -128,7 +128,7 @@ events), `ohif/facade.ts` (`createOhif`: OHIF's events in the contract's shape, 
 - REMOVE for a uid the service no longer holds is answered at once (`MeasurementService.ts:675-680` returns silently; A-10); for a present uid the command is parked before `remove()` because the service broadcasts `MEASUREMENT_REMOVED` synchronously (`:674-689`), and cornerstone erases the drawing on that event (`initMeasurementService.ts:501-522`).
 - FOCUS: an unknown uid is an ordinary race, not the error `jumpToMeasurement` would warn about (`MeasurementService.ts:741-745`); the measurement panel makes the same call (`commandsModule.ts:739-744`).
 
-`ScoringBridge.tsx`, `ohif/facade.ts`
+`ScoringViewer.tsx`, `ohif/facade.ts`
 
 - `setToolActive` is a silent no-op until a viewport has a tool group (`commandsModule.ts:1050-1055`), so `VIEWER_READY` is announced on `toolGroupService` `VIEWPORT_ADDED` (A-9).
 - OHIF's generated loader imports the default export of the package named in `pluginConfig.json` (`writePluginImportsFile.js:89-94`), so the configured extension is the default export.

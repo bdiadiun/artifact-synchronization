@@ -3,7 +3,7 @@
 Read from the pinned fork (`viewer/`, OHIF v3.12.17) and its installed `@cornerstonejs/tools`
 **4.15.29** / `@cornerstonejs/core` (both present under `viewer/node_modules/`). Paths are relative to
 `viewer/`; `cst/` abbreviates `node_modules/@cornerstonejs/tools/dist/esm/`. Extends
-[`ohif-bridge-api.md`](ohif-bridge-api.md) and [`bridge-internals.md`](bridge-internals.md).
+[`ohif-api.md`](ohif-api.md) and [`viewer-internals.md`](viewer-internals.md).
 
 ## 1. Adding an annotation programmatically
 
@@ -92,7 +92,7 @@ Too early → throws, `addMeasurement` swallows it (`initMeasurementService.ts:2
 annotation exists in cornerstone but never becomes a measurement.
 
 Signals, earliest to safest: `toolGroupService.EVENTS.VIEWPORT_ADDED`, already used by the handshake
-(`packages/viewer-bridge/src/extension.ts`, the `VIEWPORT_ADDED` subscription) — means "a tool group exists", enough for
+(`packages/scoring-viewer/src/extension.ts`, the `VIEWPORT_ADDED` subscription) — means "a tool group exists", enough for
 `setToolActive` but **not** for restore; `cornerstoneViewportService.EVENTS.VIEWPORT_DATA_CHANGED`
 (`extensions/cornerstone/src/services/ViewportService/CornerstoneViewportService.ts:44`, broadcast
 `:492`, `:1229`) — the viewport now has its display set data, the right hook; `VIEWPORT_NEW_IMAGE_SET`

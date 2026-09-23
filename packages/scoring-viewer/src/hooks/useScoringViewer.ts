@@ -1,34 +1,34 @@
 import { useEffect, useState } from 'react';
 import { isHostCommand } from '@bdiadiun/scoring-contract';
 import { useChannel } from '@bdiadiun/scoring-channel';
-import { createBridge } from '../bridge.js';
+import { createSession } from '../session.js';
 import { handleCommand } from '../commands/handlers.js';
 import { handleOhif } from '../events/handlers.js';
 import type { Ohif } from '../ohif/facade.js';
 import type { ViewerChannel } from '../ohif/surface.js';
 
-export const useScoringBridge = (hostOrigin: string, ohif: Ohif): ViewerChannel => {
+export const useScoringViewer = (hostOrigin: string, ohif: Ohif): ViewerChannel => {
   const channel = useChannel({
     peerOrigin: hostOrigin,
     accept: isHostCommand,
     peerWindow: window.parent === window ? undefined : window.parent,
   });
-  const [bridge] = useState(() => createBridge(channel));
+  const [session] = useState(() => createSession(channel));
 
   useEffect(
     () =>
       channel.on((command) => {
-        handleCommand(ohif, bridge, command);
+        handleCommand(ohif, session, command);
       }),
-    [channel, ohif, bridge],
+    [channel, ohif, session],
   );
 
   useEffect(
     () =>
       ohif.on((event) => {
-        handleOhif(ohif, bridge, event);
+        handleOhif(ohif, session, event);
       }),
-    [ohif, bridge],
+    [ohif, session],
   );
 
   return channel;

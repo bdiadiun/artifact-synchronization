@@ -1,6 +1,6 @@
 # artifact-synchronization
 
-A micro-frontend pair: an OHIF Viewer fork with a bridge extension, and a host app with a scoring
+A micro-frontend pair: an OHIF Viewer fork with a scoring extension, and a host app with a scoring
 form. They run on separate ports and talk only over `window.postMessage`.
 
 - Requirements: [docs/CANON.md](docs/CANON.md); work breakdown: [docs/FEATURE-GRAPH.md](docs/FEATURE-GRAPH.md).
@@ -8,8 +8,8 @@ form. They run on separate ports and talk only over `window.postMessage`.
 - Layout: `host-app/` (React + Vite, port 5173) and four published packages: `packages/contract/`
   (the message schemas, zod), `packages/channel/` (one `useChannel` for both sides: origin check, version,
   schema guard, `send`, `on`, and the queue until `VIEWER_READY`),
-  `packages/viewer-bridge/` and `packages/viewer-adapter/` (the OHIF extension and the adapter that
-  registers it); `viewer/` (a local checkout of
+  `packages/scoring-viewer/` (the OHIF-side scoring application, an OHIF extension) and
+  `packages/ohif-extension-loader/` (the one entry the fork lists; it loads our extensions); `viewer/` (a local checkout of
   [bdiadiun/Viewers](https://github.com/bdiadiun/Viewers), branch `scoring`, based on OHIF
   `v3.12.17`, port 3000; cloned on demand and not part of this repository, see A-18).
 

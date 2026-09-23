@@ -9,7 +9,7 @@ import type { Annotation } from '@cornerstonejs/tools/types';
 import { triggerAnnotationRenderForViewportIds } from '@cornerstonejs/tools/utilities';
 import type { Types } from '@cornerstonejs/core';
 
-import type { Bridge } from '../bridge.js';
+import type { Session } from '../session.js';
 import type { Ohif } from '../ohif/facade.js';
 import { LOG_PREFIX, type OhifServices, type ViewerChannel } from '../ohif/surface.js';
 
@@ -78,11 +78,11 @@ export const holdsViewportData = (services: OhifServices): boolean => {
   return Boolean(viewportId && services.cornerstoneViewportService.getCornerstoneViewport(viewportId));
 };
 
-export const restorePending = (ohif: Ohif, bridge: Bridge): void => {
-  const command = bridge.pendingRestore;
+export const restorePending = (ohif: Ohif, session: Session): void => {
+  const command = session.pendingRestore;
 
   if (command !== null && holdsViewportData(ohif.services)) {
-    bridge.pendingRestore = null;
-    runRestore(ohif.services, bridge.channel, command);
+    session.pendingRestore = null;
+    runRestore(ohif.services, session.channel, command);
   }
 };

@@ -24,7 +24,7 @@ did, what was kept, what was rewritten, and how the author stays able to defend 
 
 ## Where AI output was kept as is
 
-- The OHIF research note (`docs/notes/ohif-bridge-api.md`): the assistant cloned the release tag,
+- The OHIF research note (`docs/notes/ohif-api.md`): the assistant cloned the release tag,
   found the exact files and lines (measurement shape, event timing, `setToolActive`, validation
   that rejects custom fields). The findings were verified at runtime (drawing an ellipse headlessly)
   before they became decisions.

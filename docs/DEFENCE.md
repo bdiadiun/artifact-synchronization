@@ -1,7 +1,7 @@
 # Defence notes
 
 Where to point during the call. Host-app links are relative to this repository; extension links
-read the viewer side in `packages/viewer-bridge/`, which is where it now lives
+read the viewer side in `packages/scoring-viewer/`, which is where it now lives
 (`94108f3dfd`). If a line drifts after a later change, search for the quoted symbol.
 
 ## The protocol in one screen
@@ -14,7 +14,7 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 | Payload validated       | [`accept: isViewerEvent`](../host-app/src/config.ts#L9)                                                                                                                                              | [`isHostCommand`][fork-commands-guard]                                                                                                                       |
 | Handshake               | [`readyOn` flushes the queue](../packages/channel/src/channel.ts#L50)                                                                                                                                | [VIEWPORT_ADDED subscription][fork-bridge-viewport] → [`VIEWER_READY` sent once][fork-bridge-ready] → [`postMessage` with the host origin][fork-bridge-post] |
 | Early commands          | [`queued.push(message)`](../packages/channel/src/channel.ts#L45), [`open`](../packages/channel/src/channel.ts#L50)                                                                                   | —                                                                                                                                                            |
-| Row id / measurement id | [`crypto.randomUUID()` in `RowModel.create`](../host-app/src/models/row.ts#L35)                                                                                                                      | [`bridge.armedRowId = rowId`][fork-bridge-map], [taken by the next measurement][fork-bridge-take]                                                            |
+| Row id / measurement id | [`crypto.randomUUID()` in `RowModel.create`](../host-app/src/models/row.ts#L35)                                                                                                                      | [`session.armedRowId = rowId`][fork-bridge-map], [taken by the next measurement][fork-bridge-take]                                                           |
 | Tool armed and restored | [`DEFAULT_TOOL`](../host-app/src/config.ts#L18)                                                                                                                                                      | [fixed `DEFAULT_TOOL` after a measurement][fork-commands-snapshot], [`setToolActive`][fork-commands-active], [`disarm`][fork-commands-disarm]                |
 | Measurement delivered   | [`rowId === null` changes nothing](../host-app/src/state/reducer.ts#L91)                                                                                                                             | [`MEASUREMENT_ADDED` subscription][fork-bridge-added], [posted][fork-bridge-added-post], [`toMetrics`][fork-metrics], [unit normalisation][fork-units]       |
 | Live update (S-5.1)     | reducer `MEASUREMENT_UPDATED` in [`reducer.ts`](../host-app/src/state/reducer.ts#L105)                                                                                                               | [throttled emitter][fork-bridge-throttle], [`UPDATE_INTERVAL_MS`][fork-bridge-interval]                                                                      |
@@ -24,31 +24,31 @@ read the viewer side in `packages/viewer-bridge/`, which is where it now lives
 | Focus (S-5.3)           | clickable Done row in `MeasurementRow.tsx`                                                                                                                                                           | [`jumpToMeasurement`][fork-focus]                                                                                                                            |
 | Version overlay (S-5.5) | —                                                                                                                                                                                                    | [`viewportOverlay.bottomRight`][fork-overlay]                                                                                                                |
 | State and totals        | [`RowStatus`](../host-app/src/state/reducer.ts#L18), [`FormAction`](../host-app/src/state/reducer.ts#L41), [`computeTotals`](../host-app/src/utils/totals.ts#L17)                                    | —                                                                                                                                                            |
-| Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                                                                     | log prefix `[scoring-bridge]` in the viewer console                                                                                                          |
-| Entry point             | [`useScoringForm.ts`](../host-app/src/hooks/useScoringForm.ts) (`useChannel`, `channel.on` in an effect whose cleanup detaches it, Q-5)                                                              | [`getContextModule` → provider → `useScoringBridge`][fork-index]                                                                                             |
+| Diagnostics (P-9)       | [`BridgeStatus`](../host-app/src/components/BridgeStatus.tsx#L6)                                                                                                                                     | log prefix `[scoring-viewer]` in the viewer console                                                                                                          |
+| Entry point             | [`useScoringForm.ts`](../host-app/src/hooks/useScoringForm.ts) (`useChannel`, `channel.on` in an effect whose cleanup detaches it, Q-5)                                                              | [`getContextModule` → provider → `useScoringViewer`][fork-index]                                                                                             |
 
-[fork-config]: ../packages/viewer-bridge/src/ScoringBridge.tsx#L22
-[fork-index]: ../packages/viewer-bridge/src/hooks/useScoringBridge.ts
+[fork-config]: ../packages/scoring-viewer/src/ScoringViewer.tsx#L22
+[fork-index]: ../packages/scoring-viewer/src/hooks/useScoringViewer.ts
 [fork-bridge-origin]: ../packages/channel/src/peer.ts#L37
 [fork-bridge-post]: ../packages/channel/src/peer.ts#L17
-[fork-bridge-ready]: ../packages/viewer-bridge/src/events/handlers.ts#L22
-[fork-bridge-viewport]: ../packages/viewer-bridge/src/ohif/facade.ts#L84
-[fork-bridge-map]: ../packages/viewer-bridge/src/commands/handlers.ts#L41
-[fork-bridge-take]: ../packages/viewer-bridge/src/events/handlers.ts#L9
-[fork-bridge-added]: ../packages/viewer-bridge/src/ohif/facade.ts#L81
-[fork-bridge-added-post]: ../packages/viewer-bridge/src/events/handlers.ts#L11
-[fork-bridge-throttle]: ../packages/viewer-bridge/src/ohif/throttle.ts
-[fork-bridge-interval]: ../packages/viewer-bridge/src/ohif/facade.ts#L17
-[fork-bridge-removed]: ../packages/viewer-bridge/src/ohif/facade.ts#L83
-[fork-commands-guard]: ../packages/viewer-bridge/src/hooks/useScoringBridge.ts#L13
-[fork-commands-snapshot]: ../packages/viewer-bridge/src/commands/handlers.ts#L7
-[fork-commands-active]: ../packages/viewer-bridge/src/commands/handlers.ts
-[fork-commands-disarm]: ../packages/viewer-bridge/src/commands/handlers.ts#L44
-[fork-removals-remove]: ../packages/viewer-bridge/src/commands/handlers.ts#L52
-[fork-focus]: ../packages/viewer-bridge/src/commands/handlers.ts#L35
-[fork-metrics]: ../packages/viewer-bridge/src/ohif/metrics.ts
-[fork-units]: ../packages/viewer-bridge/src/ohif/metrics.ts#L25
-[fork-overlay]: ../packages/viewer-bridge/src/ohif/version.ts#L18
+[fork-bridge-ready]: ../packages/scoring-viewer/src/events/handlers.ts#L22
+[fork-bridge-viewport]: ../packages/scoring-viewer/src/ohif/facade.ts#L84
+[fork-bridge-map]: ../packages/scoring-viewer/src/commands/handlers.ts#L41
+[fork-bridge-take]: ../packages/scoring-viewer/src/events/handlers.ts#L9
+[fork-bridge-added]: ../packages/scoring-viewer/src/ohif/facade.ts#L81
+[fork-bridge-added-post]: ../packages/scoring-viewer/src/events/handlers.ts#L11
+[fork-bridge-throttle]: ../packages/scoring-viewer/src/ohif/throttle.ts
+[fork-bridge-interval]: ../packages/scoring-viewer/src/ohif/facade.ts#L17
+[fork-bridge-removed]: ../packages/scoring-viewer/src/ohif/facade.ts#L83
+[fork-commands-guard]: ../packages/scoring-viewer/src/hooks/useScoringViewer.ts#L13
+[fork-commands-snapshot]: ../packages/scoring-viewer/src/commands/handlers.ts#L7
+[fork-commands-active]: ../packages/scoring-viewer/src/commands/handlers.ts
+[fork-commands-disarm]: ../packages/scoring-viewer/src/commands/handlers.ts#L44
+[fork-removals-remove]: ../packages/scoring-viewer/src/commands/handlers.ts#L52
+[fork-focus]: ../packages/scoring-viewer/src/commands/handlers.ts#L35
+[fork-metrics]: ../packages/scoring-viewer/src/ohif/metrics.ts
+[fork-units]: ../packages/scoring-viewer/src/ohif/metrics.ts#L25
+[fork-overlay]: ../packages/scoring-viewer/src/ohif/version.ts#L18
 
 ## Questions (canon P-1..P-6)
 
@@ -73,7 +73,7 @@ row before drawing, and OHIF's `_isValidMeasurement` rejects any foreign field, 
 be stored on a measurement ([A-8](decisions/A-8-id-correlation.md)).
 
 **P-4. Where we subscribe in OHIF.** [`measurementService.subscribe(MEASUREMENT_ADDED)`][fork-bridge-added]
-inside `ohif.on`, run by an effect of [`useScoringBridge`][fork-index] with the
+inside `ohif.on`, run by an effect of [`useScoringViewer`][fork-index] with the
 `servicesManager` OHIF hands the extension at registration. The service merges cornerstone's `ANNOTATION_ADDED` and `ANNOTATION_COMPLETED`
 into one event on completion and returns an unsubscribe handle; raw cornerstone events would fire
 on the first click.
@@ -125,7 +125,7 @@ the queue drains but the viewer console has no `[channel] received ACTIVATE_TOOL
 - [ ] Reload the page with two measurements: rows, values, totals and both annotations come back.
 - [ ] 2×2 layout: `OHIF 3.12.17` in every pane.
 - [ ] P-7 swap to `RectangleROI` in under 2 minutes.
-- [ ] P-9: comment out the `bridge.channel.send(event)` of the `VIEWER_READY` case in `events/handlers.ts`, reload, diagnose aloud.
+- [ ] P-9: comment out the `session.channel.send(event)` of the `VIEWER_READY` case in `events/handlers.ts`, reload, diagnose aloud.
 
 ## Video script (D-8, 2–4 min)
 
@@ -158,11 +158,11 @@ If a step goes wrong, stop, press F5 and retake only that step — the state sur
 ## Known console noise (not ours)
 
 Two warnings appear in the viewer's console in the development build of OHIF 3.12.17 and are
-unrelated to the extension; a message of ours always starts with `[channel]` or `[scoring-bridge]`.
+unrelated to the extension; a message of ours always starts with `[channel]` or `[scoring-viewer]`.
 
 - `Warning: Failed prop type: Invalid prop `config`supplied to`App`, expected one of type [function]` — OHIF's
   own `App.propTypes` (`platform/app/src/App.tsx`), once per viewer load.
 - `Warning: React does not recognize the `evaluateProps` prop on a DOM element` — OHIF's toolbar
   (`ToolbarService` adds the field to every button, `extensions/default` spreads it onto a `div`).
-  `ScoringBridge` shows in that component stack only because our provider wraps the mode (A-32),
+  `ScoringViewer` shows in that component stack only because our provider wraps the mode (A-32),
   like every other context-module provider.

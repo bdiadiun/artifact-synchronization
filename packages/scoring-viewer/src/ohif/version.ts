@@ -6,7 +6,7 @@ declare const process: { env: { VERSION_NUMBER?: string } };
 export const VIEWER_VERSION = process.env.VERSION_NUMBER ?? 'unknown';
 
 const versionOverlayItem: OverlayItemCustomization = {
-  id: 'scoringBridgeVersion',
+  id: 'scoringViewerVersion',
   inheritsFrom: 'ohif.overlayItem',
   title: 'OHIF viewer version',
   contentF: () => `OHIF ${VIEWER_VERSION}`,

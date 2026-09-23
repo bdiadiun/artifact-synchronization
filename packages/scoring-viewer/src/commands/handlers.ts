@@ -1,5 +1,5 @@
 import type { HostCommand } from '@bdiadiun/scoring-contract';
-import type { Bridge } from '../bridge.js';
+import type { Session } from '../session.js';
 import type { Ohif } from '../ohif/facade.js';
 import { LOG_PREFIX } from '../ohif/surface.js';
 import { holdsViewportData, runRestore } from './restore.js';
@@ -33,15 +33,15 @@ const focusMeasurement = (ohif: Ohif, measurementUid: string): void => {
   measurementService.jumpToMeasurement(viewportGridService.getActiveViewportId(), measurementUid);
 };
 
-export const handleCommand = (ohif: Ohif, bridge: Bridge, command: HostCommand): void => {
+export const handleCommand = (ohif: Ohif, session: Session, command: HostCommand): void => {
   switch (command.type) {
     case 'ACTIVATE_TOOL':
-      bridge.armedRowId = command.rowId;
+      session.armedRowId = command.rowId;
       activateTool(ohif, command.toolName);
       break;
     case 'DEACTIVATE_TOOL':
-      if (bridge.armedRowId === command.rowId) {
-        bridge.armedRowId = null;
+      if (session.armedRowId === command.rowId) {
+        session.armedRowId = null;
         activateTool(ohif, DEFAULT_TOOL);
       }
       break;
@@ -55,9 +55,9 @@ export const handleCommand = (ohif: Ohif, bridge: Bridge, command: HostCommand):
       break;
     case 'RESTORE_MEASUREMENTS':
       if (holdsViewportData(ohif.services)) {
-        runRestore(ohif.services, bridge.channel, command);
+        runRestore(ohif.services, session.channel, command);
       } else {
-        bridge.pendingRestore = command;
+        session.pendingRestore = command;
       }
       break;
   }
