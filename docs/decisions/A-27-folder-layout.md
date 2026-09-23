@@ -15,7 +15,8 @@ long; the file list did not say what belonged to what, and the author found it i
   throttle, the overlay); the host application follows the conventional React layout, so a reader from any React
   project finds things where they expect them: `components/`, `pages/`, `hooks/` (`useChannel`,
   `useScoringForm`), `models/` (`row.ts`, added by A-36), `state/` (`reducer.ts`, `selectors.ts`, `actions.ts`), `services/`
-  (`storage.ts` and `storedRows.ts` — what talks to the outside; the channel's end lives in its package since A-34), `utils/` (`format.ts`,
+  (`storage.ts` — what talks to the outside; the channel's end lives in its package since A-34, the rows'
+  persistence is the hook `useStoredRows` since A-37), `utils/` (`format.ts`,
   `totals.ts`). (Amended twice on 2026-09-22: a first version invented `form/` and dissolved
   `hooks/` and `utils/`; the author prefers the standard names and places.)
 - **No file under twenty lines**, except a package `index.ts`, `main.tsx`, a component's

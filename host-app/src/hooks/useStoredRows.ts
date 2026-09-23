@@ -1,9 +1,9 @@
-// A-14: the rows are persisted per study, so a reload in the same tab restores them and another
-// tab or study never sees them.
+// The rows of one study in sessionStorage: read once at mount, written back on demand (A-14, A-37).
 
+import { useCallback, useState } from 'react';
 import { z } from 'zod';
 import { RowModel, type Row } from '@app/models/row';
-import { readStorage, writeStorage } from './storage';
+import { readStorage, writeStorage } from '@app/services/storage';
 
 const StoredRows = z.object({
   studyInstanceUid: z.string().min(1),
@@ -29,4 +29,16 @@ export const loadRows = (studyInstanceUid: string): Row[] => {
 
 export const saveRows = (studyInstanceUid: string, rows: readonly Row[]): void => {
   writeStorage(storageKey(studyInstanceUid), toStoredRows(studyInstanceUid, rows));
+};
+
+export const useStoredRows = (studyInstanceUid: string): [Row[], (rows: readonly Row[]) => void] => {
+  const [storedRows] = useState(() => loadRows(studyInstanceUid));
+  const save = useCallback(
+    (rows: readonly Row[]): void => {
+      saveRows(studyInstanceUid, rows);
+    },
+    [studyInstanceUid],
+  );
+
+  return [storedRows, save];
 };

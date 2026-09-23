@@ -13,14 +13,15 @@ how it is stored.
 ## Decision
 
 - **`models/row.ts` is the row, with its API as one named object.** `RowStatus`, the `Row` type
-  and `RowModel = { jsonSchema, create, toJSON, fromJSON, toRestoreRequest }`: the row's JSON form (every field but `restoreFailureReason`, A-14), a new pending row, the
+  and `RowModel = { jsonSchema, create, toJSON, fromJSON, toRestoreRequest }`: the row's JSON form
+  (`create(toolName)` issues the row id, A-37) (every field but `restoreFailureReason`, A-14), a new pending row, the
   conversions to and from the JSON form, and the row as a `RestoreMeasurementRequest` (or `null`
   when it has no uid or geometry). Plain functions declared above and listed by name — the
   readability of static methods without a class (the strict lint set refuses a class with only
   static members, and §2 keeps arrow functions everywhere). Nothing in it depends on the reducer
   or on storage.
 - **`state/reducer.ts` is how a row changes**: `FormAction` and the transitions; `ADD_ROW` is
-  `RowModel.create`. **`services/storedRows.ts` is how rows are stored** (the rows' I/O adapter, A-35): the envelope
+  `RowModel.create`. **`hooks/useStoredRows.ts` is how rows are stored** (A-35, A-37): the envelope
   `{ studyInstanceUid, rows: RowModel.jsonSchema[] }`, the key, `loadRows` (`RowModel.fromJSON`)
   and `saveRows` (`RowModel.toJSON`), over the storage service (A-35). `restoreViewer` maps the
   rows with `RowModel.toRestoreRequest`.

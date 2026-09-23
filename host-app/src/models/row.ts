@@ -32,8 +32,8 @@ export type Row = z.infer<typeof schema>;
 const jsonSchema = schema.omit({ restoreFailureReason: true });
 export type RowJson = z.infer<typeof jsonSchema>;
 
-const create = (rowId: string, toolName: ToolName): Row => ({
-  rowId,
+const create = (toolName: ToolName): Row => ({
+  rowId: crypto.randomUUID(),
   status: RowStatus.Pending,
   toolName,
   metrics: null,

@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import type { Metrics } from '@bdiadiun/scoring-contract';
-import { RowStatus, type Row } from '@app/models/row';
+import { RowModel, RowStatus, type Row } from '@app/models/row';
 import { reducer } from '@app/state/reducer';
 import { findRow, findRowByUid } from '@app/state/selectors';
 
 const metrics: Metrics = { area: { value: 124.5, unit: 'mm2' } };
 
 const addRows = (state: Row[], ...rowIds: string[]): Row[] =>
-  rowIds.reduce((acc, rowId) => reducer(acc, { type: 'ADD_ROW', rowId, toolName: 'EllipticalROI' }), state);
+  rowIds.reduce(
+    (acc, rowId) => reducer(acc, { type: 'ADD_ROW', row: { ...RowModel.create('EllipticalROI'), rowId } }),
+    state,
+  );
 
 const isDrawing = (state: Row[], rowId: string): boolean =>
   state.find((row) => row.rowId === rowId)?.status === RowStatus.Drawing;
@@ -16,8 +19,7 @@ describe('rows reducer', () => {
   it('ADD_ROW appends a pending row', () => {
     const state = reducer([], {
       type: 'ADD_ROW',
-      rowId: 'row-1',
-      toolName: 'EllipticalROI',
+      row: { ...RowModel.create('EllipticalROI'), rowId: 'row-1' },
     });
 
     expect(state).toHaveLength(1);
@@ -33,8 +35,7 @@ describe('rows reducer', () => {
   it('ADD_ROW keeps the given toolName on the new row', () => {
     const state = reducer([], {
       type: 'ADD_ROW',
-      rowId: 'row-1',
-      toolName: 'Length',
+      row: { ...RowModel.create('Length'), rowId: 'row-1' },
     });
     expect(state[0].toolName).toBe('Length');
   });
@@ -286,8 +287,7 @@ describe('rows reducer', () => {
   it('a row keeps its own toolName through arm/measure/clear (re-arm uses the same tool)', () => {
     let state = reducer([], {
       type: 'ADD_ROW',
-      rowId: 'row-1',
-      toolName: 'Length',
+      row: { ...RowModel.create('Length'), rowId: 'row-1' },
     });
     state = reducer(state, { type: 'ACTIVATE_TOOL', rowId: 'row-1', toolName: 'Length' });
     state = reducer(state, {

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { RowStatus, type Row } from '@app/models/row';
-import { loadRows, saveRows } from '@app/services/storedRows';
+import { loadRows, saveRows } from '@app/hooks/useStoredRows';
 
 const loadStoredRows = (study: string): Row[] => loadRows(study);
 

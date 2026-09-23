@@ -8,7 +8,7 @@ import { RowModel, RowStatus, type Row } from '@app/models/row';
 import type { FormAction } from './reducer';
 
 export const addRow = (dispatch: Dispatch<FormAction>, toolName: ToolName = DEFAULT_TOOL): void => {
-  dispatch({ type: 'ADD_ROW', rowId: crypto.randomUUID(), toolName });
+  dispatch({ type: 'ADD_ROW', row: RowModel.create(toolName) });
 };
 
 // A-4: one row is armed at a time, and ACTIVATE_TOOL replaces the armed row on both sides, so no

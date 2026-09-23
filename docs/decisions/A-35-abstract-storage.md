@@ -17,13 +17,13 @@ asked for the service to be abstract.
   schema refuses, or a store that throws — private mode, a full quota, cleared site data — each
   logged as a warning); `writeStorage(key, value)` stores the value or warns. The type parameter is
   inferred from the schema; no caller writes it.
-- **What the form stores is the form's own service**: `services/storedRows.ts` — the rows' I/O adapter
-  over the generic one — holds the envelope `{ studyInstanceUid, rows }` (rows in the model's JSON
+- **What the form stores is the form's own**: `hooks/useStoredRows.ts` (a service module until A-37 the
+  same day) — the rows' I/O over the generic service — holds the envelope `{ studyInstanceUid, rows }` (rows in the model's JSON
   form, A-36), the key, and the two functions the hook uses — `loadRows(studyInstanceUid)` (the rows under that
   study, each starting with a clean restore attempt; `[]` otherwise) and
   `saveRows(studyInstanceUid, rows)`.
 - Names: `loadRows` / `saveRows` say what the form does; `readStorage` / `writeStorage` say what the
-  service does. The `__tests__` of the envelope move with it to `services/__tests__/storedRows.test.ts`.
+  service does. The `__tests__` of the envelope move with it (`hooks/__tests__/useStoredRows.test.ts` since A-37).
 
 ## Why this way
 

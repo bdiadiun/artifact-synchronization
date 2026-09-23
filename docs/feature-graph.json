@@ -684,8 +684,8 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/hooks/useScoringForm.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/utils/totals.ts",
             "packages/contract/src/index.ts"
@@ -695,8 +695,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -745,8 +745,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -850,8 +850,8 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/hooks/useScoringForm.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/utils/totals.ts",
             "packages/contract/src/index.ts"
@@ -861,8 +861,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -978,8 +978,8 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/hooks/useScoringForm.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/utils/totals.ts",
             "packages/contract/src/index.ts"
@@ -989,8 +989,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -1084,8 +1084,8 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/hooks/useScoringForm.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/utils/totals.ts",
             "packages/contract/src/index.ts"
@@ -1095,8 +1095,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -1219,8 +1219,8 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/hooks/useScoringForm.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/utils/totals.ts",
             "packages/contract/src/index.ts"
@@ -1230,8 +1230,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -1367,8 +1367,8 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/hooks/useScoringForm.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/utils/totals.ts",
             "packages/contract/src/index.ts"
@@ -1378,8 +1378,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -1452,11 +1452,11 @@
         "host-app/src/components/MeasurementRow.props.ts",
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/config.ts",
+        "host-app/src/hooks/__tests__/useStoredRows.test.ts",
         "host-app/src/hooks/useScoringForm.ts",
+        "host-app/src/hooks/useStoredRows.ts",
         "host-app/src/i18n.ts",
-        "host-app/src/services/__tests__/storedRows.test.ts",
         "host-app/src/services/storage.ts",
-        "host-app/src/services/storedRows.ts",
         "host-app/src/state/actions.ts",
         "host-app/src/state/reducer.ts",
         "host-app/src/utils/format.ts",
@@ -1497,31 +1497,31 @@
           "internal": ["packages/contract/src/index.ts"],
           "external": ["@bdiadiun/scoring-channel"]
         },
+        "host-app/src/hooks/__tests__/useStoredRows.test.ts": {
+          "internal": ["host-app/src/hooks/useStoredRows.ts", "host-app/src/models/row.ts"],
+          "external": ["vitest"]
+        },
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@bdiadiun/scoring-channel", "react"]
         },
+        "host-app/src/hooks/useStoredRows.ts": {
+          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
+          "external": ["react", "zod"]
+        },
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/index.ts"],
           "external": []
         },
-        "host-app/src/services/__tests__/storedRows.test.ts": {
-          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storedRows.ts"],
-          "external": ["vitest"]
-        },
         "host-app/src/services/storage.ts": {
           "internal": [],
-          "external": ["zod"]
-        },
-        "host-app/src/services/storedRows.ts": {
-          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
           "external": ["zod"]
         },
         "host-app/src/state/actions.ts": {
@@ -1768,8 +1768,8 @@
           "internal": [
             "host-app/src/config.ts",
             "host-app/src/hooks/useScoringForm.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/utils/totals.ts",
             "packages/contract/src/index.ts"
@@ -2026,8 +2026,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -2193,13 +2193,17 @@
       "verify": "The host channel test covers armed-and-ready, never-ready, already-deactivated, double dispose and a missing viewer window; the host clears an issued removal id when the echo names an unknown uid; lint, typecheck, tests and both contract checks stay green.",
       "files": [
         "ARCHITECTURE.md",
+        "host-app/src/hooks/useStoredRows.ts",
         "host-app/src/i18n.ts",
         "host-app/src/main.tsx",
         "host-app/src/services/storage.ts",
-        "host-app/src/services/storedRows.ts",
         "packages/viewer-bridge/src/commands/handlers.ts"
       ],
       "imports": {
+        "host-app/src/hooks/useStoredRows.ts": {
+          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
+          "external": ["react", "zod"]
+        },
         "host-app/src/i18n.ts": {
           "internal": ["packages/contract/src/index.ts"],
           "external": []
@@ -2210,10 +2214,6 @@
         },
         "host-app/src/services/storage.ts": {
           "internal": [],
-          "external": ["zod"]
-        },
-        "host-app/src/services/storedRows.ts": {
-          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
           "external": ["zod"]
         },
         "packages/viewer-bridge/src/commands/handlers.ts": {
@@ -2270,8 +2270,8 @@
       "files": [
         ".github/workflows/publish-packages.yml",
         "docs/decisions/A-15-publish-contract-package.md",
+        "host-app/src/hooks/useStoredRows.ts",
         "host-app/src/services/storage.ts",
-        "host-app/src/services/storedRows.ts",
         "host-app/src/state/reducer.ts",
         "packages/contract/package.json",
         "packages/contract/src/hostCommands.ts",
@@ -2281,12 +2281,12 @@
         "packages/contract/tsconfig.json"
       ],
       "imports": {
+        "host-app/src/hooks/useStoredRows.ts": {
+          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
+          "external": ["react", "zod"]
+        },
         "host-app/src/services/storage.ts": {
           "internal": [],
-          "external": ["zod"]
-        },
-        "host-app/src/services/storedRows.ts": {
-          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
           "external": ["zod"]
         },
         "host-app/src/state/reducer.ts": {
@@ -2549,8 +2549,8 @@
         "docs/decisions/A-19-study-from-the-page-url.md",
         "host-app/src/__tests__/config.test.ts",
         "host-app/src/config.ts",
+        "host-app/src/hooks/useStoredRows.ts",
         "host-app/src/services/storage.ts",
-        "host-app/src/services/storedRows.ts",
         "host-app/src/state/actions.ts"
       ],
       "imports": {
@@ -2562,12 +2562,12 @@
           "internal": ["packages/contract/src/index.ts"],
           "external": ["@bdiadiun/scoring-channel"]
         },
+        "host-app/src/hooks/useStoredRows.ts": {
+          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
+          "external": ["react", "zod"]
+        },
         "host-app/src/services/storage.ts": {
           "internal": [],
-          "external": ["zod"]
-        },
-        "host-app/src/services/storedRows.ts": {
-          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
           "external": ["zod"]
         },
         "host-app/src/state/actions.ts": {
@@ -2874,8 +2874,8 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
@@ -3070,7 +3070,7 @@
     {
       "id": "F-67",
       "name": "Boundaries as schemas, one channel",
-      "description": "The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed. The review of the working tree (A-33) then fixed what the shape had promised but not kept: `VIEWER_READY` is answered in the message handler with the rows on screen, `MEASUREMENT_UPDATED` keeps its geometry, a restore mark is cleared once it stops being true, one effect owns the viewer bridge, a standalone viewer has no peer, and the channel package is React-free (A-33). The author's design then made the two ends mirror each other (A-34): one `useChannel` in the channel package for both applications, `channel.on` and `ohif.on` as the one way to subscribe, the form's actions as the contract's commands, OHIF's events parsed and throttled at the boundary. The storage service became abstract (A-35): sessionStorage for any key and schema, the form's stored rows in `services/storedRows.ts`. The row model got its own folder (A-36): `models/row.ts` with `RowModel` — JSON form, `create`, `toJSON` / `fromJSON`, `toRestoreRequest`.",
+      "description": "The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed. The review of the working tree (A-33) then fixed what the shape had promised but not kept: `VIEWER_READY` is answered in the message handler with the rows on screen, `MEASUREMENT_UPDATED` keeps its geometry, a restore mark is cleared once it stops being true, one effect owns the viewer bridge, a standalone viewer has no peer, and the channel package is React-free (A-33). The author's design then made the two ends mirror each other (A-34): one `useChannel` in the channel package for both applications, `channel.on` and `ohif.on` as the one way to subscribe, the form's actions as the contract's commands, OHIF's events parsed and throttled at the boundary. The storage service became abstract (A-35): sessionStorage for any key and schema, the form's stored rows in `services/storedRows.ts`. The row model got its own folder (A-36): `models/row.ts` with `RowModel` — JSON form, `create`, `toJSON` / `fromJSON`, `toRestoreRequest`. The stored rows became a hook, `useStoredRows(study)` → `[storedRows, save]`, composed with `useReducer` in `useScoringForm`; `RowModel.create(toolName)` issues the row id (A-37).",
       "canon": ["A-13", "D-2", "Q-7"],
       "dependsOn": ["F-66"],
       "slice": "61",
@@ -3086,15 +3086,16 @@
         "docs/decisions/A-34-two-applications-one-channel-hook.md",
         "docs/decisions/A-35-abstract-storage.md",
         "docs/decisions/A-36-row-model-folder.md",
+        "docs/decisions/A-37-stored-rows-hook.md",
         "docs/notes/ohif-service-availability.md",
         "eslint.config.js",
         "host-app/src/components/MeasurementRow.tsx",
         "host-app/src/config.ts",
         "host-app/src/hooks/useScoringForm.ts",
+        "host-app/src/hooks/useStoredRows.ts",
         "host-app/src/models/row.ts",
         "host-app/src/pages/ScoringPage.tsx",
         "host-app/src/services/storage.ts",
-        "host-app/src/services/storedRows.ts",
         "host-app/src/state/actions.ts",
         "host-app/src/state/reducer.ts",
         "host-app/src/state/selectors.ts",
@@ -3147,13 +3148,17 @@
         "host-app/src/hooks/useScoringForm.ts": {
           "internal": [
             "host-app/src/config.ts",
+            "host-app/src/hooks/useStoredRows.ts",
             "host-app/src/models/row.ts",
-            "host-app/src/services/storedRows.ts",
             "host-app/src/state/actions.ts",
             "host-app/src/state/reducer.ts",
             "packages/contract/src/index.ts"
           ],
           "external": ["@bdiadiun/scoring-channel", "react"]
+        },
+        "host-app/src/hooks/useStoredRows.ts": {
+          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
+          "external": ["react", "zod"]
         },
         "host-app/src/models/row.ts": {
           "internal": ["packages/contract/src/index.ts"],
@@ -3165,10 +3170,6 @@
         },
         "host-app/src/services/storage.ts": {
           "internal": [],
-          "external": ["zod"]
-        },
-        "host-app/src/services/storedRows.ts": {
-          "internal": ["host-app/src/models/row.ts", "host-app/src/services/storage.ts"],
           "external": ["zod"]
         },
         "host-app/src/state/actions.ts": {

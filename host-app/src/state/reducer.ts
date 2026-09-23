@@ -6,30 +6,23 @@ import type {
   MeasurementRemovedEvent,
   MeasurementsRestoredEvent,
   MeasurementUpdatedEvent,
-  ToolName,
   ViewerEvent,
 } from '@bdiadiun/scoring-contract';
-import { RowModel, RowStatus, type Row } from '@app/models/row';
+import { RowStatus, type Row } from '@app/models/row';
 import { findRow, findRowByUid } from './selectors';
 
 // What changes the rows: the two local actions, every command the form sends and every event the
 // viewer sends — commands and events go through as they are, so this reducer is the one place that
 // says what each of them means for the form.
 export type FormAction =
-  | { type: 'ADD_ROW'; rowId: string; toolName: ToolName }
-  | { type: 'REMOVE_ROW'; rowId: string }
-  | HostCommand
-  | ViewerEvent;
+  { type: 'ADD_ROW'; row: Row } | { type: 'REMOVE_ROW'; rowId: string } | HostCommand | ViewerEvent;
 
 type ActionOf<T extends FormAction['type']> = Extract<FormAction, { type: T }>;
 
 const replaceRow = (rows: Row[], rowId: string, patch: Partial<Row>): Row[] =>
   rows.map((row) => (row.rowId === rowId ? { ...row, ...patch } : row));
 
-const addRow = (rows: Row[], action: ActionOf<'ADD_ROW'>): Row[] => [
-  ...rows,
-  RowModel.create(action.rowId, action.toolName),
-];
+const addRow = (rows: Row[], action: ActionOf<'ADD_ROW'>): Row[] => [...rows, action.row];
 
 // Only one row is armed at a time (A-4): the target starts drawing, any other drawing row goes
 // back to pending. Arming the row that already draws changes nothing.

@@ -15,7 +15,7 @@ the detail; these seven sentences are the shape, and a change that breaks one of
 even when the linter is green.
 
 1. **A hook returns what its name promises, or it does not exist.** `useScoringForm(study)` →
-   `[rows, dispatch, channel]`; `useChannel(options)` → the channel; `useScoringBridge(hostOrigin,
+   `[rows, dispatch, channel]`; `useStoredRows(study)` → `[storedRows, save]`; `useChannel(options)` → the channel; `useScoringBridge(hostOrigin,
 ohif)` → the channel it provides. A hook that returns
    nothing is a hidden effect (the former `usePersistRows(rows)`, `useMessages(channel, handle)`):
    write the effect where it happens instead.
@@ -185,8 +185,8 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   consumer that must check a shape builds a schema from the contract's.
 - **A folder names a side or a role (A-27).** Channel: two files, no folder; extension:
   `commands/`, `events/`, `ohif/`; application: the conventional React layout — `components/`,
-  `pages/`, `hooks/`, `models/` (the row, A-36), `state/` (reducer, selectors, actions), `services/` (storage,
-  stored rows), `utils/` (format, totals). No file under twenty lines (a constant, a type or a one-function module joins its owner), except a
+  `pages/`, `hooks/`, `models/` (the row, A-36), `state/` (reducer, selectors, actions), `services/` (storage),
+  `utils/` (format, totals); `hooks/` holds `useScoringForm` and `useStoredRows` (A-37). No file under twenty lines (a constant, a type or a one-function module joins its owner), except a
   package `index.ts`, `main.tsx`, a component's `.props.ts` and a file the standard layout names
   (`state/selectors.ts`, a page; A-33, A-34). Tests move with the code they test.
 - **No code for a caller that does not exist.** A default every caller overrides, an export only a
