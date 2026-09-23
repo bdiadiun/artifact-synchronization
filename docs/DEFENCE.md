@@ -102,7 +102,7 @@ else: the tool name travels in `ACTIVATE_TOOL`, the extension checks `toolGroup.
    [`packages/contract/src/vocabulary.ts`](../packages/contract/src/vocabulary.ts) (and a unit to
    `Unit` if a new one is needed) — one line each, since A-28 the vocabulary is the only place a
    metric is named; then publish the package and raise its pinned version in the extension.
-2. Extension: in [`toMetrics`][fork-metrics] read `stats.mean` the way `area` is read.
+2. Extension: one more row in `METRIC_SPECS` of [`ohif/metrics.ts`][fork-metrics] (the stats field and its unit table), the way `area` is read.
 3. Host: `MeasurementRow` already renders the first non-area metric; to show both, map over the
    metrics object; `computeTotals(rows, 'mean')` gives the total.
 
@@ -115,7 +115,7 @@ the queue drains but the viewer console has no `[channel] received ACTIVATE_TOOL
 
 ## Rehearsal checklist
 
-- [ ] Both apps start from a clean clone by README only.
+- [ ] Both apps start from a clean clone by README only (`npm run viewer:link` first until the release is pinned in the fork).
 - [ ] Three measurements in a row, total updates.
 - [ ] Cancel: "Активувати", then "Скасувати" → row `Очікує`, tool back to WindowLevel.
 - [ ] Drag an ellipse handle: the row value and total change while dragging.
@@ -129,14 +129,40 @@ the queue drains but the viewer console has no `[channel] received ACTIVATE_TOOL
 
 ## Video script (D-8, 2–4 min)
 
-| Time      | What to show                                                                                                                                        | What to say                                                                                                                                                                  |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0:00–0:25 | Terminal 1: `cd viewer && OHIF_OPEN=false yarn --cwd platform/app dev`. Terminal 2: `npm run dev --workspace host-app`. Open http://localhost:5173. | Two apps, two ports, one channel. The status line turns to `готовий` after `VIEWER_READY`.                                                                                   |
-| 0:25–1:15 | "Додати вимірювання" three times. For each row: "Активувати", draw an ellipse. Point at the value, the unit and "Разом".                            | Row ids come from the form, measurement ids from OHIF; the tool returns to the previous one.                                                                                 |
-| 1:15–1:35 | Add a fourth row, "Активувати", then "Скасувати". Point at the OHIF toolbar.                                                                        | Cancel sends `DEACTIVATE_TOOL`; the row stays as `Очікує`.                                                                                                                   |
-| 1:50–2:10 | Drag a handle of one ellipse.                                                                                                                       | Live update, throttled to one message per 100 ms; the form never writes back, so no loop.                                                                                    |
-| 1:35–1:50 | Click "Додати довжину", activate it, draw a line across the image. Point at the two totals.                                                         | The row carries its own tool, so the same command activates the ruler; areas and lengths are summed separately and units are never mixed.                                    |
-| 2:10–2:35 | "Видалити" on one row; then delete another annotation in OHIF's measurements panel.                                                                 | Deletion in both directions; the viewer tags our own echo with `causedBy`.                                                                                                   |
-| 2:35–2:55 | Click a Done row after scrolling the viewer away.                                                                                                   | Focus: OHIF jumps to the image and selects the annotation.                                                                                                                   |
-| 2:55–3:10 | Reload the page (F5) and wait a moment.                                                                                                             | The form persists rows and the annotation geometry per tab and per study; the viewer rebuilds the annotations with their original ids, so the correlation survives a reload. |
-| 3:10–3:25 | Switch the layout to 2×2.                                                                                                                           | OHIF version from `version.txt`, injected at build time, in every viewport.                                                                                                  |
+Read while recording. Steps and labels are as on screen; the narration is in the video's language,
+Ukrainian, the way the form's strings are (A-7) — everything else here stays English.
+
+**Before recording (off camera).** `npm run viewer:link` (until the release is pinned in the fork the
+viewer must run the working-tree packages, or the published contract rejects every command);
+`npm run viewer:dev` and wait for "compiled successfully"; `npm run dev --workspace host-app`. Open
+the host's and the viewer's consoles in separate windows. Clear the host's sessionStorage
+(DevTools → Application) so the form starts empty. Dismiss OHIF's "investigational use" banner and
+answer "No" to "Track measurements?" once, before the take.
+
+| Time      | What to show                                                                                                                    | Narration                                                                                                                                                                                                                                                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0:00–0:20 | Two terminals with the running servers; open http://localhost:5173. Point at the status line before and after the viewer loads. | «Два застосунки на різних портах: форма на 5173, OHIF на 3000 в iframe. Спілкуються лише через postMessage з явним origin. Статус зверху — "очікує VIEWER_READY": форма нічого не шле, поки viewer не оголосить готовність. Ось він завантажився — "готовий, у черзі: 0".»                                                            |
+| 0:20–1:20 | "Додати вимірювання" → "Активувати" → draw an ellipse; three times. Point at the value, the unit and "Разом (3 вимірювання)".   | «Кожен рядок отримує свій rowId ще до малювання. "Активувати" шле ACTIVATE_TOOL з іменем інструмента, viewer вмикає еліпс, а після вимірювання повертається до WindowLevel. Площа приходить у MEASUREMENT_ADDED разом із uid анотації — це єдина кореляція між сторонами. "Разом" — сума лише в mm²; px² до mm² ніколи не додається.» |
+| 1:20–1:40 | "Додати вимірювання" → "Активувати" → "Скасувати". Point at the OHIF toolbar.                                                   | «Передумав: DEACTIVATE_TOOL, рядок повертається в "Очікує", інструмент — до WindowLevel. Рядок лишається, його можна активувати знову.»                                                                                                                                                                                               |
+| 1:40–2:00 | Hover an ellipse, grab a handle, drag it slowly.                                                                                | «Живе оновлення: значення і сума міняються під час руху. Viewer проріджує MEASUREMENT_UPDATED до десяти на секунду; форма у відповідь нічого не шле, тому петлі немає.»                                                                                                                                                               |
+| 2:00–2:20 | "Додати довжину" → "Активувати" → draw a line. Point at "Разом довжина".                                                        | «Другий інструмент їде тим самим полем toolName. Довжини сумуються окремо від площ.»                                                                                                                                                                                                                                                  |
+| 2:20–2:35 | Pan the image away, then click a "Готово" row.                                                                                  | «Клік по рядку — FOCUS_MEASUREMENT: viewer стрибає до анотації і виділяє її.»                                                                                                                                                                                                                                                         |
+| 2:35–3:00 | "Видалити" on one row; then right-click another ellipse in the viewer → "Delete measurement".                                   | «Видалення в обидва боки: з форми — анотація зникає у viewer-і; з viewer-а — рядок повертається в "Очікує", як сказано в завданні.»                                                                                                                                                                                                   |
+| 3:00–3:15 | Switch the layout to 2×2 (toolbar grid button).                                                                                 | «OHIF 3.12.17 у кожній панелі — версія з package.json, підставлена webpack-ом під час збірки.»                                                                                                                                                                                                                                        |
+| 3:15–3:35 | Press F5; wait for the viewer; point at the rows, the totals and the redrawn annotations.                                       | «Після перезавантаження рядки й суми на місці, а viewer отримує RESTORE_MEASUREMENTS і перемальовує анотації з тими самими uid. Значення підтверджує сам viewer, сховищу не довіряємо.»                                                                                                                                               |
+| 3:35–3:50 | The host console: `[channel] received …` / `sent …` lines.                                                                      | «Весь протокол видно в консолі: перевірка origin, версія контракту, черга до VIEWER_READY. Контракт — zod-схеми в окремому пакеті, спільному для обох сторін.»                                                                                                                                                                        |
+
+Tips: draw small ellipses right after "Активувати" and narrate over the actions, not between them.
+If a step goes wrong, stop, press F5 and retake only that step — the state survives a reload.
+
+## Known console noise (not ours)
+
+Two warnings appear in the viewer's console in the development build of OHIF 3.12.17 and are
+unrelated to the extension; a message of ours always starts with `[channel]` or `[scoring-bridge]`.
+
+- `Warning: Failed prop type: Invalid prop `config`supplied to`App`, expected one of type [function]` — OHIF's
+  own `App.propTypes` (`platform/app/src/App.tsx`), once per viewer load.
+- `Warning: React does not recognize the `evaluateProps` prop on a DOM element` — OHIF's toolbar
+  (`ToolbarService` adds the field to every button, `extensions/default` spreads it onto a `div`).
+  `ScoringBridge` shows in that component stack only because our provider wraps the mode (A-32),
+  like every other context-module provider.
