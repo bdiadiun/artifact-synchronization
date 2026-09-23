@@ -15,7 +15,7 @@ Statuses: `planned` → `approved` → `in-progress` → `review` → `done`.
 | F-02 | Page layout: iframe + form panel                                                                                                                  | C-4.1.3, C-4.2.2                                                | F-01             | 1     | done    | Page shows a full-height flexible iframe on the left pointing at `http://localhost:3000/viewer?StudyInstanceUIDs=…` and a form panel on the right.                                                                                                                                                                                                                                                                                                                                                        |
 | F-03 | Shared message contract                                                                                                                           | C-4.4.1, C-4.4.2, C-4.4.3, P-7, P-8, Q-7                        | F-00             | 2     | done    | Types for the five events with `version: 1`; runtime guard rejects malformed / wrong-version messages; unit tests for serialisation and validation pass (X-4).                                                                                                                                                                                                                                                                                                                                            |
 | F-04 | OHIF fork wired in                                                                                                                                | A-1, C-4.1.1, C-4.1.2, C-4.1.3, D-1                             | F-00             | 2     | done    | Fork added as checkout under `viewer/`; `yarn dev` serves on port 3000; a direct study link opens with the default public DICOMweb.                                                                                                                                                                                                                                                                                                                                                                       |
-| F-05 | Viewer bridge extension: context module, origin check, `VIEWER_READY`                                                                             | C-3.1, C-3.2, C-3.4, Q-2, Q-5                                   | F-03, F-04       | 2     | done    | Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).                                                                                                                                                                                                                                                                                                   |
+| F-05 | Scoring viewer extension: context module, origin check, `VIEWER_READY`                                                                            | C-3.1, C-3.2, C-3.4, Q-2, Q-5                                   | F-03, F-04       | 2     | done    | Extension registered in the fork's app config; on load the parent receives `VIEWER_READY` with correct `targetOrigin`; messages from a foreign origin are ignored (manual `postMessage` from devtools).                                                                                                                                                                                                                                                                                                   |
 | F-06 | Host bridge client: origin check, handshake, early-command queue, cleanup                                                                         | C-3.1, P-1, P-9, Q-1, Q-2, Q-5                                  | F-02, F-03       | 2     | done    | Clicking "Activate" before the iframe is ready queues the command; it is flushed after `VIEWER_READY`; listeners are removed on unmount (React StrictMode double-mount leaves one listener).                                                                                                                                                                                                                                                                                                              |
 | F-07 | Form rows: add, statuses, row IDs                                                                                                                 | C-4.3.1, C-4.3.2, C-4.3.7, Q-3                                  | F-02             | 3     | done    | "Add measurement" creates rows with unique IDs and status `Pending`; any number of rows can be added.                                                                                                                                                                                                                                                                                                                                                                                                     |
 | F-08 | Activate / deactivate tool from a row                                                                                                             | A-4, C-4.3.3, C-4.4.1, P-7, Q-3                                 | F-05, F-06, F-07 | 3     | done    | "Activate" switches the row to `Drawing…` and the viewer to `EllipticalROI`; cancel sends `DEACTIVATE_TOOL`, row returns to `Pending`, viewer returns to the default tool.                                                                                                                                                                                                                                                                                                                                |
@@ -128,7 +128,7 @@ graph TD
   F02["F-02 Page layout: iframe + form panel"]
   F03["F-03 Shared message contract"]
   F04["F-04 OHIF fork wired in"]
-  F05["F-05 Viewer bridge extension: context module, origin check, VIEWER_READY"]
+  F05["F-05 Scoring viewer extension: context module, origin check, VIEWER_READY"]
   F06["F-06 Host bridge client: origin check, handshake, early-command queue, cleanup"]
   F07["F-07 Form rows: add, statuses, row IDs"]
   F08["F-08 Activate / deactivate tool from a row"]
@@ -420,21 +420,21 @@ Files:
 - `viewer/platform/app/package.json`
 - `viewer/platform/app/pluginConfig.json`
 
-### F-05 Viewer bridge extension: context module, origin check, `VIEWER_READY`
+### F-05 Scoring viewer extension: context module, origin check, `VIEWER_READY`
 
-The `scoring-bridge` OHIF extension receives `servicesManager` and `commandsManager` in its `getContextModule` (the place OHIF gives an extension a React lifetime; C-3.4 read as A-33 records) and mounts the bridge as a provider around the mode (A-32). The bridge listens for `message` events, ignores any origin other than the configured host origin, and posts to the parent with an explicit `targetOrigin`. `VIEWER_READY` is sent at once when a viewport exists and otherwise on the first `VIEWPORT_ADDED`, because tool activation is a no-op before a viewport exists; one effect owns every subscription and releases it on unmount.
+The `scoring-viewer` OHIF extension (named so by A-38) receives `servicesManager` and `commandsManager` in its `getContextModule` (the place OHIF gives an extension a React lifetime; C-3.4 read as A-33 records) and mounts the bridge as a provider around the mode (A-32). The bridge listens for `message` events, ignores any origin other than the configured host origin, and posts to the parent with an explicit `targetOrigin`. `VIEWER_READY` is sent at once when a viewport exists and otherwise on the first `VIEWPORT_ADDED`, because tool activation is a no-op before a viewport exists; one effect owns every subscription and releases it on unmount.
 
 Canon: C-3.1, C-3.2, C-3.4, Q-2, Q-5. Depends on: F-03, F-04. Slice 2, status `done`.
 
 Files:
 
-- `packages/viewer-bridge/package.json`
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
-- `packages/viewer-bridge/src/hooks/useScoringBridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/handlers.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
-- `packages/viewer-bridge/tsconfig.json`
+- `packages/scoring-viewer/package.json`
+- `packages/scoring-viewer/src/ScoringViewer.tsx` — internal: `packages/scoring-viewer/src/hooks/useScoringViewer.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`; external: `react`
+- `packages/scoring-viewer/src/events/handlers.ts` — internal: `packages/scoring-viewer/src/commands/handlers.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/hooks/useScoringViewer.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/handlers.ts`, `packages/scoring-viewer/src/events/handlers.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `packages/scoring-viewer/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/metrics.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/ohif/throttle.ts`, `packages/scoring-viewer/src/ohif/version.ts`
+- `packages/scoring-viewer/src/session.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/surface.ts`
+- `packages/scoring-viewer/tsconfig.json`
 
 ### F-06 Host bridge client: origin check, handshake, early-command queue, cleanup
 
@@ -475,7 +475,7 @@ Files:
 - `docs/decisions/A-4-cancelled-activation.md`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useStoredRows.ts`, `host-app/src/models/row.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
 
 ### F-09 Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool
 
@@ -487,9 +487,9 @@ Files:
 
 - `docs/decisions/A-11-units-and-metrics-payload.md`
 - `docs/decisions/A-8-id-correlation.md`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
-- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/events/handlers.ts` — internal: `packages/scoring-viewer/src/commands/handlers.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/metrics.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/ohif/throttle.ts`, `packages/scoring-viewer/src/ohif/version.ts`
 
 ### F-10 Row receives the value
 
@@ -557,9 +557,9 @@ Files:
 - `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useStoredRows.ts`, `host-app/src/models/row.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/models/row.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/models/row.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`
-- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
-- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
-- `packages/viewer-bridge/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
+- `packages/scoring-viewer/src/events/handlers.ts` — internal: `packages/scoring-viewer/src/commands/handlers.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/metrics.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/ohif/throttle.ts`, `packages/scoring-viewer/src/ohif/version.ts`
+- `packages/scoring-viewer/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
 
 ### F-15 Bonus: two-way deletion
 
@@ -583,7 +583,7 @@ Files:
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
 
 ### F-16 Bonus: focus annotation from row
 
@@ -605,7 +605,7 @@ Files:
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
 
 ### F-17 Bonus: Length row type with separate sum
 
@@ -637,7 +637,7 @@ Canon: S-5.5. Depends on: F-04. Slice 9, status `done`.
 
 Files:
 
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
+- `packages/scoring-viewer/src/ScoringViewer.tsx` — internal: `packages/scoring-viewer/src/hooks/useScoringViewer.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`; external: `react`
 
 ### F-19 Bonus: state restore after reload
 
@@ -667,7 +667,7 @@ Files:
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
 - `packages/contract/src/viewerEvents.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
+- `packages/scoring-viewer/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
 - `scripts/eslint-fork-style.config.js` — external: `typescript-eslint`
 
 ### F-20 Project tooling and state journal
@@ -759,7 +759,7 @@ Canon: A-13, Q-7. Depends on: F-25. Slice 16, status `done`.
 Files:
 
 - `docs/CONVENTIONS.md`
-- `docs/notes/bridge-internals.md`
+- `docs/notes/viewer-internals.md`
 
 ### F-27 Component file layout: `{Name}.props.ts` for types, interfaces and styles; tests in `__tests__/` folders; lint rule against inline style literals
 
@@ -853,9 +853,9 @@ Files:
 
 - `ARCHITECTURE.md`
 - `docs/DEFENCE.md`
-- `docs/notes/bridge-internals.md`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
+- `docs/notes/viewer-internals.md`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
 
 ### F-33 Scoring form hook and reducer split
 
@@ -970,7 +970,7 @@ Files:
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/main.tsx` — internal: `host-app/src/index.css`, `host-app/src/pages/ScoringPage.tsx`; external: `react`, `react-dom`
 - `host-app/src/services/storage.ts` — external: `zod`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
 
 ### F-40 Workflow ownership and the return-statement rule
 
@@ -1028,8 +1028,8 @@ Files:
 - `.claude/rules/fork.md`
 - `.github/workflows/ci.yml`
 - `docs/decisions/A-15-publish-contract-package.md`
-- `packages/viewer-bridge/package.json`
-- `packages/viewer-bridge/tsconfig.json`
+- `packages/scoring-viewer/package.json`
+- `packages/scoring-viewer/tsconfig.json`
 
 ### F-44 The bridge is an adapter with a handler registry
 
@@ -1041,7 +1041,7 @@ Files:
 
 - `docs/decisions/A-16-adapter-and-viewer-delivery.md`
 - `docs/notes/ohif-packaging.md`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
 
 ### F-45 The viewer client becomes the orchestrator package
 
@@ -1172,10 +1172,10 @@ Files:
 - `docs/decisions/A-20-three-layers.md`
 - `docs/notes/ohif-extension-composition.md`
 - `packages/contract/tsconfig.tests.json`
-- `packages/viewer-bridge/package.json`
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
-- `packages/viewer-bridge/src/index.ts` — internal: `packages/viewer-bridge/src/ScoringBridge.tsx`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/version.ts`
-- `packages/viewer-bridge/tsconfig.tests.json`
+- `packages/scoring-viewer/package.json`
+- `packages/scoring-viewer/src/ScoringViewer.tsx` — internal: `packages/scoring-viewer/src/hooks/useScoringViewer.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`; external: `react`
+- `packages/scoring-viewer/src/index.ts` — internal: `packages/scoring-viewer/src/ScoringViewer.tsx`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/ohif/version.ts`
+- `packages/scoring-viewer/tsconfig.tests.json`
 
 ### F-56 The adapter registers our extensions
 
@@ -1188,8 +1188,8 @@ Files:
 - `.github/workflows/publish-packages.yml`
 - `docs/decisions/A-20-three-layers.md`
 - `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
-- `packages/viewer-adapter/package.json`
-- `packages/viewer-adapter/src/extension.ts` — external: `@bdiadiun/ohif-extension-scoring-bridge`
+- `packages/ohif-extension-loader/package.json`
+- `packages/ohif-extension-loader/src/extension.ts` — external: `@bdiadiun/ohif-extension-scoring-viewer`
 
 ### F-57 The three layers are in place
 
@@ -1230,8 +1230,8 @@ Files:
 - `docs/CONVENTIONS.md`
 - `packages/channel/package.json`
 - `packages/contract/package.json`
-- `packages/viewer-adapter/package.json`
-- `packages/viewer-bridge/package.json`
+- `packages/ohif-extension-loader/package.json`
+- `packages/scoring-viewer/package.json`
 
 ### F-60 The instructions name the command that works
 
@@ -1271,8 +1271,8 @@ Files:
 
 - `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/models/row.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
-- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
+- `packages/scoring-viewer/src/events/handlers.ts` — internal: `packages/scoring-viewer/src/commands/handlers.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/metrics.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/ohif/throttle.ts`, `packages/scoring-viewer/src/ohif/version.ts`
 
 ### F-63 One channel API for both ends
 
@@ -1300,12 +1300,12 @@ Files:
 - `docs/decisions/A-23-minimal-bridge.md`
 - `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
-- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
-- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
-- `packages/viewer-bridge/src/ohif/surface.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `packages/scoring-viewer/src/ScoringViewer.tsx` — internal: `packages/scoring-viewer/src/hooks/useScoringViewer.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`; external: `react`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
+- `packages/scoring-viewer/src/events/handlers.ts` — internal: `packages/scoring-viewer/src/commands/handlers.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/metrics.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/ohif/throttle.ts`, `packages/scoring-viewer/src/ohif/version.ts`
+- `packages/scoring-viewer/src/ohif/surface.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 
 ### F-65 Plain code
 
@@ -1341,7 +1341,7 @@ Files:
 
 ### F-67 Boundaries as schemas, one channel
 
-The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed. The review of the working tree (A-33) then fixed what the shape had promised but not kept: `VIEWER_READY` is answered in the message handler with the rows on screen, `MEASUREMENT_UPDATED` keeps its geometry, a restore mark is cleared once it stops being true, one effect owns the viewer bridge, a standalone viewer has no peer, and the channel package is React-free (A-33). The author's design then made the two ends mirror each other (A-34): one `useChannel` in the channel package for both applications, `channel.on` and `ohif.on` as the one way to subscribe, the form's actions as the contract's commands, OHIF's events parsed and throttled at the boundary. The storage service became abstract (A-35): sessionStorage for any key and schema, the form's stored rows in `services/storedRows.ts`. The row model got its own folder (A-36): `models/row.ts` with `RowModel` — JSON form, `create`, `toJSON` / `fromJSON`, `toRestoreRequest`. The stored rows became a hook, `useStoredRows(study)` → `[storedRows, save]`, composed with `useReducer` in `useScoringForm`; `RowModel.create(toolName)` issues the row id (A-37).
+The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed. The review of the working tree (A-33) then fixed what the shape had promised but not kept: `VIEWER_READY` is answered in the message handler with the rows on screen, `MEASUREMENT_UPDATED` keeps its geometry, a restore mark is cleared once it stops being true, one effect owns the viewer bridge, a standalone viewer has no peer, and the channel package is React-free (A-33). The author's design then made the two ends mirror each other (A-34): one `useChannel` in the channel package for both applications, `channel.on` and `ohif.on` as the one way to subscribe, the form's actions as the contract's commands, OHIF's events parsed and throttled at the boundary. The storage service became abstract (A-35): sessionStorage for any key and schema, the form's stored rows in `services/storedRows.ts`. The row model got its own folder (A-36): `models/row.ts` with `RowModel` — JSON form, `create`, `toJSON` / `fromJSON`, `toRestoreRequest`. The stored rows became a hook, `useStoredRows(study)` → `[storedRows, save]`, composed with `useReducer` in `useScoringForm`; `RowModel.create(toolName)` issues the row id (A-37). Slice 62 then named the two OHIF-side packages after their roles: `packages/scoring-viewer` (`@bdiadiun/ohif-extension-scoring-viewer`, `ScoringViewer`, `useScoringViewer`, `session.ts`) and `packages/ohif-extension-loader` (`@bdiadiun/ohif-extension-loader`), both at 0.1.0 (A-38).
 
 Canon: A-13, D-2, Q-7. Depends on: F-66. Slice 61, status `review`.
 
@@ -1357,6 +1357,7 @@ Files:
 - `docs/decisions/A-35-abstract-storage.md`
 - `docs/decisions/A-36-row-model-folder.md`
 - `docs/decisions/A-37-stored-rows-hook.md`
+- `docs/decisions/A-38-names-after-roles.md`
 - `docs/notes/form-internals.md`
 - `docs/notes/ohif-service-availability.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
@@ -1376,16 +1377,16 @@ Files:
 - `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/channel/src/peer.ts` — internal: `packages/contract/src/index.ts`
 - `packages/contract/src/vocabulary.ts` — external: `zod`
-- `packages/viewer-adapter/src/extension.ts` — external: `@bdiadiun/ohif-extension-scoring-bridge`
-- `packages/viewer-bridge/src/ScoringBridge.tsx` — internal: `packages/viewer-bridge/src/hooks/useScoringBridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `react`
-- `packages/viewer-bridge/src/bridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
-- `packages/viewer-bridge/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
-- `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
-- `packages/viewer-bridge/src/hooks/useScoringBridge.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/events/handlers.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `packages/viewer-bridge/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/ohif/metrics.ts`, `packages/viewer-bridge/src/ohif/surface.ts`, `packages/viewer-bridge/src/ohif/throttle.ts`, `packages/viewer-bridge/src/ohif/version.ts`
-- `packages/viewer-bridge/src/ohif/metrics.ts` — internal: `packages/contract/src/index.ts`; external: `zod`
-- `packages/viewer-bridge/src/ohif/surface.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
-- `packages/viewer-bridge/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
-- `packages/viewer-bridge/src/ohif/version.ts` — internal: `packages/viewer-bridge/src/ohif/surface.ts`
+- `packages/ohif-extension-loader/src/extension.ts` — external: `@bdiadiun/ohif-extension-scoring-viewer`
+- `packages/scoring-viewer/src/ScoringViewer.tsx` — internal: `packages/scoring-viewer/src/hooks/useScoringViewer.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`; external: `react`
+- `packages/scoring-viewer/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/commands/restore.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`; external: `@cornerstonejs/core`, `@cornerstonejs/tools`
+- `packages/scoring-viewer/src/events/handlers.ts` — internal: `packages/scoring-viewer/src/commands/handlers.ts`, `packages/scoring-viewer/src/commands/restore.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/session.ts`
+- `packages/scoring-viewer/src/hooks/useScoringViewer.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/commands/handlers.ts`, `packages/scoring-viewer/src/events/handlers.ts`, `packages/scoring-viewer/src/ohif/facade.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/session.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `packages/scoring-viewer/src/ohif/facade.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/metrics.ts`, `packages/scoring-viewer/src/ohif/surface.ts`, `packages/scoring-viewer/src/ohif/throttle.ts`, `packages/scoring-viewer/src/ohif/version.ts`
+- `packages/scoring-viewer/src/ohif/metrics.ts` — internal: `packages/contract/src/index.ts`; external: `zod`
+- `packages/scoring-viewer/src/ohif/surface.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `packages/scoring-viewer/src/ohif/throttle.ts` — internal: `packages/contract/src/index.ts`
+- `packages/scoring-viewer/src/ohif/version.ts` — internal: `packages/scoring-viewer/src/ohif/surface.ts`
+- `packages/scoring-viewer/src/session.ts` — internal: `packages/contract/src/index.ts`, `packages/scoring-viewer/src/ohif/surface.ts`
 - `scripts/viewer.mjs` — external: `node:child_process`, `node:fs`, `node:path`, `node:url`

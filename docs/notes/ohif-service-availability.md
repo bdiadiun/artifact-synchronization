@@ -30,14 +30,14 @@ list; `@ohif/extension-cornerstone` registers them itself, inside its own
 synchronously, before that call returns.
 
 `viewer/platform/app/pluginConfig.json` lists `@ohif/extension-cornerstone`
-at index 1 and `@bdiadiun/ohif-extension-scoring-adapter` last (index 14).
+at index 1 and `@bdiadiun/ohif-extension-loader` last (index 14).
 Since `registerExtensions` is sequential, cornerstone's `preRegistration`
 has already completed by the time the adapter's starts.
 
 The adapter registers our bridge extension from inside its own
 `preRegistration`, via `registerChildren`, which `await`s
 `extensionManager.registerExtension(child)` per child in a `for` loop
-(`packages/viewer-adapter/src/registerChildren.ts:5-14`). This nests our
+(`packages/ohif-extension-loader/src/registerChildren.ts:5-14`). This nests our
 bridge's `preRegistration` one level deeper but does not change the
 ordering: it still runs after the adapter's slot in the top-level list,
 i.e. after cornerstone.

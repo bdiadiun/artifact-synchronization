@@ -133,7 +133,7 @@ Indicative slice order (the minimum from the canon; refined in the graph): 0. `d
   deliverable).
 - Commit format — Conventional Commits: `type(scope): summary` (`feat`, `fix`, `chore`, `docs`,
   `refactor`, `test`).
-- Branches: `<type>/<short-description>`, e.g. `feat/viewer-bridge-extension`. Branched from
+- Branches: `<type>/<short-description>`, e.g. `feat/scoring-viewer-extension`. Branched from
   `main`, PR into `main`.
 - Direct commits to `main` are forbidden (except the very first initial commit if needed to create
   the base branch).

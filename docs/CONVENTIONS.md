@@ -15,7 +15,7 @@ the detail; these seven sentences are the shape, and a change that breaks one of
 even when the linter is green.
 
 1. **A hook returns what its name promises, or it does not exist.** `useScoringForm(study)` →
-   `[rows, dispatch, channel]`; `useStoredRows(study)` → `[storedRows, save]`; `useChannel(options)` → the channel; `useScoringBridge(hostOrigin,
+   `[rows, dispatch, channel]`; `useStoredRows(study)` → `[storedRows, save]`; `useChannel(options)` → the channel; `useScoringViewer(hostOrigin,
 ohif)` → the channel it provides. A hook that returns
    nothing is a hidden effect (the former `usePersistRows(rows)`, `useMessages(channel, handle)`):
    write the effect where it happens instead.
@@ -44,7 +44,7 @@ ohif)` → the channel it provides. A hook that returns
 7. **A component renders; a hook owns.** `ScoringPanel` calls one hook and renders;
    `MeasurementRow` calls `activateRow(dispatch, row)` from its own button; the page is layout
    only. On the viewer side the same: the provider renders its children around the channel
-   `useScoringBridge` returns, and the hook owns the channel, the commands and the OHIF events.
+   `useScoringViewer` returns, and the hook owns the channel, the commands and the OHIF events.
 
 ## 1. Language and tooling
 
@@ -143,7 +143,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - Split by role, not by size: the bridge is messaging, handshake and the measurement stream; a
   hook is user actions or event synchronisation, not both. A factory that does more than three
   things is two factories and a composition root that wires them.
-- A composition root (`ScoringBridge.tsx`, `main.tsx`, a top-level hook) only creates and connects; it holds
+- A composition root (`ScoringViewer.tsx`, `main.tsx`, a top-level hook) only creates and connects; it holds
   no branching logic of its own.
 - Repeated lookups become named selectors (`findRow`, `findRowByUid` in `state/selectors.ts`) instead of inline `find`
   calls scattered through a module.
@@ -270,7 +270,7 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
 - **No comments in the packages** (A-24, author's decision 2026-09-22). Names, small functions and
   types carry the meaning; a comment loads the reader and gets in the way of remembering the code.
   What the code cannot say — the reason for a call, the OHIF or cornerstone `file:line` that
-  justifies it, the decision behind it — lives in `docs/notes/bridge-internals.md` and
+  justifies it, the decision behind it — lives in `docs/notes/viewer-internals.md` and
   `docs/decisions/`, where it is read on purpose rather than skipped over. The one exception is
   a directive the tooling needs (`eslint-disable`, `@ts-expect-error`, the DefinePlugin note above
   `declare const process`), kept to one line.
@@ -387,7 +387,7 @@ viewer:link` swaps the fork's installed copies of our packages for symlinks to `
 ## 13. The OHIF fork
 
 - No code of ours lives there. The fork registers one package, the adapter
-  `@bdiadiun/ohif-extension-scoring-adapter`, which registers our extensions itself; the bridge
+  `@bdiadiun/ohif-extension-loader`, which registers our extensions itself; the bridge
   arrives as its dependency. The fork carries that entry, the matching dependency and its workflow,
   and nothing else (A-20). Adding a capability is a change to the adapter, not to the fork.
 - We never describe OHIF's types, we describe the members we call, in the package's own

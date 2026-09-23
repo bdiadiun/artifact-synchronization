@@ -1,14 +1,14 @@
-import type { Bridge } from '../bridge.js';
+import type { Session } from '../session.js';
 import { activateTool, DEFAULT_TOOL } from '../commands/handlers.js';
 import { restorePending } from '../commands/restore.js';
 import type { Ohif, OhifEvent } from '../ohif/facade.js';
 
-export const handleOhif = (ohif: Ohif, bridge: Bridge, event: OhifEvent): void => {
+export const handleOhif = (ohif: Ohif, session: Session, event: OhifEvent): void => {
   switch (event.type) {
     case 'MEASUREMENT_ADDED': {
-      const rowId = bridge.armedRowId;
-      bridge.armedRowId = null;
-      bridge.channel.send({ ...event, rowId });
+      const rowId = session.armedRowId;
+      session.armedRowId = null;
+      session.channel.send({ ...event, rowId });
 
       if (rowId !== null) {
         activateTool(ohif, DEFAULT_TOOL);
@@ -17,16 +17,16 @@ export const handleOhif = (ohif: Ohif, bridge: Bridge, event: OhifEvent): void =
     }
     case 'MEASUREMENT_UPDATED':
     case 'MEASUREMENT_REMOVED':
-      bridge.channel.send(event);
+      session.channel.send(event);
       break;
     case 'VIEWER_READY':
-      if (!bridge.announced) {
-        bridge.announced = true;
-        bridge.channel.send(event);
+      if (!session.announced) {
+        session.announced = true;
+        session.channel.send(event);
       }
       break;
     case 'VIEWPORT_DATA_CHANGED':
-      restorePending(ohif, bridge);
+      restorePending(ohif, session);
       break;
   }
 };

@@ -1,5 +1,5 @@
 import { createContext, type JSX, type ReactNode } from 'react';
-import { useScoringBridge } from './hooks/useScoringBridge.js';
+import { useScoringViewer } from './hooks/useScoringViewer.js';
 import { createOhif } from './ohif/facade.js';
 import {
   LOG_PREFIX,
@@ -9,7 +9,7 @@ import {
   type ViewerChannel,
 } from './ohif/surface.js';
 
-const ScoringBridgeContext = createContext<ViewerChannel | null>(null);
+const ScoringViewerContext = createContext<ViewerChannel | null>(null);
 
 const hasCornerstoneServices = (services: Partial<OhifServices>): services is OhifServices =>
   services.toolGroupService !== undefined && services.cornerstoneViewportService !== undefined;
@@ -19,12 +19,12 @@ export const getContextModule = ({
   servicesManager,
   commandsManager,
 }: OhifExtensionParams): OhifContextModuleEntry[] => {
-  const hostOrigin = appConfig?.scoringBridge?.hostOrigin;
+  const hostOrigin = appConfig?.scoringViewer?.hostOrigin;
   const { services } = servicesManager;
 
   if (hostOrigin === undefined || hostOrigin.length === 0) {
     console.error(
-      `${LOG_PREFIX} no host origin configured; set window.config.scoringBridge.hostOrigin to the embedding form's origin`,
+      `${LOG_PREFIX} no host origin configured; set window.config.scoringViewer.hostOrigin to the embedding form's origin`,
     );
     return [];
   }
@@ -37,11 +37,11 @@ export const getContextModule = ({
   }
 
   const ohif = createOhif(services, commandsManager);
-  const ScoringBridge = ({ children }: { children?: ReactNode }): JSX.Element => {
-    const channel = useScoringBridge(hostOrigin, ohif);
+  const ScoringViewer = ({ children }: { children?: ReactNode }): JSX.Element => {
+    const channel = useScoringViewer(hostOrigin, ohif);
 
-    return <ScoringBridgeContext.Provider value={channel}>{children}</ScoringBridgeContext.Provider>;
+    return <ScoringViewerContext.Provider value={channel}>{children}</ScoringViewerContext.Provider>;
   };
 
-  return [{ name: 'ScoringBridge', context: ScoringBridgeContext, provider: ScoringBridge }];
+  return [{ name: 'ScoringViewer', context: ScoringViewerContext, provider: ScoringViewer }];
 };

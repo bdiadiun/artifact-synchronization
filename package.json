@@ -21,7 +21,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "prepare": "tsc -b packages/viewer-adapter",
+    "prepare": "tsc -b packages/ohif-extension-loader",
     "viewer:setup": "node scripts/viewer.mjs setup",
     "viewer:dev": "node scripts/viewer.mjs dev",
     "viewer:link": "node scripts/viewer.mjs link",

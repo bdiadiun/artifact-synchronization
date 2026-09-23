@@ -1,12 +1,12 @@
 {
-  "name": "@bdiadiun/ohif-extension-scoring-bridge",
-  "version": "0.0.10",
+  "name": "@bdiadiun/ohif-extension-scoring-viewer",
+  "version": "0.1.0",
   "description": "the OHIF-side scoring application, packaged as an OHIF extension: it talks to OHIF and speaks the scoring contract over the channel",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bdiadiun/artifact-synchronization.git",
-    "directory": "packages/viewer-bridge"
+    "directory": "packages/scoring-viewer"
   },
   "type": "module",
   "main": "./dist/index.js",

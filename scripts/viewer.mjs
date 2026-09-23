@@ -13,9 +13,10 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PIN_FILE = 'viewer.json';
 const SETUP_HINT = 'Run `npm run viewer:setup` to clone it.';
 
-// A-2: the form's origin. The bridge is a published package that carries no deployment URL, so the
-// origin reaches it through `window.config`, which OHIF builds from the app config file named by
-// APP_CONFIG. The generated file stays untracked in the fork, whose diff is two registration lines.
+// A-2: the form's origin. The scoring viewer is a published package that carries no deployment
+// URL, so the origin reaches it through `window.config`, which OHIF builds from the app config
+// file named by APP_CONFIG. The generated file stays untracked in the fork, whose diff is two
+// registration lines.
 const HOST_ORIGIN = process.env.HOST_ORIGIN ?? 'http://localhost:5173';
 const BASE_APP_CONFIG = 'config/default.js';
 const GENERATED_APP_CONFIG = 'config/scoring.js';
@@ -87,7 +88,7 @@ const runSetup = () => {
 
 const writeAppConfig = () => {
   const base = readFileSync(join(viewerDir, PUBLIC_DIR, BASE_APP_CONFIG), 'utf8');
-  const generated = `${base}\nwindow.config.scoringBridge = { hostOrigin: ${JSON.stringify(HOST_ORIGIN)} };\n`;
+  const generated = `${base}\nwindow.config.scoringViewer = { hostOrigin: ${JSON.stringify(HOST_ORIGIN)} };\n`;
   writeFileSync(join(viewerDir, PUBLIC_DIR, GENERATED_APP_CONFIG), generated);
   console.log(`Viewer configured to talk to ${HOST_ORIGIN} (${GENERATED_APP_CONFIG}).`);
 };
@@ -108,8 +109,8 @@ const runDev = () => {
 const LINKED_PACKAGES = {
   'scoring-contract': 'contract',
   'scoring-channel': 'channel',
-  'ohif-extension-scoring-bridge': 'viewer-bridge',
-  'ohif-extension-scoring-adapter': 'viewer-adapter',
+  'ohif-extension-scoring-viewer': 'scoring-viewer',
+  'ohif-extension-loader': 'ohif-extension-loader',
 };
 const SCOPE_DIR = 'node_modules/@bdiadiun';
 const KEEP_SUFFIX = '.installed';

@@ -4,7 +4,7 @@ import type { Channel } from '@bdiadiun/scoring-channel';
 
 export type ViewerChannel = Channel<HostCommand>;
 
-export const LOG_PREFIX = '[scoring-bridge]';
+export const LOG_PREFIX = '[scoring-viewer]';
 
 export interface OhifSubscription {
   unsubscribe: () => void;
@@ -81,8 +81,8 @@ export interface OhifCommandsManager {
   runCommand: (commandName: string, options?: Record<string, unknown>) => unknown;
 }
 
-export interface ScoringBridgeAppConfig {
-  scoringBridge?: {
+export interface ScoringViewerAppConfig {
+  scoringViewer?: {
     hostOrigin?: string;
   };
 }
@@ -108,7 +108,7 @@ export interface OhifExtensionParams {
   servicesManager: OhifServicesManager;
   commandsManager: OhifCommandsManager;
   extensionManager?: OhifExtensionManager;
-  appConfig?: ScoringBridgeAppConfig;
+  appConfig?: ScoringViewerAppConfig;
 }
 
 export interface OverlayItemCustomization {

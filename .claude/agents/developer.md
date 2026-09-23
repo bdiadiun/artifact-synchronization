@@ -82,8 +82,8 @@ deviations from the brief, open questions. No transcripts, no file dumps.
 
 Files you may write
 
-- Application code only: `host-app/src/**` outside `__tests__/`, `packages/contract/src/**`,
-  `viewer/extensions/scoring-bridge/src/**`, and the build or lint configuration a brief names.
+- Application code only: `host-app/src/**` and `packages/*/src/**` outside `__tests__/`, and the
+  build or lint configuration a brief names.
 - Never a test. Files under any `__tests__/` folder, `setup-tests.ts` and end-to-end scripts belong
   to the tester. If your change makes a test fail or go stale, fix the code or report it; do not
   edit the test to make it pass.
