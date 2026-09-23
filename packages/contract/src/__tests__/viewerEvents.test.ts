@@ -82,21 +82,15 @@ describe('isViewerEvent', () => {
   });
 
   it('rejects a non-finite metric value', () => {
-    expect(
-      isViewerEvent({ ...measurementAdded, metrics: { area: { value: Infinity, unit: 'mm2' } } }),
-    ).toBe(false);
+    expect(isViewerEvent({ ...measurementAdded, metrics: { area: { value: Infinity, unit: 'mm2' } } })).toBe(false);
   });
 
   it('rejects a metric under a key the vocabulary does not name', () => {
-    expect(
-      isViewerEvent({ ...measurementAdded, metrics: { mean: { value: 40, unit: 'mm' } } }),
-    ).toBe(false);
+    expect(isViewerEvent({ ...measurementAdded, metrics: { mean: { value: 40, unit: 'mm' } } })).toBe(false);
   });
 
   it('rejects a bad unit', () => {
-    expect(
-      isViewerEvent({ ...measurementAdded, metrics: { area: { value: 1, unit: 'cm2' } } }),
-    ).toBe(false);
+    expect(isViewerEvent({ ...measurementAdded, metrics: { area: { value: 1, unit: 'cm2' } } })).toBe(false);
   });
 
   it('rejects a missing required field', () => {
@@ -134,9 +128,7 @@ describe('isViewerEvent', () => {
   });
 
   it('rejects MEASUREMENT_UPDATED with invalid geometry', () => {
-    expect(isViewerEvent({ ...measurementUpdated, geometry: { ...geometry, points: [] } })).toBe(
-      false,
-    );
+    expect(isViewerEvent({ ...measurementUpdated, geometry: { ...geometry, points: [] } })).toBe(false);
   });
 
   it('accepts a valid MEASUREMENTS_RESTORED event', () => {

@@ -12,9 +12,7 @@ import { restoreViewer } from '@app/state/actions';
 // talks to the viewer (A-30); and the handler is re-registered whenever the rows change, so a
 // viewer that announces itself is offered the rows on screen — a page reload and a viewer reload
 // restore the same way (S-5.6).
-export const useScoringForm = (
-  studyInstanceUid: string,
-): [Row[], Dispatch<FormAction>, HostChannel] => {
+export const useScoringForm = (studyInstanceUid: string): [Row[], Dispatch<FormAction>, HostChannel] => {
   const channel = useChannel(VIEWER_CHANNEL);
   const [rows, reduce] = useReducer(reducer, studyInstanceUid, getStorage);
 

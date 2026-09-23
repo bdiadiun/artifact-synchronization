@@ -4,8 +4,7 @@
 // Usage: npm run lint:fork
 import tseslint from 'typescript-eslint';
 
-const numericEnumMemberSelector =
-  'TSEnumDeclaration TSEnumMember > :matches(Literal[raw=/^\\d/], UnaryExpression)';
+const numericEnumMemberSelector = 'TSEnumDeclaration TSEnumMember > :matches(Literal[raw=/^\\d/], UnaryExpression)';
 const constEnumSelector = 'TSEnumDeclaration[const=true]';
 
 export default tseslint.config({

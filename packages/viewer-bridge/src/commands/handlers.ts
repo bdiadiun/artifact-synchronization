@@ -10,9 +10,7 @@ export const activateTool = (ohif: Ohif, toolName: string): void => {
   const toolGroup = ohif.services.toolGroupService.getToolGroup();
 
   if (!toolGroup) {
-    console.error(
-      `${LOG_PREFIX} no tool group for the active viewport; cannot activate ${toolName}`,
-    );
+    console.error(`${LOG_PREFIX} no tool group for the active viewport; cannot activate ${toolName}`);
     return;
   }
 

@@ -107,21 +107,15 @@ describe('MeasurementGeometry', () => {
   });
 
   it('refuses a world point of four coordinates', () => {
-    expect(MeasurementGeometry.safeParse({ ...geometry, points: [[1, 2, 3, 4]] }).success).toBe(
-      false,
-    );
+    expect(MeasurementGeometry.safeParse({ ...geometry, points: [[1, 2, 3, 4]] }).success).toBe(false);
   });
 
   it('refuses a NaN coordinate', () => {
-    expect(MeasurementGeometry.safeParse({ ...geometry, points: [[1, NaN, 3]] }).success).toBe(
-      false,
-    );
+    expect(MeasurementGeometry.safeParse({ ...geometry, points: [[1, NaN, 3]] }).success).toBe(false);
   });
 
   it('refuses an infinite coordinate', () => {
-    expect(MeasurementGeometry.safeParse({ ...geometry, points: [[1, Infinity, 3]] }).success).toBe(
-      false,
-    );
+    expect(MeasurementGeometry.safeParse({ ...geometry, points: [[1, Infinity, 3]] }).success).toBe(false);
   });
 
   it('refuses an empty points array', () => {
@@ -129,8 +123,6 @@ describe('MeasurementGeometry', () => {
   });
 
   it('refuses an empty frameOfReferenceUid', () => {
-    expect(MeasurementGeometry.safeParse({ ...geometry, frameOfReferenceUid: '' }).success).toBe(
-      false,
-    );
+    expect(MeasurementGeometry.safeParse({ ...geometry, frameOfReferenceUid: '' }).success).toBe(false);
   });
 });

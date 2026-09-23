@@ -130,9 +130,7 @@ describe('isHostCommand', () => {
 
   it('rejects a restore request without geometry', () => {
     const { geometry: _geometry, ...requestWithoutGeometry } = restoreMeasurements.measurements[0];
-    expect(isHostCommand({ ...restoreMeasurements, measurements: [requestWithoutGeometry] })).toBe(
-      false,
-    );
+    expect(isHostCommand({ ...restoreMeasurements, measurements: [requestWithoutGeometry] })).toBe(false);
   });
 
   it('survives a JSON round-trip for RESTORE_MEASUREMENTS', () => {

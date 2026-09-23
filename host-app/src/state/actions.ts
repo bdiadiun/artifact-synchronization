@@ -61,11 +61,7 @@ const restorableMeasurements = (rows: readonly Row[]): RestoreMeasurementRequest
   return measurements;
 };
 
-export const restoreViewer = (
-  dispatch: Dispatch<FormAction>,
-  studyInstanceUid: string,
-  rows: readonly Row[],
-): void => {
+export const restoreViewer = (dispatch: Dispatch<FormAction>, studyInstanceUid: string, rows: readonly Row[]): void => {
   const measurements = restorableMeasurements(rows);
   if (measurements.length > 0) {
     dispatch({

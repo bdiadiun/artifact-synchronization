@@ -83,9 +83,7 @@ const disarmRow = (rows: Row[], action: ActionOf<'DEACTIVATE_TOOL'>): Row[] =>
     : rows;
 
 const removeRow = (rows: Row[], action: ActionOf<'REMOVE_ROW'>): Row[] =>
-  findRow(rows, action.rowId) === undefined
-    ? rows
-    : rows.filter((row) => row.rowId !== action.rowId);
+  findRow(rows, action.rowId) === undefined ? rows : rows.filter((row) => row.rowId !== action.rowId);
 
 // A-8: a measurement drawn while nothing was armed arrives with `rowId: null` and changes nothing.
 const receiveMeasurement = (rows: Row[], event: MeasurementAddedEvent): Row[] => {

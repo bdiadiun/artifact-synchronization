@@ -456,11 +456,7 @@
           "external": ["react", "react-dom"]
         },
         "host-app/src/pages/__tests__/ScoringPage.test.tsx": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/i18n.ts",
-            "host-app/src/pages/ScoringPage.tsx"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/i18n.ts", "host-app/src/pages/ScoringPage.tsx"],
           "external": ["@testing-library/react", "vitest"]
         }
       }
@@ -526,10 +522,7 @@
           "external": []
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         },
         "packages/contract/src/vocabulary.ts": {
@@ -590,10 +583,7 @@
           "external": ["react"]
         },
         "packages/viewer-bridge/src/bridge.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/ohif/surface.ts"
-          ],
+          "internal": ["packages/contract/src/index.ts", "packages/viewer-bridge/src/ohif/surface.ts"],
           "external": []
         },
         "packages/viewer-bridge/src/events/handlers.ts": {
@@ -876,19 +866,11 @@
           "external": ["zod"]
         },
         "host-app/src/utils/__tests__/format.test.ts": {
-          "internal": [
-            "host-app/src/i18n.ts",
-            "host-app/src/state/reducer.ts",
-            "host-app/src/utils/format.ts"
-          ],
+          "internal": ["host-app/src/i18n.ts", "host-app/src/state/reducer.ts", "host-app/src/utils/format.ts"],
           "external": ["vitest"]
         },
         "host-app/src/utils/format.ts": {
-          "internal": [
-            "host-app/src/i18n.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/i18n.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": []
         }
       }
@@ -1155,10 +1137,7 @@
           "external": []
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         },
         "packages/contract/src/vocabulary.ts": {
@@ -1275,10 +1254,7 @@
           "external": []
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         },
         "packages/contract/src/vocabulary.ts": {
@@ -1520,11 +1496,7 @@
           "external": ["zod"]
         },
         "host-app/src/state/actions.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": ["react"]
         },
         "host-app/src/state/reducer.ts": {
@@ -1532,11 +1504,7 @@
           "external": ["zod"]
         },
         "host-app/src/utils/format.ts": {
-          "internal": [
-            "host-app/src/i18n.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/i18n.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "packages/contract/src/hostCommands.ts": {
@@ -1552,10 +1520,7 @@
           "external": []
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         },
         "packages/contract/src/vocabulary.ts": {
@@ -1682,21 +1647,7 @@
       "id": "F-25",
       "name": "Final documentation pass: defence pointers after the refactor, AI usage for all slices, README for bonus features, video script",
       "description": "Re-points every `file:line` link in DEFENCE.md after the refactor slices, extends AI-USAGE to all slices, documents the implemented bonuses in README and adds the video script. It answers the defence questions P-1..P-9 with current pointers.",
-      "canon": [
-        "D-5",
-        "D-6",
-        "D-7",
-        "D-8",
-        "P-1",
-        "P-2",
-        "P-3",
-        "P-4",
-        "P-5",
-        "P-6",
-        "P-7",
-        "P-8",
-        "P-9"
-      ],
+      "canon": ["D-5", "D-6", "D-7", "D-8", "P-1", "P-2", "P-3", "P-4", "P-5", "P-6", "P-7", "P-8", "P-9"],
       "dependsOn": ["F-12", "F-24"],
       "slice": "15",
       "status": "done",
@@ -1788,11 +1739,7 @@
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/pages/__tests__/ScoringPage.test.tsx": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/i18n.ts",
-            "host-app/src/pages/ScoringPage.tsx"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/i18n.ts", "host-app/src/pages/ScoringPage.tsx"],
           "external": ["@testing-library/react", "vitest"]
         },
         "host-app/src/state/__tests__/reducer.test.ts": {
@@ -1804,11 +1751,7 @@
           "external": ["vitest"]
         },
         "host-app/src/utils/__tests__/format.test.ts": {
-          "internal": [
-            "host-app/src/i18n.ts",
-            "host-app/src/state/reducer.ts",
-            "host-app/src/utils/format.ts"
-          ],
+          "internal": ["host-app/src/i18n.ts", "host-app/src/state/reducer.ts", "host-app/src/utils/format.ts"],
           "external": ["vitest"]
         },
         "host-app/src/utils/__tests__/totals.test.ts": {
@@ -2064,11 +2007,7 @@
           "external": ["vitest"]
         },
         "host-app/src/state/actions.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": ["react"]
         },
         "host-app/src/state/reducer.ts": {
@@ -2076,11 +2015,7 @@
           "external": ["zod"]
         },
         "host-app/src/utils/format.ts": {
-          "internal": [
-            "host-app/src/i18n.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/i18n.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": []
         }
       }
@@ -2094,11 +2029,7 @@
       "slice": "27",
       "status": "done",
       "verify": "The fork builds from a clean install with no copy of the contract in its tree; the package resolves from the public registry without a token.",
-      "files": [
-        ".github/workflows/publish-packages.yml",
-        "docs/decisions/A-12-npm-workspaces.md",
-        "package.json"
-      ],
+      "files": [".github/workflows/publish-packages.yml", "docs/decisions/A-12-npm-workspaces.md", "package.json"],
       "imports": {}
     },
     {
@@ -2159,10 +2090,7 @@
           "external": ["react", "react-dom"]
         },
         "host-app/src/pages/ScoringPage.tsx": {
-          "internal": [
-            "host-app/src/components/ScoringPanel.tsx",
-            "host-app/src/components/ViewerFrame.tsx"
-          ],
+          "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/components/ViewerFrame.tsx"],
           "external": ["react"]
         },
         "scripts/build-docs.mjs": {
@@ -2322,10 +2250,7 @@
           "external": []
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         },
         "packages/contract/src/vocabulary.ts": {
@@ -2401,10 +2326,7 @@
       "slice": "39",
       "status": "done",
       "verify": "A clean install rebuilds the package before the form imports it; `npm pack --dry-run` lists only built files; the channel's own tests run from the package, including the five that cover disarming on dispose; the form contains no transport code.",
-      "files": [
-        ".github/workflows/publish-packages.yml",
-        "docs/decisions/A-17-orchestrator-package.md"
-      ],
+      "files": [".github/workflows/publish-packages.yml", "docs/decisions/A-17-orchestrator-package.md"],
       "imports": {}
     },
     {
@@ -2506,10 +2428,7 @@
           "external": []
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         },
         "packages/contract/src/vocabulary.ts": {
@@ -2583,11 +2502,7 @@
           "external": ["zod"]
         },
         "host-app/src/state/actions.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": ["react"]
         }
       }
@@ -2692,11 +2607,7 @@
       "slice": "51",
       "status": "done",
       "verify": "The fork's diff against the upstream tag is four files and no deletion; its lockfile resolves the adapter, the bridge and the contract as registry tarballs with integrity hashes while its manifests name only the adapter; the viewer builds with our code in the bundle.",
-      "files": [
-        ".claude/agents/git-operator.md",
-        ".github/workflows/publish-packages.yml",
-        "viewer.json"
-      ],
+      "files": [".claude/agents/git-operator.md", ".github/workflows/publish-packages.yml", "viewer.json"],
       "imports": {}
     },
     {
@@ -2718,11 +2629,7 @@
       ],
       "imports": {
         "host-app/src/state/actions.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": ["react"]
         },
         "packages/channel/src/channel.ts": {
@@ -2734,10 +2641,7 @@
           "external": []
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         }
       }
@@ -2822,11 +2726,7 @@
       ],
       "imports": {
         "host-app/src/state/actions.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": ["react"]
         },
         "packages/contract/src/vocabulary.ts": {
@@ -2898,11 +2798,7 @@
           "external": ["@bdiadiun/scoring-channel", "react"]
         },
         "host-app/src/state/actions.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": ["react"]
         },
         "packages/channel/src/channel.ts": {
@@ -3024,10 +2920,7 @@
           "external": ["zod"]
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         }
       }
@@ -3075,10 +2968,7 @@
           "external": []
         },
         "packages/contract/src/viewerEvents.ts": {
-          "internal": [
-            "packages/contract/src/hostCommands.ts",
-            "packages/contract/src/vocabulary.ts"
-          ],
+          "internal": ["packages/contract/src/hostCommands.ts", "packages/contract/src/vocabulary.ts"],
           "external": ["zod"]
         },
         "packages/contract/src/vocabulary.ts": {
@@ -3171,10 +3061,7 @@
           "external": ["@bdiadiun/scoring-channel", "react"]
         },
         "host-app/src/pages/ScoringPage.tsx": {
-          "internal": [
-            "host-app/src/components/ScoringPanel.tsx",
-            "host-app/src/components/ViewerFrame.tsx"
-          ],
+          "internal": ["host-app/src/components/ScoringPanel.tsx", "host-app/src/components/ViewerFrame.tsx"],
           "external": ["react"]
         },
         "host-app/src/services/storage.ts": {
@@ -3182,11 +3069,7 @@
           "external": ["zod"]
         },
         "host-app/src/state/actions.ts": {
-          "internal": [
-            "host-app/src/config.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/config.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": ["react"]
         },
         "host-app/src/state/reducer.ts": {
@@ -3198,11 +3081,7 @@
           "external": []
         },
         "host-app/src/utils/format.ts": {
-          "internal": [
-            "host-app/src/i18n.ts",
-            "host-app/src/state/reducer.ts",
-            "packages/contract/src/index.ts"
-          ],
+          "internal": ["host-app/src/i18n.ts", "host-app/src/state/reducer.ts", "packages/contract/src/index.ts"],
           "external": []
         },
         "host-app/src/utils/totals.ts": {
@@ -3238,10 +3117,7 @@
           "external": ["react"]
         },
         "packages/viewer-bridge/src/bridge.ts": {
-          "internal": [
-            "packages/contract/src/index.ts",
-            "packages/viewer-bridge/src/ohif/surface.ts"
-          ],
+          "internal": ["packages/contract/src/index.ts", "packages/viewer-bridge/src/ohif/surface.ts"],
           "external": []
         },
         "packages/viewer-bridge/src/commands/handlers.ts": {

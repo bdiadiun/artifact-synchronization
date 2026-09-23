@@ -22,21 +22,14 @@ export const TotalsFooter = ({ totals, label, primaryUnit }: TotalsFooterProps):
   return (
     <div>
       <div>
-        {label}:{' '}
-        {primary !== undefined
-          ? formatMetric({ value: primary.value, unit: primaryUnit })
-          : t.emptyValue}
-        {primary !== undefined && (
-          <span style={styles.count}>({t.measurementsCount(primary.count)})</span>
-        )}
+        {label}: {primary !== undefined ? formatMetric({ value: primary.value, unit: primaryUnit }) : t.emptyValue}
+        {primary !== undefined && <span style={styles.count}>({t.measurementsCount(primary.count)})</span>}
       </div>
       {others.map((total) => (
         <div key={total.unit} style={styles.otherTotal}>
           {formatMetric({ value: total.value, unit: total.unit })}
           <span style={styles.count}>({t.measurementsCount(total.count)})</span>
-          {total.unit.startsWith('px') && (
-            <span style={styles.noSpacingHint}>({t.totalNoSpacingHint})</span>
-          )}
+          {total.unit.startsWith('px') && <span style={styles.noSpacingHint}>({t.totalNoSpacingHint})</span>}
         </div>
       ))}
     </div>

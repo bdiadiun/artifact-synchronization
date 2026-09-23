@@ -1,9 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SCORING_BRIDGE_EXTENSION_ID } from '@bdiadiun/ohif-extension-scoring-bridge';
-import type {
-  OhifExtensionManager,
-  OhifExtensionParams,
-} from '@bdiadiun/ohif-extension-scoring-bridge';
+import type { OhifExtensionManager, OhifExtensionParams } from '@bdiadiun/ohif-extension-scoring-bridge';
 
 import { scoringAdapterExtension, SCORING_ADAPTER_EXTENSION_ID } from '../extension.js';
 
@@ -31,9 +28,7 @@ describe('scoringAdapterExtension', () => {
 
     await extension.preRegistration?.(baseParams(undefined));
 
-    expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('no extension manager was passed'),
-    );
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('no extension manager was passed'));
   });
 
   it('registers exactly one child, the bridge, through the extension manager it is handed', async () => {
@@ -57,9 +52,6 @@ describe('scoringAdapterExtension', () => {
 
     await expect(extension.preRegistration?.(baseParams(manager))).resolves.toBeUndefined();
 
-    expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining(SCORING_BRIDGE_EXTENSION_ID),
-      expect.any(Error),
-    );
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining(SCORING_BRIDGE_EXTENSION_ID), expect.any(Error));
   });
 });

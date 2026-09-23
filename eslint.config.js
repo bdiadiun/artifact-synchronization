@@ -10,11 +10,9 @@ import globals from 'globals';
 // A-13: string enums only. In the typescript-eslint v8 AST enum members sit under a TSEnumBody
 // node, so the selectors use the descendant combinator rather than a direct-child one.
 // Missing initializers (implicit numbers) are caught by prefer-enum-initializers.
-const numericEnumMemberSelector =
-  'TSEnumDeclaration TSEnumMember > :matches(Literal[raw=/^\\d/], UnaryExpression)';
+const numericEnumMemberSelector = 'TSEnumDeclaration TSEnumMember > :matches(Literal[raw=/^\\d/], UnaryExpression)';
 const constEnumSelector = 'TSEnumDeclaration[const=true]';
-const inlineStyleObjectSelector =
-  "JSXAttribute[name.name='style'] > JSXExpressionContainer > ObjectExpression";
+const inlineStyleObjectSelector = "JSXAttribute[name.name='style'] > JSXExpressionContainer > ObjectExpression";
 
 // A function created inside a JSX prop is a new identity on every render and hides it from the
 // component body, where every function a component renders with belongs (CONVENTIONS §6).
@@ -39,13 +37,11 @@ const enumRestrictions = [
 const jsxRestrictions = [
   {
     selector: inlineStyleObjectSelector,
-    message:
-      'Inline style objects are forbidden (CONVENTIONS §6); use styles from {Name}.props.ts.',
+    message: 'Inline style objects are forbidden (CONVENTIONS §6); use styles from {Name}.props.ts.',
   },
   {
     selector: inlineEventHandlerSelector,
-    message:
-      'Event handler props take a named handleX function (CONVENTIONS §6); no functions created inline.',
+    message: 'Event handler props take a named handleX function (CONVENTIONS §6); no functions created inline.',
   },
 ];
 
@@ -149,12 +145,7 @@ export default tseslint.config(
     files: ['host-app/src/**/*.tsx'],
     ignores: ['**/*.props.ts', '**/__tests__/**'],
     rules: {
-      'no-restricted-syntax': [
-        'error',
-        ...enumRestrictions,
-        ...jsxRestrictions,
-        siblingTypesRestriction,
-      ],
+      'no-restricted-syntax': ['error', ...enumRestrictions, ...jsxRestrictions, siblingTypesRestriction],
     },
   },
   {

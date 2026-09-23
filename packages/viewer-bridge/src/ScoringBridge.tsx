@@ -40,9 +40,7 @@ export const getContextModule = ({
   const ScoringBridge = ({ children }: { children?: ReactNode }): JSX.Element => {
     const channel = useScoringBridge(hostOrigin, ohif);
 
-    return (
-      <ScoringBridgeContext.Provider value={channel}>{children}</ScoringBridgeContext.Provider>
-    );
+    return <ScoringBridgeContext.Provider value={channel}>{children}</ScoringBridgeContext.Provider>;
   };
 
   return [{ name: 'ScoringBridge', context: ScoringBridgeContext, provider: ScoringBridge }];

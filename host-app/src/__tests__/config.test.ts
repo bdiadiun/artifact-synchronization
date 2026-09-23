@@ -81,9 +81,7 @@ describe('viewerUrl', () => {
     setStudyParam('abc');
     const { viewerUrl, FALLBACK_STUDY_INSTANCE_UID } = await loadConfig();
 
-    expect(viewerUrl()).toBe(
-      `${VIEWER_URL_PREFIX}${encodeURIComponent(FALLBACK_STUDY_INSTANCE_UID)}`,
-    );
+    expect(viewerUrl()).toBe(`${VIEWER_URL_PREFIX}${encodeURIComponent(FALLBACK_STUDY_INSTANCE_UID)}`);
   });
 
   it('never lets a rejected value that looks like a second query parameter appear unescaped', async () => {

@@ -1,9 +1,4 @@
-import {
-  METRIC_KEY_BY_TOOL,
-  type Metric,
-  type MetricKey,
-  type Unit,
-} from '@bdiadiun/scoring-contract';
+import { METRIC_KEY_BY_TOOL, type Metric, type MetricKey, type Unit } from '@bdiadiun/scoring-contract';
 import { t } from '@app/i18n';
 import { RowStatus, type Row } from '@app/state/reducer';
 
@@ -25,8 +20,7 @@ const KIND_LABELS: Record<MetricKey, string> = {
   length: t.kindLength,
 };
 
-export const formatMetric = (metric: Metric): string =>
-  `${metric.value.toFixed(1)} ${UNIT_LABELS[metric.unit]}`;
+export const formatMetric = (metric: Metric): string => `${metric.value.toFixed(1)} ${UNIT_LABELS[metric.unit]}`;
 
 export const formatRowStatus = (status: RowStatus): string => STATUS_LABELS[status];
 

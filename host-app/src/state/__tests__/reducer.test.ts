@@ -6,10 +6,7 @@ import { findRow, findRowByUid } from '@app/state/selectors';
 const metrics: Metrics = { area: { value: 124.5, unit: 'mm2' } };
 
 const addRows = (state: Row[], ...rowIds: string[]): Row[] =>
-  rowIds.reduce(
-    (acc, rowId) => reducer(acc, { type: 'ADD_ROW', rowId, toolName: 'EllipticalROI' }),
-    state,
-  );
+  rowIds.reduce((acc, rowId) => reducer(acc, { type: 'ADD_ROW', rowId, toolName: 'EllipticalROI' }), state);
 
 const isDrawing = (state: Row[], rowId: string): boolean =>
   state.find((row) => row.rowId === rowId)?.status === RowStatus.Drawing;

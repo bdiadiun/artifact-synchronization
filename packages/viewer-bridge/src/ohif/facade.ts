@@ -5,12 +5,7 @@ import type {
   ViewerReadyEvent,
 } from '@bdiadiun/scoring-contract';
 import { measure } from './metrics.js';
-import {
-  LOG_PREFIX,
-  type OhifCommandsManager,
-  type OhifMeasurementEvent,
-  type OhifServices,
-} from './surface.js';
+import { LOG_PREFIX, type OhifCommandsManager, type OhifMeasurementEvent, type OhifServices } from './surface.js';
 import { createThrottledEmitter } from './throttle.js';
 import { VIEWER_VERSION } from './version.js';
 
@@ -40,10 +35,7 @@ export const createOhif = (services: OhifServices, commandsManager: OhifCommands
       const measured = measure(payload);
 
       if (measured === null) {
-        console.warn(
-          `${LOG_PREFIX} MEASUREMENT_ADDED without metrics; ignored`,
-          payload.measurement,
-        );
+        console.warn(`${LOG_PREFIX} MEASUREMENT_ADDED without metrics; ignored`, payload.measurement);
         return;
       }
 
@@ -82,10 +74,7 @@ export const createOhif = (services: OhifServices, commandsManager: OhifCommands
       measurementService.subscribe(EVENTS.MEASUREMENT_UPDATED, updated),
       measurementService.subscribe(EVENTS.MEASUREMENT_REMOVED, removed),
       toolGroupService.subscribe(toolGroupService.EVENTS.VIEWPORT_ADDED, viewportAdded),
-      cornerstoneViewportService.subscribe(
-        cornerstoneViewportService.EVENTS.VIEWPORT_DATA_CHANGED,
-        viewportData,
-      ),
+      cornerstoneViewportService.subscribe(cornerstoneViewportService.EVENTS.VIEWPORT_DATA_CHANGED, viewportData),
     ];
 
     if (toolGroupService.getToolGroup() !== undefined) {

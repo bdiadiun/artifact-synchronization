@@ -51,7 +51,8 @@ ohif)` → the channel it provides. A hook that returns
 - TypeScript `strict` everywhere. No `any`; when an external type is genuinely unknown, use
   `unknown` and narrow, or write a one-line comment above a justified `// eslint-disable-next-line`.
 - ESLint 9 flat config with `typescript-eslint` strict + stylistic (type-aware), `react-hooks`,
-  `react-refresh`; Prettier for formatting (single quotes, semicolons, trailing commas, width 100).
+  `react-refresh`; Prettier for formatting (single quotes, semicolons, trailing commas, width 120 —
+  raised from 100 on 2026-09-23 so a hook signature with its return type fits on one line).
 - Dependencies: runtime dependencies of an app live in that workspace's `package.json`. Shared
   tooling lives at the root: ESLint, Prettier, Vitest, jsdom, Testing Library and the React type
   packages those tests rely on. npm hoists workspace packages unpredictably, and a test library

@@ -81,10 +81,7 @@ const subscribe = (listener: () => void): (() => void) => {
 };
 
 const samePeer = (a: ChannelOptions<BridgeMessage>, b: ChannelOptions<BridgeMessage>): boolean =>
-  a.peerOrigin === b.peerOrigin &&
-  a.accept === b.accept &&
-  a.readyOn === b.readyOn &&
-  a.peerWindow === b.peerWindow;
+  a.peerOrigin === b.peerOrigin && a.accept === b.accept && a.readyOn === b.readyOn && a.peerWindow === b.peerWindow;
 
 const listen = (options: ChannelOptions<BridgeMessage>): (() => void) => {
   if (peer === null) {
@@ -94,9 +91,7 @@ const listen = (options: ChannelOptions<BridgeMessage>): (() => void) => {
       open();
     }
   } else if (!samePeer(peer, options)) {
-    console.error(
-      `${LOG_PREFIX} one peer per window: keeping ${peer.peerOrigin}, ignoring ${options.peerOrigin}`,
-    );
+    console.error(`${LOG_PREFIX} one peer per window: keeping ${peer.peerOrigin}, ignoring ${options.peerOrigin}`);
   }
 
   leases += 1;
@@ -121,10 +116,7 @@ export const useChannel = <TIn extends BridgeMessage>({
   readyOn,
   peerWindow,
 }: ChannelOptions<TIn>): Channel<TIn> => {
-  useEffect(
-    () => listen({ peerOrigin, accept, readyOn, peerWindow }),
-    [peerOrigin, accept, readyOn, peerWindow],
-  );
+  useEffect(() => listen({ peerOrigin, accept, readyOn, peerWindow }), [peerOrigin, accept, readyOn, peerWindow]);
   useSyncExternalStore(subscribe, getState);
 
   return channel;

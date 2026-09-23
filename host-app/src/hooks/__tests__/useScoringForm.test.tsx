@@ -56,9 +56,7 @@ const createChannelHarness = (): ChannelHarness => {
 // The contract version lives on the wire, not in the message types (A-25), so it is stamped here
 // the way the viewer's channel stamps it; without it the host's channel drops the event.
 const dispatchFromViewer = (event: ViewerEvent, origin = VIEWER_ORIGIN): void => {
-  window.dispatchEvent(
-    new MessageEvent('message', { data: { version: 1, ...event }, origin, source: window }),
-  );
+  window.dispatchEvent(new MessageEvent('message', { data: { version: 1, ...event }, origin, source: window }));
 };
 
 afterEach(() => {
@@ -104,9 +102,7 @@ const measurementRemoved = (
   ...overrides,
 });
 
-const measurementsRestored = (
-  overrides: Partial<MeasurementsRestoredEvent> = {},
-): MeasurementsRestoredEvent => ({
+const measurementsRestored = (overrides: Partial<MeasurementsRestoredEvent> = {}): MeasurementsRestoredEvent => ({
   type: 'MEASUREMENTS_RESTORED',
   restored: [],
   failed: [],
@@ -144,9 +140,7 @@ describe('useScoringForm outgoing commands', () => {
       activateRow(result.current[1], rowById(result.current[0], rowId));
     });
 
-    expect(posted()).toContainEqual(
-      expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId, toolName: DEFAULT_TOOL }),
-    );
+    expect(posted()).toContainEqual(expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId, toolName: DEFAULT_TOOL }));
   });
 
   it('activate sends the length tool for a row added as a length row', () => {
@@ -163,9 +157,7 @@ describe('useScoringForm outgoing commands', () => {
       activateRow(result.current[1], rowById(result.current[0], rowId));
     });
 
-    expect(posted()).toContainEqual(
-      expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId, toolName: 'Length' }),
-    );
+    expect(posted()).toContainEqual(expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId, toolName: 'Length' }));
   });
 
   it('addRow with no argument still uses the configured area tool', () => {
@@ -201,12 +193,8 @@ describe('useScoringForm outgoing commands', () => {
       { version: 1, type: 'ACTIVATE_TOOL', rowId: rowA.rowId, toolName: DEFAULT_TOOL },
       { version: 1, type: 'ACTIVATE_TOOL', rowId: rowB.rowId, toolName: DEFAULT_TOOL },
     ]);
-    expect(result.current[0].find((row) => row.rowId === rowA.rowId)?.status).toBe(
-      RowStatus.Pending,
-    );
-    expect(result.current[0].find((row) => row.rowId === rowB.rowId)?.status).toBe(
-      RowStatus.Drawing,
-    );
+    expect(result.current[0].find((row) => row.rowId === rowA.rowId)?.status).toBe(RowStatus.Pending);
+    expect(result.current[0].find((row) => row.rowId === rowB.rowId)?.status).toBe(RowStatus.Drawing);
   });
 
   it('focus on a done row sends FOCUS_MEASUREMENT with its measurementUid', () => {
@@ -228,9 +216,7 @@ describe('useScoringForm outgoing commands', () => {
       focusRow(result.current[1], rowById(result.current[0], rowId));
     });
 
-    expect(posted()).toContainEqual(
-      expect.objectContaining({ type: 'FOCUS_MEASUREMENT', measurementUid: 'uid-1' }),
-    );
+    expect(posted()).toContainEqual(expect.objectContaining({ type: 'FOCUS_MEASUREMENT', measurementUid: 'uid-1' }));
   });
 
   it('focus on a pending row sends nothing', () => {
@@ -365,9 +351,7 @@ describe('useScoringForm incoming measurements', () => {
 
     act(() => {
       dispatchFromViewer(measurementAdded(rowId));
-      dispatchFromViewer(
-        measurementUpdated('uid-1', { metrics: { area: { value: 200, unit: 'mm2' } } }),
-      );
+      dispatchFromViewer(measurementUpdated('uid-1', { metrics: { area: { value: 200, unit: 'mm2' } } }));
     });
 
     const row = result.current[0].find((r) => r.rowId === rowId);
@@ -463,19 +447,13 @@ describe('useScoringForm incoming measurements', () => {
       activateRow(result.current[1], rowById(result.current[0], rowId));
       dispatchFromViewer(measurementAdded(rowId));
     });
-    expect(computeTotals(result.current[0], 'area')).toEqual([
-      { unit: 'mm2', value: 124.5, count: 1 },
-    ]);
+    expect(computeTotals(result.current[0], 'area')).toEqual([{ unit: 'mm2', value: 124.5, count: 1 }]);
 
     act(() => {
-      dispatchFromViewer(
-        measurementUpdated('uid-1', { metrics: { area: { value: 200, unit: 'mm2' } } }),
-      );
+      dispatchFromViewer(measurementUpdated('uid-1', { metrics: { area: { value: 200, unit: 'mm2' } } }));
     });
 
-    expect(computeTotals(result.current[0], 'area')).toEqual([
-      { unit: 'mm2', value: 200, count: 1 },
-    ]);
+    expect(computeTotals(result.current[0], 'area')).toEqual([{ unit: 'mm2', value: 200, count: 1 }]);
   });
 });
 
@@ -559,10 +537,7 @@ describe('useScoringForm restore (A-14)', () => {
   });
 
   it('marks the failed rows and leaves the restored rows untouched when MEASUREMENTS_RESTORED arrives', () => {
-    saveRows(FALLBACK_STUDY_INSTANCE_UID, [
-      storedRow('row-1', 'uid-1'),
-      storedRow('row-2', 'uid-2'),
-    ]);
+    saveRows(FALLBACK_STUDY_INSTANCE_UID, [storedRow('row-1', 'uid-1'), storedRow('row-2', 'uid-2')]);
     createChannelHarness();
     const { result } = renderHook(() => useScoringForm(FALLBACK_STUDY_INSTANCE_UID));
 
@@ -607,9 +582,7 @@ describe('useScoringForm restore (A-14)', () => {
       expect.objectContaining({
         type: 'RESTORE_MEASUREMENTS',
         studyInstanceUid: FALLBACK_STUDY_INSTANCE_UID,
-        measurements: [
-          expect.objectContaining({ rowId, measurementUid: 'uid-1', geometry: GEOMETRY }),
-        ],
+        measurements: [expect.objectContaining({ rowId, measurementUid: 'uid-1', geometry: GEOMETRY })],
       }),
     );
   });
@@ -632,8 +605,6 @@ describe('useScoringForm restore (A-14)', () => {
       dispatchFromViewer(viewerReady());
     });
 
-    expect(posted()).toContainEqual(
-      expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId, toolName: DEFAULT_TOOL }),
-    );
+    expect(posted()).toContainEqual(expect.objectContaining({ type: 'ACTIVATE_TOOL', rowId, toolName: DEFAULT_TOOL }));
   });
 });

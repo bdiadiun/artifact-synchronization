@@ -13,11 +13,7 @@ import type { Bridge } from '../bridge.js';
 import type { Ohif } from '../ohif/facade.js';
 import { LOG_PREFIX, type OhifServices, type ViewerChannel } from '../ohif/surface.js';
 
-const toAnnotation = ({
-  measurementUid,
-  toolName,
-  geometry,
-}: RestoreMeasurementRequest): Annotation => ({
+const toAnnotation = ({ measurementUid, toolName, geometry }: RestoreMeasurementRequest): Annotation => ({
   annotationUID: measurementUid,
   metadata: {
     toolName,
@@ -31,10 +27,7 @@ const toAnnotation = ({
   invalidated: true,
 });
 
-const restoreRow = (
-  services: OhifServices,
-  request: RestoreMeasurementRequest,
-): RestoreFailureReason | null => {
+const restoreRow = (services: OhifServices, request: RestoreMeasurementRequest): RestoreFailureReason | null => {
   if (services.measurementService.getMeasurement(request.measurementUid)) {
     return 'already-present';
   }
@@ -82,9 +75,7 @@ export const runRestore = (
 
 export const holdsViewportData = (services: OhifServices): boolean => {
   const viewportId = services.viewportGridService.getActiveViewportId();
-  return Boolean(
-    viewportId && services.cornerstoneViewportService.getCornerstoneViewport(viewportId),
-  );
+  return Boolean(viewportId && services.cornerstoneViewportService.getCornerstoneViewport(viewportId));
 };
 
 export const restorePending = (ohif: Ohif, bridge: Bridge): void => {

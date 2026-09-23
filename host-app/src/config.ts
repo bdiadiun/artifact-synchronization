@@ -29,8 +29,7 @@ const STUDY_PARAM = 'study';
 const UID_PATTERN = /^\d+(?:\.\d+)*$/;
 const UID_MAX_LENGTH = 64;
 
-const isStudyInstanceUid = (value: string): boolean =>
-  value.length <= UID_MAX_LENGTH && UID_PATTERN.test(value);
+const isStudyInstanceUid = (value: string): boolean => value.length <= UID_MAX_LENGTH && UID_PATTERN.test(value);
 
 // The study ends up inside the viewer iframe `src`, so anything but a UID is rejected rather than
 // escaped: a free-form value could append its own query parameters or repoint the path.

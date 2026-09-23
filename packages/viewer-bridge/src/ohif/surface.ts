@@ -22,10 +22,7 @@ export interface OhifMeasurementEvent {
 
 export interface OhifMeasurementService {
   EVENTS: OhifMeasurementServiceEvents;
-  subscribe: (
-    eventName: string,
-    handler: (event: OhifMeasurementEvent) => void,
-  ) => OhifSubscription;
+  subscribe: (eventName: string, handler: (event: OhifMeasurementEvent) => void) => OhifSubscription;
   getMeasurement: (measurementUid: string) => unknown;
   remove: (measurementUid: string) => void;
   jumpToMeasurement: (viewportId: string, measurementUid: string) => void;

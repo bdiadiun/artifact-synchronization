@@ -4,11 +4,7 @@ const CONTRACT_VERSION = 1;
 
 export const LOG_PREFIX = '[channel]';
 
-export const postTo = (
-  peerWindow: Window | null,
-  peerOrigin: string,
-  message: BridgeMessage,
-): boolean => {
+export const postTo = (peerWindow: Window | null, peerOrigin: string, message: BridgeMessage): boolean => {
   if (peerWindow === null) {
     console.debug(`${LOG_PREFIX} no peer window yet -> ${message.type} not delivered`);
     return false;
@@ -22,8 +18,7 @@ export const postTo = (
 const versionOf = (data: unknown): unknown =>
   typeof data === 'object' && data !== null && 'version' in data ? data.version : undefined;
 
-const isWindow = (source: MessageEventSource | null): source is Window =>
-  source !== null && 'parent' in source;
+const isWindow = (source: MessageEventSource | null): source is Window => source !== null && 'parent' in source;
 
 export const listenFrom = <TMessage extends BridgeMessage>(
   peerOrigin: string,

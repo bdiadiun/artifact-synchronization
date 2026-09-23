@@ -50,5 +50,4 @@ export const HostCommand = z.discriminatedUnion('type', [
 ]);
 export type HostCommand = z.infer<typeof HostCommand>;
 
-export const isHostCommand = (value: unknown): value is HostCommand =>
-  HostCommand.safeParse(value).success;
+export const isHostCommand = (value: unknown): value is HostCommand => HostCommand.safeParse(value).success;

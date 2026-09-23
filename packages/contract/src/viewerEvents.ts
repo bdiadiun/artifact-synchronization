@@ -58,7 +58,6 @@ export const ViewerEvent = z.discriminatedUnion('type', [
 ]);
 export type ViewerEvent = z.infer<typeof ViewerEvent>;
 
-export const isViewerEvent = (value: unknown): value is ViewerEvent =>
-  ViewerEvent.safeParse(value).success;
+export const isViewerEvent = (value: unknown): value is ViewerEvent => ViewerEvent.safeParse(value).success;
 
 export type BridgeMessage = HostCommand | ViewerEvent;
