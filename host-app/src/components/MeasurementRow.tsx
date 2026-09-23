@@ -5,12 +5,10 @@ import { formatRowKind, formatRowMetric, formatRowStatus } from '@app/utils/form
 import { activateRow, cancelRow, focusRow, removeRow } from '@app/state/actions';
 import { rowInteraction, rowStyle, styles, type MeasurementRowProps } from './MeasurementRow.props';
 
-// Native elements, minimal grey styling (X-3: no design work required).
 export const MeasurementRow = ({ row, index, dispatch }: MeasurementRowProps): JSX.Element => {
   const metricLabel = formatRowMetric(row);
   const focusable = row.status === RowStatus.Done;
 
-  // stopPropagation keeps a button click from also triggering the row's focus click.
   const handleActivate = (event: MouseEvent<HTMLButtonElement>): void => {
     event.stopPropagation();
     activateRow(dispatch, row);
@@ -26,7 +24,6 @@ export const MeasurementRow = ({ row, index, dispatch }: MeasurementRowProps): J
     removeRow(dispatch, row);
   };
 
-  // S-5.3: both are attached only while the row is focusable, so neither re-checks the status.
   const handleRowClick = (): void => {
     focusRow(dispatch, row);
   };
@@ -65,7 +62,6 @@ export const MeasurementRow = ({ row, index, dispatch }: MeasurementRowProps): J
           {t.cancel}
         </button>
       )}
-      {/* S-5.2: available for every status; removeRow decides what to send. */}
       <button type="button" onClick={handleRemove}>
         {t.remove}
       </button>

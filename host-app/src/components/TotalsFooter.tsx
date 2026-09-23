@@ -1,7 +1,3 @@
-// A-11 / Q-6: totals are grouped strictly by unit. The primary unit takes the labelled line and
-// any other unit (px²/px, an image without pixel spacing) gets its own line with a hint, rather
-// than being dropped or added into a sum it does not belong to.
-
 import type { JSX } from 'react';
 import { formatMetric } from '@app/utils/format';
 import { t } from '@app/i18n';

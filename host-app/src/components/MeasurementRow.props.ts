@@ -9,8 +9,6 @@ export interface MeasurementRowProps {
   dispatch: Dispatch<FormAction>;
 }
 
-// The attributes that turn the row div into a button, or nothing at all (S-5.3: only a `done` row
-// has an annotation to focus).
 interface RowInteraction {
   role?: 'button';
   tabIndex?: number;
@@ -28,7 +26,6 @@ export const styles = {
   rowClickable: { cursor: 'pointer' },
   status: { color: '#666' },
   focusHint: { color: '#999', fontSize: '12px' },
-  // A-14: stands out from the grey status text so a failed restore is not missed.
   restoreFailed: { color: '#b00020', fontSize: '12px' },
 } satisfies Record<string, CSSProperties>;
 

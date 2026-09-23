@@ -1357,6 +1357,7 @@ Files:
 - `docs/decisions/A-35-abstract-storage.md`
 - `docs/decisions/A-36-row-model-folder.md`
 - `docs/decisions/A-37-stored-rows-hook.md`
+- `docs/notes/form-internals.md`
 - `docs/notes/ohif-service-availability.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/models/row.ts`, `host-app/src/state/actions.ts`, `host-app/src/utils/format.ts`; external: `react`

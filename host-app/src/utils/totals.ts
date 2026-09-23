@@ -1,5 +1,3 @@
-// Per-unit sums for the form footer (A-11). mm² and px² are never added together.
-
 import type { MetricKey, Unit } from '@bdiadiun/scoring-contract';
 import { RowStatus, type Row } from '@app/models/row';
 
@@ -9,7 +7,6 @@ export interface Total {
   count: number;
 }
 
-// mm2 first: clinically meaningful when the study carries pixel spacing.
 const UNIT_ORDER: readonly Unit[] = ['mm2', 'px2', 'mm', 'px'];
 
 const compareUnits = (a: Unit, b: Unit): number => UNIT_ORDER.indexOf(a) - UNIT_ORDER.indexOf(b);

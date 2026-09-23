@@ -5,7 +5,6 @@ import type { Total } from '@app/utils/totals';
 export interface TotalsFooterProps {
   totals: Total[];
   label: string;
-  // The unit shown on the primary line; any other unit in `totals` gets its own line below.
   primaryUnit: Unit;
 }
 

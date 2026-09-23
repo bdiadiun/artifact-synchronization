@@ -1,5 +1,3 @@
-// The rows of one study in sessionStorage: read once at mount, written back on demand (A-14, A-37).
-
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 import { RowModel, type Row } from '@app/models/row';
@@ -18,7 +16,6 @@ const toStoredRows = (studyInstanceUid: string, rows: readonly Row[]): StoredRow
   rows: rows.map(RowModel.toJSON),
 });
 
-// Rows only from a validated state under this exact study; anything else is "nothing to restore".
 export const loadRows = (studyInstanceUid: string): Row[] => {
   const stored = readStorage(storageKey(studyInstanceUid), StoredRows);
   if (stored?.studyInstanceUid !== studyInstanceUid) {

@@ -59,7 +59,9 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Comment ratio
 
-- After slice 16: 227 comment lines vs 3 499 code lines (6%); rules in CONVENTIONS §8.
+- After slice 16: 227 comment lines vs 3 499 code lines (6%); rules in CONVENTIONS §8. Since slice 61 (2026-09-23) the
+  packages and the form carry no comments except one DefinePlugin directive; the reasons are in `docs/notes/bridge-internals.md`
+  and `docs/notes/form-internals.md`.
 
 ## Comment baseline before slice 16
 

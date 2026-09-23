@@ -1,8 +1,3 @@
-// What a row of the form is (A-14: `geometry` is kept so a restored row can be re-sent to the viewer, and
-// `restoreFailureReason` marks a row the viewer refused, which `MeasurementRow` shows next to a value that has no
-// annotation behind it), and its JSON form for persistence: every field but `restoreFailureReason`, so a reload always
-// starts with a clean restore attempt rather than replaying a stale failure.
-
 import { z } from 'zod';
 import {
   MeasurementGeometry,
@@ -46,7 +41,6 @@ const toJSON = ({ restoreFailureReason: _restoreFailureReason, ...row }: Row): R
 
 const fromJSON = (row: RowJson): Row => ({ ...row, restoreFailureReason: null });
 
-// Only a row with both a stored uid and its geometry can be re-added in the viewer (A-14).
 const toRestoreRequest = (row: Row): RestoreMeasurementRequest | null =>
   row.measurementUid !== null && row.geometry !== null
     ? { rowId: row.rowId, measurementUid: row.measurementUid, toolName: row.toolName, geometry: row.geometry }

@@ -274,8 +274,9 @@ live in `.claude/rules/` with a `paths` glob, not in `CLAUDE.md`.
   `docs/decisions/`, where it is read on purpose rather than skipped over. The one exception is
   a directive the tooling needs (`eslint-disable`, `@ts-expect-error`, the DefinePlugin note above
   `declare const process`), kept to one line.
-- In the application the same rule applies; a component's `.props.ts` needs no explanation of its
-  own props.
+- In the application the same rule applies (since 2026-09-23 the form's code carries none either): what its
+  code cannot say lives in `docs/notes/form-internals.md`; a component's `.props.ts` needs no explanation of
+  its own props.
 - No commented-out code, no TODO without an owner and a follow-up entry in `docs/STATE.md`.
 - English only; no mention of AI tools anywhere in code (AI usage is documented in `AI-USAGE.md`).
 

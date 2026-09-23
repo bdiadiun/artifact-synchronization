@@ -7,12 +7,6 @@ import { reducer, type FormAction } from '@app/state/reducer';
 import { restoreViewer } from '@app/state/actions';
 import { useStoredRows } from './useStoredRows';
 
-// The form for one study, and the page's end of the channel. Its rows come from `useStoredRows`
-// once, as the reducer's initial state, and are written back through it on every change (A-14);
-// `dispatch` sends every action that is a command of the contract and reduces all of them, so
-// nothing else in the form talks to the viewer (A-30); and the handler is re-registered whenever
-// the rows change, so a viewer that announces itself is offered the rows on screen — a page reload
-// and a viewer reload restore the same way (S-5.6).
 export const useScoringForm = (studyInstanceUid: string): [Row[], Dispatch<FormAction>, HostChannel] => {
   const channel = useChannel(VIEWER_CHANNEL);
   const [storedRows, saveRows] = useStoredRows(studyInstanceUid);

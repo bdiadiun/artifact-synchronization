@@ -1,7 +1,3 @@
-// sessionStorage, defensively: private mode, a full quota or a cleared store throw or return nothing,
-// and the caller still has to render. What is stored and under which key is the caller's; the value
-// read back passes through the caller's schema once (A-14, A-35).
-
 import type { z } from 'zod';
 
 export const readStorage = <T>(key: string, schema: z.ZodType<T>): T | null => {
