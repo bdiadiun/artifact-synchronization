@@ -1,12 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { RowStatus, type Row } from '@app/state/reducer';
-import { getStorage, setStorage } from '@app/services/storage';
+import { loadRows, saveRows } from '@app/state/storedRows';
 
-const saveRows = (study: string, rows: Row[]): void => {
-  setStorage(study, rows);
-};
-
-const loadStoredRows = (study: string): Row[] => getStorage(study);
+const loadStoredRows = (study: string): Row[] => loadRows(study);
 
 const STUDY_A = '1.2.3';
 const STUDY_B = '9.9.9';

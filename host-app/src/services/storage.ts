@@ -1,53 +1,27 @@
-// A-14: the rows are persisted in sessionStorage per study (see useScoringForm), so a reload in
-// the same tab restores them and another tab or study never sees them. Every access is defensive:
-// private mode, a full quota or a cleared store throw or return nothing, and the form still has to
-// render.
+// sessionStorage, defensively: private mode, a full quota or a cleared store throw or return nothing,
+// and the caller still has to render. What is stored and under which key is the caller's; the value
+// read back passes through the caller's schema once (A-14, A-35).
 
-import { z } from 'zod';
-import { Row } from '@app/state/reducer';
+import type { z } from 'zod';
 
-// The fields A-14 asks to persist; `restoreFailureReason` is not among them, so every load starts
-// with a clean restore attempt rather than replaying a stale failure.
-const StoredRow = Row.omit({ restoreFailureReason: true });
-type StoredRow = z.infer<typeof StoredRow>;
-
-const StoredState = z.object({
-  studyInstanceUid: z.string().min(1),
-  rows: z.array(StoredRow),
-});
-type StoredState = z.infer<typeof StoredState>;
-
-const storageKey = (studyInstanceUid: string): string => `scoring-form:rows:${studyInstanceUid}`;
-
-const toStoredState = (studyInstanceUid: string, rows: readonly Row[]): StoredState => ({
-  studyInstanceUid,
-  rows: rows.map(({ restoreFailureReason: _restoreFailureReason, ...row }) => row),
-});
-
-// Rows only from a validated state under this exact study; anything else is "nothing to restore".
-const fromStoredState = (value: unknown, studyInstanceUid: string): Row[] => {
-  const parsed = StoredState.safeParse(value);
-  if (!parsed.success || parsed.data.studyInstanceUid !== studyInstanceUid) {
-    return [];
-  }
-  return parsed.data.rows.map((row) => ({ ...row, restoreFailureReason: null }));
-};
-
-export const getStorage = (studyInstanceUid: string): Row[] => {
+export const readStorage = <T>(key: string, schema: z.ZodType<T>): T | null => {
   try {
-    const raw = window.sessionStorage.getItem(storageKey(studyInstanceUid));
-    return fromStoredState(raw === null ? undefined : JSON.parse(raw), studyInstanceUid);
+    const raw = window.sessionStorage.getItem(key);
+    if (raw === null) {
+      return null;
+    }
+    const parsed = schema.safeParse(JSON.parse(raw));
+    return parsed.success ? parsed.data : null;
   } catch (error) {
-    console.warn('[form] failed to read stored form state', error);
-    return [];
+    console.warn('[storage] failed to read', key, error);
+    return null;
   }
 };
 
-export const setStorage = (studyInstanceUid: string, rows: readonly Row[]): void => {
+export const writeStorage = (key: string, value: unknown): void => {
   try {
-    const value = JSON.stringify(toStoredState(studyInstanceUid, rows));
-    window.sessionStorage.setItem(storageKey(studyInstanceUid), value);
+    window.sessionStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.warn('[form] failed to persist form state', error);
+    console.warn('[storage] failed to write', key, error);
   }
 };

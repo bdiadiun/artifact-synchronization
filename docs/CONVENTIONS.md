@@ -36,7 +36,7 @@ ohif)` → the channel it provides. A hook that returns
    through a ref or a re-read of storage (A-33). On the other side the same: `ohif.on` delivers
    OHIF's events already in the contract's shape, and `handleOhif` sends them.
 5. **A function takes exactly what it needs and does one thing.** `activateRow(dispatch, row)`,
-   `restoreViewer(dispatch, study, rows)`, `getStorage(studyInstanceUid)`. At most three inputs, no
+   `restoreViewer(dispatch, study, rows)`, `loadRows(studyInstanceUid)`. At most three inputs, no
    dependency bags, no factory that returns a function.
 6. **A boundary is a schema; a guarantee is a tool's.** Everything foreign — the wire, OHIF's
    measurement object, `sessionStorage` — passes through one zod schema once. What the linter or

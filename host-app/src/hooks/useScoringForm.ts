@@ -3,7 +3,7 @@ import { isHostCommand } from '@bdiadiun/scoring-contract';
 import { useChannel } from '@bdiadiun/scoring-channel';
 import { VIEWER_CHANNEL, type HostChannel } from '@app/config';
 import { reducer, type FormAction, type Row } from '@app/state/reducer';
-import { getStorage, setStorage } from '@app/services/storage';
+import { loadRows, saveRows } from '@app/state/storedRows';
 import { restoreViewer } from '@app/state/actions';
 
 // The form for one study, and the page's end of the channel. Its rows are read from storage once,
@@ -14,7 +14,7 @@ import { restoreViewer } from '@app/state/actions';
 // restore the same way (S-5.6).
 export const useScoringForm = (studyInstanceUid: string): [Row[], Dispatch<FormAction>, HostChannel] => {
   const channel = useChannel(VIEWER_CHANNEL);
-  const [rows, reduce] = useReducer(reducer, studyInstanceUid, getStorage);
+  const [rows, reduce] = useReducer(reducer, studyInstanceUid, loadRows);
 
   const dispatch = useCallback(
     (action: FormAction): void => {
@@ -27,7 +27,7 @@ export const useScoringForm = (studyInstanceUid: string): [Row[], Dispatch<FormA
   );
 
   useEffect(() => {
-    setStorage(studyInstanceUid, rows);
+    saveRows(studyInstanceUid, rows);
   }, [studyInstanceUid, rows]);
 
   useEffect(

@@ -459,8 +459,8 @@ Files:
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 
@@ -474,7 +474,7 @@ Files:
 
 - `docs/decisions/A-4-cancelled-activation.md`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
 
 ### F-09 Viewer publishes `MEASUREMENT_ADDED` and auto-deactivates the tool
@@ -501,8 +501,8 @@ Files:
 
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `host-app/src/utils/__tests__/format.test.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `vitest`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
@@ -553,8 +553,8 @@ Files:
 
 - `docs/decisions/A-10-echo-guard.md`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `packages/viewer-bridge/src/events/handlers.ts` — internal: `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/handlers.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`
@@ -571,8 +571,8 @@ Files:
 
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `packages/contract/src/__tests__/hostCommands.test.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
@@ -595,8 +595,8 @@ Files:
 
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `packages/contract/src/__tests__/hostCommands.test.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
 - `packages/contract/src/__tests__/index.test.ts` — internal: `packages/contract/src/index.ts`; external: `vitest`
 - `packages/contract/src/__tests__/viewerEvents.test.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`; external: `vitest`
@@ -622,8 +622,8 @@ Files:
 - `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/components/TotalsFooter.tsx` — internal: `host-app/src/components/TotalsFooter.props.ts`, `host-app/src/i18n.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
@@ -655,12 +655,13 @@ Files:
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
-- `host-app/src/services/__tests__/storage.test.ts` — internal: `host-app/src/services/storage.ts`, `host-app/src/state/reducer.ts`; external: `vitest`
-- `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
+- `host-app/src/services/storage.ts` — external: `zod`
+- `host-app/src/state/__tests__/storedRows.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`; external: `vitest`
 - `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
+- `host-app/src/state/storedRows.ts` — internal: `host-app/src/services/storage.ts`, `host-app/src/state/reducer.ts`; external: `zod`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
@@ -775,7 +776,7 @@ Files:
 - `host-app/src/components/ScoringPanel.props.ts` — external: `react`
 - `host-app/src/components/TotalsFooter.props.ts` — internal: `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/components/ViewerFrame.props.ts` — external: `react`
-- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
+- `host-app/src/hooks/__tests__/useScoringForm.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/hooks/useScoringForm.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `host-app/src/utils/totals.ts`, `packages/contract/src/index.ts`; external: `@testing-library/react`, `vitest`
 - `host-app/src/pages/__tests__/ScoringPage.test.tsx` — internal: `host-app/src/config.ts`, `host-app/src/i18n.ts`, `host-app/src/pages/ScoringPage.tsx`; external: `@testing-library/react`, `vitest`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/utils/__tests__/format.test.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `vitest`
@@ -869,7 +870,7 @@ Files:
 - `host-app/src/components/MeasurementRow.props.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`; external: `react`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/__tests__/reducer.test.ts` — internal: `host-app/src/state/reducer.ts`, `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `vitest`
 - `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
@@ -967,7 +968,8 @@ Files:
 - `ARCHITECTURE.md`
 - `host-app/src/i18n.ts` — internal: `packages/contract/src/index.ts`
 - `host-app/src/main.tsx` — internal: `host-app/src/index.css`, `host-app/src/pages/ScoringPage.tsx`; external: `react`, `react-dom`
-- `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
+- `host-app/src/services/storage.ts` — external: `zod`
+- `host-app/src/state/storedRows.ts` — internal: `host-app/src/services/storage.ts`, `host-app/src/state/reducer.ts`; external: `zod`
 - `packages/viewer-bridge/src/commands/handlers.ts` — internal: `packages/contract/src/index.ts`, `packages/viewer-bridge/src/bridge.ts`, `packages/viewer-bridge/src/commands/restore.ts`, `packages/viewer-bridge/src/ohif/facade.ts`, `packages/viewer-bridge/src/ohif/surface.ts`
 
 ### F-40 Workflow ownership and the return-statement rule
@@ -994,8 +996,9 @@ Files:
 
 - `.github/workflows/publish-packages.yml`
 - `docs/decisions/A-15-publish-contract-package.md`
-- `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
+- `host-app/src/services/storage.ts` — external: `zod`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
+- `host-app/src/state/storedRows.ts` — internal: `host-app/src/services/storage.ts`, `host-app/src/state/reducer.ts`; external: `zod`
 - `packages/contract/package.json`
 - `packages/contract/src/hostCommands.ts` — internal: `packages/contract/src/vocabulary.ts`; external: `zod`
 - `packages/contract/src/index.ts` — internal: `packages/contract/src/hostCommands.ts`, `packages/contract/src/viewerEvents.ts`, `packages/contract/src/vocabulary.ts`
@@ -1140,8 +1143,9 @@ Files:
 - `docs/decisions/A-19-study-from-the-page-url.md`
 - `host-app/src/__tests__/config.test.ts` — internal: `host-app/src/config.ts`; external: `vitest`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
+- `host-app/src/services/storage.ts` — external: `zod`
 - `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
+- `host-app/src/state/storedRows.ts` — internal: `host-app/src/services/storage.ts`, `host-app/src/state/reducer.ts`; external: `zod`
 
 ### F-53 A module is addressed by where it lives
 
@@ -1281,7 +1285,7 @@ Files:
 - `docs/decisions/A-22-one-channel-api.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `packages/channel/src/channel.ts` — internal: `packages/channel/src/peer.ts`, `packages/contract/src/index.ts`; external: `react`
 
@@ -1337,7 +1341,7 @@ Files:
 
 ### F-67 Boundaries as schemas, one channel
 
-The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed. The review of the working tree (A-33) then fixed what the shape had promised but not kept: `VIEWER_READY` is answered in the message handler with the rows on screen, `MEASUREMENT_UPDATED` keeps its geometry, a restore mark is cleared once it stops being true, one effect owns the viewer bridge, a standalone viewer has no peer, and the channel package is React-free (A-33). The author's design then made the two ends mirror each other (A-34): one `useChannel` in the channel package for both applications, `channel.on` and `ohif.on` as the one way to subscribe, the form's actions as the contract's commands, OHIF's events parsed and throttled at the boundary.
+The two remaining boundaries follow the contract's pattern (A-28): OHIF's measurement object is checked by one zod schema, the form's Row is a schema the stored row derives from, metric keys are an enum. The channel is transport only and one factory serves both ends (A-29, A-31): send, onMessage, getState, subscribe, dispose, with readyOn opening the queue. Commands carry no requestId and events no causedBy (A-30): the one correlation is rowId ↔ measurementUid, the echo guard is a rule per side, exchange and pending answers are gone. Every VIEWER_READY restores the current rows; activate sends one command; removal is fire-and-forget. API without a caller (on, disposer set, hostOrigin option, optional OHIF services) is removed. The review of the working tree (A-33) then fixed what the shape had promised but not kept: `VIEWER_READY` is answered in the message handler with the rows on screen, `MEASUREMENT_UPDATED` keeps its geometry, a restore mark is cleared once it stops being true, one effect owns the viewer bridge, a standalone viewer has no peer, and the channel package is React-free (A-33). The author's design then made the two ends mirror each other (A-34): one `useChannel` in the channel package for both applications, `channel.on` and `ohif.on` as the one way to subscribe, the form's actions as the contract's commands, OHIF's events parsed and throttled at the boundary. The storage service became abstract (A-35): sessionStorage for any key and schema, the form's stored rows in `state/storedRows.ts`.
 
 Canon: A-13, D-2, Q-7. Depends on: F-66. Slice 61, status `review`.
 
@@ -1350,16 +1354,18 @@ Files:
 - `docs/decisions/A-32-react-bridge.md`
 - `docs/decisions/A-33-review-of-the-boundaries-refactor.md`
 - `docs/decisions/A-34-two-applications-one-channel-hook.md`
+- `docs/decisions/A-35-abstract-storage.md`
 - `docs/notes/ohif-service-availability.md`
 - `eslint.config.js` — external: `@eslint/js`, `eslint-config-prettier`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `typescript-eslint`
 - `host-app/src/components/MeasurementRow.tsx` — internal: `host-app/src/components/MeasurementRow.props.ts`, `host-app/src/i18n.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/utils/format.ts`; external: `react`
 - `host-app/src/config.ts` — internal: `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`
-- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/services/storage.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
+- `host-app/src/hooks/useScoringForm.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/actions.ts`, `host-app/src/state/reducer.ts`, `host-app/src/state/storedRows.ts`, `packages/contract/src/index.ts`; external: `@bdiadiun/scoring-channel`, `react`
 - `host-app/src/pages/ScoringPage.tsx` — internal: `host-app/src/components/ScoringPanel.tsx`, `host-app/src/components/ViewerFrame.tsx`; external: `react`
-- `host-app/src/services/storage.ts` — internal: `host-app/src/state/reducer.ts`; external: `zod`
+- `host-app/src/services/storage.ts` — external: `zod`
 - `host-app/src/state/actions.ts` — internal: `host-app/src/config.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`; external: `react`
 - `host-app/src/state/reducer.ts` — internal: `host-app/src/state/selectors.ts`, `packages/contract/src/index.ts`; external: `zod`
 - `host-app/src/state/selectors.ts` — internal: `host-app/src/state/reducer.ts`
+- `host-app/src/state/storedRows.ts` — internal: `host-app/src/services/storage.ts`, `host-app/src/state/reducer.ts`; external: `zod`
 - `host-app/src/utils/format.ts` — internal: `host-app/src/i18n.ts`, `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
 - `host-app/src/utils/totals.ts` — internal: `host-app/src/state/reducer.ts`, `packages/contract/src/index.ts`
 - `host-app/vite.config.ts` — external: `@vitejs/plugin-react`, `node:url`, `vite`
