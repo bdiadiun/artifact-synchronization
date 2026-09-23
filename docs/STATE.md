@@ -20,7 +20,8 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 - OHIF `master` needs Node >= 24 + pnpm 11; release `v3.12.17` needs Node >= 18 + yarn 1 → A-6, we base on `v3.12.17`.
 - Local toolchain: Node 22.13.1, npm 10.9.2; yarn/pnpm not installed (use corepack for yarn 1 in the fork).
-- `gh pr merge` is refused by the permission classifier ("Merge Without Review") — consistently since 2026-09-22, in both repositories. The git operator stops at the open, green PR and the author merges it. Never work around a refusal.
+- `gh pr merge` was refused by the permission classifier ("Merge Without Review") on 2026-09-22 in both repositories, and allowed again on 2026-09-23 (PR #79). The git operator tries it once after the author's approval; on a refusal it stops and the author merges. Never work around a refusal.
+- `npm ci` runs the workspaces' `prepare` scripts concurrently, and each package's `tsc -b --force` rebuilt the whole reference chain — two processes writing `packages/channel/dist` at once made the publish workflow fail on 2026-09-23 (`index.d.ts is not a module`). Since then the root `package.json` has the one `prepare`, `tsc -b packages/viewer-adapter`, which builds contract → channel → bridge → adapter once, in order; the packages keep `build` for `viewer:link`.
 - The `gh` token has the `workflow` scope since 2026-09-17 (needed to push `.github/workflows`).
 - Git pushes over HTTPS use `gh auth setup-git` as the credential helper.
 - GitHub default branch was the first pushed branch (`docs/canon-and-feature-graph`) until 2026-09-16; now `main`. A plain `git clone` therefore works.
