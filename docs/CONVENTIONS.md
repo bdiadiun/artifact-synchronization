@@ -70,6 +70,10 @@ ohif)` → the channel it provides. A hook that returns
   ```
 - A `function` declaration is allowed only when hoisting is genuinely required (mutual recursion
   in one module) and carries a comment saying so.
+- A `class` is for state with behaviour that exists as one instance — the end of the channel
+  (`ChannelEnd`, A-39) — with private fields and arrow-function methods so they can be passed by
+  reference. Not for a model without instances (`RowModel` is an object of functions, A-36), a
+  reducer or a hook; a class with only static members is a namespace and the lint set refuses it.
 - Exported functions declare their return type explicitly. Internal helpers may infer.
 - Prefer small named helpers over long inline lambdas; a callback longer than ~5 lines gets a name.
 - **At most three inputs.** A function, factory, hook or helper takes no more than three inputs,

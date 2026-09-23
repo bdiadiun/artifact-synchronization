@@ -5,12 +5,12 @@ not a log. Update it in every PR (same commit as the work it describes).
 
 ## Where we are
 
-| Field          | Value                                                                                                                                                                                                                             |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Current slice  | none open — slice 62 `refactor: name the packages after their roles` (#82, decision A-38) is merged, published under the new names and pinned in the fork                                                                         |
-| Gate           | — (next slice starts at gate 1)                                                                                                                                                                                                   |
-| Last merged PR | `chore: pin the fork at the loader release` (slice 62 closed: contract 0.0.14, channel 0.0.8, scoring-viewer 0.1.0, ohif-extension-loader 0.1.0, fork at f9a46226; before it #82)                                                 |
-| Next slice     | 63 `test: only the tests the assignment asks for` (sum, serialisation, reducer; the coverage that left with the old harnesses — channel, facade, hooks — decided there); the study-change decision (Follow-ups); the video (F-13) |
+| Field          | Value                                                                                                                                                                                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current slice  | 63 `refactor(channel): the end of the channel is a class` (branch `refactor/the-channel-end-is-a-class`, node F-67, decision A-39): `class ChannelEnd`, channel 0.0.9, scoring-viewer 0.1.1, ohif-extension-loader 0.1.1                                               |
+| Gate           | 2 — code, docs and versions in the working tree; verify green; browser scenario on the linked tree before the PR. After the merge: publish, fork PR (loader 0.1.1 + yarn.lock; the fork's `gh pr merge` is refused by the classifier, the author merges), then the pin |
+| Last merged PR | `chore: pin the fork at the loader release` (slice 62 closed: contract 0.0.14, channel 0.0.8, scoring-viewer 0.1.0, ohif-extension-loader 0.1.0, fork at f9a46226; before it #82)                                                                                      |
+| Next slice     | after the fork pin: 64 `test: only the tests the assignment asks for` (sum, serialisation, reducer; the coverage that left with the old harnesses — channel, facade, hooks — decided there); the study-change decision (Follow-ups)                                    |
 
 ## Open decisions (see CANON.md → Decisions)
 

@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/ohif-extension-loader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OHIF extension that loads our extensions into the viewer, so the fork carries one entry that never changes",
   "license": "MIT",
   "repository": {
@@ -28,6 +28,6 @@
     "typecheck": "tsc -p tsconfig.tests.json"
   },
   "dependencies": {
-    "@bdiadiun/ohif-extension-scoring-viewer": "0.1.0"
+    "@bdiadiun/ohif-extension-scoring-viewer": "0.1.1"
   }
 }

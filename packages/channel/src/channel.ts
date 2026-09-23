@@ -22,93 +22,101 @@ export interface Channel<TIn extends BridgeMessage> {
 
 const ignore = (): void => undefined;
 
-const queued: BridgeMessage[] = [];
-const listeners = new Set<() => void>();
-let peer: ChannelOptions<BridgeMessage> | null = null;
-let target: Window | null = null;
-let state: ChannelState = { ready: false, queued: 0 };
-let handle: (message: BridgeMessage) => void = ignore;
-let leases = 0;
-let stopListening = ignore;
+class ChannelEnd {
+  private readonly queued: BridgeMessage[] = [];
+  private readonly listeners = new Set<() => void>();
+  private peer: ChannelOptions<BridgeMessage> | null = null;
+  private target: Window | null = null;
+  private state: ChannelState = { ready: false, queued: 0 };
+  private handle: (message: BridgeMessage) => void = ignore;
+  private leases = 0;
+  private stopListening = ignore;
 
-const publish = (next: ChannelState): void => {
-  state = next;
-  for (const listener of listeners) {
-    listener();
-  }
-};
-
-const send = (message: BridgeMessage): boolean => {
-  if (state.ready && peer !== null && postTo(target, peer.peerOrigin, message)) {
-    return true;
-  }
-  queued.push(message);
-  publish({ ...state, queued: queued.length });
-  return false;
-};
-
-const open = (): void => {
-  while (peer !== null && queued.length > 0 && postTo(target, peer.peerOrigin, queued[0])) {
-    queued.shift();
-  }
-  publish({ ready: true, queued: queued.length });
-};
-
-const receive = (message: BridgeMessage, source: Window | null): void => {
-  target = source ?? target;
-  if (message.type === peer?.readyOn) {
-    open();
-  }
-  handle(message);
-};
-
-const on = (next: (message: never) => void): (() => void) => {
-  handle = next as (message: BridgeMessage) => void;
-
-  return () => {
-    handle = ignore;
-  };
-};
-
-const getState = (): ChannelState => state;
-
-const subscribe = (listener: () => void): (() => void) => {
-  listeners.add(listener);
-
-  return () => {
-    listeners.delete(listener);
-  };
-};
-
-const samePeer = (a: ChannelOptions<BridgeMessage>, b: ChannelOptions<BridgeMessage>): boolean =>
-  a.peerOrigin === b.peerOrigin && a.accept === b.accept && a.readyOn === b.readyOn && a.peerWindow === b.peerWindow;
-
-const listen = (options: ChannelOptions<BridgeMessage>): (() => void) => {
-  if (peer === null) {
-    peer = options;
-    target = options.peerWindow ?? null;
-    if (options.readyOn === undefined) {
-      open();
+  send = (message: BridgeMessage): boolean => {
+    if (this.state.ready && this.peer !== null && postTo(this.target, this.peer.peerOrigin, message)) {
+      return true;
     }
-  } else if (!samePeer(peer, options)) {
-    console.error(`${LOG_PREFIX} one peer per window: keeping ${peer.peerOrigin}, ignoring ${options.peerOrigin}`);
-  }
+    this.queued.push(message);
+    this.publish({ ...this.state, queued: this.queued.length });
+    return false;
+  };
 
-  leases += 1;
-  if (leases === 1) {
-    stopListening = listenFrom(peer.peerOrigin, peer.accept, receive);
-  }
+  on = (next: (message: never) => void): (() => void) => {
+    this.handle = next as (message: BridgeMessage) => void;
 
-  return () => {
-    leases -= 1;
-    if (leases === 0) {
-      stopListening();
-      stopListening = ignore;
+    return () => {
+      this.handle = ignore;
+    };
+  };
+
+  getState = (): ChannelState => this.state;
+
+  subscribe = (listener: () => void): (() => void) => {
+    this.listeners.add(listener);
+
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  listen = (options: ChannelOptions<BridgeMessage>): (() => void) => {
+    if (this.peer === null) {
+      this.peer = options;
+      this.target = options.peerWindow ?? null;
+      if (options.readyOn === undefined) {
+        this.open();
+      }
+    } else if (!this.samePeer(options)) {
+      console.error(
+        `${LOG_PREFIX} one peer per window: keeping ${this.peer.peerOrigin}, ignoring ${options.peerOrigin}`,
+      );
+    }
+
+    this.leases += 1;
+    if (this.leases === 1) {
+      this.stopListening = listenFrom(this.peer.peerOrigin, this.peer.accept, this.receive);
+    }
+
+    return () => {
+      this.leases -= 1;
+      if (this.leases === 0) {
+        this.stopListening();
+        this.stopListening = ignore;
+      }
+    };
+  };
+
+  private publish = (next: ChannelState): void => {
+    this.state = next;
+    for (const listener of this.listeners) {
+      listener();
     }
   };
-};
 
-const channel = { send, on, getState };
+  private open = (): void => {
+    while (this.peer !== null && this.queued.length > 0 && postTo(this.target, this.peer.peerOrigin, this.queued[0])) {
+      this.queued.shift();
+    }
+    this.publish({ ready: true, queued: this.queued.length });
+  };
+
+  private receive = (message: BridgeMessage, source: Window | null): void => {
+    this.target = source ?? this.target;
+    if (message.type === this.peer?.readyOn) {
+      this.open();
+    }
+    this.handle(message);
+  };
+
+  private samePeer = (options: ChannelOptions<BridgeMessage>): boolean =>
+    this.peer !== null &&
+    this.peer.peerOrigin === options.peerOrigin &&
+    this.peer.accept === options.accept &&
+    this.peer.readyOn === options.readyOn &&
+    this.peer.peerWindow === options.peerWindow;
+}
+
+const channel = new ChannelEnd();
 
 export const useChannel = <TIn extends BridgeMessage>({
   peerOrigin,
@@ -116,8 +124,11 @@ export const useChannel = <TIn extends BridgeMessage>({
   readyOn,
   peerWindow,
 }: ChannelOptions<TIn>): Channel<TIn> => {
-  useEffect(() => listen({ peerOrigin, accept, readyOn, peerWindow }), [peerOrigin, accept, readyOn, peerWindow]);
-  useSyncExternalStore(subscribe, getState);
+  useEffect(
+    () => channel.listen({ peerOrigin, accept, readyOn, peerWindow }),
+    [peerOrigin, accept, readyOn, peerWindow],
+  );
+  useSyncExternalStore(channel.subscribe, channel.getState);
 
   return channel;
 };

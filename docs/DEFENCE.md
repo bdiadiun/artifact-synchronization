@@ -65,6 +65,14 @@ receiver can verify. On one origin we could call into `iframe.contentWindow` dir
 `BroadcastChannel`; the origin checks would go, but the typed contract would stay, because it is
 the seam between two separately deployed apps.
 
+**P-2a. If the origins do not match** (the form opened as `127.0.0.1`, the viewer on another
+port): the receiver drops the message before the version and the guard and logs
+`[channel] ignoring message from foreign origin …` once per origin; the sender's `postMessage`
+with its explicit `targetOrigin` is not delivered and Chrome logs "target origin provided … does
+not match" there. The status line stays at `очікує VIEWER_READY` and the queue grows. Demo: open
+the form as http://127.0.0.1:5173 — the viewer's `VIEWER_READY` is ignored; open it as
+http://localhost:5173 — it is accepted.
+
 **P-3. Who issues which id.** The host issues `rowId`
 ([`crypto.randomUUID()`](../host-app/src/state/actions.ts#L12)) before anything is drawn, so an
 empty `Очікує` row can exist. The viewer issues `measurementUid` (the cornerstone annotation UID)

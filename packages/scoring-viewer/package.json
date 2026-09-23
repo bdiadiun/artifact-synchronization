@@ -1,6 +1,6 @@
 {
   "name": "@bdiadiun/ohif-extension-scoring-viewer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "the OHIF-side scoring application, packaged as an OHIF extension: it talks to OHIF and speaks the scoring contract over the channel",
   "license": "MIT",
   "repository": {
@@ -28,7 +28,7 @@
     "typecheck": "tsc -p tsconfig.tests.json"
   },
   "dependencies": {
-    "@bdiadiun/scoring-channel": "0.0.8",
+    "@bdiadiun/scoring-channel": "0.0.9",
     "@bdiadiun/scoring-contract": "0.0.14",
     "zod": "4.6.5"
   },
